@@ -25,3 +25,11 @@ Thumbs.db
 
 # CDK-generated files
 cdk.out/
+
+# Local tool settings and deployment packages
+.claude/
+*.zip
+
+# Organizer briefing documents (shared separately by PolyFinances; the starter data stays tracked)
+Datathon2026/*.pdf
+Datathon2026/*.pptx

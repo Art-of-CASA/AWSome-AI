@@ -1,0 +1,36 @@
+asset_id,ticker,name,asset_class,market,currency,sector,region,country,wiki_article
+E01,ASML.AS,ASML Holding,equity,Euronext Amsterdam,EUR,Information Technology,Europe,Pays-Bas,ASML_Holding
+E02,MC.PA,LVMH Moët Hennessy Louis Vuitton,equity,Euronext Paris,EUR,Consumer Discretionary,Europe,France,LVMH
+E03,NESN.SW,Nestlé,equity,SIX Swiss Exchange,CHF,Consumer Staples,Europe,Suisse,Nestlé
+E04,NOVO-B.CO,Novo Nordisk (B),equity,Nasdaq Copenhagen,DKK,Health Care,Europe,Danemark,Novo_Nordisk
+E05,SAP.DE,SAP,equity,Xetra,EUR,Information Technology,Europe,Allemagne,SAP
+E06,SIE.DE,Siemens,equity,Xetra,EUR,Industrials,Europe,Allemagne,Siemens
+E07,TTE.PA,TotalEnergies,equity,Euronext Paris,EUR,Energy,Europe,France,TotalEnergies
+E08,SHEL.L,Shell,equity,London Stock Exchange,GBP,Energy,Europe,Royaume-Uni,Shell_plc
+E09,AZN.L,AstraZeneca,equity,London Stock Exchange,GBP,Health Care,Europe,Royaume-Uni,AstraZeneca
+E10,HSBA.L,HSBC Holdings,equity,London Stock Exchange,GBP,Financials,Europe,Royaume-Uni,HSBC
+S01,2330.TW,Taiwan Semiconductor Manufacturing (TSMC),equity,Taiwan Stock Exchange,TWD,Information Technology,Asie,Taïwan,TSMC
+S02,005930.KS,Samsung Electronics,equity,Korea Exchange,KRW,Information Technology,Asie,Corée du Sud,Samsung_Electronics
+S03,7203.T,Toyota Motor,equity,Tokyo Stock Exchange,JPY,Consumer Discretionary,Asie,Japon,Toyota
+S04,6758.T,Sony Group,equity,Tokyo Stock Exchange,JPY,Consumer Discretionary,Asie,Japon,Sony
+S05,0700.HK,Tencent Holdings,equity,Hong Kong Exchange,HKD,Communication Services,Asie,Chine,Tencent
+S06,9988.HK,Alibaba Group,equity,Hong Kong Exchange,HKD,Consumer Discretionary,Asie,Chine,Alibaba_Group
+S07,1211.HK,BYD Company,equity,Hong Kong Exchange,HKD,Consumer Discretionary,Asie,Chine,BYD_Company
+S08,RELIANCE.NS,Reliance Industries,equity,National Stock Exchange of India,INR,Energy,Asie,Inde,Reliance_Industries
+S09,HDFCBANK.NS,HDFC Bank,equity,National Stock Exchange of India,INR,Financials,Asie,Inde,HDFC_Bank
+S10,INFY.NS,Infosys,equity,National Stock Exchange of India,INR,Information Technology,Asie,Inde,Infosys
+F01,NPN.JO,Naspers,equity,Johannesburg Stock Exchange,ZAR,Consumer Discretionary,Afrique,Afrique du Sud,Naspers
+F02,FSR.JO,FirstRand,equity,Johannesburg Stock Exchange,ZAR,Financials,Afrique,Afrique du Sud,FirstRand
+F03,SBK.JO,Standard Bank Group,equity,Johannesburg Stock Exchange,ZAR,Financials,Afrique,Afrique du Sud,Standard_Bank
+F04,MTN.JO,MTN Group,equity,Johannesburg Stock Exchange,ZAR,Communication Services,Afrique,Afrique du Sud,MTN_Group
+F05,VOD.JO,Vodacom Group,equity,Johannesburg Stock Exchange,ZAR,Communication Services,Afrique,Afrique du Sud,Vodacom
+F06,GFI.JO,Gold Fields,equity,Johannesburg Stock Exchange,ZAR,Materials,Afrique,Afrique du Sud,Gold_Fields
+F07,SOL.JO,Sasol,equity,Johannesburg Stock Exchange,ZAR,Materials,Afrique,Afrique du Sud,Sasol
+F08,SHP.JO,Shoprite Holdings,equity,Johannesburg Stock Exchange,ZAR,Consumer Staples,Afrique,Afrique du Sud,Shoprite_(South_Africa)
+F09,APN.JO,Aspen Pharmacare,equity,Johannesburg Stock Exchange,ZAR,Health Care,Afrique,Afrique du Sud,Aspen_Pharmacare
+F10,COMI.CA,Commercial International Bank (Égypte),equity,Egyptian Exchange,EGP,Financials,Afrique,Égypte,Commercial_International_Bank
+G01,VT,Vanguard Total World Stock ETF,etf_equity,NYSE Arca,USD,Broad market (monde),Monde,États-Unis (fonds),
+G02,VEA,Vanguard FTSE Developed Markets ETF,etf_equity,NYSE Arca,USD,Broad market (pays développés hors Amérique du Nord),Monde,États-Unis (fonds),
+G03,VWO,Vanguard FTSE Emerging Markets ETF,etf_equity,NYSE Arca,USD,Broad market (pays émergents),Monde,États-Unis (fonds),
+G04,XEQT.TO,iShares Core Equity ETF Portfolio,etf_equity,TSX,CAD,"Broad market (monde, portefeuille tout-en-un)",Monde,Canada (fonds),
+G05,BNDW,Vanguard Total World Bond ETF,etf_bond,Nasdaq,USD,"Bonds (monde, couvert en USD)",Monde,États-Unis (fonds),

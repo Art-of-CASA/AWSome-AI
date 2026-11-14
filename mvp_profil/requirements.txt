@@ -1,0 +1,5 @@
+anthropic[bedrock]>=2.8.0
+streamlit>=1.67.0
+pydantic>=2.0
+pandas>=2.0
+amazon-transcribe>=0.6.4

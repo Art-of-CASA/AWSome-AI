@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<!--
+  Conversation vocale mains libres (composant Streamlit sans dépendance).
+  - Un seul clic « Démarrer » (exigé par les navigateurs pour le micro et le son), puis plus aucun bouton.
+  - Détection de la parole dans le navigateur : début quand le niveau dépasse le bruit de fond, fin après
+    0,8 s de silence. L'énoncé (WAV 16 kHz mono) est envoyé à Python, qui le fait transcrire par Amazon Transcribe.
+  - La réponse de l'IA (MP3 Amazon Polly) est jouée ici, sans lecteur visible ; l'écoute reprend à la fin.
+    La voix vit dans ce cadre, qui n'est pas recréé quand la page Streamlit se rafraîchit : elle n'est plus coupée.
+  - Pendant que l'IA parle, le micro n'écoute pas (évite que l'IA s'entende elle-même).
+  Protocole Streamlit : messages postMessage componentReady / render / setComponentValue / setFrameHeight.
+-->
+<style>
+  :root { --texte: #31333f; --fond-bouton: #ffffff; --bord: #c9cbd3; }
+  body { margin: 0; font-family: "Source Sans Pro", system-ui, sans-serif; color: var(--texte); background: transparent; }
+  .boite { display: flex; align-items: center; gap: 16px; padding: 10px 6px; }
+  .orbe { width: 58px; height: 58px; border-radius: 50%; background: #9e9e9e; flex: none;
+          transition: transform 0.08s linear, background 0.3s; }
+  .ecoute .orbe { background: #2e7d32; }
+  .parle .orbe { background: #1565c0; animation: respire 1.2s ease-in-out infinite; }
+  .reflexion .orbe { background: #f9a825; animation: pulse 0.9s ease-in-out infinite; }
+  .pause .orbe, .fin .orbe { background: #9e9e9e; }
+  @keyframes pulse { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
+  @keyframes respire { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+  .etat { font-size: 16px; font-weight: 600; }
+  .sous { font-size: 13px; opacity: 0.75; margin-top: 2px; }
+  .texte { flex: 1; min-width: 0; }
+  button { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--bord); background: var(--fond-bouton);
+           color: var(--texte); font-size: 14px; cursor: pointer; flex: none; }
+  button.principal { background: #ff4b4b; border-color: #ff4b4b; color: #fff; }
+</style>
+</head>
+<body>
+<div id="boite" class="boite">
+  <div class="orbe" id="orbe"></div>
+  <div class="texte">
+    <div class="etat" id="etat">Conversation vocale</div>
+    <div class="sous" id="sous">Cliquez sur « Démarrer », puis parlez normalement : plus besoin de bouton ensuite.</div>
+  </div>
+  <button id="bouton" class="principal">Démarrer</button>
+</div>
+<script>
+const envoyerStreamlit = (type, data) =>
+  window.parent.postMessage(Object.assign({ isStreamlitMessage: true, type: type }, data || {}), "*");
+
+const CIBLE = 16000;               // Hz, attendu par Amazon Transcribe
+const FIN_SILENCE_MS = 800;        // fin d'énoncé après ce silence
+const DEBUT_PAROLE_MS = 120;       // parole confirmée après cette durée au-dessus du seuil
+const PREROLL_MS = 300;            // on garde ce qui précède le début détecté
+const MAX_ENONCE_MS = 30000;
+
+let args = {};
+let demarre = false, enPause = false;
+let etat = "arret";
+let nEnvoye = 0;                   // numéro du dernier énoncé envoyé à Python
+let dernierJoue = 0;               // numéro de la dernière réplique de l'IA jouée
+let lecteur = null;
+let contexte = null, tauxEntree = 48000;
+// Détection de la parole
+let seuil = 0.02, calibration = [], tempsCalib = 0;
+let parole = false, msAuDessus = 0, msSilence = 0, msEnonce = 0;
+let tampon = [], preroll = [], msPreroll = 0;
+
+const $ = (id) => document.getElementById(id);
+
+function afficher(nouvel, titre, sous) {
+  etat = nouvel;
+  $("boite").className = "boite " + nouvel;
+  $("etat").textContent = titre;
+  $("sous").textContent = sous || "";
+}
+
+function hauteur() { envoyerStreamlit("streamlit:setFrameHeight", { height: document.body.scrollHeight + 4 }); }
+
+function reduire(entree, taux) {   // ré-échantillonnage vers 16 kHz par moyenne
+  if (taux === CIBLE) return Float32Array.from(entree);
+  const r = taux / CIBLE, n = Math.floor(entree.length / r), sortie = new Float32Array(n);
+  for (let i = 0; i < n; i++) {
+    const a = Math.floor(i * r), z = Math.min(entree.length, Math.floor((i + 1) * r));
+    let s = 0; for (let j = a; j < z; j++) s += entree[j];
+    sortie[i] = s / Math.max(1, z - a);
+  }
+  return sortie;
+}
+
+function wav(echantillons) {
+  const buf = new ArrayBuffer(44 + echantillons.length * 2), v = new DataView(buf);
+  const ecrire = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+  ecrire(0, "RIFF"); v.setUint32(4, 36 + echantillons.length * 2, true); ecrire(8, "WAVE"); ecrire(12, "fmt ");
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, CIBLE, true);
+  v.setUint32(28, CIBLE * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); ecrire(36, "data");
+  v.setUint32(40, echantillons.length * 2, true);
+  let o = 44;
+  for (const e of echantillons) { const x = Math.max(-1, Math.min(1, e)); v.setInt16(o, x < 0 ? x * 0x8000 : x * 0x7fff, true); o += 2; }
+  return buf;
+}
+
+function base64(buf) {
+  let s = ""; const u = new Uint8Array(buf);
+  for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+
+function ecouter() {
+  if (enPause || !demarre || etat === "fin") return;
+  parole = false; msAuDessus = 0; msSilence = 0; msEnonce = 0; tampon = []; preroll = []; msPreroll = 0;
+  afficher("ecoute", "Je vous écoute…", "Parlez quand vous voulez ; je réponds dès que vous avez fini.");
+}
+
+function envoyerEnonce() {
+  const total = tampon.reduce((n, t) => n + t.length, 0);
+  if (total < CIBLE * 0.4) { ecouter(); return; }      // trop court : bruit, on ignore
+  const tout = new Float32Array(total); let o = 0;
+  for (const t of tampon) { tout.set(t, o); o += t.length; }
+  tampon = [];
+  nEnvoye += 1;
+  afficher("reflexion", "Je réfléchis…", "Transcription puis réponse de l'IA.");
+  envoyerStreamlit("streamlit:setComponentValue", { value: { kind: "audio", n: nEnvoye, wav: base64(wav(tout)) }, dataType: "json" });
+}
+
+function traiterAudio(e) {
+  if (etat !== "ecoute") { $("orbe").style.transform = ""; return; }
+  const entree = e.inputBuffer.getChannelData(0);
+  const morceau = reduire(entree, tauxEntree);
+  const ms = (entree.length / tauxEntree) * 1000;
+  let somme = 0; for (const x of entree) somme += x * x;
+  const rms = Math.sqrt(somme / entree.length);
+  $("orbe").style.transform = "scale(" + (1 + Math.min(0.5, rms * 6)).toFixed(3) + ")";
+  if (tempsCalib < 700) {                                // calibration du bruit de fond au démarrage
+    tempsCalib += ms; calibration.push(rms);
+    if (tempsCalib >= 700) {
+      const moyenne = calibration.reduce((a, b) => a + b, 0) / calibration.length;
+      seuil = Math.max(0.012, moyenne * 2.5);
+    }
+    return;
+  }
+  if (!parole) {
+    preroll.push(morceau); msPreroll += ms;
+    while (msPreroll > PREROLL_MS && preroll.length > 1) { msPreroll -= ms; preroll.shift(); }
+    msAuDessus = rms > seuil ? msAuDessus + ms : 0;
+    if (msAuDessus >= DEBUT_PAROLE_MS) {
+      parole = true; tampon = preroll.slice(); preroll = []; msSilence = 0; msEnonce = msPreroll;
+      afficher("ecoute", "Je vous écoute…", "…");
+    }
+    return;
+  }
+  tampon.push(morceau); msEnonce += ms;
+  msSilence = rms < seuil * 0.7 ? msSilence + ms : 0;
+  if (msSilence >= FIN_SILENCE_MS || msEnonce >= MAX_ENONCE_MS) envoyerEnonce();
+}
+
+function apresReplique() {
+  lecteur = null;
+  if (args.fin) {
+    afficher("fin", "Merci !", "Passage à la suite du questionnaire…");
+    nEnvoye += 1;
+    envoyerStreamlit("streamlit:setComponentValue", { value: { kind: "termine", n: nEnvoye }, dataType: "json" });
+    return;
+  }
+  setTimeout(ecouter, 250);   // petite marge : le micro ne capte pas la fin de la voix de l'IA
+}
+
+function jouer() {
+  dernierJoue = args.n;
+  if (!args.voix || !args.audio) {
+    afficher("parle", "L'IA vous répond", "(lecture vocale désactivée : lisez la question ci-dessous)");
+    setTimeout(apresReplique, 600);
+    return;
+  }
+  afficher("parle", "L'IA parle…", "Vous pourrez répondre dès qu'elle aura fini. Dites « pouvez-vous répéter ? » au besoin.");
+  lecteur = new Audio("data:audio/mpeg;base64," + args.audio);
+  lecteur.onended = apresReplique;
+  lecteur.onerror = apresReplique;
+  lecteur.play().catch(apresReplique);
+}
+
+async function demarrer() {
+  try {
+    const flux = await navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 } });
+    contexte = new (window.AudioContext || window.webkitAudioContext)();
+    tauxEntree = contexte.sampleRate;
+    const source = contexte.createMediaStreamSource(flux);
+    const proc = contexte.createScriptProcessor(2048, 1, 1);
+    proc.onaudioprocess = traiterAudio;
+    const muet = contexte.createGain(); muet.gain.value = 0;      // le processeur doit être relié à une sortie
+    source.connect(proc); proc.connect(muet); muet.connect(contexte.destination);
+  } catch (err) {
+    afficher("pause", "Micro indisponible", "Autorisez le micro (HTTPS requis) ou écrivez votre réponse sous ce cadre.");
+    return;
+  }
+  demarre = true;
+  $("bouton").textContent = "Pause";
+  $("bouton").className = "";
+  if ((args.n || 0) > dernierJoue) jouer(); else ecouter();
+}
+
+$("bouton").onclick = () => {
+  if (!demarre) { demarrer(); return; }
+  enPause = !enPause;
+  if (enPause) {
+    if (lecteur) { lecteur.pause(); lecteur = null; }
+    $("bouton").textContent = "Reprendre";
+    afficher("pause", "En pause", "Cliquez sur « Reprendre » pour continuer la conversation.");
+  } else {
+    $("bouton").textContent = "Pause";
+    if ((args.n || 0) > dernierJoue) jouer(); else ecouter();
+  }
+};
+
+window.addEventListener("message", (evenement) => {
+  if (evenement.data.type !== "streamlit:render") return;
+  args = evenement.data.args || {};
+  const theme = evenement.data.theme;
+  if (theme && theme.textColor) {
+    document.documentElement.style.setProperty("--texte", theme.textColor);
+    document.documentElement.style.setProperty("--fond-bouton", theme.secondaryBackgroundColor || "#fff");
+  }
+  hauteur();
+  if (!demarre || enPause) return;
+  // Python a traité notre dernier énoncé : nouvelle réplique à jouer, ou rien compris -> on réécoute.
+  const nouvelleReplique = (args.n || 0) > dernierJoue;
+  if (nouvelleReplique && etat !== "parle") jouer();
+  else if (etat === "reflexion" && (args.ack || 0) >= nEnvoye) ecouter();
+});
+
+// Petit point d'accès pour les tests automatiques (simuler un énoncé sans micro).
+window.__simulerEnonce = (base64Wav) => {
+  nEnvoye += 1;
+  afficher("reflexion", "Je réfléchis…", "(énoncé simulé)");
+  envoyerStreamlit("streamlit:setComponentValue", { value: { kind: "audio", n: nEnvoye, wav: base64Wav }, dataType: "json" });
+};
+window.__demarrerSansMicro = () => {
+  demarre = true; $("bouton").textContent = "Pause"; $("bouton").className = "";
+  if ((args.n || 0) > dernierJoue) jouer(); else ecouter();
+};
+window.__etat = () => ({ etat, demarre, nEnvoye, dernierJoue, joue: !!lecteur && !lecteur.paused,
+                         position: lecteur ? lecteur.currentTime : null });
+
+envoyerStreamlit("streamlit:componentReady", { apiVersion: 1 });
+hauteur();
+</script>
+</body>
+</html>
