@@ -1,0 +1,452 @@
+{
+ "genere_le": "2026-11-14",
+ "source": "jeu de départ + univers étendu, en CAD",
+ "replay": {
+  "equilibre": {
+   "nom": "Équilibré",
+   "composition": {
+    "XEQT.TO": 0.6,
+    "XBB.TO": 0.4
+   },
+   "mois": [
+    "départ",
+    "2022-01",
+    "2022-02",
+    "2022-03",
+    "2022-04",
+    "2022-05",
+    "2022-06",
+    "2022-07",
+    "2022-08",
+    "2022-09",
+    "2022-10",
+    "2022-11",
+    "2022-12",
+    "2023-01",
+    "2023-02",
+    "2023-03",
+    "2023-04",
+    "2023-05",
+    "2023-06",
+    "2023-07",
+    "2023-08",
+    "2023-09",
+    "2023-10",
+    "2023-11",
+    "2023-12",
+    "2024-01",
+    "2024-02",
+    "2024-03",
+    "2024-04",
+    "2024-05",
+    "2024-06",
+    "2024-07",
+    "2024-08",
+    "2024-09",
+    "2024-10",
+    "2024-11",
+    "2024-12"
+   ],
+   "valeurs": [
+    10000.0,
+    9642.0,
+    9490.0,
+    9457.0,
+    9007.0,
+    8978.0,
+    8513.0,
+    8962.0,
+    8766.0,
+    8495.0,
+    8739.0,
+    9173.0,
+    8906.0,
+    9335.0,
+    9218.0,
+    9367.0,
+    9516.0,
+    9340.0,
+    9524.0,
+    9642.0,
+    9603.0,
+    9291.0,
+    9213.0,
+    9754.0,
+    10071.0,
+    10097.0,
+    10356.0,
+    10580.0,
+    10360.0,
+    10647.0,
+    10762.0,
+    11091.0,
+    11130.0,
+    11371.0,
+    11374.0,
+    11818.0,
+    11678.0
+   ],
+   "arrets": [
+    {
+     "date": "2022-03-31",
+     "mois_index": 3,
+     "valeur": 9457.0
+    },
+    {
+     "date": "2022-06-30",
+     "mois_index": 6,
+     "valeur": 8513.0
+    },
+    {
+     "date": "2022-09-30",
+     "mois_index": 9,
+     "valeur": 8495.0
+    },
+    {
+     "date": "2022-12-30",
+     "mois_index": 12,
+     "valeur": 8906.0
+    }
+   ],
+   "creux": 8386.0,
+   "fin": 11678.0
+  },
+  "actions": {
+   "nom": "100 % actions",
+   "composition": {
+    "XEQT.TO": 1.0
+   },
+   "mois": [
+    "départ",
+    "2022-01",
+    "2022-02",
+    "2022-03",
+    "2022-04",
+    "2022-05",
+    "2022-06",
+    "2022-07",
+    "2022-08",
+    "2022-09",
+    "2022-10",
+    "2022-11",
+    "2022-12",
+    "2023-01",
+    "2023-02",
+    "2023-03",
+    "2023-04",
+    "2023-05",
+    "2023-06",
+    "2023-07",
+    "2023-08",
+    "2023-09",
+    "2023-10",
+    "2023-11",
+    "2023-12",
+    "2024-01",
+    "2024-02",
+    "2024-03",
+    "2024-04",
+    "2024-05",
+    "2024-06",
+    "2024-07",
+    "2024-08",
+    "2024-09",
+    "2024-10",
+    "2024-11",
+    "2024-12"
+   ],
+   "valeurs": [
+    10000.0,
+    9632.0,
+    9422.0,
+    9550.0,
+    9021.0,
+    8963.0,
+    8321.0,
+    8833.0,
+    8672.0,
+    8263.0,
+    8703.0,
+    9261.0,
+    8901.0,
+    9440.0,
+    9366.0,
+    9473.0,
+    9669.0,
+    9473.0,
+    9779.0,
+    10066.0,
+    10003.0,
+    9629.0,
+    9487.0,
+    10131.0,
+    10438.0,
+    10586.0,
+    11069.0,
+    11428.0,
+    11193.0,
+    11576.0,
+    11683.0,
+    12106.0,
+    12138.0,
+    12428.0,
+    12512.0,
+    13181.0,
+    12983.0
+   ],
+   "arrets": [
+    {
+     "date": "2022-03-31",
+     "mois_index": 3,
+     "valeur": 9550.0
+    },
+    {
+     "date": "2022-06-30",
+     "mois_index": 6,
+     "valeur": 8321.0
+    },
+    {
+     "date": "2022-09-30",
+     "mois_index": 9,
+     "valeur": 8263.0
+    },
+    {
+     "date": "2022-12-30",
+     "mois_index": 12,
+     "valeur": 8901.0
+    }
+   ],
+   "creux": 8198.0,
+   "fin": 12983.0
+  },
+  "technologie": {
+   "nom": "Actions technologiques",
+   "composition": {
+    "QQQ": 1.0
+   },
+   "mois": [
+    "départ",
+    "2022-01",
+    "2022-02",
+    "2022-03",
+    "2022-04",
+    "2022-05",
+    "2022-06",
+    "2022-07",
+    "2022-08",
+    "2022-09",
+    "2022-10",
+    "2022-11",
+    "2022-12",
+    "2023-01",
+    "2023-02",
+    "2023-03",
+    "2023-04",
+    "2023-05",
+    "2023-06",
+    "2023-07",
+    "2023-08",
+    "2023-09",
+    "2023-10",
+    "2023-11",
+    "2023-12",
+    "2024-01",
+    "2024-02",
+    "2024-03",
+    "2024-04",
+    "2024-05",
+    "2024-06",
+    "2024-07",
+    "2024-08",
+    "2024-09",
+    "2024-10",
+    "2024-11",
+    "2024-12"
+   ],
+   "valeurs": [
+    10000.0,
+    9155.0,
+    8731.0,
+    8993.0,
+    7954.0,
+    7740.0,
+    7183.0,
+    8046.0,
+    7804.0,
+    7299.0,
+    7559.0,
+    7895.0,
+    7203.0,
+    7855.0,
+    7979.0,
+    8688.0,
+    8761.0,
+    9469.0,
+    9797.0,
+    10127.0,
+    10245.0,
+    9716.0,
+    9763.0,
+    10593.0,
+    10892.0,
+    11234.0,
+    11980.0,
+    12115.0,
+    11752.0,
+    12377.0,
+    13226.0,
+    13120.0,
+    12959.0,
+    13307.0,
+    13599.0,
+    14423.0,
+    14881.0
+   ],
+   "arrets": [
+    {
+     "date": "2022-03-31",
+     "mois_index": 3,
+     "valeur": 8993.0
+    },
+    {
+     "date": "2022-06-30",
+     "mois_index": 6,
+     "valeur": 7183.0
+    },
+    {
+     "date": "2022-09-30",
+     "mois_index": 9,
+     "valeur": 7299.0
+    },
+    {
+     "date": "2022-12-30",
+     "mois_index": 12,
+     "valeur": 7203.0
+    }
+   ],
+   "creux": 6965.0,
+   "fin": 14881.0
+  }
+ },
+ "fourchettes": {
+  "tres_prudent": {
+   "nom": "Très prudent",
+   "composition": {
+    "XEQT.TO": 0.2,
+    "XBB.TO": 0.8
+   },
+   "mauvaise": -0.0649,
+   "typique": 0.0377,
+   "bonne": 0.1529,
+   "volatilite": 0.0642,
+   "annees_simulees": 10000,
+   "rendement_attendu": 0.0386,
+   "methode": "dispersion : rééchantillonnage par blocs de 21 séances des rendements 2021-2026 (CAD) ; moyenne : Norme d'hypothèses de projection 2026, FP Canada et Institut de planification financière : https://www.newswire.ca/news-releases/fp-canada-tm-and-the-institute-of-financial-planning-jointly-publish-the-2026-projection-assumption-guidelines-for-financial-planners-804319758.html"
+  },
+  "prudent": {
+   "nom": "Prudent",
+   "composition": {
+    "XEQT.TO": 0.4,
+    "XBB.TO": 0.6
+   },
+   "mauvaise": -0.0716,
+   "typique": 0.0464,
+   "bonne": 0.1747,
+   "volatilite": 0.0732,
+   "annees_simulees": 10000,
+   "rendement_attendu": 0.0452,
+   "methode": "dispersion : rééchantillonnage par blocs de 21 séances des rendements 2021-2026 (CAD) ; moyenne : Norme d'hypothèses de projection 2026, FP Canada et Institut de planification financière : https://www.newswire.ca/news-releases/fp-canada-tm-and-the-institute-of-financial-planning-jointly-publish-the-2026-projection-assumption-guidelines-for-financial-planners-804319758.html"
+  },
+  "equilibre": {
+   "nom": "Équilibré",
+   "composition": {
+    "XEQT.TO": 0.6,
+    "XBB.TO": 0.4
+   },
+   "mauvaise": -0.0868,
+   "typique": 0.0541,
+   "bonne": 0.207,
+   "volatilite": 0.0902,
+   "annees_simulees": 10000,
+   "rendement_attendu": 0.0518,
+   "methode": "dispersion : rééchantillonnage par blocs de 21 séances des rendements 2021-2026 (CAD) ; moyenne : Norme d'hypothèses de projection 2026, FP Canada et Institut de planification financière : https://www.newswire.ca/news-releases/fp-canada-tm-and-the-institute-of-financial-planning-jointly-publish-the-2026-projection-assumption-guidelines-for-financial-planners-804319758.html"
+  },
+  "croissance": {
+   "nom": "Croissance",
+   "composition": {
+    "XEQT.TO": 0.8,
+    "XBB.TO": 0.2
+   },
+   "mauvaise": -0.1051,
+   "typique": 0.0612,
+   "bonne": 0.2466,
+   "volatilite": 0.1115,
+   "annees_simulees": 10000,
+   "rendement_attendu": 0.0584,
+   "methode": "dispersion : rééchantillonnage par blocs de 21 séances des rendements 2021-2026 (CAD) ; moyenne : Norme d'hypothèses de projection 2026, FP Canada et Institut de planification financière : https://www.newswire.ca/news-releases/fp-canada-tm-and-the-institute-of-financial-planning-jointly-publish-the-2026-projection-assumption-guidelines-for-financial-planners-804319758.html"
+  },
+  "actions": {
+   "nom": "100 % actions",
+   "composition": {
+    "XEQT.TO": 1.0
+   },
+   "mauvaise": -0.125,
+   "typique": 0.0688,
+   "bonne": 0.2907,
+   "volatilite": 0.1352,
+   "annees_simulees": 10000,
+   "rendement_attendu": 0.065,
+   "methode": "dispersion : rééchantillonnage par blocs de 21 séances des rendements 2021-2026 (CAD) ; moyenne : Norme d'hypothèses de projection 2026, FP Canada et Institut de planification financière : https://www.newswire.ca/news-releases/fp-canada-tm-and-the-institute-of-financial-planning-jointly-publish-the-2026-projection-assumption-guidelines-for-financial-planners-804319758.html"
+  }
+ },
+ "mode": [
+  {
+   "ticker": "NVDA",
+   "nom": "NVIDIA",
+   "mediatise": true,
+   "secteur": "Technologie",
+   "rendement_3m": -0.2408,
+   "volatilite": 0.5101,
+   "perte_max": -0.6346,
+   "dividende": 0.0031,
+   "pic_recent": true,
+   "lettre": "A"
+  },
+  {
+   "ticker": "FTS.TO",
+   "nom": "Fortis",
+   "mediatise": false,
+   "secteur": "Services publics",
+   "rendement_3m": 0.0819,
+   "volatilite": 0.1468,
+   "perte_max": -0.2401,
+   "dividende": 0.0303,
+   "pic_recent": false,
+   "lettre": "B"
+  },
+  {
+   "ticker": "TSLA",
+   "nom": "Tesla",
+   "mediatise": true,
+   "secteur": "Automobile et consommation",
+   "rendement_3m": 0.193,
+   "volatilite": 0.5878,
+   "perte_max": -0.7088,
+   "dividende": 0.0,
+   "pic_recent": true,
+   "lettre": "C"
+  },
+  {
+   "ticker": "RY.TO",
+   "nom": "Royal Bank of Canada",
+   "mediatise": false,
+   "secteur": "Banque",
+   "rendement_3m": -0.0316,
+   "volatilite": 0.1543,
+   "perte_max": -0.2121,
+   "dividende": 0.0235,
+   "pic_recent": true,
+   "lettre": "D"
+  }
+ ]
+}

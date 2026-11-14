@@ -1,0 +1,1252 @@
+ticker,fiscal_year_end,statement,field,value,currency,available_from
+RY.TO,2025-10-31,income_stmt,Total Revenue,66532000000.0,CAD,2026-01-29
+RY.TO,2024-10-31,income_stmt,Total Revenue,57491000000.0,CAD,2025-01-29
+RY.TO,2023-10-31,income_stmt,Total Revenue,51591000000.0,CAD,2024-01-29
+RY.TO,2022-10-31,income_stmt,Total Revenue,48775000000.0,CAD,2023-01-29
+RY.TO,2025-10-31,income_stmt,Net Income,20362000000.0,CAD,2026-01-29
+RY.TO,2024-10-31,income_stmt,Net Income,16230000000.0,CAD,2025-01-29
+RY.TO,2023-10-31,income_stmt,Net Income,14605000000.0,CAD,2024-01-29
+RY.TO,2022-10-31,income_stmt,Net Income,15794000000.0,CAD,2023-01-29
+RY.TO,2025-10-31,income_stmt,Diluted EPS,14.07,CAD,2026-01-29
+RY.TO,2024-10-31,income_stmt,Diluted EPS,11.25,CAD,2025-01-29
+RY.TO,2023-10-31,income_stmt,Diluted EPS,10.32,CAD,2024-01-29
+RY.TO,2022-10-31,income_stmt,Diluted EPS,11.06,CAD,2023-01-29
+RY.TO,2025-10-31,income_stmt,Interest Expense,70825000000.0,CAD,2026-01-29
+RY.TO,2024-10-31,income_stmt,Interest Expense,76998000000.0,CAD,2025-01-29
+RY.TO,2023-10-31,income_stmt,Interest Expense,61862000000.0,CAD,2024-01-29
+RY.TO,2022-10-31,income_stmt,Interest Expense,18054000000.0,CAD,2023-01-29
+RY.TO,2025-10-31,balance_sheet,Total Assets,2325006000000.0,CAD,2026-01-29
+RY.TO,2024-10-31,balance_sheet,Total Assets,2171582000000.0,CAD,2025-01-29
+RY.TO,2023-10-31,balance_sheet,Total Assets,2006531000000.0,CAD,2024-01-29
+RY.TO,2022-10-31,balance_sheet,Total Assets,1917219000000.0,CAD,2023-01-29
+RY.TO,2025-10-31,balance_sheet,Total Debt,545439000000.0,CAD,2026-01-29
+RY.TO,2024-10-31,balance_sheet,Total Debt,463411000000.0,CAD,2025-01-29
+RY.TO,2023-10-31,balance_sheet,Total Debt,439351000000.0,CAD,2024-01-29
+RY.TO,2022-10-31,balance_sheet,Total Debt,425176000000.0,CAD,2023-01-29
+RY.TO,2025-10-31,balance_sheet,Net Debt,453465000000.0,CAD,2026-01-29
+RY.TO,2024-10-31,balance_sheet,Net Debt,335995000000.0,CAD,2025-01-29
+RY.TO,2023-10-31,balance_sheet,Net Debt,301512000000.0,CAD,2024-01-29
+RY.TO,2022-10-31,balance_sheet,Net Debt,239658000000.0,CAD,2023-01-29
+RY.TO,2025-10-31,balance_sheet,Stockholders Equity,139092000000.0,CAD,2026-01-29
+RY.TO,2024-10-31,balance_sheet,Stockholders Equity,127089000000.0,CAD,2025-01-29
+RY.TO,2023-10-31,balance_sheet,Stockholders Equity,115048000000.0,CAD,2024-01-29
+RY.TO,2022-10-31,balance_sheet,Stockholders Equity,108064000000.0,CAD,2023-01-29
+RY.TO,2025-10-31,balance_sheet,Cash And Cash Equivalents,87388000000.0,CAD,2026-01-29
+RY.TO,2024-10-31,balance_sheet,Cash And Cash Equivalents,122743000000.0,CAD,2025-01-29
+RY.TO,2023-10-31,balance_sheet,Cash And Cash Equivalents,133075000000.0,CAD,2024-01-29
+RY.TO,2022-10-31,balance_sheet,Cash And Cash Equivalents,180408000000.0,CAD,2023-01-29
+RY.TO,2025-10-31,cashflow,Operating Cash Flow,55220000000.0,CAD,2026-01-29
+RY.TO,2024-10-31,cashflow,Operating Cash Flow,23139000000.0,CAD,2025-01-29
+RY.TO,2023-10-31,cashflow,Operating Cash Flow,26079000000.0,CAD,2024-01-29
+RY.TO,2022-10-31,cashflow,Operating Cash Flow,21942000000.0,CAD,2023-01-29
+RY.TO,2025-10-31,cashflow,Capital Expenditure,-2243000000.0,CAD,2026-01-29
+RY.TO,2024-10-31,cashflow,Capital Expenditure,-2280000000.0,CAD,2025-01-29
+RY.TO,2023-10-31,cashflow,Capital Expenditure,-2730000000.0,CAD,2024-01-29
+RY.TO,2022-10-31,cashflow,Capital Expenditure,-2500000000.0,CAD,2023-01-29
+RY.TO,2025-10-31,cashflow,Free Cash Flow,52977000000.0,CAD,2026-01-29
+RY.TO,2024-10-31,cashflow,Free Cash Flow,20859000000.0,CAD,2025-01-29
+RY.TO,2023-10-31,cashflow,Free Cash Flow,23349000000.0,CAD,2024-01-29
+RY.TO,2022-10-31,cashflow,Free Cash Flow,19442000000.0,CAD,2023-01-29
+RY.TO,2025-10-31,cashflow,Cash Dividends Paid,-8800000000.0,CAD,2026-01-29
+RY.TO,2024-10-31,cashflow,Cash Dividends Paid,-6637000000.0,CAD,2025-01-29
+RY.TO,2023-10-31,cashflow,Cash Dividends Paid,-5549000000.0,CAD,2024-01-29
+RY.TO,2022-10-31,cashflow,Cash Dividends Paid,-6960000000.0,CAD,2023-01-29
+TD.TO,2025-10-31,income_stmt,Total Revenue,61281000000.0,CAD,2026-01-29
+TD.TO,2024-10-31,income_stmt,Total Revenue,56256000000.0,CAD,2025-01-29
+TD.TO,2023-10-31,income_stmt,Total Revenue,51524000000.0,CAD,2024-01-29
+TD.TO,2022-10-31,income_stmt,Total Revenue,45762000000.0,CAD,2023-01-29
+TD.TO,2025-10-31,income_stmt,Net Income,20538000000.0,CAD,2026-01-29
+TD.TO,2024-10-31,income_stmt,Net Income,8842000000.0,CAD,2025-01-29
+TD.TO,2023-10-31,income_stmt,Net Income,10634000000.0,CAD,2024-01-29
+TD.TO,2022-10-31,income_stmt,Net Income,17429000000.0,CAD,2023-01-29
+TD.TO,2025-10-31,income_stmt,Diluted EPS,11.56,CAD,2026-01-29
+TD.TO,2024-10-31,income_stmt,Diluted EPS,4.72,CAD,2025-01-29
+TD.TO,2023-10-31,income_stmt,Diluted EPS,5.52,CAD,2024-01-29
+TD.TO,2022-10-31,income_stmt,Diluted EPS,9.47,CAD,2023-01-29
+TD.TO,2025-10-31,income_stmt,Interest Expense,54559000000.0,CAD,2026-01-29
+TD.TO,2024-10-31,income_stmt,Interest Expense,62917000000.0,CAD,2025-01-29
+TD.TO,2023-10-31,income_stmt,Interest Expense,50730000000.0,CAD,2024-01-29
+TD.TO,2022-10-31,income_stmt,Interest Expense,13679000000.0,CAD,2023-01-29
+TD.TO,2025-10-31,balance_sheet,Total Assets,2094558000000.0,CAD,2026-01-29
+TD.TO,2024-10-31,balance_sheet,Total Assets,2061751000000.0,CAD,2025-01-29
+TD.TO,2023-10-31,balance_sheet,Total Assets,1955139000000.0,CAD,2024-01-29
+TD.TO,2022-10-31,balance_sheet,Total Assets,1917528000000.0,CAD,2023-01-29
+TD.TO,2025-10-31,balance_sheet,Total Debt,442429000000.0,CAD,2026-01-29
+TD.TO,2024-10-31,balance_sheet,Total Debt,460663000000.0,CAD,2025-01-29
+TD.TO,2023-10-31,balance_sheet,Total Debt,401809000000.0,CAD,2024-01-29
+TD.TO,2022-10-31,balance_sheet,Total Debt,374036000000.0,CAD,2023-01-29
+TD.TO,2025-10-31,balance_sheet,Net Debt,320148000000.0,CAD,2026-01-29
+TD.TO,2024-10-31,balance_sheet,Net Debt,277627000000.0,CAD,2025-01-29
+TD.TO,2023-10-31,balance_sheet,Net Debt,291690000000.0,CAD,2024-01-29
+TD.TO,2022-10-31,balance_sheet,Net Debt,222873000000.0,CAD,2023-01-29
+TD.TO,2025-10-31,balance_sheet,Stockholders Equity,127827000000.0,CAD,2026-01-29
+TD.TO,2024-10-31,balance_sheet,Stockholders Equity,115160000000.0,CAD,2025-01-29
+TD.TO,2023-10-31,balance_sheet,Stockholders Equity,112071000000.0,CAD,2024-01-29
+TD.TO,2022-10-31,balance_sheet,Stockholders Equity,111383000000.0,CAD,2023-01-29
+TD.TO,2025-10-31,balance_sheet,Cash And Cash Equivalents,116929000000.0,CAD,2026-01-29
+TD.TO,2024-10-31,balance_sheet,Cash And Cash Equivalents,178023000000.0,CAD,2025-01-29
+TD.TO,2023-10-31,balance_sheet,Cash And Cash Equivalents,105069000000.0,CAD,2024-01-29
+TD.TO,2022-10-31,balance_sheet,Cash And Cash Equivalents,145850000000.0,CAD,2023-01-29
+TD.TO,2025-10-31,cashflow,Operating Cash Flow,-69646000000.0,CAD,2026-01-29
+TD.TO,2024-10-31,cashflow,Operating Cash Flow,54937000000.0,CAD,2025-01-29
+TD.TO,2023-10-31,cashflow,Operating Cash Flow,-65302000000.0,CAD,2024-01-29
+TD.TO,2022-10-31,cashflow,Operating Cash Flow,38949000000.0,CAD,2023-01-29
+TD.TO,2025-10-31,cashflow,Capital Expenditure,-2145000000.0,CAD,2026-01-29
+TD.TO,2024-10-31,cashflow,Capital Expenditure,-2177000000.0,CAD,2025-01-29
+TD.TO,2023-10-31,cashflow,Capital Expenditure,-1844000000.0,CAD,2024-01-29
+TD.TO,2022-10-31,cashflow,Capital Expenditure,-1454000000.0,CAD,2023-01-29
+TD.TO,2025-10-31,cashflow,Free Cash Flow,-71791000000.0,CAD,2026-01-29
+TD.TO,2024-10-31,cashflow,Free Cash Flow,52760000000.0,CAD,2025-01-29
+TD.TO,2023-10-31,cashflow,Free Cash Flow,-67146000000.0,CAD,2024-01-29
+TD.TO,2022-10-31,cashflow,Free Cash Flow,37495000000.0,CAD,2023-01-29
+TD.TO,2025-10-31,cashflow,Cash Dividends Paid,-7663000000.0,CAD,2026-01-29
+TD.TO,2024-10-31,cashflow,Cash Dividends Paid,-7160000000.0,CAD,2025-01-29
+TD.TO,2023-10-31,cashflow,Cash Dividends Paid,-5825000000.0,CAD,2024-01-29
+TD.TO,2022-10-31,cashflow,Cash Dividends Paid,-6665000000.0,CAD,2023-01-29
+MFC.TO,2025-12-31,income_stmt,Total Revenue,53014000000.0,CAD,2026-03-31
+MFC.TO,2024-12-31,income_stmt,Total Revenue,-7288000000.0,CAD,2025-03-31
+MFC.TO,2023-12-31,income_stmt,Total Revenue,-7037000000.0,CAD,2024-03-30
+MFC.TO,2022-12-31,income_stmt,Total Revenue,24159000000.0,CAD,2023-03-31
+MFC.TO,2025-12-31,income_stmt,Net Income,5782000000.0,CAD,2026-03-31
+MFC.TO,2024-12-31,income_stmt,Net Income,5631000000.0,CAD,2025-03-31
+MFC.TO,2023-12-31,income_stmt,Net Income,5463000000.0,CAD,2024-03-30
+MFC.TO,2022-12-31,income_stmt,Net Income,-2100000000.0,CAD,2023-03-31
+MFC.TO,2025-12-31,income_stmt,Diluted EPS,3.07,CAD,2026-03-31
+MFC.TO,2024-12-31,income_stmt,Diluted EPS,2.84,CAD,2025-03-31
+MFC.TO,2023-12-31,income_stmt,Diluted EPS,2.61,CAD,2024-03-30
+MFC.TO,2022-12-31,income_stmt,Diluted EPS,3.68,CAD,2023-03-31
+MFC.TO,2025-12-31,income_stmt,Interest Expense,1530000000.0,CAD,2026-03-31
+MFC.TO,2024-12-31,income_stmt,Interest Expense,1681000000.0,CAD,2025-03-31
+MFC.TO,2023-12-31,income_stmt,Interest Expense,1554000000.0,CAD,2024-03-30
+MFC.TO,2022-12-31,income_stmt,Interest Expense,1051000000.0,CAD,2023-03-31
+MFC.TO,2025-12-31,balance_sheet,Total Assets,1025433000000.0,CAD,2026-03-31
+MFC.TO,2024-12-31,balance_sheet,Total Assets,978818000000.0,CAD,2025-03-31
+MFC.TO,2023-12-31,balance_sheet,Total Assets,875574000000.0,CAD,2024-03-30
+MFC.TO,2022-12-31,balance_sheet,Total Assets,833689000000.0,CAD,2023-03-31
+MFC.TO,2025-12-31,balance_sheet,Total Debt,14675000000.0,CAD,2026-03-31
+MFC.TO,2024-12-31,balance_sheet,Total Debt,14161000000.0,CAD,2025-03-31
+MFC.TO,2023-12-31,balance_sheet,Total Debt,12738000000.0,CAD,2024-03-30
+MFC.TO,2022-12-31,balance_sheet,Total Debt,12356000000.0,CAD,2023-03-31
+MFC.TO,2025-12-31,balance_sheet,Stockholders Equity,50957000000.0,CAD,2026-03-31
+MFC.TO,2024-12-31,balance_sheet,Stockholders Equity,51539000000.0,CAD,2025-03-31
+MFC.TO,2023-12-31,balance_sheet,Stockholders Equity,47296000000.0,CAD,2024-03-30
+MFC.TO,2022-12-31,balance_sheet,Stockholders Equity,46799000000.0,CAD,2023-03-31
+MFC.TO,2025-12-31,balance_sheet,Cash And Cash Equivalents,26703000000.0,CAD,2026-03-31
+MFC.TO,2024-12-31,balance_sheet,Cash And Cash Equivalents,25789000000.0,CAD,2025-03-31
+MFC.TO,2023-12-31,balance_sheet,Cash And Cash Equivalents,20338000000.0,CAD,2024-03-30
+MFC.TO,2022-12-31,balance_sheet,Cash And Cash Equivalents,19153000000.0,CAD,2023-03-31
+MFC.TO,2025-12-31,cashflow,Operating Cash Flow,32105000000.0,CAD,2026-03-31
+MFC.TO,2024-12-31,cashflow,Operating Cash Flow,26494000000.0,CAD,2025-03-31
+MFC.TO,2023-12-31,cashflow,Operating Cash Flow,20423000000.0,CAD,2024-03-30
+MFC.TO,2022-12-31,cashflow,Operating Cash Flow,16628000000.0,CAD,2023-03-31
+MFC.TO,2025-12-31,cashflow,Free Cash Flow,32105000000.0,CAD,2026-03-31
+MFC.TO,2024-12-31,cashflow,Free Cash Flow,26494000000.0,CAD,2025-03-31
+MFC.TO,2023-12-31,cashflow,Free Cash Flow,20423000000.0,CAD,2024-03-30
+MFC.TO,2022-12-31,cashflow,Free Cash Flow,16628000000.0,CAD,2023-03-31
+MFC.TO,2025-12-31,cashflow,Cash Dividends Paid,-3305000000.0,CAD,2026-03-31
+MFC.TO,2024-12-31,cashflow,Cash Dividends Paid,-3159000000.0,CAD,2025-03-31
+MFC.TO,2023-12-31,cashflow,Cash Dividends Paid,-2972000000.0,CAD,2024-03-30
+MFC.TO,2022-12-31,cashflow,Cash Dividends Paid,-2787000000.0,CAD,2023-03-31
+ENB.TO,2025-12-31,income_stmt,Total Revenue,65194000000.0,CAD,2026-03-31
+ENB.TO,2024-12-31,income_stmt,Total Revenue,53473000000.0,CAD,2025-03-31
+ENB.TO,2023-12-31,income_stmt,Total Revenue,43649000000.0,CAD,2024-03-30
+ENB.TO,2022-12-31,income_stmt,Total Revenue,53309000000.0,CAD,2023-03-31
+ENB.TO,2025-12-31,income_stmt,Operating Income,11528000000.0,CAD,2026-03-31
+ENB.TO,2024-12-31,income_stmt,Operating Income,9839000000.0,CAD,2025-03-31
+ENB.TO,2023-12-31,income_stmt,Operating Income,9070000000.0,CAD,2024-03-30
+ENB.TO,2022-12-31,income_stmt,Operating Income,8184000000.0,CAD,2023-03-31
+ENB.TO,2025-12-31,income_stmt,EBITDA,20446000000.0,CAD,2026-03-31
+ENB.TO,2024-12-31,income_stmt,EBITDA,16867000000.0,CAD,2025-03-31
+ENB.TO,2023-12-31,income_stmt,EBITDA,16349000000.0,CAD,2024-03-30
+ENB.TO,2022-12-31,income_stmt,EBITDA,12083000000.0,CAD,2023-03-31
+ENB.TO,2025-12-31,income_stmt,Net Income,7491000000.0,CAD,2026-03-31
+ENB.TO,2024-12-31,income_stmt,Net Income,5441000000.0,CAD,2025-03-31
+ENB.TO,2023-12-31,income_stmt,Net Income,6191000000.0,CAD,2024-03-30
+ENB.TO,2022-12-31,income_stmt,Net Income,3003000000.0,CAD,2023-03-31
+ENB.TO,2025-12-31,income_stmt,Diluted EPS,3.22,CAD,2026-03-31
+ENB.TO,2024-12-31,income_stmt,Diluted EPS,2.34,CAD,2025-03-31
+ENB.TO,2023-12-31,income_stmt,Diluted EPS,2.84,CAD,2024-03-30
+ENB.TO,2022-12-31,income_stmt,Diluted EPS,1.28,CAD,2023-03-31
+ENB.TO,2025-12-31,income_stmt,Interest Expense,4992000000.0,CAD,2026-03-31
+ENB.TO,2024-12-31,income_stmt,Interest Expense,4401000000.0,CAD,2025-03-31
+ENB.TO,2023-12-31,income_stmt,Interest Expense,3857000000.0,CAD,2024-03-30
+ENB.TO,2022-12-31,income_stmt,Interest Expense,3224000000.0,CAD,2023-03-31
+ENB.TO,2025-12-31,balance_sheet,Total Assets,218475000000.0,CAD,2026-03-31
+ENB.TO,2024-12-31,balance_sheet,Total Assets,218973000000.0,CAD,2025-03-31
+ENB.TO,2023-12-31,balance_sheet,Total Assets,180317000000.0,CAD,2024-03-30
+ENB.TO,2022-12-31,balance_sheet,Total Assets,179608000000.0,CAD,2023-03-31
+ENB.TO,2025-12-31,balance_sheet,Total Debt,105252000000.0,CAD,2026-03-31
+ENB.TO,2024-12-31,balance_sheet,Total Debt,101844000000.0,CAD,2025-03-31
+ENB.TO,2023-12-31,balance_sheet,Total Debt,81199000000.0,CAD,2024-03-30
+ENB.TO,2022-12-31,balance_sheet,Total Debt,80980000000.0,CAD,2023-03-31
+ENB.TO,2025-12-31,balance_sheet,Net Debt,104158000000.0,CAD,2026-03-31
+ENB.TO,2024-12-31,balance_sheet,Net Debt,100041000000.0,CAD,2025-03-31
+ENB.TO,2023-12-31,balance_sheet,Net Debt,75298000000.0,CAD,2024-03-30
+ENB.TO,2022-12-31,balance_sheet,Net Debt,80119000000.0,CAD,2023-03-31
+ENB.TO,2025-12-31,balance_sheet,Stockholders Equity,62333000000.0,CAD,2026-03-31
+ENB.TO,2024-12-31,balance_sheet,Stockholders Equity,65900000000.0,CAD,2025-03-31
+ENB.TO,2023-12-31,balance_sheet,Stockholders Equity,61454000000.0,CAD,2024-03-30
+ENB.TO,2022-12-31,balance_sheet,Stockholders Equity,59887000000.0,CAD,2023-03-31
+ENB.TO,2025-12-31,balance_sheet,Cash And Cash Equivalents,1094000000.0,CAD,2026-03-31
+ENB.TO,2024-12-31,balance_sheet,Cash And Cash Equivalents,1803000000.0,CAD,2025-03-31
+ENB.TO,2023-12-31,balance_sheet,Cash And Cash Equivalents,5901000000.0,CAD,2024-03-30
+ENB.TO,2022-12-31,balance_sheet,Cash And Cash Equivalents,861000000.0,CAD,2023-03-31
+ENB.TO,2025-12-31,balance_sheet,Current Assets,13195000000.0,CAD,2026-03-31
+ENB.TO,2024-12-31,balance_sheet,Current Assets,13163000000.0,CAD,2025-03-31
+ENB.TO,2023-12-31,balance_sheet,Current Assets,14399000000.0,CAD,2024-03-30
+ENB.TO,2022-12-31,balance_sheet,Current Assets,12147000000.0,CAD,2023-03-31
+ENB.TO,2025-12-31,balance_sheet,Current Liabilities,21004000000.0,CAD,2026-03-31
+ENB.TO,2024-12-31,balance_sheet,Current Liabilities,23812000000.0,CAD,2025-03-31
+ENB.TO,2023-12-31,balance_sheet,Current Liabilities,17435000000.0,CAD,2024-03-30
+ENB.TO,2022-12-31,balance_sheet,Current Liabilities,20301000000.0,CAD,2023-03-31
+ENB.TO,2025-12-31,cashflow,Operating Cash Flow,12270000000.0,CAD,2026-03-31
+ENB.TO,2024-12-31,cashflow,Operating Cash Flow,12600000000.0,CAD,2025-03-31
+ENB.TO,2023-12-31,cashflow,Operating Cash Flow,14201000000.0,CAD,2024-03-30
+ENB.TO,2022-12-31,cashflow,Operating Cash Flow,11230000000.0,CAD,2023-03-31
+ENB.TO,2025-12-31,cashflow,Capital Expenditure,-9165000000.0,CAD,2026-03-31
+ENB.TO,2024-12-31,cashflow,Capital Expenditure,-6930000000.0,CAD,2025-03-31
+ENB.TO,2023-12-31,cashflow,Capital Expenditure,-4876000000.0,CAD,2024-03-30
+ENB.TO,2022-12-31,cashflow,Capital Expenditure,-4821000000.0,CAD,2023-03-31
+ENB.TO,2025-12-31,cashflow,Free Cash Flow,3105000000.0,CAD,2026-03-31
+ENB.TO,2024-12-31,cashflow,Free Cash Flow,5670000000.0,CAD,2025-03-31
+ENB.TO,2023-12-31,cashflow,Free Cash Flow,9325000000.0,CAD,2024-03-30
+ENB.TO,2022-12-31,cashflow,Free Cash Flow,6409000000.0,CAD,2023-03-31
+ENB.TO,2025-12-31,cashflow,Cash Dividends Paid,-8639000000.0,CAD,2026-03-31
+ENB.TO,2024-12-31,cashflow,Cash Dividends Paid,-8262000000.0,CAD,2025-03-31
+ENB.TO,2023-12-31,cashflow,Cash Dividends Paid,-7628000000.0,CAD,2024-03-30
+ENB.TO,2022-12-31,cashflow,Cash Dividends Paid,-7306000000.0,CAD,2023-03-31
+CNQ.TO,2025-12-31,income_stmt,Total Revenue,44167000000.0,CAD,2026-03-31
+CNQ.TO,2024-12-31,income_stmt,Total Revenue,41509000000.0,CAD,2025-03-31
+CNQ.TO,2023-12-31,income_stmt,Total Revenue,40835000000.0,CAD,2024-03-30
+CNQ.TO,2022-12-31,income_stmt,Total Revenue,49530000000.0,CAD,2023-03-31
+CNQ.TO,2025-12-31,income_stmt,Operating Income,8226000000.0,CAD,2026-03-31
+CNQ.TO,2024-12-31,income_stmt,Operating Income,9727000000.0,CAD,2025-03-31
+CNQ.TO,2023-12-31,income_stmt,Operating Income,10464000000.0,CAD,2024-03-30
+CNQ.TO,2022-12-31,income_stmt,Operating Income,14760000000.0,CAD,2023-03-31
+CNQ.TO,2025-12-31,income_stmt,EBITDA,21887000000.0,CAD,2026-03-31
+CNQ.TO,2024-12-31,income_stmt,EBITDA,15413000000.0,CAD,2025-03-31
+CNQ.TO,2023-12-31,income_stmt,EBITDA,17269000000.0,CAD,2024-03-30
+CNQ.TO,2022-12-31,income_stmt,EBITDA,21727000000.0,CAD,2023-03-31
+CNQ.TO,2025-12-31,income_stmt,Net Income,10820000000.0,CAD,2026-03-31
+CNQ.TO,2024-12-31,income_stmt,Net Income,6106000000.0,CAD,2025-03-31
+CNQ.TO,2023-12-31,income_stmt,Net Income,8233000000.0,CAD,2024-03-30
+CNQ.TO,2022-12-31,income_stmt,Net Income,10937000000.0,CAD,2023-03-31
+CNQ.TO,2025-12-31,income_stmt,Diluted EPS,5.16,CAD,2026-03-31
+CNQ.TO,2024-12-31,income_stmt,Diluted EPS,2.85,CAD,2025-03-31
+CNQ.TO,2023-12-31,income_stmt,Diluted EPS,3.735,CAD,2024-03-30
+CNQ.TO,2022-12-31,income_stmt,Diluted EPS,4.76,CAD,2023-03-31
+CNQ.TO,2025-12-31,income_stmt,Interest Expense,1039000000.0,CAD,2026-03-31
+CNQ.TO,2024-12-31,income_stmt,Interest Expense,673000000.0,CAD,2025-03-31
+CNQ.TO,2023-12-31,income_stmt,Interest Expense,691000000.0,CAD,2024-03-30
+CNQ.TO,2022-12-31,income_stmt,Interest Expense,670000000.0,CAD,2023-03-31
+CNQ.TO,2025-12-31,balance_sheet,Total Assets,91830000000.0,CAD,2026-03-31
+CNQ.TO,2024-12-31,balance_sheet,Total Assets,85359000000.0,CAD,2025-03-31
+CNQ.TO,2023-12-31,balance_sheet,Total Assets,75955000000.0,CAD,2024-03-30
+CNQ.TO,2022-12-31,balance_sheet,Total Assets,76142000000.0,CAD,2023-03-31
+CNQ.TO,2025-12-31,balance_sheet,Total Debt,16617000000.0,CAD,2026-03-31
+CNQ.TO,2024-12-31,balance_sheet,Total Debt,18819000000.0,CAD,2025-03-31
+CNQ.TO,2023-12-31,balance_sheet,Total Debt,10799000000.0,CAD,2024-03-30
+CNQ.TO,2022-12-31,balance_sheet,Total Debt,11445000000.0,CAD,2023-03-31
+CNQ.TO,2025-12-31,balance_sheet,Net Debt,15944000000.0,CAD,2026-03-31
+CNQ.TO,2024-12-31,balance_sheet,Net Debt,18688000000.0,CAD,2025-03-31
+CNQ.TO,2023-12-31,balance_sheet,Net Debt,9922000000.0,CAD,2024-03-30
+CNQ.TO,2022-12-31,balance_sheet,Net Debt,10525000000.0,CAD,2023-03-31
+CNQ.TO,2025-12-31,balance_sheet,Stockholders Equity,44366000000.0,CAD,2026-03-31
+CNQ.TO,2024-12-31,balance_sheet,Stockholders Equity,39468000000.0,CAD,2025-03-31
+CNQ.TO,2023-12-31,balance_sheet,Stockholders Equity,39832000000.0,CAD,2024-03-30
+CNQ.TO,2022-12-31,balance_sheet,Stockholders Equity,38175000000.0,CAD,2023-03-31
+CNQ.TO,2025-12-31,balance_sheet,Cash And Cash Equivalents,673000000.0,CAD,2026-03-31
+CNQ.TO,2024-12-31,balance_sheet,Cash And Cash Equivalents,131000000.0,CAD,2025-03-31
+CNQ.TO,2023-12-31,balance_sheet,Cash And Cash Equivalents,877000000.0,CAD,2024-03-30
+CNQ.TO,2022-12-31,balance_sheet,Cash And Cash Equivalents,920000000.0,CAD,2023-03-31
+CNQ.TO,2025-12-31,balance_sheet,Current Assets,7664000000.0,CAD,2026-03-31
+CNQ.TO,2024-12-31,balance_sheet,Current Assets,7405000000.0,CAD,2025-03-31
+CNQ.TO,2023-12-31,balance_sheet,Current Assets,7167000000.0,CAD,2024-03-30
+CNQ.TO,2022-12-31,balance_sheet,Current Assets,7057000000.0,CAD,2023-03-31
+CNQ.TO,2025-12-31,balance_sheet,Current Liabilities,8063000000.0,CAD,2026-03-31
+CNQ.TO,2024-12-31,balance_sheet,Current Liabilities,9631000000.0,CAD,2025-03-31
+CNQ.TO,2023-12-31,balance_sheet,Current Liabilities,7435000000.0,CAD,2024-03-30
+CNQ.TO,2022-12-31,balance_sheet,Current Liabilities,8651000000.0,CAD,2023-03-31
+CNQ.TO,2025-12-31,cashflow,Operating Cash Flow,15106000000.0,CAD,2026-03-31
+CNQ.TO,2024-12-31,cashflow,Operating Cash Flow,13386000000.0,CAD,2025-03-31
+CNQ.TO,2023-12-31,cashflow,Operating Cash Flow,12353000000.0,CAD,2024-03-30
+CNQ.TO,2022-12-31,cashflow,Operating Cash Flow,19391000000.0,CAD,2023-03-31
+CNQ.TO,2025-12-31,cashflow,Capital Expenditure,-6791000000.0,CAD,2026-03-31
+CNQ.TO,2024-12-31,cashflow,Capital Expenditure,-5383000000.0,CAD,2025-03-31
+CNQ.TO,2023-12-31,cashflow,Capital Expenditure,-4909000000.0,CAD,2024-03-30
+CNQ.TO,2022-12-31,cashflow,Capital Expenditure,-5136000000.0,CAD,2023-03-31
+CNQ.TO,2025-12-31,cashflow,Free Cash Flow,8315000000.0,CAD,2026-03-31
+CNQ.TO,2024-12-31,cashflow,Free Cash Flow,8003000000.0,CAD,2025-03-31
+CNQ.TO,2023-12-31,cashflow,Free Cash Flow,7444000000.0,CAD,2024-03-30
+CNQ.TO,2022-12-31,cashflow,Free Cash Flow,14255000000.0,CAD,2023-03-31
+CNQ.TO,2025-12-31,cashflow,Cash Dividends Paid,-4871000000.0,CAD,2026-03-31
+CNQ.TO,2024-12-31,cashflow,Cash Dividends Paid,-4429000000.0,CAD,2025-03-31
+CNQ.TO,2023-12-31,cashflow,Cash Dividends Paid,-3891000000.0,CAD,2024-03-30
+CNQ.TO,2022-12-31,cashflow,Cash Dividends Paid,-4926000000.0,CAD,2023-03-31
+CNR.TO,2025-12-31,income_stmt,Total Revenue,17304000000.0,CAD,2026-03-31
+CNR.TO,2024-12-31,income_stmt,Total Revenue,17046000000.0,CAD,2025-03-31
+CNR.TO,2023-12-31,income_stmt,Total Revenue,16828000000.0,CAD,2024-03-30
+CNR.TO,2022-12-31,income_stmt,Total Revenue,17107000000.0,CAD,2023-03-31
+CNR.TO,2025-12-31,income_stmt,Operating Income,6587000000.0,CAD,2026-03-31
+CNR.TO,2024-12-31,income_stmt,Operating Income,6325000000.0,CAD,2025-03-31
+CNR.TO,2023-12-31,income_stmt,Operating Income,6597000000.0,CAD,2024-03-30
+CNR.TO,2022-12-31,income_stmt,Operating Income,6840000000.0,CAD,2023-03-31
+CNR.TO,2025-12-31,income_stmt,EBITDA,9115000000.0,CAD,2026-03-31
+CNR.TO,2024-12-31,income_stmt,EBITDA,8635000000.0,CAD,2025-03-31
+CNR.TO,2023-12-31,income_stmt,EBITDA,9027000000.0,CAD,2024-03-30
+CNR.TO,2022-12-31,income_stmt,EBITDA,9040000000.0,CAD,2023-03-31
+CNR.TO,2025-12-31,income_stmt,Net Income,4720000000.0,CAD,2026-03-31
+CNR.TO,2024-12-31,income_stmt,Net Income,4448000000.0,CAD,2025-03-31
+CNR.TO,2023-12-31,income_stmt,Net Income,5625000000.0,CAD,2024-03-30
+CNR.TO,2022-12-31,income_stmt,Net Income,5118000000.0,CAD,2023-03-31
+CNR.TO,2025-12-31,income_stmt,Diluted EPS,7.57,CAD,2026-03-31
+CNR.TO,2024-12-31,income_stmt,Diluted EPS,7.01,CAD,2025-03-31
+CNR.TO,2023-12-31,income_stmt,Diluted EPS,8.53,CAD,2024-03-30
+CNR.TO,2022-12-31,income_stmt,Diluted EPS,7.44,CAD,2023-03-31
+CNR.TO,2025-12-31,income_stmt,Interest Expense,913000000.0,CAD,2026-03-31
+CNR.TO,2024-12-31,income_stmt,Interest Expense,891000000.0,CAD,2025-03-31
+CNR.TO,2023-12-31,income_stmt,Interest Expense,722000000.0,CAD,2024-03-30
+CNR.TO,2022-12-31,income_stmt,Interest Expense,548000000.0,CAD,2023-03-31
+CNR.TO,2025-12-31,balance_sheet,Total Assets,58555000000.0,CAD,2026-03-31
+CNR.TO,2024-12-31,balance_sheet,Total Assets,57067000000.0,CAD,2025-03-31
+CNR.TO,2023-12-31,balance_sheet,Total Assets,52666000000.0,CAD,2024-03-30
+CNR.TO,2022-12-31,balance_sheet,Total Assets,50662000000.0,CAD,2023-03-31
+CNR.TO,2025-12-31,balance_sheet,Total Debt,21630000000.0,CAD,2026-03-31
+CNR.TO,2024-12-31,balance_sheet,Total Debt,21371000000.0,CAD,2025-03-31
+CNR.TO,2023-12-31,balance_sheet,Total Debt,18888000000.0,CAD,2024-03-30
+CNR.TO,2022-12-31,balance_sheet,Total Debt,15895000000.0,CAD,2023-03-31
+CNR.TO,2025-12-31,balance_sheet,Net Debt,20856000000.0,CAD,2026-03-31
+CNR.TO,2024-12-31,balance_sheet,Net Debt,20505000000.0,CAD,2025-03-31
+CNR.TO,2023-12-31,balance_sheet,Net Debt,17998000000.0,CAD,2024-03-30
+CNR.TO,2022-12-31,balance_sheet,Net Debt,15101000000.0,CAD,2023-03-31
+CNR.TO,2025-12-31,balance_sheet,Stockholders Equity,21568000000.0,CAD,2026-03-31
+CNR.TO,2024-12-31,balance_sheet,Stockholders Equity,21051000000.0,CAD,2025-03-31
+CNR.TO,2023-12-31,balance_sheet,Stockholders Equity,20117000000.0,CAD,2024-03-30
+CNR.TO,2022-12-31,balance_sheet,Stockholders Equity,21384000000.0,CAD,2023-03-31
+CNR.TO,2025-12-31,balance_sheet,Cash And Cash Equivalents,350000000.0,CAD,2026-03-31
+CNR.TO,2024-12-31,balance_sheet,Cash And Cash Equivalents,389000000.0,CAD,2025-03-31
+CNR.TO,2023-12-31,balance_sheet,Cash And Cash Equivalents,475000000.0,CAD,2024-03-30
+CNR.TO,2022-12-31,balance_sheet,Cash And Cash Equivalents,328000000.0,CAD,2023-03-31
+CNR.TO,2025-12-31,balance_sheet,Current Assets,2471000000.0,CAD,2026-03-31
+CNR.TO,2024-12-31,balance_sheet,Current Assets,2619000000.0,CAD,2025-03-31
+CNR.TO,2023-12-31,balance_sheet,Current Assets,3089000000.0,CAD,2024-03-30
+CNR.TO,2022-12-31,balance_sheet,Current Assets,3217000000.0,CAD,2023-03-31
+CNR.TO,2025-12-31,balance_sheet,Current Liabilities,3696000000.0,CAD,2026-03-31
+CNR.TO,2024-12-31,balance_sheet,Current Liabilities,3976000000.0,CAD,2025-03-31
+CNR.TO,2023-12-31,balance_sheet,Current Liabilities,5035000000.0,CAD,2024-03-30
+CNR.TO,2022-12-31,balance_sheet,Current Liabilities,3842000000.0,CAD,2023-03-31
+CNR.TO,2025-12-31,cashflow,Operating Cash Flow,7049000000.0,CAD,2026-03-31
+CNR.TO,2024-12-31,cashflow,Operating Cash Flow,6699000000.0,CAD,2025-03-31
+CNR.TO,2023-12-31,cashflow,Operating Cash Flow,6965000000.0,CAD,2024-03-30
+CNR.TO,2022-12-31,cashflow,Operating Cash Flow,6667000000.0,CAD,2023-03-31
+CNR.TO,2025-12-31,cashflow,Capital Expenditure,-3658000000.0,CAD,2026-03-31
+CNR.TO,2024-12-31,cashflow,Capital Expenditure,-3549000000.0,CAD,2025-03-31
+CNR.TO,2023-12-31,cashflow,Capital Expenditure,-3187000000.0,CAD,2024-03-30
+CNR.TO,2022-12-31,cashflow,Capital Expenditure,-2750000000.0,CAD,2023-03-31
+CNR.TO,2025-12-31,cashflow,Free Cash Flow,3391000000.0,CAD,2026-03-31
+CNR.TO,2024-12-31,cashflow,Free Cash Flow,3150000000.0,CAD,2025-03-31
+CNR.TO,2023-12-31,cashflow,Free Cash Flow,3778000000.0,CAD,2024-03-30
+CNR.TO,2022-12-31,cashflow,Free Cash Flow,3917000000.0,CAD,2023-03-31
+CNR.TO,2025-12-31,cashflow,Cash Dividends Paid,-2208000000.0,CAD,2026-03-31
+CNR.TO,2024-12-31,cashflow,Cash Dividends Paid,-2138000000.0,CAD,2025-03-31
+CNR.TO,2023-12-31,cashflow,Cash Dividends Paid,-2071000000.0,CAD,2024-03-30
+CNR.TO,2022-12-31,cashflow,Cash Dividends Paid,-2004000000.0,CAD,2023-03-31
+FTS.TO,2025-12-31,income_stmt,Total Revenue,12170000000.0,CAD,2026-03-31
+FTS.TO,2024-12-31,income_stmt,Total Revenue,11508000000.0,CAD,2025-03-31
+FTS.TO,2023-12-31,income_stmt,Total Revenue,11517000000.0,CAD,2024-03-30
+FTS.TO,2022-12-31,income_stmt,Total Revenue,11043000000.0,CAD,2023-03-31
+FTS.TO,2025-12-31,income_stmt,Operating Income,3492000000.0,CAD,2026-03-31
+FTS.TO,2024-12-31,income_stmt,Operating Income,3292000000.0,CAD,2025-03-31
+FTS.TO,2023-12-31,income_stmt,Operating Income,3084000000.0,CAD,2024-03-30
+FTS.TO,2022-12-31,income_stmt,Operating Income,2740000000.0,CAD,2023-03-31
+FTS.TO,2025-12-31,income_stmt,EBITDA,5889000000.0,CAD,2026-03-31
+FTS.TO,2024-12-31,income_stmt,EBITDA,5507000000.0,CAD,2025-03-31
+FTS.TO,2023-12-31,income_stmt,EBITDA,5148000000.0,CAD,2024-03-30
+FTS.TO,2022-12-31,income_stmt,EBITDA,4573000000.0,CAD,2023-03-31
+FTS.TO,2025-12-31,income_stmt,Net Income,1799000000.0,CAD,2026-03-31
+FTS.TO,2024-12-31,income_stmt,Net Income,1680000000.0,CAD,2025-03-31
+FTS.TO,2023-12-31,income_stmt,Net Income,1573000000.0,CAD,2024-03-30
+FTS.TO,2022-12-31,income_stmt,Net Income,1394000000.0,CAD,2023-03-31
+FTS.TO,2025-12-31,income_stmt,Diluted EPS,3.4,CAD,2026-03-31
+FTS.TO,2024-12-31,income_stmt,Diluted EPS,3.24,CAD,2025-03-31
+FTS.TO,2023-12-31,income_stmt,Diluted EPS,3.1,CAD,2024-03-30
+FTS.TO,2022-12-31,income_stmt,Diluted EPS,2.78,CAD,2023-03-31
+FTS.TO,2025-12-31,income_stmt,Interest Expense,1478000000.0,CAD,2026-03-31
+FTS.TO,2024-12-31,income_stmt,Interest Expense,1406000000.0,CAD,2025-03-31
+FTS.TO,2023-12-31,income_stmt,Interest Expense,1305000000.0,CAD,2024-03-30
+FTS.TO,2022-12-31,income_stmt,Interest Expense,1102000000.0,CAD,2023-03-31
+FTS.TO,2025-12-31,balance_sheet,Total Assets,74830000000.0,CAD,2026-03-31
+FTS.TO,2024-12-31,balance_sheet,Total Assets,73486000000.0,CAD,2025-03-31
+FTS.TO,2023-12-31,balance_sheet,Total Assets,65920000000.0,CAD,2024-03-30
+FTS.TO,2022-12-31,balance_sheet,Total Assets,64252000000.0,CAD,2023-03-31
+FTS.TO,2025-12-31,balance_sheet,Total Debt,34673000000.0,CAD,2026-03-31
+FTS.TO,2024-12-31,balance_sheet,Total Debt,33702000000.0,CAD,2025-03-31
+FTS.TO,2023-12-31,balance_sheet,Total Debt,30028000000.0,CAD,2024-03-30
+FTS.TO,2022-12-31,balance_sheet,Total Debt,29035000000.0,CAD,2023-03-31
+FTS.TO,2025-12-31,balance_sheet,Net Debt,33914000000.0,CAD,2026-03-31
+FTS.TO,2024-12-31,balance_sheet,Net Debt,33092000000.0,CAD,2025-03-31
+FTS.TO,2023-12-31,balance_sheet,Net Debt,29025000000.0,CAD,2024-03-30
+FTS.TO,2022-12-31,balance_sheet,Net Debt,28456000000.0,CAD,2023-03-31
+FTS.TO,2025-12-31,balance_sheet,Stockholders Equity,23810000000.0,CAD,2026-03-31
+FTS.TO,2024-12-31,balance_sheet,Stockholders Equity,23808000000.0,CAD,2025-03-31
+FTS.TO,2023-12-31,balance_sheet,Stockholders Equity,21505000000.0,CAD,2024-03-30
+FTS.TO,2022-12-31,balance_sheet,Stockholders Equity,21030000000.0,CAD,2023-03-31
+FTS.TO,2025-12-31,balance_sheet,Cash And Cash Equivalents,367000000.0,CAD,2026-03-31
+FTS.TO,2024-12-31,balance_sheet,Cash And Cash Equivalents,220000000.0,CAD,2025-03-31
+FTS.TO,2023-12-31,balance_sheet,Cash And Cash Equivalents,625000000.0,CAD,2024-03-30
+FTS.TO,2022-12-31,balance_sheet,Cash And Cash Equivalents,209000000.0,CAD,2023-03-31
+FTS.TO,2025-12-31,balance_sheet,Current Assets,3805000000.0,CAD,2026-03-31
+FTS.TO,2024-12-31,balance_sheet,Current Assets,3796000000.0,CAD,2025-03-31
+FTS.TO,2023-12-31,balance_sheet,Current Assets,4025000000.0,CAD,2024-03-30
+FTS.TO,2022-12-31,balance_sheet,Current Assets,4269000000.0,CAD,2023-03-31
+FTS.TO,2025-12-31,balance_sheet,Current Liabilities,7513000000.0,CAD,2026-03-31
+FTS.TO,2024-12-31,balance_sheet,Current Liabilities,6036000000.0,CAD,2025-03-31
+FTS.TO,2023-12-31,balance_sheet,Current Liabilities,5964000000.0,CAD,2024-03-30
+FTS.TO,2022-12-31,balance_sheet,Current Liabilities,6617000000.0,CAD,2023-03-31
+FTS.TO,2025-12-31,cashflow,Operating Cash Flow,4062000000.0,CAD,2026-03-31
+FTS.TO,2024-12-31,cashflow,Operating Cash Flow,3882000000.0,CAD,2025-03-31
+FTS.TO,2023-12-31,cashflow,Operating Cash Flow,3545000000.0,CAD,2024-03-30
+FTS.TO,2022-12-31,cashflow,Operating Cash Flow,3074000000.0,CAD,2023-03-31
+FTS.TO,2025-12-31,cashflow,Capital Expenditure,-6234000000.0,CAD,2026-03-31
+FTS.TO,2024-12-31,cashflow,Capital Expenditure,-5218000000.0,CAD,2025-03-31
+FTS.TO,2023-12-31,cashflow,Capital Expenditure,-4169000000.0,CAD,2024-03-30
+FTS.TO,2022-12-31,cashflow,Capital Expenditure,-3865000000.0,CAD,2023-03-31
+FTS.TO,2025-12-31,cashflow,Free Cash Flow,-2172000000.0,CAD,2026-03-31
+FTS.TO,2024-12-31,cashflow,Free Cash Flow,-1336000000.0,CAD,2025-03-31
+FTS.TO,2023-12-31,cashflow,Free Cash Flow,-624000000.0,CAD,2024-03-30
+FTS.TO,2022-12-31,cashflow,Free Cash Flow,-791000000.0,CAD,2023-03-31
+FTS.TO,2025-12-31,cashflow,Cash Dividends Paid,-873000000.0,CAD,2026-03-31
+FTS.TO,2024-12-31,cashflow,Cash Dividends Paid,-818000000.0,CAD,2025-03-31
+FTS.TO,2023-12-31,cashflow,Cash Dividends Paid,-768000000.0,CAD,2024-03-30
+FTS.TO,2022-12-31,cashflow,Cash Dividends Paid,-737000000.0,CAD,2023-03-31
+ATD.TO,2026-04-30,income_stmt,Total Revenue,76506600000.0,USD,2026-07-29
+ATD.TO,2025-04-30,income_stmt,Total Revenue,72856800000.0,USD,2025-07-29
+ATD.TO,2024-04-30,income_stmt,Total Revenue,69263500000.0,USD,2024-07-29
+ATD.TO,2023-04-30,income_stmt,Total Revenue,71856700000.0,USD,2023-07-29
+ATD.TO,2026-04-30,income_stmt,Operating Income,4567100000.0,USD,2026-07-29
+ATD.TO,2025-04-30,income_stmt,Operating Income,3736400000.0,USD,2025-07-29
+ATD.TO,2024-04-30,income_stmt,Operating Income,3780900000.0,USD,2024-07-29
+ATD.TO,2023-04-30,income_stmt,Operating Income,4145500000.0,USD,2023-07-29
+ATD.TO,2026-04-30,income_stmt,EBITDA,7162100000.0,USD,2026-07-29
+ATD.TO,2025-04-30,income_stmt,EBITDA,6076500000.0,USD,2025-07-29
+ATD.TO,2024-04-30,income_stmt,EBITDA,5730300000.0,USD,2024-07-29
+ATD.TO,2023-04-30,income_stmt,EBITDA,5815500000.0,USD,2023-07-29
+ATD.TO,2026-04-30,income_stmt,Net Income,3143700000.0,USD,2026-07-29
+ATD.TO,2025-04-30,income_stmt,Net Income,2580400000.0,USD,2025-07-29
+ATD.TO,2024-04-30,income_stmt,Net Income,2729700000.0,USD,2024-07-29
+ATD.TO,2023-04-30,income_stmt,Net Income,3090900000.0,USD,2023-07-29
+ATD.TO,2026-04-30,income_stmt,Diluted EPS,3.37,USD,2026-07-29
+ATD.TO,2025-04-30,income_stmt,Diluted EPS,2.71,USD,2025-07-29
+ATD.TO,2024-04-30,income_stmt,Diluted EPS,2.82,USD,2024-07-29
+ATD.TO,2023-04-30,income_stmt,Diluted EPS,3.06,USD,2023-07-29
+ATD.TO,2026-04-30,income_stmt,Interest Expense,710200000.0,USD,2026-07-29
+ATD.TO,2025-04-30,income_stmt,Interest Expense,642600000.0,USD,2025-07-29
+ATD.TO,2024-04-30,income_stmt,Interest Expense,516900000.0,USD,2024-07-29
+ATD.TO,2023-04-30,income_stmt,Interest Expense,352900000.0,USD,2023-07-29
+ATD.TO,2026-04-30,balance_sheet,Total Assets,43516700000.0,USD,2026-07-29
+ATD.TO,2025-04-30,balance_sheet,Total Assets,38301900000.0,USD,2025-07-29
+ATD.TO,2024-04-30,balance_sheet,Total Assets,37218000000.0,USD,2024-07-29
+ATD.TO,2023-04-30,balance_sheet,Total Assets,29058400000.0,USD,2023-07-29
+ATD.TO,2026-04-30,balance_sheet,Total Debt,16446000000.0,USD,2026-07-29
+ATD.TO,2025-04-30,balance_sheet,Total Debt,13956300000.0,USD,2025-07-29
+ATD.TO,2024-04-30,balance_sheet,Total Debt,14690900000.0,USD,2024-07-29
+ATD.TO,2023-04-30,balance_sheet,Total Debt,9473600000.0,USD,2023-07-29
+ATD.TO,2026-04-30,balance_sheet,Net Debt,8187900000.0,USD,2026-07-29
+ATD.TO,2025-04-30,balance_sheet,Net Debt,7204000000.0,USD,2025-07-29
+ATD.TO,2024-04-30,balance_sheet,Net Debt,8984300000.0,USD,2024-07-29
+ATD.TO,2023-04-30,balance_sheet,Net Debt,5054800000.0,USD,2023-07-29
+ATD.TO,2026-04-30,balance_sheet,Stockholders Equity,16178900000.0,USD,2026-07-29
+ATD.TO,2025-04-30,balance_sheet,Stockholders Equity,14946800000.0,USD,2025-07-29
+ATD.TO,2024-04-30,balance_sheet,Stockholders Equity,13189200000.0,USD,2024-07-29
+ATD.TO,2023-04-30,balance_sheet,Stockholders Equity,12564500000.0,USD,2023-07-29
+ATD.TO,2026-04-30,balance_sheet,Cash And Cash Equivalents,3111300000.0,USD,2026-07-29
+ATD.TO,2025-04-30,balance_sheet,Cash And Cash Equivalents,2263000000.0,USD,2025-07-29
+ATD.TO,2024-04-30,balance_sheet,Cash And Cash Equivalents,1309000000.0,USD,2024-07-29
+ATD.TO,2023-04-30,balance_sheet,Cash And Cash Equivalents,834200000.0,USD,2023-07-29
+ATD.TO,2026-04-30,balance_sheet,Current Assets,10034100000.0,USD,2026-07-29
+ATD.TO,2025-04-30,balance_sheet,Current Assets,7527800000.0,USD,2025-07-29
+ATD.TO,2024-04-30,balance_sheet,Current Assets,7683300000.0,USD,2024-07-29
+ATD.TO,2023-04-30,balance_sheet,Current Assets,5669600000.0,USD,2023-07-29
+ATD.TO,2026-04-30,balance_sheet,Current Liabilities,8926700000.0,USD,2026-07-29
+ATD.TO,2025-04-30,balance_sheet,Current Liabilities,7617300000.0,USD,2025-07-29
+ATD.TO,2024-04-30,balance_sheet,Current Liabilities,7832900000.0,USD,2024-07-29
+ATD.TO,2023-04-30,balance_sheet,Current Liabilities,5166500000.0,USD,2023-07-29
+ATD.TO,2026-04-30,cashflow,Operating Cash Flow,5363200000.0,USD,2026-07-29
+ATD.TO,2025-04-30,cashflow,Operating Cash Flow,5037100000.0,USD,2025-07-29
+ATD.TO,2024-04-30,cashflow,Operating Cash Flow,4817200000.0,USD,2024-07-29
+ATD.TO,2023-04-30,cashflow,Operating Cash Flow,4344600000.0,USD,2023-07-29
+ATD.TO,2026-04-30,cashflow,Capital Expenditure,-1990500000.0,USD,2026-07-29
+ATD.TO,2025-04-30,cashflow,Capital Expenditure,-2326600000.0,USD,2025-07-29
+ATD.TO,2024-04-30,cashflow,Capital Expenditure,-1943100000.0,USD,2024-07-29
+ATD.TO,2023-04-30,cashflow,Capital Expenditure,-1803800000.0,USD,2023-07-29
+ATD.TO,2026-04-30,cashflow,Free Cash Flow,3372700000.0,USD,2026-07-29
+ATD.TO,2025-04-30,cashflow,Free Cash Flow,2710500000.0,USD,2025-07-29
+ATD.TO,2024-04-30,cashflow,Free Cash Flow,2874100000.0,USD,2024-07-29
+ATD.TO,2023-04-30,cashflow,Free Cash Flow,2540800000.0,USD,2023-07-29
+ATD.TO,2026-04-30,cashflow,Cash Dividends Paid,-553300000.0,USD,2026-07-29
+ATD.TO,2025-04-30,cashflow,Cash Dividends Paid,-505300000.0,USD,2025-07-29
+ATD.TO,2024-04-30,cashflow,Cash Dividends Paid,-453000000.0,USD,2024-07-29
+ATD.TO,2023-04-30,cashflow,Cash Dividends Paid,-377700000.0,USD,2023-07-29
+SHOP.TO,2025-12-31,income_stmt,Total Revenue,11556000000.0,USD,2026-03-31
+SHOP.TO,2024-12-31,income_stmt,Total Revenue,8880000000.0,USD,2025-03-31
+SHOP.TO,2023-12-31,income_stmt,Total Revenue,7060000000.0,USD,2024-03-30
+SHOP.TO,2022-12-31,income_stmt,Total Revenue,5600000000.0,USD,2023-03-31
+SHOP.TO,2025-12-31,income_stmt,Operating Income,1885000000.0,USD,2026-03-31
+SHOP.TO,2024-12-31,income_stmt,Operating Income,1302000000.0,USD,2025-03-31
+SHOP.TO,2023-12-31,income_stmt,Operating Income,74000000.0,USD,2024-03-30
+SHOP.TO,2022-12-31,income_stmt,Operating Income,-687000000.0,USD,2023-03-31
+SHOP.TO,2025-12-31,income_stmt,EBITDA,1916000000.0,USD,2026-03-31
+SHOP.TO,2024-12-31,income_stmt,EBITDA,1338000000.0,USD,2025-03-31
+SHOP.TO,2023-12-31,income_stmt,EBITDA,144000000.0,USD,2024-03-30
+SHOP.TO,2022-12-31,income_stmt,EBITDA,-594000000.0,USD,2023-03-31
+SHOP.TO,2025-12-31,income_stmt,Net Income,1231000000.0,USD,2026-03-31
+SHOP.TO,2024-12-31,income_stmt,Net Income,2019000000.0,USD,2025-03-31
+SHOP.TO,2023-12-31,income_stmt,Net Income,132000000.0,USD,2024-03-30
+SHOP.TO,2022-12-31,income_stmt,Net Income,-3460000000.0,USD,2023-03-31
+SHOP.TO,2025-12-31,income_stmt,Diluted EPS,0.944088,USD,2026-03-31
+SHOP.TO,2024-12-31,income_stmt,Diluted EPS,1.559579,USD,2025-03-31
+SHOP.TO,2023-12-31,income_stmt,Diluted EPS,0.1,USD,2024-03-30
+SHOP.TO,2022-12-31,income_stmt,Diluted EPS,-2.73,USD,2023-03-31
+SHOP.TO,2022-12-31,income_stmt,Interest Expense,1150000.0,USD,2023-03-31
+SHOP.TO,2021-12-31,income_stmt,Interest Expense,1150000.0,USD,2022-03-31
+SHOP.TO,2025-12-31,balance_sheet,Total Assets,15189000000.0,USD,2026-03-31
+SHOP.TO,2024-12-31,balance_sheet,Total Assets,13924000000.0,USD,2025-03-31
+SHOP.TO,2023-12-31,balance_sheet,Total Assets,11299000000.0,USD,2024-03-30
+SHOP.TO,2022-12-31,balance_sheet,Total Assets,10757000000.0,USD,2023-03-31
+SHOP.TO,2025-12-31,balance_sheet,Total Debt,188000000.0,USD,2026-03-31
+SHOP.TO,2024-12-31,balance_sheet,Total Debt,1126000000.0,USD,2025-03-31
+SHOP.TO,2023-12-31,balance_sheet,Total Debt,1150000000.0,USD,2024-03-30
+SHOP.TO,2022-12-31,balance_sheet,Total Debt,1396000000.0,USD,2023-03-31
+SHOP.TO,2025-12-31,balance_sheet,Stockholders Equity,13473000000.0,USD,2026-03-31
+SHOP.TO,2024-12-31,balance_sheet,Stockholders Equity,11558000000.0,USD,2025-03-31
+SHOP.TO,2023-12-31,balance_sheet,Stockholders Equity,9066000000.0,USD,2024-03-30
+SHOP.TO,2022-12-31,balance_sheet,Stockholders Equity,8239000000.0,USD,2023-03-31
+SHOP.TO,2025-12-31,balance_sheet,Cash And Cash Equivalents,1534000000.0,USD,2026-03-31
+SHOP.TO,2024-12-31,balance_sheet,Cash And Cash Equivalents,1489000000.0,USD,2025-03-31
+SHOP.TO,2023-12-31,balance_sheet,Cash And Cash Equivalents,1405000000.0,USD,2024-03-30
+SHOP.TO,2022-12-31,balance_sheet,Cash And Cash Equivalents,1649000000.0,USD,2023-03-31
+SHOP.TO,2025-12-31,balance_sheet,Current Assets,8296000000.0,USD,2026-03-31
+SHOP.TO,2024-12-31,balance_sheet,Current Assets,7254000000.0,USD,2025-03-31
+SHOP.TO,2023-12-31,balance_sheet,Current Assets,6275000000.0,USD,2024-03-30
+SHOP.TO,2022-12-31,balance_sheet,Current Assets,6050000000.0,USD,2023-03-31
+SHOP.TO,2025-12-31,balance_sheet,Current Liabilities,1392000000.0,USD,2026-03-31
+SHOP.TO,2024-12-31,balance_sheet,Current Liabilities,1956000000.0,USD,2025-03-31
+SHOP.TO,2023-12-31,balance_sheet,Current Liabilities,898000000.0,USD,2024-03-30
+SHOP.TO,2022-12-31,balance_sheet,Current Liabilities,856000000.0,USD,2023-03-31
+SHOP.TO,2025-12-31,cashflow,Operating Cash Flow,2033000000.0,USD,2026-03-31
+SHOP.TO,2024-12-31,cashflow,Operating Cash Flow,1616000000.0,USD,2025-03-31
+SHOP.TO,2023-12-31,cashflow,Operating Cash Flow,944000000.0,USD,2024-03-30
+SHOP.TO,2022-12-31,cashflow,Operating Cash Flow,-136000000.0,USD,2023-03-31
+SHOP.TO,2025-12-31,cashflow,Capital Expenditure,-26000000.0,USD,2026-03-31
+SHOP.TO,2024-12-31,cashflow,Capital Expenditure,-19000000.0,USD,2025-03-31
+SHOP.TO,2023-12-31,cashflow,Capital Expenditure,-39000000.0,USD,2024-03-30
+SHOP.TO,2022-12-31,cashflow,Capital Expenditure,-50000000.0,USD,2023-03-31
+SHOP.TO,2025-12-31,cashflow,Free Cash Flow,2007000000.0,USD,2026-03-31
+SHOP.TO,2024-12-31,cashflow,Free Cash Flow,1597000000.0,USD,2025-03-31
+SHOP.TO,2023-12-31,cashflow,Free Cash Flow,905000000.0,USD,2024-03-30
+SHOP.TO,2022-12-31,cashflow,Free Cash Flow,-186000000.0,USD,2023-03-31
+CSU.TO,2025-12-31,income_stmt,Total Revenue,11623000000.0,USD,2026-03-31
+CSU.TO,2024-12-31,income_stmt,Total Revenue,10066000000.0,USD,2025-03-31
+CSU.TO,2023-12-31,income_stmt,Total Revenue,8405000000.0,USD,2024-03-30
+CSU.TO,2022-12-31,income_stmt,Total Revenue,6622000000.0,USD,2023-03-31
+CSU.TO,2025-12-31,income_stmt,Operating Income,2108000000.0,USD,2026-03-31
+CSU.TO,2024-12-31,income_stmt,Operating Income,1645000000.0,USD,2025-03-31
+CSU.TO,2023-12-31,income_stmt,Operating Income,1323000000.0,USD,2024-03-30
+CSU.TO,2022-12-31,income_stmt,Operating Income,1034000000.0,USD,2023-03-31
+CSU.TO,2025-12-31,income_stmt,EBITDA,2578000000.0,USD,2026-03-31
+CSU.TO,2024-12-31,income_stmt,EBITDA,2485000000.0,USD,2025-03-31
+CSU.TO,2023-12-31,income_stmt,EBITDA,1449000000.0,USD,2024-03-30
+CSU.TO,2022-12-31,income_stmt,EBITDA,1632000000.0,USD,2023-03-31
+CSU.TO,2025-12-31,income_stmt,Net Income,512000000.0,USD,2026-03-31
+CSU.TO,2024-12-31,income_stmt,Net Income,731000000.0,USD,2025-03-31
+CSU.TO,2023-12-31,income_stmt,Net Income,565000000.0,USD,2024-03-30
+CSU.TO,2022-12-31,income_stmt,Net Income,512000000.0,USD,2023-03-31
+CSU.TO,2025-12-31,income_stmt,Diluted EPS,24.15,USD,2026-03-31
+CSU.TO,2024-12-31,income_stmt,Diluted EPS,34.48,USD,2025-03-31
+CSU.TO,2023-12-31,income_stmt,Diluted EPS,26.67,USD,2024-03-30
+CSU.TO,2022-12-31,income_stmt,Diluted EPS,24.18,USD,2023-03-31
+CSU.TO,2025-12-31,income_stmt,Interest Expense,256000000.0,USD,2026-03-31
+CSU.TO,2024-12-31,income_stmt,Interest Expense,248000000.0,USD,2025-03-31
+CSU.TO,2023-12-31,income_stmt,Interest Expense,163000000.0,USD,2024-03-30
+CSU.TO,2022-12-31,income_stmt,Interest Expense,88000000.0,USD,2023-03-31
+CSU.TO,2025-12-31,balance_sheet,Total Assets,16171000000.0,USD,2026-03-31
+CSU.TO,2024-12-31,balance_sheet,Total Assets,12848000000.0,USD,2025-03-31
+CSU.TO,2023-12-31,balance_sheet,Total Assets,10862000000.0,USD,2024-03-30
+CSU.TO,2022-12-31,balance_sheet,Total Assets,7872000000.0,USD,2023-03-31
+CSU.TO,2025-12-31,balance_sheet,Total Debt,5787000000.0,USD,2026-03-31
+CSU.TO,2024-12-31,balance_sheet,Total Debt,4533000000.0,USD,2025-03-31
+CSU.TO,2023-12-31,balance_sheet,Total Debt,3682000000.0,USD,2024-03-30
+CSU.TO,2022-12-31,balance_sheet,Total Debt,2288000000.0,USD,2023-03-31
+CSU.TO,2025-12-31,balance_sheet,Net Debt,2275000000.0,USD,2026-03-31
+CSU.TO,2024-12-31,balance_sheet,Net Debt,2186000000.0,USD,2025-03-31
+CSU.TO,2023-12-31,balance_sheet,Net Debt,2050000000.0,USD,2024-03-30
+CSU.TO,2022-12-31,balance_sheet,Net Debt,1163000000.0,USD,2023-03-31
+CSU.TO,2025-12-31,balance_sheet,Stockholders Equity,3576000000.0,USD,2026-03-31
+CSU.TO,2024-12-31,balance_sheet,Stockholders Equity,2794000000.0,USD,2025-03-31
+CSU.TO,2023-12-31,balance_sheet,Stockholders Equity,1876000000.0,USD,2024-03-30
+CSU.TO,2022-12-31,balance_sheet,Stockholders Equity,1712000000.0,USD,2023-03-31
+CSU.TO,2025-12-31,balance_sheet,Cash And Cash Equivalents,3089000000.0,USD,2026-03-31
+CSU.TO,2024-12-31,balance_sheet,Cash And Cash Equivalents,1980000000.0,USD,2025-03-31
+CSU.TO,2023-12-31,balance_sheet,Cash And Cash Equivalents,1284000000.0,USD,2024-03-30
+CSU.TO,2022-12-31,balance_sheet,Cash And Cash Equivalents,811000000.0,USD,2023-03-31
+CSU.TO,2025-12-31,balance_sheet,Current Assets,5803000000.0,USD,2026-03-31
+CSU.TO,2024-12-31,balance_sheet,Current Assets,4291000000.0,USD,2025-03-31
+CSU.TO,2023-12-31,balance_sheet,Current Assets,3339000000.0,USD,2024-03-30
+CSU.TO,2022-12-31,balance_sheet,Current Assets,2466000000.0,USD,2023-03-31
+CSU.TO,2025-12-31,balance_sheet,Current Liabilities,6074000000.0,USD,2026-03-31
+CSU.TO,2024-12-31,balance_sheet,Current Liabilities,4661000000.0,USD,2025-03-31
+CSU.TO,2023-12-31,balance_sheet,Current Liabilities,5483000000.0,USD,2024-03-30
+CSU.TO,2022-12-31,balance_sheet,Current Liabilities,3772000000.0,USD,2023-03-31
+CSU.TO,2025-12-31,cashflow,Operating Cash Flow,2732000000.0,USD,2026-03-31
+CSU.TO,2024-12-31,cashflow,Operating Cash Flow,2196000000.0,USD,2025-03-31
+CSU.TO,2023-12-31,cashflow,Operating Cash Flow,1779000000.0,USD,2024-03-30
+CSU.TO,2022-12-31,cashflow,Operating Cash Flow,1297000000.0,USD,2023-03-31
+CSU.TO,2025-12-31,cashflow,Capital Expenditure,-68000000.0,USD,2026-03-31
+CSU.TO,2024-12-31,cashflow,Capital Expenditure,-67000000.0,USD,2025-03-31
+CSU.TO,2023-12-31,cashflow,Capital Expenditure,-42000000.0,USD,2024-03-30
+CSU.TO,2022-12-31,cashflow,Capital Expenditure,-41000000.0,USD,2023-03-31
+CSU.TO,2025-12-31,cashflow,Free Cash Flow,2664000000.0,USD,2026-03-31
+CSU.TO,2024-12-31,cashflow,Free Cash Flow,2129000000.0,USD,2025-03-31
+CSU.TO,2023-12-31,cashflow,Free Cash Flow,1737000000.0,USD,2024-03-30
+CSU.TO,2022-12-31,cashflow,Free Cash Flow,1256000000.0,USD,2023-03-31
+CSU.TO,2025-12-31,cashflow,Cash Dividends Paid,-85000000.0,USD,2026-03-31
+CSU.TO,2024-12-31,cashflow,Cash Dividends Paid,-149000000.0,USD,2025-03-31
+CSU.TO,2023-12-31,cashflow,Cash Dividends Paid,-85000000.0,USD,2024-03-30
+CSU.TO,2022-12-31,cashflow,Cash Dividends Paid,-115000000.0,USD,2023-03-31
+AAPL,2026-09-30,income_stmt,Total Revenue,478834000000.0,USD,2026-12-29
+AAPL,2025-09-30,income_stmt,Total Revenue,416161000000.0,USD,2025-12-29
+AAPL,2024-09-30,income_stmt,Total Revenue,391035000000.0,USD,2024-12-29
+AAPL,2023-09-30,income_stmt,Total Revenue,383285000000.0,USD,2023-12-29
+AAPL,2026-09-30,income_stmt,Operating Income,158063000000.0,USD,2026-12-29
+AAPL,2025-09-30,income_stmt,Operating Income,133050000000.0,USD,2025-12-29
+AAPL,2024-09-30,income_stmt,Operating Income,123216000000.0,USD,2024-12-29
+AAPL,2023-09-30,income_stmt,Operating Income,114301000000.0,USD,2023-12-29
+AAPL,2026-09-30,income_stmt,EBITDA,171486000000.0,USD,2026-12-29
+AAPL,2025-09-30,income_stmt,EBITDA,144748000000.0,USD,2025-12-29
+AAPL,2024-09-30,income_stmt,EBITDA,134661000000.0,USD,2024-12-29
+AAPL,2023-09-30,income_stmt,EBITDA,125820000000.0,USD,2023-12-29
+AAPL,2026-09-30,income_stmt,Net Income,132175000000.0,USD,2026-12-29
+AAPL,2025-09-30,income_stmt,Net Income,112010000000.0,USD,2025-12-29
+AAPL,2024-09-30,income_stmt,Net Income,93736000000.0,USD,2024-12-29
+AAPL,2023-09-30,income_stmt,Net Income,96995000000.0,USD,2023-12-29
+AAPL,2026-09-30,income_stmt,Diluted EPS,8.98,USD,2026-12-29
+AAPL,2025-09-30,income_stmt,Diluted EPS,7.46,USD,2025-12-29
+AAPL,2024-09-30,income_stmt,Diluted EPS,6.08,USD,2024-12-29
+AAPL,2023-09-30,income_stmt,Diluted EPS,6.13,USD,2023-12-29
+AAPL,2023-09-30,income_stmt,Interest Expense,3933000000.0,USD,2023-12-29
+AAPL,2022-09-30,income_stmt,Interest Expense,2931000000.0,USD,2022-12-29
+AAPL,2026-09-30,balance_sheet,Total Assets,404548000000.0,USD,2026-12-29
+AAPL,2025-09-30,balance_sheet,Total Assets,359241000000.0,USD,2025-12-29
+AAPL,2024-09-30,balance_sheet,Total Assets,364980000000.0,USD,2024-12-29
+AAPL,2023-09-30,balance_sheet,Total Assets,352583000000.0,USD,2023-12-29
+AAPL,2026-09-30,balance_sheet,Total Debt,80111000000.0,USD,2026-12-29
+AAPL,2025-09-30,balance_sheet,Total Debt,98657000000.0,USD,2025-12-29
+AAPL,2024-09-30,balance_sheet,Total Debt,106629000000.0,USD,2024-12-29
+AAPL,2023-09-30,balance_sheet,Total Debt,111088000000.0,USD,2023-12-29
+AAPL,2026-09-30,balance_sheet,Net Debt,43806000000.0,USD,2026-12-29
+AAPL,2025-09-30,balance_sheet,Net Debt,62723000000.0,USD,2025-12-29
+AAPL,2024-09-30,balance_sheet,Net Debt,76686000000.0,USD,2024-12-29
+AAPL,2023-09-30,balance_sheet,Net Debt,81123000000.0,USD,2023-12-29
+AAPL,2026-09-30,balance_sheet,Stockholders Equity,112093000000.0,USD,2026-12-29
+AAPL,2025-09-30,balance_sheet,Stockholders Equity,73733000000.0,USD,2025-12-29
+AAPL,2024-09-30,balance_sheet,Stockholders Equity,56950000000.0,USD,2024-12-29
+AAPL,2023-09-30,balance_sheet,Stockholders Equity,62146000000.0,USD,2023-12-29
+AAPL,2026-09-30,balance_sheet,Cash And Cash Equivalents,36305000000.0,USD,2026-12-29
+AAPL,2025-09-30,balance_sheet,Cash And Cash Equivalents,35934000000.0,USD,2025-12-29
+AAPL,2024-09-30,balance_sheet,Cash And Cash Equivalents,29943000000.0,USD,2024-12-29
+AAPL,2023-09-30,balance_sheet,Cash And Cash Equivalents,29965000000.0,USD,2023-12-29
+AAPL,2026-09-30,balance_sheet,Current Assets,173857000000.0,USD,2026-12-29
+AAPL,2025-09-30,balance_sheet,Current Assets,147957000000.0,USD,2025-12-29
+AAPL,2024-09-30,balance_sheet,Current Assets,152987000000.0,USD,2024-12-29
+AAPL,2023-09-30,balance_sheet,Current Assets,143566000000.0,USD,2023-12-29
+AAPL,2026-09-30,balance_sheet,Current Liabilities,169915000000.0,USD,2026-12-29
+AAPL,2025-09-30,balance_sheet,Current Liabilities,165631000000.0,USD,2025-12-29
+AAPL,2024-09-30,balance_sheet,Current Liabilities,176392000000.0,USD,2024-12-29
+AAPL,2023-09-30,balance_sheet,Current Liabilities,145308000000.0,USD,2023-12-29
+AAPL,2026-09-30,cashflow,Operating Cash Flow,145097000000.0,USD,2026-12-29
+AAPL,2025-09-30,cashflow,Operating Cash Flow,111482000000.0,USD,2025-12-29
+AAPL,2024-09-30,cashflow,Operating Cash Flow,118254000000.0,USD,2024-12-29
+AAPL,2023-09-30,cashflow,Operating Cash Flow,110543000000.0,USD,2023-12-29
+AAPL,2026-09-30,cashflow,Capital Expenditure,-9041000000.0,USD,2026-12-29
+AAPL,2025-09-30,cashflow,Capital Expenditure,-12715000000.0,USD,2025-12-29
+AAPL,2024-09-30,cashflow,Capital Expenditure,-9447000000.0,USD,2024-12-29
+AAPL,2023-09-30,cashflow,Capital Expenditure,-10959000000.0,USD,2023-12-29
+AAPL,2026-09-30,cashflow,Free Cash Flow,136056000000.0,USD,2026-12-29
+AAPL,2025-09-30,cashflow,Free Cash Flow,98767000000.0,USD,2025-12-29
+AAPL,2024-09-30,cashflow,Free Cash Flow,108807000000.0,USD,2024-12-29
+AAPL,2023-09-30,cashflow,Free Cash Flow,99584000000.0,USD,2023-12-29
+AAPL,2026-09-30,cashflow,Cash Dividends Paid,-15721000000.0,USD,2026-12-29
+AAPL,2025-09-30,cashflow,Cash Dividends Paid,-15421000000.0,USD,2025-12-29
+AAPL,2024-09-30,cashflow,Cash Dividends Paid,-15234000000.0,USD,2024-12-29
+AAPL,2023-09-30,cashflow,Cash Dividends Paid,-15025000000.0,USD,2023-12-29
+MSFT,2026-06-30,income_stmt,Total Revenue,331839000000.0,USD,2026-09-28
+MSFT,2025-06-30,income_stmt,Total Revenue,281724000000.0,USD,2025-09-28
+MSFT,2024-06-30,income_stmt,Total Revenue,245122000000.0,USD,2024-09-28
+MSFT,2023-06-30,income_stmt,Total Revenue,211915000000.0,USD,2023-09-28
+MSFT,2026-06-30,income_stmt,Operating Income,155237000000.0,USD,2026-09-28
+MSFT,2025-06-30,income_stmt,Operating Income,128528000000.0,USD,2025-09-28
+MSFT,2024-06-30,income_stmt,Operating Income,109433000000.0,USD,2024-09-28
+MSFT,2023-06-30,income_stmt,Operating Income,88523000000.0,USD,2023-09-28
+MSFT,2026-06-30,income_stmt,EBITDA,207519000000.0,USD,2026-09-28
+MSFT,2025-06-30,income_stmt,EBITDA,155445000000.0,USD,2025-09-28
+MSFT,2024-06-30,income_stmt,EBITDA,131680000000.0,USD,2024-09-28
+MSFT,2023-06-30,income_stmt,EBITDA,105140000000.0,USD,2023-09-28
+MSFT,2026-06-30,income_stmt,Net Income,133749000000.0,USD,2026-09-28
+MSFT,2025-06-30,income_stmt,Net Income,101832000000.0,USD,2025-09-28
+MSFT,2024-06-30,income_stmt,Net Income,88136000000.0,USD,2024-09-28
+MSFT,2023-06-30,income_stmt,Net Income,72361000000.0,USD,2023-09-28
+MSFT,2026-06-30,income_stmt,Diluted EPS,17.95,USD,2026-09-28
+MSFT,2025-06-30,income_stmt,Diluted EPS,13.64,USD,2025-09-28
+MSFT,2024-06-30,income_stmt,Diluted EPS,11.8,USD,2024-09-28
+MSFT,2023-06-30,income_stmt,Diluted EPS,9.68,USD,2023-09-28
+MSFT,2026-06-30,income_stmt,Interest Expense,3051000000.0,USD,2026-09-28
+MSFT,2025-06-30,income_stmt,Interest Expense,2385000000.0,USD,2025-09-28
+MSFT,2024-06-30,income_stmt,Interest Expense,2935000000.0,USD,2024-09-28
+MSFT,2023-06-30,income_stmt,Interest Expense,1968000000.0,USD,2023-09-28
+MSFT,2026-06-30,balance_sheet,Total Assets,758376000000.0,USD,2026-09-28
+MSFT,2025-06-30,balance_sheet,Total Assets,619003000000.0,USD,2025-09-28
+MSFT,2024-06-30,balance_sheet,Total Assets,512163000000.0,USD,2024-09-28
+MSFT,2023-06-30,balance_sheet,Total Assets,411976000000.0,USD,2023-09-28
+MSFT,2026-06-30,balance_sheet,Total Debt,56826000000.0,USD,2026-09-28
+MSFT,2025-06-30,balance_sheet,Total Debt,60588000000.0,USD,2025-09-28
+MSFT,2024-06-30,balance_sheet,Total Debt,67127000000.0,USD,2024-09-28
+MSFT,2023-06-30,balance_sheet,Total Debt,59965000000.0,USD,2023-09-28
+MSFT,2026-06-30,balance_sheet,Net Debt,19359000000.0,USD,2026-09-28
+MSFT,2025-06-30,balance_sheet,Net Debt,12909000000.0,USD,2025-09-28
+MSFT,2024-06-30,balance_sheet,Net Debt,33315000000.0,USD,2024-09-28
+MSFT,2023-06-30,balance_sheet,Net Debt,12533000000.0,USD,2023-09-28
+MSFT,2026-06-30,balance_sheet,Stockholders Equity,442387000000.0,USD,2026-09-28
+MSFT,2025-06-30,balance_sheet,Stockholders Equity,343479000000.0,USD,2025-09-28
+MSFT,2024-06-30,balance_sheet,Stockholders Equity,268477000000.0,USD,2024-09-28
+MSFT,2023-06-30,balance_sheet,Stockholders Equity,206223000000.0,USD,2023-09-28
+MSFT,2026-06-30,balance_sheet,Cash And Cash Equivalents,20935000000.0,USD,2026-09-28
+MSFT,2025-06-30,balance_sheet,Cash And Cash Equivalents,30242000000.0,USD,2025-09-28
+MSFT,2024-06-30,balance_sheet,Cash And Cash Equivalents,18315000000.0,USD,2024-09-28
+MSFT,2023-06-30,balance_sheet,Cash And Cash Equivalents,34704000000.0,USD,2023-09-28
+MSFT,2026-06-30,balance_sheet,Current Assets,207710000000.0,USD,2026-09-28
+MSFT,2025-06-30,balance_sheet,Current Assets,191131000000.0,USD,2025-09-28
+MSFT,2024-06-30,balance_sheet,Current Assets,159734000000.0,USD,2024-09-28
+MSFT,2023-06-30,balance_sheet,Current Assets,184257000000.0,USD,2023-09-28
+MSFT,2026-06-30,balance_sheet,Current Liabilities,168825000000.0,USD,2026-09-28
+MSFT,2025-06-30,balance_sheet,Current Liabilities,141218000000.0,USD,2025-09-28
+MSFT,2024-06-30,balance_sheet,Current Liabilities,125286000000.0,USD,2024-09-28
+MSFT,2023-06-30,balance_sheet,Current Liabilities,104149000000.0,USD,2023-09-28
+MSFT,2026-06-30,cashflow,Operating Cash Flow,182935000000.0,USD,2026-09-28
+MSFT,2025-06-30,cashflow,Operating Cash Flow,136162000000.0,USD,2025-09-28
+MSFT,2024-06-30,cashflow,Operating Cash Flow,118548000000.0,USD,2024-09-28
+MSFT,2023-06-30,cashflow,Operating Cash Flow,87582000000.0,USD,2023-09-28
+MSFT,2026-06-30,cashflow,Capital Expenditure,-115948000000.0,USD,2026-09-28
+MSFT,2025-06-30,cashflow,Capital Expenditure,-64551000000.0,USD,2025-09-28
+MSFT,2024-06-30,cashflow,Capital Expenditure,-44477000000.0,USD,2024-09-28
+MSFT,2023-06-30,cashflow,Capital Expenditure,-28107000000.0,USD,2023-09-28
+MSFT,2026-06-30,cashflow,Free Cash Flow,66987000000.0,USD,2026-09-28
+MSFT,2025-06-30,cashflow,Free Cash Flow,71611000000.0,USD,2025-09-28
+MSFT,2024-06-30,cashflow,Free Cash Flow,74071000000.0,USD,2024-09-28
+MSFT,2023-06-30,cashflow,Free Cash Flow,59475000000.0,USD,2023-09-28
+MSFT,2026-06-30,cashflow,Cash Dividends Paid,-26445000000.0,USD,2026-09-28
+MSFT,2025-06-30,cashflow,Cash Dividends Paid,-24082000000.0,USD,2025-09-28
+MSFT,2024-06-30,cashflow,Cash Dividends Paid,-21771000000.0,USD,2024-09-28
+MSFT,2023-06-30,cashflow,Cash Dividends Paid,-19800000000.0,USD,2023-09-28
+NVDA,2026-01-31,income_stmt,Total Revenue,215938000000.0,USD,2026-05-01
+NVDA,2025-01-31,income_stmt,Total Revenue,130497000000.0,USD,2025-05-01
+NVDA,2024-01-31,income_stmt,Total Revenue,60922000000.0,USD,2024-04-30
+NVDA,2023-01-31,income_stmt,Total Revenue,26974000000.0,USD,2023-05-01
+NVDA,2026-01-31,income_stmt,Operating Income,130387000000.0,USD,2026-05-01
+NVDA,2025-01-31,income_stmt,Operating Income,81453000000.0,USD,2025-05-01
+NVDA,2024-01-31,income_stmt,Operating Income,32972000000.0,USD,2024-04-30
+NVDA,2023-01-31,income_stmt,Operating Income,5577000000.0,USD,2023-05-01
+NVDA,2026-01-31,income_stmt,EBITDA,144552000000.0,USD,2026-05-01
+NVDA,2025-01-31,income_stmt,EBITDA,86137000000.0,USD,2025-05-01
+NVDA,2024-01-31,income_stmt,EBITDA,35583000000.0,USD,2024-04-30
+NVDA,2023-01-31,income_stmt,EBITDA,5986000000.0,USD,2023-05-01
+NVDA,2026-01-31,income_stmt,Net Income,120067000000.0,USD,2026-05-01
+NVDA,2025-01-31,income_stmt,Net Income,72880000000.0,USD,2025-05-01
+NVDA,2024-01-31,income_stmt,Net Income,29760000000.0,USD,2024-04-30
+NVDA,2023-01-31,income_stmt,Net Income,4368000000.0,USD,2023-05-01
+NVDA,2026-01-31,income_stmt,Diluted EPS,4.9,USD,2026-05-01
+NVDA,2025-01-31,income_stmt,Diluted EPS,2.94,USD,2025-05-01
+NVDA,2024-01-31,income_stmt,Diluted EPS,1.19,USD,2024-04-30
+NVDA,2023-01-31,income_stmt,Diluted EPS,0.174,USD,2023-05-01
+NVDA,2026-01-31,income_stmt,Interest Expense,259000000.0,USD,2026-05-01
+NVDA,2025-01-31,income_stmt,Interest Expense,247000000.0,USD,2025-05-01
+NVDA,2024-01-31,income_stmt,Interest Expense,257000000.0,USD,2024-04-30
+NVDA,2023-01-31,income_stmt,Interest Expense,262000000.0,USD,2023-05-01
+NVDA,2026-01-31,balance_sheet,Total Assets,206803000000.0,USD,2026-05-01
+NVDA,2025-01-31,balance_sheet,Total Assets,111601000000.0,USD,2025-05-01
+NVDA,2024-01-31,balance_sheet,Total Assets,65728000000.0,USD,2024-04-30
+NVDA,2023-01-31,balance_sheet,Total Assets,41182000000.0,USD,2023-05-01
+NVDA,2026-01-31,balance_sheet,Total Debt,11040000000.0,USD,2026-05-01
+NVDA,2025-01-31,balance_sheet,Total Debt,9982000000.0,USD,2025-05-01
+NVDA,2024-01-31,balance_sheet,Total Debt,11056000000.0,USD,2024-04-30
+NVDA,2023-01-31,balance_sheet,Total Debt,12031000000.0,USD,2023-05-01
+NVDA,2024-01-31,balance_sheet,Net Debt,2429000000.0,USD,2024-04-30
+NVDA,2023-01-31,balance_sheet,Net Debt,7564000000.0,USD,2023-05-01
+NVDA,2022-01-31,balance_sheet,Net Debt,8956000000.0,USD,2022-05-01
+NVDA,2026-01-31,balance_sheet,Stockholders Equity,157293000000.0,USD,2026-05-01
+NVDA,2025-01-31,balance_sheet,Stockholders Equity,79327000000.0,USD,2025-05-01
+NVDA,2024-01-31,balance_sheet,Stockholders Equity,42978000000.0,USD,2024-04-30
+NVDA,2023-01-31,balance_sheet,Stockholders Equity,22101000000.0,USD,2023-05-01
+NVDA,2026-01-31,balance_sheet,Cash And Cash Equivalents,10605000000.0,USD,2026-05-01
+NVDA,2025-01-31,balance_sheet,Cash And Cash Equivalents,8589000000.0,USD,2025-05-01
+NVDA,2024-01-31,balance_sheet,Cash And Cash Equivalents,7280000000.0,USD,2024-04-30
+NVDA,2023-01-31,balance_sheet,Cash And Cash Equivalents,3389000000.0,USD,2023-05-01
+NVDA,2026-01-31,balance_sheet,Current Assets,125605000000.0,USD,2026-05-01
+NVDA,2025-01-31,balance_sheet,Current Assets,80126000000.0,USD,2025-05-01
+NVDA,2024-01-31,balance_sheet,Current Assets,44345000000.0,USD,2024-04-30
+NVDA,2023-01-31,balance_sheet,Current Assets,23073000000.0,USD,2023-05-01
+NVDA,2026-01-31,balance_sheet,Current Liabilities,32163000000.0,USD,2026-05-01
+NVDA,2025-01-31,balance_sheet,Current Liabilities,18047000000.0,USD,2025-05-01
+NVDA,2024-01-31,balance_sheet,Current Liabilities,10631000000.0,USD,2024-04-30
+NVDA,2023-01-31,balance_sheet,Current Liabilities,6563000000.0,USD,2023-05-01
+NVDA,2026-01-31,cashflow,Operating Cash Flow,102718000000.0,USD,2026-05-01
+NVDA,2025-01-31,cashflow,Operating Cash Flow,64089000000.0,USD,2025-05-01
+NVDA,2024-01-31,cashflow,Operating Cash Flow,28090000000.0,USD,2024-04-30
+NVDA,2023-01-31,cashflow,Operating Cash Flow,5641000000.0,USD,2023-05-01
+NVDA,2026-01-31,cashflow,Capital Expenditure,-6042000000.0,USD,2026-05-01
+NVDA,2025-01-31,cashflow,Capital Expenditure,-3236000000.0,USD,2025-05-01
+NVDA,2024-01-31,cashflow,Capital Expenditure,-1069000000.0,USD,2024-04-30
+NVDA,2023-01-31,cashflow,Capital Expenditure,-1833000000.0,USD,2023-05-01
+NVDA,2026-01-31,cashflow,Free Cash Flow,96676000000.0,USD,2026-05-01
+NVDA,2025-01-31,cashflow,Free Cash Flow,60853000000.0,USD,2025-05-01
+NVDA,2024-01-31,cashflow,Free Cash Flow,27021000000.0,USD,2024-04-30
+NVDA,2023-01-31,cashflow,Free Cash Flow,3808000000.0,USD,2023-05-01
+NVDA,2026-01-31,cashflow,Cash Dividends Paid,-974000000.0,USD,2026-05-01
+NVDA,2025-01-31,cashflow,Cash Dividends Paid,-834000000.0,USD,2025-05-01
+NVDA,2024-01-31,cashflow,Cash Dividends Paid,-395000000.0,USD,2024-04-30
+NVDA,2023-01-31,cashflow,Cash Dividends Paid,-398000000.0,USD,2023-05-01
+GOOGL,2025-12-31,income_stmt,Total Revenue,402836000000.0,USD,2026-03-31
+GOOGL,2024-12-31,income_stmt,Total Revenue,350018000000.0,USD,2025-03-31
+GOOGL,2023-12-31,income_stmt,Total Revenue,307394000000.0,USD,2024-03-30
+GOOGL,2022-12-31,income_stmt,Total Revenue,282836000000.0,USD,2023-03-31
+GOOGL,2025-12-31,income_stmt,Operating Income,129039000000.0,USD,2026-03-31
+GOOGL,2024-12-31,income_stmt,Operating Income,112390000000.0,USD,2025-03-31
+GOOGL,2023-12-31,income_stmt,Operating Income,84293000000.0,USD,2024-03-30
+GOOGL,2022-12-31,income_stmt,Operating Income,74842000000.0,USD,2023-03-31
+GOOGL,2025-12-31,income_stmt,EBITDA,180698000000.0,USD,2026-03-31
+GOOGL,2024-12-31,income_stmt,EBITDA,135394000000.0,USD,2025-03-31
+GOOGL,2023-12-31,income_stmt,EBITDA,97971000000.0,USD,2024-03-30
+GOOGL,2022-12-31,income_stmt,EBITDA,85160000000.0,USD,2023-03-31
+GOOGL,2025-12-31,income_stmt,Net Income,132170000000.0,USD,2026-03-31
+GOOGL,2024-12-31,income_stmt,Net Income,100118000000.0,USD,2025-03-31
+GOOGL,2023-12-31,income_stmt,Net Income,73795000000.0,USD,2024-03-30
+GOOGL,2022-12-31,income_stmt,Net Income,59972000000.0,USD,2023-03-31
+GOOGL,2025-12-31,income_stmt,Diluted EPS,10.81,USD,2026-03-31
+GOOGL,2024-12-31,income_stmt,Diluted EPS,8.04,USD,2025-03-31
+GOOGL,2023-12-31,income_stmt,Diluted EPS,5.8,USD,2024-03-30
+GOOGL,2022-12-31,income_stmt,Diluted EPS,4.56,USD,2023-03-31
+GOOGL,2025-12-31,income_stmt,Interest Expense,736000000.0,USD,2026-03-31
+GOOGL,2024-12-31,income_stmt,Interest Expense,268000000.0,USD,2025-03-31
+GOOGL,2023-12-31,income_stmt,Interest Expense,308000000.0,USD,2024-03-30
+GOOGL,2022-12-31,income_stmt,Interest Expense,357000000.0,USD,2023-03-31
+GOOGL,2025-12-31,balance_sheet,Total Assets,595281000000.0,USD,2026-03-31
+GOOGL,2024-12-31,balance_sheet,Total Assets,450256000000.0,USD,2025-03-31
+GOOGL,2023-12-31,balance_sheet,Total Assets,402392000000.0,USD,2024-03-30
+GOOGL,2022-12-31,balance_sheet,Total Assets,365264000000.0,USD,2023-03-31
+GOOGL,2025-12-31,balance_sheet,Total Debt,59291000000.0,USD,2026-03-31
+GOOGL,2024-12-31,balance_sheet,Total Debt,22574000000.0,USD,2025-03-31
+GOOGL,2023-12-31,balance_sheet,Total Debt,27121000000.0,USD,2024-03-30
+GOOGL,2022-12-31,balance_sheet,Total Debt,29679000000.0,USD,2023-03-31
+GOOGL,2025-12-31,balance_sheet,Net Debt,15839000000.0,USD,2026-03-31
+GOOGL,2025-12-31,balance_sheet,Stockholders Equity,415265000000.0,USD,2026-03-31
+GOOGL,2024-12-31,balance_sheet,Stockholders Equity,325084000000.0,USD,2025-03-31
+GOOGL,2023-12-31,balance_sheet,Stockholders Equity,283379000000.0,USD,2024-03-30
+GOOGL,2022-12-31,balance_sheet,Stockholders Equity,256144000000.0,USD,2023-03-31
+GOOGL,2025-12-31,balance_sheet,Cash And Cash Equivalents,30708000000.0,USD,2026-03-31
+GOOGL,2024-12-31,balance_sheet,Cash And Cash Equivalents,23466000000.0,USD,2025-03-31
+GOOGL,2023-12-31,balance_sheet,Cash And Cash Equivalents,24048000000.0,USD,2024-03-30
+GOOGL,2022-12-31,balance_sheet,Cash And Cash Equivalents,21879000000.0,USD,2023-03-31
+GOOGL,2025-12-31,balance_sheet,Current Assets,206038000000.0,USD,2026-03-31
+GOOGL,2024-12-31,balance_sheet,Current Assets,163711000000.0,USD,2025-03-31
+GOOGL,2023-12-31,balance_sheet,Current Assets,171530000000.0,USD,2024-03-30
+GOOGL,2022-12-31,balance_sheet,Current Assets,164795000000.0,USD,2023-03-31
+GOOGL,2025-12-31,balance_sheet,Current Liabilities,102745000000.0,USD,2026-03-31
+GOOGL,2024-12-31,balance_sheet,Current Liabilities,89122000000.0,USD,2025-03-31
+GOOGL,2023-12-31,balance_sheet,Current Liabilities,81814000000.0,USD,2024-03-30
+GOOGL,2022-12-31,balance_sheet,Current Liabilities,69300000000.0,USD,2023-03-31
+GOOGL,2025-12-31,cashflow,Operating Cash Flow,164713000000.0,USD,2026-03-31
+GOOGL,2024-12-31,cashflow,Operating Cash Flow,125299000000.0,USD,2025-03-31
+GOOGL,2023-12-31,cashflow,Operating Cash Flow,101746000000.0,USD,2024-03-30
+GOOGL,2022-12-31,cashflow,Operating Cash Flow,91495000000.0,USD,2023-03-31
+GOOGL,2025-12-31,cashflow,Capital Expenditure,-91447000000.0,USD,2026-03-31
+GOOGL,2024-12-31,cashflow,Capital Expenditure,-52535000000.0,USD,2025-03-31
+GOOGL,2023-12-31,cashflow,Capital Expenditure,-32251000000.0,USD,2024-03-30
+GOOGL,2022-12-31,cashflow,Capital Expenditure,-31485000000.0,USD,2023-03-31
+GOOGL,2025-12-31,cashflow,Free Cash Flow,73266000000.0,USD,2026-03-31
+GOOGL,2024-12-31,cashflow,Free Cash Flow,72764000000.0,USD,2025-03-31
+GOOGL,2023-12-31,cashflow,Free Cash Flow,69495000000.0,USD,2024-03-30
+GOOGL,2022-12-31,cashflow,Free Cash Flow,60010000000.0,USD,2023-03-31
+GOOGL,2025-12-31,cashflow,Cash Dividends Paid,-10049000000.0,USD,2026-03-31
+GOOGL,2024-12-31,cashflow,Cash Dividends Paid,-7363000000.0,USD,2025-03-31
+GOOGL,2023-12-31,cashflow,Cash Dividends Paid,0.0,USD,2024-03-30
+GOOGL,2022-12-31,cashflow,Cash Dividends Paid,0.0,USD,2023-03-31
+AMZN,2025-12-31,income_stmt,Total Revenue,716924000000.0,USD,2026-03-31
+AMZN,2024-12-31,income_stmt,Total Revenue,637959000000.0,USD,2025-03-31
+AMZN,2023-12-31,income_stmt,Total Revenue,574785000000.0,USD,2024-03-30
+AMZN,2022-12-31,income_stmt,Total Revenue,513983000000.0,USD,2023-03-31
+AMZN,2025-12-31,income_stmt,Operating Income,79975000000.0,USD,2026-03-31
+AMZN,2024-12-31,income_stmt,Operating Income,68593000000.0,USD,2025-03-31
+AMZN,2023-12-31,income_stmt,Operating Income,36852000000.0,USD,2024-03-30
+AMZN,2022-12-31,income_stmt,Operating Income,12248000000.0,USD,2023-03-31
+AMZN,2025-12-31,income_stmt,EBITDA,165341000000.0,USD,2026-03-31
+AMZN,2024-12-31,income_stmt,EBITDA,123815000000.0,USD,2025-03-31
+AMZN,2023-12-31,income_stmt,EBITDA,89402000000.0,USD,2024-03-30
+AMZN,2022-12-31,income_stmt,EBITDA,38352000000.0,USD,2023-03-31
+AMZN,2025-12-31,income_stmt,Net Income,77670000000.0,USD,2026-03-31
+AMZN,2024-12-31,income_stmt,Net Income,59248000000.0,USD,2025-03-31
+AMZN,2023-12-31,income_stmt,Net Income,30425000000.0,USD,2024-03-30
+AMZN,2022-12-31,income_stmt,Net Income,-2722000000.0,USD,2023-03-31
+AMZN,2025-12-31,income_stmt,Diluted EPS,7.17,USD,2026-03-31
+AMZN,2024-12-31,income_stmt,Diluted EPS,5.53,USD,2025-03-31
+AMZN,2023-12-31,income_stmt,Diluted EPS,2.9,USD,2024-03-30
+AMZN,2022-12-31,income_stmt,Diluted EPS,-0.27,USD,2023-03-31
+AMZN,2025-12-31,income_stmt,Interest Expense,2274000000.0,USD,2026-03-31
+AMZN,2024-12-31,income_stmt,Interest Expense,2406000000.0,USD,2025-03-31
+AMZN,2023-12-31,income_stmt,Interest Expense,3182000000.0,USD,2024-03-30
+AMZN,2022-12-31,income_stmt,Interest Expense,2367000000.0,USD,2023-03-31
+AMZN,2025-12-31,balance_sheet,Total Assets,818042000000.0,USD,2026-03-31
+AMZN,2024-12-31,balance_sheet,Total Assets,624894000000.0,USD,2025-03-31
+AMZN,2023-12-31,balance_sheet,Total Assets,527854000000.0,USD,2024-03-30
+AMZN,2022-12-31,balance_sheet,Total Assets,462675000000.0,USD,2023-03-31
+AMZN,2025-12-31,balance_sheet,Total Debt,152987000000.0,USD,2026-03-31
+AMZN,2024-12-31,balance_sheet,Total Debt,130900000000.0,USD,2025-03-31
+AMZN,2023-12-31,balance_sheet,Total Debt,135611000000.0,USD,2024-03-30
+AMZN,2022-12-31,balance_sheet,Total Debt,140118000000.0,USD,2023-03-31
+AMZN,2022-12-31,balance_sheet,Net Debt,13262000000.0,USD,2023-03-31
+AMZN,2021-12-31,balance_sheet,Net Debt,12524000000.0,USD,2022-03-31
+AMZN,2025-12-31,balance_sheet,Stockholders Equity,411065000000.0,USD,2026-03-31
+AMZN,2024-12-31,balance_sheet,Stockholders Equity,285970000000.0,USD,2025-03-31
+AMZN,2023-12-31,balance_sheet,Stockholders Equity,201875000000.0,USD,2024-03-30
+AMZN,2022-12-31,balance_sheet,Stockholders Equity,146043000000.0,USD,2023-03-31
+AMZN,2025-12-31,balance_sheet,Cash And Cash Equivalents,86810000000.0,USD,2026-03-31
+AMZN,2024-12-31,balance_sheet,Cash And Cash Equivalents,78779000000.0,USD,2025-03-31
+AMZN,2023-12-31,balance_sheet,Cash And Cash Equivalents,73387000000.0,USD,2024-03-30
+AMZN,2022-12-31,balance_sheet,Cash And Cash Equivalents,53888000000.0,USD,2023-03-31
+AMZN,2025-12-31,balance_sheet,Current Assets,229083000000.0,USD,2026-03-31
+AMZN,2024-12-31,balance_sheet,Current Assets,190867000000.0,USD,2025-03-31
+AMZN,2023-12-31,balance_sheet,Current Assets,172351000000.0,USD,2024-03-30
+AMZN,2022-12-31,balance_sheet,Current Assets,146791000000.0,USD,2023-03-31
+AMZN,2025-12-31,balance_sheet,Current Liabilities,218005000000.0,USD,2026-03-31
+AMZN,2024-12-31,balance_sheet,Current Liabilities,179431000000.0,USD,2025-03-31
+AMZN,2023-12-31,balance_sheet,Current Liabilities,164917000000.0,USD,2024-03-30
+AMZN,2022-12-31,balance_sheet,Current Liabilities,155393000000.0,USD,2023-03-31
+AMZN,2025-12-31,cashflow,Operating Cash Flow,139514000000.0,USD,2026-03-31
+AMZN,2024-12-31,cashflow,Operating Cash Flow,115877000000.0,USD,2025-03-31
+AMZN,2023-12-31,cashflow,Operating Cash Flow,84946000000.0,USD,2024-03-30
+AMZN,2022-12-31,cashflow,Operating Cash Flow,46752000000.0,USD,2023-03-31
+AMZN,2025-12-31,cashflow,Capital Expenditure,-131819000000.0,USD,2026-03-31
+AMZN,2024-12-31,cashflow,Capital Expenditure,-82999000000.0,USD,2025-03-31
+AMZN,2023-12-31,cashflow,Capital Expenditure,-52729000000.0,USD,2024-03-30
+AMZN,2022-12-31,cashflow,Capital Expenditure,-63645000000.0,USD,2023-03-31
+AMZN,2025-12-31,cashflow,Free Cash Flow,7695000000.0,USD,2026-03-31
+AMZN,2024-12-31,cashflow,Free Cash Flow,32878000000.0,USD,2025-03-31
+AMZN,2023-12-31,cashflow,Free Cash Flow,32217000000.0,USD,2024-03-30
+AMZN,2022-12-31,cashflow,Free Cash Flow,-16893000000.0,USD,2023-03-31
+TSLA,2025-12-31,income_stmt,Total Revenue,94827000000.0,USD,2026-03-31
+TSLA,2024-12-31,income_stmt,Total Revenue,97690000000.0,USD,2025-03-31
+TSLA,2023-12-31,income_stmt,Total Revenue,96773000000.0,USD,2024-03-30
+TSLA,2022-12-31,income_stmt,Total Revenue,81462000000.0,USD,2023-03-31
+TSLA,2025-12-31,income_stmt,Operating Income,4849000000.0,USD,2026-03-31
+TSLA,2024-12-31,income_stmt,Operating Income,7760000000.0,USD,2025-03-31
+TSLA,2023-12-31,income_stmt,Operating Income,8891000000.0,USD,2024-03-30
+TSLA,2022-12-31,income_stmt,Operating Income,13832000000.0,USD,2023-03-31
+TSLA,2025-12-31,income_stmt,EBITDA,11764000000.0,USD,2026-03-31
+TSLA,2024-12-31,income_stmt,EBITDA,14708000000.0,USD,2025-03-31
+TSLA,2023-12-31,income_stmt,EBITDA,14796000000.0,USD,2024-03-30
+TSLA,2022-12-31,income_stmt,EBITDA,17657000000.0,USD,2023-03-31
+TSLA,2025-12-31,income_stmt,Net Income,3794000000.0,USD,2026-03-31
+TSLA,2024-12-31,income_stmt,Net Income,7130000000.0,USD,2025-03-31
+TSLA,2023-12-31,income_stmt,Net Income,14999000000.0,USD,2024-03-30
+TSLA,2022-12-31,income_stmt,Net Income,12583000000.0,USD,2023-03-31
+TSLA,2025-12-31,income_stmt,Diluted EPS,1.08,USD,2026-03-31
+TSLA,2024-12-31,income_stmt,Diluted EPS,2.04,USD,2025-03-31
+TSLA,2023-12-31,income_stmt,Diluted EPS,4.31,USD,2024-03-30
+TSLA,2022-12-31,income_stmt,Diluted EPS,3.62,USD,2023-03-31
+TSLA,2025-12-31,income_stmt,Interest Expense,338000000.0,USD,2026-03-31
+TSLA,2024-12-31,income_stmt,Interest Expense,350000000.0,USD,2025-03-31
+TSLA,2023-12-31,income_stmt,Interest Expense,156000000.0,USD,2024-03-30
+TSLA,2022-12-31,income_stmt,Interest Expense,191000000.0,USD,2023-03-31
+TSLA,2025-12-31,balance_sheet,Total Assets,137806000000.0,USD,2026-03-31
+TSLA,2024-12-31,balance_sheet,Total Assets,122070000000.0,USD,2025-03-31
+TSLA,2023-12-31,balance_sheet,Total Assets,106618000000.0,USD,2024-03-30
+TSLA,2022-12-31,balance_sheet,Total Assets,82338000000.0,USD,2023-03-31
+TSLA,2025-12-31,balance_sheet,Total Debt,14719000000.0,USD,2026-03-31
+TSLA,2024-12-31,balance_sheet,Total Debt,13623000000.0,USD,2025-03-31
+TSLA,2023-12-31,balance_sheet,Total Debt,9573000000.0,USD,2024-03-30
+TSLA,2022-12-31,balance_sheet,Total Debt,5748000000.0,USD,2023-03-31
+TSLA,2025-12-31,balance_sheet,Stockholders Equity,82137000000.0,USD,2026-03-31
+TSLA,2024-12-31,balance_sheet,Stockholders Equity,72913000000.0,USD,2025-03-31
+TSLA,2023-12-31,balance_sheet,Stockholders Equity,62634000000.0,USD,2024-03-30
+TSLA,2022-12-31,balance_sheet,Stockholders Equity,44704000000.0,USD,2023-03-31
+TSLA,2025-12-31,balance_sheet,Cash And Cash Equivalents,16513000000.0,USD,2026-03-31
+TSLA,2024-12-31,balance_sheet,Cash And Cash Equivalents,16139000000.0,USD,2025-03-31
+TSLA,2023-12-31,balance_sheet,Cash And Cash Equivalents,16398000000.0,USD,2024-03-30
+TSLA,2022-12-31,balance_sheet,Cash And Cash Equivalents,16253000000.0,USD,2023-03-31
+TSLA,2025-12-31,balance_sheet,Current Assets,68642000000.0,USD,2026-03-31
+TSLA,2024-12-31,balance_sheet,Current Assets,58360000000.0,USD,2025-03-31
+TSLA,2023-12-31,balance_sheet,Current Assets,49616000000.0,USD,2024-03-30
+TSLA,2022-12-31,balance_sheet,Current Assets,40917000000.0,USD,2023-03-31
+TSLA,2025-12-31,balance_sheet,Current Liabilities,31714000000.0,USD,2026-03-31
+TSLA,2024-12-31,balance_sheet,Current Liabilities,28821000000.0,USD,2025-03-31
+TSLA,2023-12-31,balance_sheet,Current Liabilities,28748000000.0,USD,2024-03-30
+TSLA,2022-12-31,balance_sheet,Current Liabilities,26709000000.0,USD,2023-03-31
+TSLA,2025-12-31,cashflow,Operating Cash Flow,14747000000.0,USD,2026-03-31
+TSLA,2024-12-31,cashflow,Operating Cash Flow,14923000000.0,USD,2025-03-31
+TSLA,2023-12-31,cashflow,Operating Cash Flow,13256000000.0,USD,2024-03-30
+TSLA,2022-12-31,cashflow,Operating Cash Flow,14724000000.0,USD,2023-03-31
+TSLA,2025-12-31,cashflow,Capital Expenditure,-8527000000.0,USD,2026-03-31
+TSLA,2024-12-31,cashflow,Capital Expenditure,-11342000000.0,USD,2025-03-31
+TSLA,2023-12-31,cashflow,Capital Expenditure,-8899000000.0,USD,2024-03-30
+TSLA,2022-12-31,cashflow,Capital Expenditure,-7172000000.0,USD,2023-03-31
+TSLA,2025-12-31,cashflow,Free Cash Flow,6220000000.0,USD,2026-03-31
+TSLA,2024-12-31,cashflow,Free Cash Flow,3581000000.0,USD,2025-03-31
+TSLA,2023-12-31,cashflow,Free Cash Flow,4357000000.0,USD,2024-03-30
+TSLA,2022-12-31,cashflow,Free Cash Flow,7552000000.0,USD,2023-03-31
+JPM,2025-12-31,income_stmt,Total Revenue,181847000000.0,USD,2026-03-31
+JPM,2024-12-31,income_stmt,Total Revenue,169439000000.0,USD,2025-03-31
+JPM,2023-12-31,income_stmt,Total Revenue,154952000000.0,USD,2024-03-30
+JPM,2022-12-31,income_stmt,Total Revenue,127727000000.0,USD,2023-03-31
+JPM,2025-12-31,income_stmt,Net Income,57048000000.0,USD,2026-03-31
+JPM,2024-12-31,income_stmt,Net Income,58471000000.0,USD,2025-03-31
+JPM,2023-12-31,income_stmt,Net Income,49552000000.0,USD,2024-03-30
+JPM,2022-12-31,income_stmt,Net Income,37676000000.0,USD,2023-03-31
+JPM,2025-12-31,income_stmt,Diluted EPS,20.02,USD,2026-03-31
+JPM,2024-12-31,income_stmt,Diluted EPS,19.75,USD,2025-03-31
+JPM,2023-12-31,income_stmt,Diluted EPS,16.23,USD,2024-03-30
+JPM,2022-12-31,income_stmt,Diluted EPS,12.09,USD,2023-03-31
+JPM,2025-12-31,income_stmt,Interest Expense,97898000000.0,USD,2026-03-31
+JPM,2024-12-31,income_stmt,Interest Expense,101350000000.0,USD,2025-03-31
+JPM,2023-12-31,income_stmt,Interest Expense,81321000000.0,USD,2024-03-30
+JPM,2022-12-31,income_stmt,Interest Expense,26097000000.0,USD,2023-03-31
+JPM,2025-12-31,balance_sheet,Total Assets,4424900000000.0,USD,2026-03-31
+JPM,2024-12-31,balance_sheet,Total Assets,4002814000000.0,USD,2025-03-31
+JPM,2023-12-31,balance_sheet,Total Assets,3875393000000.0,USD,2024-03-30
+JPM,2022-12-31,balance_sheet,Total Assets,3665743000000.0,USD,2023-03-31
+JPM,2025-12-31,balance_sheet,Total Debt,499982000000.0,USD,2026-03-31
+JPM,2024-12-31,balance_sheet,Total Debt,454311000000.0,USD,2025-03-31
+JPM,2023-12-31,balance_sheet,Total Debt,436537000000.0,USD,2024-03-30
+JPM,2022-12-31,balance_sheet,Total Debt,339892000000.0,USD,2023-03-31
+JPM,2025-12-31,balance_sheet,Net Debt,156644000000.0,USD,2026-03-31
+JPM,2025-12-31,balance_sheet,Stockholders Equity,362438000000.0,USD,2026-03-31
+JPM,2024-12-31,balance_sheet,Stockholders Equity,344758000000.0,USD,2025-03-31
+JPM,2023-12-31,balance_sheet,Stockholders Equity,327878000000.0,USD,2024-03-30
+JPM,2022-12-31,balance_sheet,Stockholders Equity,292332000000.0,USD,2023-03-31
+JPM,2025-12-31,balance_sheet,Cash And Cash Equivalents,343338000000.0,USD,2026-03-31
+JPM,2024-12-31,balance_sheet,Cash And Cash Equivalents,469317000000.0,USD,2025-03-31
+JPM,2023-12-31,balance_sheet,Cash And Cash Equivalents,624151000000.0,USD,2024-03-30
+JPM,2022-12-31,balance_sheet,Cash And Cash Equivalents,567234000000.0,USD,2023-03-31
+JPM,2025-12-31,cashflow,Operating Cash Flow,-147782000000.0,USD,2026-03-31
+JPM,2024-12-31,cashflow,Operating Cash Flow,-42012000000.0,USD,2025-03-31
+JPM,2023-12-31,cashflow,Operating Cash Flow,12974000000.0,USD,2024-03-30
+JPM,2022-12-31,cashflow,Operating Cash Flow,107119000000.0,USD,2023-03-31
+JPM,2025-12-31,cashflow,Free Cash Flow,-147782000000.0,USD,2026-03-31
+JPM,2024-12-31,cashflow,Free Cash Flow,-42012000000.0,USD,2025-03-31
+JPM,2023-12-31,cashflow,Free Cash Flow,12974000000.0,USD,2024-03-30
+JPM,2022-12-31,cashflow,Free Cash Flow,107119000000.0,USD,2023-03-31
+JPM,2025-12-31,cashflow,Cash Dividends Paid,-16625000000.0,USD,2026-03-31
+JPM,2024-12-31,cashflow,Cash Dividends Paid,-14783000000.0,USD,2025-03-31
+JPM,2023-12-31,cashflow,Cash Dividends Paid,-13463000000.0,USD,2024-03-30
+JPM,2022-12-31,cashflow,Cash Dividends Paid,-13562000000.0,USD,2023-03-31
+JNJ,2025-12-31,income_stmt,Total Revenue,94193000000.0,USD,2026-03-31
+JNJ,2024-12-31,income_stmt,Total Revenue,88821000000.0,USD,2025-03-31
+JNJ,2023-12-31,income_stmt,Total Revenue,85159000000.0,USD,2024-03-30
+JNJ,2022-12-31,income_stmt,Total Revenue,79990000000.0,USD,2023-03-31
+JNJ,2025-12-31,income_stmt,Operating Income,25596000000.0,USD,2026-03-31
+JNJ,2024-12-31,income_stmt,Operating Income,21249000000.0,USD,2025-03-31
+JNJ,2023-12-31,income_stmt,Operating Income,22009000000.0,USD,2024-03-30
+JNJ,2022-12-31,income_stmt,Operating Income,21013000000.0,USD,2023-03-31
+JNJ,2025-12-31,income_stmt,EBITDA,41055000000.0,USD,2026-03-31
+JNJ,2024-12-31,income_stmt,EBITDA,24781000000.0,USD,2025-03-31
+JNJ,2023-12-31,income_stmt,EBITDA,23320000000.0,USD,2024-03-30
+JNJ,2022-12-31,income_stmt,EBITDA,26605000000.0,USD,2023-03-31
+JNJ,2025-12-31,income_stmt,Net Income,26804000000.0,USD,2026-03-31
+JNJ,2024-12-31,income_stmt,Net Income,14066000000.0,USD,2025-03-31
+JNJ,2023-12-31,income_stmt,Net Income,35153000000.0,USD,2024-03-30
+JNJ,2022-12-31,income_stmt,Net Income,17941000000.0,USD,2023-03-31
+JNJ,2025-12-31,income_stmt,Diluted EPS,11.03,USD,2026-03-31
+JNJ,2024-12-31,income_stmt,Diluted EPS,5.79,USD,2025-03-31
+JNJ,2023-12-31,income_stmt,Diluted EPS,13.72,USD,2024-03-30
+JNJ,2022-12-31,income_stmt,Diluted EPS,6.73,USD,2023-03-31
+JNJ,2025-12-31,income_stmt,Interest Expense,971000000.0,USD,2026-03-31
+JNJ,2024-12-31,income_stmt,Interest Expense,755000000.0,USD,2025-03-31
+JNJ,2023-12-31,income_stmt,Interest Expense,772000000.0,USD,2024-03-30
+JNJ,2022-12-31,income_stmt,Interest Expense,276000000.0,USD,2023-03-31
+JNJ,2025-12-31,balance_sheet,Total Assets,199210000000.0,USD,2026-03-31
+JNJ,2024-12-31,balance_sheet,Total Assets,180104000000.0,USD,2025-03-31
+JNJ,2023-12-31,balance_sheet,Total Assets,167558000000.0,USD,2024-03-30
+JNJ,2022-12-31,balance_sheet,Total Assets,187378000000.0,USD,2023-03-31
+JNJ,2025-12-31,balance_sheet,Total Debt,47933000000.0,USD,2026-03-31
+JNJ,2024-12-31,balance_sheet,Total Debt,36634000000.0,USD,2025-03-31
+JNJ,2023-12-31,balance_sheet,Total Debt,29332000000.0,USD,2024-03-30
+JNJ,2022-12-31,balance_sheet,Total Debt,39642000000.0,USD,2023-03-31
+JNJ,2025-12-31,balance_sheet,Net Debt,28224000000.0,USD,2026-03-31
+JNJ,2024-12-31,balance_sheet,Net Debt,12529000000.0,USD,2025-03-31
+JNJ,2023-12-31,balance_sheet,Net Debt,7473000000.0,USD,2024-03-30
+JNJ,2022-12-31,balance_sheet,Net Debt,26753000000.0,USD,2023-03-31
+JNJ,2025-12-31,balance_sheet,Stockholders Equity,81544000000.0,USD,2026-03-31
+JNJ,2024-12-31,balance_sheet,Stockholders Equity,71490000000.0,USD,2025-03-31
+JNJ,2023-12-31,balance_sheet,Stockholders Equity,68774000000.0,USD,2024-03-30
+JNJ,2022-12-31,balance_sheet,Stockholders Equity,76804000000.0,USD,2023-03-31
+JNJ,2025-12-31,balance_sheet,Cash And Cash Equivalents,19709000000.0,USD,2026-03-31
+JNJ,2024-12-31,balance_sheet,Cash And Cash Equivalents,24105000000.0,USD,2025-03-31
+JNJ,2023-12-31,balance_sheet,Cash And Cash Equivalents,21859000000.0,USD,2024-03-30
+JNJ,2022-12-31,balance_sheet,Cash And Cash Equivalents,12889000000.0,USD,2023-03-31
+JNJ,2025-12-31,balance_sheet,Current Assets,55624000000.0,USD,2026-03-31
+JNJ,2024-12-31,balance_sheet,Current Assets,55893000000.0,USD,2025-03-31
+JNJ,2023-12-31,balance_sheet,Current Assets,53495000000.0,USD,2024-03-30
+JNJ,2022-12-31,balance_sheet,Current Assets,55294000000.0,USD,2023-03-31
+JNJ,2025-12-31,balance_sheet,Current Liabilities,54126000000.0,USD,2026-03-31
+JNJ,2024-12-31,balance_sheet,Current Liabilities,50321000000.0,USD,2025-03-31
+JNJ,2023-12-31,balance_sheet,Current Liabilities,46282000000.0,USD,2024-03-30
+JNJ,2022-12-31,balance_sheet,Current Liabilities,55802000000.0,USD,2023-03-31
+JNJ,2025-12-31,cashflow,Operating Cash Flow,24530000000.0,USD,2026-03-31
+JNJ,2024-12-31,cashflow,Operating Cash Flow,24266000000.0,USD,2025-03-31
+JNJ,2023-12-31,cashflow,Operating Cash Flow,22791000000.0,USD,2024-03-30
+JNJ,2022-12-31,cashflow,Operating Cash Flow,21194000000.0,USD,2023-03-31
+JNJ,2025-12-31,cashflow,Capital Expenditure,-5217000000.0,USD,2026-03-31
+JNJ,2024-12-31,cashflow,Capital Expenditure,-6207000000.0,USD,2025-03-31
+JNJ,2023-12-31,cashflow,Capital Expenditure,-5013000000.0,USD,2024-03-30
+JNJ,2022-12-31,cashflow,Capital Expenditure,-4009000000.0,USD,2023-03-31
+JNJ,2025-12-31,cashflow,Free Cash Flow,19313000000.0,USD,2026-03-31
+JNJ,2024-12-31,cashflow,Free Cash Flow,18059000000.0,USD,2025-03-31
+JNJ,2023-12-31,cashflow,Free Cash Flow,17778000000.0,USD,2024-03-30
+JNJ,2022-12-31,cashflow,Free Cash Flow,17185000000.0,USD,2023-03-31
+JNJ,2025-12-31,cashflow,Cash Dividends Paid,-12381000000.0,USD,2026-03-31
+JNJ,2024-12-31,cashflow,Cash Dividends Paid,-11823000000.0,USD,2025-03-31
+JNJ,2023-12-31,cashflow,Cash Dividends Paid,-11770000000.0,USD,2024-03-30
+JNJ,2022-12-31,cashflow,Cash Dividends Paid,-11682000000.0,USD,2023-03-31
+PG,2026-06-30,income_stmt,Total Revenue,87032000000.0,USD,2026-09-28
+PG,2025-06-30,income_stmt,Total Revenue,84284000000.0,USD,2025-09-28
+PG,2024-06-30,income_stmt,Total Revenue,84039000000.0,USD,2024-09-28
+PG,2023-06-30,income_stmt,Total Revenue,82006000000.0,USD,2023-09-28
+PG,2026-06-30,income_stmt,Operating Income,19748000000.0,USD,2026-09-28
+PG,2025-06-30,income_stmt,Operating Income,20451000000.0,USD,2025-09-28
+PG,2024-06-30,income_stmt,Operating Income,19886000000.0,USD,2024-09-28
+PG,2023-06-30,income_stmt,Operating Income,18134000000.0,USD,2023-09-28
+PG,2026-06-30,income_stmt,EBITDA,24414000000.0,USD,2026-09-28
+PG,2025-06-30,income_stmt,EBITDA,23921000000.0,USD,2025-09-28
+PG,2024-06-30,income_stmt,EBITDA,22582000000.0,USD,2024-09-28
+PG,2023-06-30,income_stmt,EBITDA,21823000000.0,USD,2023-09-28
+PG,2026-06-30,income_stmt,Net Income,16046000000.0,USD,2026-09-28
+PG,2025-06-30,income_stmt,Net Income,15974000000.0,USD,2025-09-28
+PG,2024-06-30,income_stmt,Net Income,14879000000.0,USD,2024-09-28
+PG,2023-06-30,income_stmt,Net Income,14653000000.0,USD,2023-09-28
+PG,2026-06-30,income_stmt,Diluted EPS,6.62,USD,2026-09-28
+PG,2025-06-30,income_stmt,Diluted EPS,6.51,USD,2025-09-28
+PG,2024-06-30,income_stmt,Diluted EPS,6.02,USD,2024-09-28
+PG,2023-06-30,income_stmt,Diluted EPS,5.9,USD,2023-09-28
+PG,2026-06-30,income_stmt,Interest Expense,877000000.0,USD,2026-09-28
+PG,2025-06-30,income_stmt,Interest Expense,907000000.0,USD,2025-09-28
+PG,2024-06-30,income_stmt,Interest Expense,925000000.0,USD,2024-09-28
+PG,2023-06-30,income_stmt,Interest Expense,756000000.0,USD,2023-09-28
+PG,2026-06-30,balance_sheet,Total Assets,126521000000.0,USD,2026-09-28
+PG,2025-06-30,balance_sheet,Total Assets,125231000000.0,USD,2025-09-28
+PG,2024-06-30,balance_sheet,Total Assets,122370000000.0,USD,2024-09-28
+PG,2023-06-30,balance_sheet,Total Assets,120829000000.0,USD,2023-09-28
+PG,2026-06-30,balance_sheet,Total Debt,35026000000.0,USD,2026-09-28
+PG,2025-06-30,balance_sheet,Total Debt,35463000000.0,USD,2025-09-28
+PG,2024-06-30,balance_sheet,Total Debt,33369000000.0,USD,2024-09-28
+PG,2023-06-30,balance_sheet,Total Debt,35424000000.0,USD,2023-09-28
+PG,2026-06-30,balance_sheet,Net Debt,24197000000.0,USD,2026-09-28
+PG,2025-06-30,balance_sheet,Net Debt,24951000000.0,USD,2025-09-28
+PG,2024-06-30,balance_sheet,Net Debt,22978000000.0,USD,2024-09-28
+PG,2023-06-30,balance_sheet,Net Debt,26361000000.0,USD,2023-09-28
+PG,2026-06-30,balance_sheet,Stockholders Equity,54081000000.0,USD,2026-09-28
+PG,2025-06-30,balance_sheet,Stockholders Equity,52012000000.0,USD,2025-09-28
+PG,2024-06-30,balance_sheet,Stockholders Equity,50286000000.0,USD,2024-09-28
+PG,2023-06-30,balance_sheet,Stockholders Equity,46777000000.0,USD,2023-09-28
+PG,2026-06-30,balance_sheet,Cash And Cash Equivalents,9942000000.0,USD,2026-09-28
+PG,2025-06-30,balance_sheet,Cash And Cash Equivalents,9556000000.0,USD,2025-09-28
+PG,2024-06-30,balance_sheet,Cash And Cash Equivalents,9482000000.0,USD,2024-09-28
+PG,2023-06-30,balance_sheet,Cash And Cash Equivalents,8246000000.0,USD,2023-09-28
+PG,2026-06-30,balance_sheet,Current Assets,26208000000.0,USD,2026-09-28
+PG,2025-06-30,balance_sheet,Current Assets,25392000000.0,USD,2025-09-28
+PG,2024-06-30,balance_sheet,Current Assets,24709000000.0,USD,2024-09-28
+PG,2023-06-30,balance_sheet,Current Assets,22648000000.0,USD,2023-09-28
+PG,2026-06-30,balance_sheet,Current Liabilities,38694000000.0,USD,2026-09-28
+PG,2025-06-30,balance_sheet,Current Liabilities,36058000000.0,USD,2025-09-28
+PG,2024-06-30,balance_sheet,Current Liabilities,33627000000.0,USD,2024-09-28
+PG,2023-06-30,balance_sheet,Current Liabilities,35756000000.0,USD,2023-09-28
+PG,2026-06-30,cashflow,Operating Cash Flow,19556000000.0,USD,2026-09-28
+PG,2025-06-30,cashflow,Operating Cash Flow,17817000000.0,USD,2025-09-28
+PG,2024-06-30,cashflow,Operating Cash Flow,19846000000.0,USD,2024-09-28
+PG,2023-06-30,cashflow,Operating Cash Flow,16848000000.0,USD,2023-09-28
+PG,2026-06-30,cashflow,Capital Expenditure,-4409000000.0,USD,2026-09-28
+PG,2025-06-30,cashflow,Capital Expenditure,-3773000000.0,USD,2025-09-28
+PG,2024-06-30,cashflow,Capital Expenditure,-3322000000.0,USD,2024-09-28
+PG,2023-06-30,cashflow,Capital Expenditure,-3062000000.0,USD,2023-09-28
+PG,2026-06-30,cashflow,Free Cash Flow,15147000000.0,USD,2026-09-28
+PG,2025-06-30,cashflow,Free Cash Flow,14044000000.0,USD,2025-09-28
+PG,2024-06-30,cashflow,Free Cash Flow,16524000000.0,USD,2024-09-28
+PG,2023-06-30,cashflow,Free Cash Flow,13786000000.0,USD,2023-09-28
+PG,2026-06-30,cashflow,Cash Dividends Paid,-10232000000.0,USD,2026-09-28
+PG,2025-06-30,cashflow,Cash Dividends Paid,-9872000000.0,USD,2025-09-28
+PG,2024-06-30,cashflow,Cash Dividends Paid,-9312000000.0,USD,2024-09-28
+PG,2023-06-30,cashflow,Cash Dividends Paid,-8999000000.0,USD,2023-09-28
+XOM,2025-12-31,income_stmt,Total Revenue,323905000000.0,USD,2026-03-31
+XOM,2024-12-31,income_stmt,Total Revenue,339247000000.0,USD,2025-03-31
+XOM,2023-12-31,income_stmt,Total Revenue,334697000000.0,USD,2024-03-30
+XOM,2022-12-31,income_stmt,Total Revenue,398675000000.0,USD,2023-03-31
+XOM,2025-12-31,income_stmt,Operating Income,33938000000.0,USD,2026-03-31
+XOM,2024-12-31,income_stmt,Operating Income,39652000000.0,USD,2025-03-31
+XOM,2023-12-31,income_stmt,Operating Income,44461000000.0,USD,2024-03-30
+XOM,2022-12-31,income_stmt,Operating Income,64028000000.0,USD,2023-03-31
+XOM,2025-12-31,income_stmt,EBITDA,67864000000.0,USD,2026-03-31
+XOM,2024-12-31,income_stmt,EBITDA,73311000000.0,USD,2025-03-31
+XOM,2023-12-31,income_stmt,EBITDA,74273000000.0,USD,2024-03-30
+XOM,2022-12-31,income_stmt,EBITDA,102591000000.0,USD,2023-03-31
+XOM,2025-12-31,income_stmt,Net Income,28844000000.0,USD,2026-03-31
+XOM,2024-12-31,income_stmt,Net Income,33680000000.0,USD,2025-03-31
+XOM,2023-12-31,income_stmt,Net Income,36010000000.0,USD,2024-03-30
+XOM,2022-12-31,income_stmt,Net Income,55740000000.0,USD,2023-03-31
+XOM,2025-12-31,income_stmt,Diluted EPS,6.7,USD,2026-03-31
+XOM,2024-12-31,income_stmt,Diluted EPS,7.84,USD,2025-03-31
+XOM,2023-12-31,income_stmt,Diluted EPS,8.89,USD,2024-03-30
+XOM,2022-12-31,income_stmt,Diluted EPS,13.26,USD,2023-03-31
+XOM,2025-12-31,income_stmt,Interest Expense,603000000.0,USD,2026-03-31
+XOM,2024-12-31,income_stmt,Interest Expense,996000000.0,USD,2025-03-31
+XOM,2023-12-31,income_stmt,Interest Expense,849000000.0,USD,2024-03-30
+XOM,2022-12-31,income_stmt,Interest Expense,798000000.0,USD,2023-03-31
+XOM,2025-12-31,balance_sheet,Total Assets,448980000000.0,USD,2026-03-31
+XOM,2024-12-31,balance_sheet,Total Assets,453475000000.0,USD,2025-03-31
+XOM,2023-12-31,balance_sheet,Total Assets,376317000000.0,USD,2024-03-30
+XOM,2022-12-31,balance_sheet,Total Assets,369067000000.0,USD,2023-03-31
+XOM,2025-12-31,balance_sheet,Total Debt,43537000000.0,USD,2026-03-31
+XOM,2024-12-31,balance_sheet,Total Debt,41710000000.0,USD,2025-03-31
+XOM,2023-12-31,balance_sheet,Total Debt,41573000000.0,USD,2024-03-30
+XOM,2022-12-31,balance_sheet,Total Debt,41193000000.0,USD,2023-03-31
+XOM,2025-12-31,balance_sheet,Net Debt,26543000000.0,USD,2026-03-31
+XOM,2024-12-31,balance_sheet,Net Debt,14730000000.0,USD,2025-03-31
+XOM,2023-12-31,balance_sheet,Net Debt,6196000000.0,USD,2024-03-30
+XOM,2022-12-31,balance_sheet,Net Debt,8254000000.0,USD,2023-03-31
+XOM,2025-12-31,balance_sheet,Stockholders Equity,259386000000.0,USD,2026-03-31
+XOM,2024-12-31,balance_sheet,Stockholders Equity,263705000000.0,USD,2025-03-31
+XOM,2023-12-31,balance_sheet,Stockholders Equity,204802000000.0,USD,2024-03-30
+XOM,2022-12-31,balance_sheet,Stockholders Equity,195049000000.0,USD,2023-03-31
+XOM,2025-12-31,balance_sheet,Cash And Cash Equivalents,10681000000.0,USD,2026-03-31
+XOM,2024-12-31,balance_sheet,Cash And Cash Equivalents,23029000000.0,USD,2025-03-31
+XOM,2023-12-31,balance_sheet,Cash And Cash Equivalents,31539000000.0,USD,2024-03-30
+XOM,2022-12-31,balance_sheet,Cash And Cash Equivalents,29640000000.0,USD,2023-03-31
+XOM,2025-12-31,balance_sheet,Current Assets,83382000000.0,USD,2026-03-31
+XOM,2024-12-31,balance_sheet,Current Assets,91990000000.0,USD,2025-03-31
+XOM,2023-12-31,balance_sheet,Current Assets,96609000000.0,USD,2024-03-30
+XOM,2022-12-31,balance_sheet,Current Assets,97631000000.0,USD,2023-03-31
+XOM,2025-12-31,balance_sheet,Current Liabilities,72330000000.0,USD,2026-03-31
+XOM,2024-12-31,balance_sheet,Current Liabilities,70307000000.0,USD,2025-03-31
+XOM,2023-12-31,balance_sheet,Current Liabilities,65316000000.0,USD,2024-03-30
+XOM,2022-12-31,balance_sheet,Current Liabilities,69045000000.0,USD,2023-03-31
+XOM,2025-12-31,cashflow,Operating Cash Flow,51970000000.0,USD,2026-03-31
+XOM,2024-12-31,cashflow,Operating Cash Flow,55022000000.0,USD,2025-03-31
+XOM,2023-12-31,cashflow,Operating Cash Flow,55369000000.0,USD,2024-03-30
+XOM,2022-12-31,cashflow,Operating Cash Flow,76797000000.0,USD,2023-03-31
+XOM,2025-12-31,cashflow,Capital Expenditure,-28358000000.0,USD,2026-03-31
+XOM,2024-12-31,cashflow,Capital Expenditure,-24306000000.0,USD,2025-03-31
+XOM,2023-12-31,cashflow,Capital Expenditure,-21919000000.0,USD,2024-03-30
+XOM,2022-12-31,cashflow,Capital Expenditure,-18407000000.0,USD,2023-03-31
+XOM,2025-12-31,cashflow,Free Cash Flow,23612000000.0,USD,2026-03-31
+XOM,2024-12-31,cashflow,Free Cash Flow,30716000000.0,USD,2025-03-31
+XOM,2023-12-31,cashflow,Free Cash Flow,33450000000.0,USD,2024-03-30
+XOM,2022-12-31,cashflow,Free Cash Flow,58390000000.0,USD,2023-03-31
+XOM,2025-12-31,cashflow,Cash Dividends Paid,-17231000000.0,USD,2026-03-31
+XOM,2024-12-31,cashflow,Cash Dividends Paid,-16704000000.0,USD,2025-03-31
+XOM,2023-12-31,cashflow,Cash Dividends Paid,-14941000000.0,USD,2024-03-30
+XOM,2022-12-31,cashflow,Cash Dividends Paid,-14939000000.0,USD,2023-03-31

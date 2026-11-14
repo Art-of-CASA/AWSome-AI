@@ -1,0 +1,32 @@
+ticker,fossil_involvement,fossil_note,in_jantzi_social_index,jantzi_as_of,controversies,max_severity,controversy_topics,esg_data_status
+RY.TO,aucune,Activité principale hors énergies fossiles,True,2026-11-12,0,aucune trouvée,,partielle
+TD.TO,aucune,Activité principale hors énergies fossiles,False,2026-11-12,1,élevée,Lutte contre le blanchiment,partielle
+MFC.TO,aucune,Activité principale hors énergies fossiles,True,2026-11-12,0,aucune trouvée,,partielle
+ENB.TO,directe,Transport par pipeline et distribution de pétrole et de gaz,True,2026-11-12,1,élevée,"Ligne 5, terres autochtones (Bad River)",partielle
+CNQ.TO,directe,"Production de pétrole, de gaz et de sables bitumineux",True,2026-11-12,0,aucune trouvée,,partielle
+CNR.TO,aucune,Activité principale hors énergies fossiles,True,2026-11-12,0,aucune trouvée,,partielle
+FTS.TO,partielle,"Services publics, dont distribution de gaz naturel",True,2026-11-12,0,aucune trouvée,,partielle
+ATD.TO,aucune,Activité principale hors énergies fossiles,True,2026-11-12,0,aucune trouvée,,partielle
+SHOP.TO,aucune,Activité principale hors énergies fossiles,True,2026-11-12,0,aucune trouvée,,partielle
+CSU.TO,aucune,Activité principale hors énergies fossiles,False,2026-11-12,0,aucune trouvée,,partielle
+AAPL,aucune,Activité principale hors énergies fossiles,,,1,moyenne,Concurrence,partielle
+MSFT,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+NVDA,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+GOOGL,aucune,Activité principale hors énergies fossiles,,,1,élevée,Concurrence,partielle
+AMZN,aucune,Activité principale hors énergies fossiles,,,1,moyenne,Protection du consommateur (Prime),partielle
+TSLA,aucune,Activité principale hors énergies fossiles,,,1,moyenne,Sécurité des produits (Autopilot),partielle
+JPM,aucune,Activité principale hors énergies fossiles,,,1,moyenne,Affaire Epstein,partielle
+JNJ,aucune,Activité principale hors énergies fossiles,,,1,moyenne,Sécurité des produits (talc),partielle
+PG,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+XOM,directe,"Exploration, production et raffinage de pétrole et de gaz",,,1,moyenne,Recyclage du plastique,partielle
+XIU.TO,part énergie 18.0%,Part du secteur énergie publiée par Yahoo Finance (fund data),,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+SPY,part énergie 3.9%,Part du secteur énergie publiée par Yahoo Finance (fund data),,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+QQQ,part énergie 0.5%,Part du secteur énergie publiée par Yahoo Finance (fund data),,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+ESGV,part énergie 0.0%,Part du secteur énergie publiée par Yahoo Finance (fund data),,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+XBB.TO,non applicable,Fonds obligataire ou d'or : pas de répartition sectorielle en actions,,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+ZST.TO,non applicable,Fonds obligataire ou d'or : pas de répartition sectorielle en actions,,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+AGG,non applicable,Fonds obligataire ou d'or : pas de répartition sectorielle en actions,,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+TLT,non applicable,Fonds obligataire ou d'or : pas de répartition sectorielle en actions,,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+GLD,non applicable,Fonds obligataire ou d'or : pas de répartition sectorielle en actions,,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+BTC-USD,indirecte,Consommation d'énergie du minage (Bitcoin) ; Ether en preuve d'enjeu depuis 2022,,,0,aucune trouvée,,partielle
+ETH-USD,indirecte,Consommation d'énergie du minage (Bitcoin) ; Ether en preuve d'enjeu depuis 2022,,,0,aucune trouvée,,partielle

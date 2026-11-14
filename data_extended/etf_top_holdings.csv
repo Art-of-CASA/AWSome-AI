@@ -1,0 +1,38 @@
+etf,holding_symbol,holding_name,weight
+VT,NVDA,NVIDIA Corp,0.0454318
+VT,AAPL,Apple Inc,0.041058302
+VT,MSFT,Microsoft Corp,0.032492198
+VT,AMZN,Amazon.com Inc,0.0206092
+VT,GOOGL,Alphabet Inc Class A,0.0173223
+VT,2330.TW,Taiwan Semiconductor Manufacturing Co Ltd,0.016245801
+VT,AVGO,Broadcom Inc,0.0139319
+VT,META,Meta Platforms Inc Class A,0.0135921
+VT,GOOG,Alphabet Inc Class C,0.0135857
+VT,MU,Micron Technology Inc,0.0102386
+VEA,005930.KQ,Samsung Electronics Co Ltd,0.028148701
+VEA,000660.KQ,SK hynix Inc,0.022973198
+VEA,ASML.AS,ASML Holding NV,0.021403302
+VEA,HSBA.L,HSBC Holdings PLC,0.0104945
+VEA,ROP.SW,Roche Holding AG Ordinary Shares new,0.0090485
+VEA,SHEL.L,Shell PLC,0.0085662
+VEA,RY,Royal Bank of Canada,0.0085177
+VEA,NOVN.SW,Novartis AG Registered Shares,0.0082329
+VEA,8306.T,Mitsubishi UFJ Financial Group Inc,0.007828
+VEA,AZN.L,AstraZeneca PLC,0.0074962
+VWO,2330.TW,Taiwan Semiconductor Manufacturing Co Ltd,0.1574503
+VWO,0700.HK,Tencent Holdings Ltd,0.0281666
+VWO,9988.HK,Alibaba Group Holding Ltd Ordinary Shares,0.021119699
+VWO,2454.TW,MediaTek Inc,0.01875
+VWO,2308.TW,Delta Electronics Inc,0.0094558
+VWO,00939,China Construction Bank Corp Class H,0.009099199
+VWO,2317.TW,Hon Hai Precision Industry Co Ltd,0.0079443995
+VWO,HDFCBANK.NS,HDFC Bank Ltd,0.0069686
+VWO,RELIANCE.NS,Reliance Industries Ltd,0.0068818997
+VWO,01398,Industrial And Commercial Bank Of China Ltd Class H,0.0064797997
+XEQT.TO,XTOT.TO,iShares Core S&P Total U.S. Stk Mktt ETF,0.3125994
+XEQT.TO,XIC.TO,iShares Core S&P/TSX Cap Composite ETF,0.2571781
+XEQT.TO,XEF.TO,iShares Core MSCI EAFE IMI ETF,0.24139191
+XEQT.TO,ITOT,iShares Core S&P Total US Stock Mkt ETF,0.14320171
+XEQT.TO,XEC.TO,iShares Core MSCI Emer Mkts IMI ETF,0.044765
+BNDW,BND,Vanguard Total Bond Market ETF,0.5131012
+BNDW,BNDX,Vanguard Total International Bond ETF,0.48687708

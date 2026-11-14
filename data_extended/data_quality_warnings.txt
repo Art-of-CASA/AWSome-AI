@@ -1,0 +1,4 @@
+Généré par scripts/build_extended_prices.py
+NPN.JO 2023-09-13 : « fractionnement » de 5000 pour 1 dans Yahoo, sans saut de prix ; métadonnée probablement erronée, ne pas l'utiliser
+SBK.JO 2025-04-25 : prix remis à l'échelle x100 (rapport à la médiane voisine 0.0101, erreur d'unité Yahoo)
+VOD.JO 2025-01-10 : prix remis à l'échelle x100 (rapport à la médiane voisine 0.0098, erreur d'unité Yahoo)

@@ -1,0 +1,36 @@
+ticker,fossil_involvement,fossil_note,in_jantzi_social_index,jantzi_as_of,controversies,max_severity,controversy_topics,esg_data_status
+ASML.AS,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+MC.PA,aucune,Activité principale hors énergies fossiles,,,1,moyenne,Chaîne d'approvisionnement (travail),partielle
+NESN.SW,aucune,Activité principale hors énergies fossiles,,,1,moyenne,Eaux minérales (traitements interdits),partielle
+NOVO-B.CO,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+SAP.DE,aucune,Activité principale hors énergies fossiles,,,1,moyenne,Corruption (FCPA),partielle
+SIE.DE,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+TTE.PA,directe,"Exploration, production et raffinage de pétrole et de gaz, GNL",,,1,élevée,Écoblanchiment (allégations climatiques),partielle
+SHEL.L,directe,"Exploration, production et raffinage de pétrole et de gaz, GNL",,,1,faible,Procès climatique (Milieudefensie),partielle
+AZN.L,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+HSBA.L,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+2330.TW,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+005930.KS,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+7203.T,aucune,Activité principale hors énergies fossiles,,,1,moyenne,Certification des véhicules,partielle
+6758.T,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+0700.HK,aucune,Activité principale hors énergies fossiles,,,1,moyenne,Désignation militaire américaine,partielle
+9988.HK,aucune,Activité principale hors énergies fossiles,,,1,élevée,Concurrence,partielle
+1211.HK,aucune,Activité principale hors énergies fossiles,,,1,moyenne,Conditions de travail (Brésil),partielle
+RELIANCE.NS,directe,"Raffinage et pétrochimie (première activité par les revenus), télécoms et commerce",,,0,aucune trouvée,,partielle
+HDFCBANK.NS,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+INFY.NS,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+NPN.JO,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+FSR.JO,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+SBK.JO,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+MTN.JO,aucune,Activité principale hors énergies fossiles,,,1,moyenne,Financement présumé du terrorisme,partielle
+VOD.JO,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+GFI.JO,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+SOL.JO,directe,Carburants et produits chimiques à partir de charbon et de gaz (Secunda),,,0,aucune trouvée,,partielle
+SHP.JO,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+APN.JO,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+COMI.CA,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+VT,part énergie 4.0%,Part du secteur énergie publiée par Yahoo Finance (fund data),,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+VEA,part énergie 5.1%,Part du secteur énergie publiée par Yahoo Finance (fund data),,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+VWO,part énergie 4.1%,Part du secteur énergie publiée par Yahoo Finance (fund data),,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+XEQT.TO,part énergie 7.5%,Part du secteur énergie publiée par Yahoo Finance (fund data),,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+BNDW,non applicable,Fonds obligataire ou d'or : pas de répartition sectorielle en actions,,,0,aucune trouvée,,fonds : méthodologie de l'émetteur

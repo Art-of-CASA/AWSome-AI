@@ -1,0 +1,10 @@
+ticker,overview_categoryName,overview_family,overview_legalType,ops_Annual Report Expense Ratio,ops_Annual Holdings Turnover,ops_Total Net Assets,asset_cashPosition,asset_stockPosition,asset_bondPosition,asset_preferredPosition,asset_convertiblePosition,asset_otherPosition
+XIU.TO,,BlackRock Asset Management Canada Ltd,Exchange Traded Fund,0.0018000001,1.2518001,105448.8,0.0025,0.9975,0.0,0.0,0.0,0.0
+SPY,Large Blend,State Street Investment Management,Exchange Traded Fund,0.000945,0.03,504496.28,0.00059999997,0.9994,0.0,0.0,0.0,0.0
+QQQ,Large Growth,Invesco,Exchange Traded Fund,0.0018000001,0.0,763952.5,0.0016,0.9984,0.0,0.0,0.0,0.0
+ESGV,Large Blend,Vanguard,Exchange Traded Fund,0.00090000004,0.03,464596.16,0.0022,0.9972,0.0,0.0,0.0,0.0007
+XBB.TO,,BlackRock Asset Management Canada Ltd,Exchange Traded Fund,0.001,0.2602,0.0,-0.00029999999,0.0,0.9992,0.0,0.00090000004,0.0001
+ZST.TO,,BMO Asset Management Inc,Exchange Traded Fund,0.0015,1.3141999,0.0,0.3975,0.0,0.6025,0.0,0.0,0.0
+AGG,Intermediate Core Bond,iShares,Exchange Traded Fund,0.00029999999,0.62,0.0,0.0069,0.0,0.99300003,0.0,0.0,0.0
+TLT,Long Government,iShares,Exchange Traded Fund,0.0015,0.18,0.0,0.0047,0.0,0.9953,0.0,0.0,0.0
+GLD,Commodities Focused,State Street Investment Management,Exchange Traded Fund,0.004,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0

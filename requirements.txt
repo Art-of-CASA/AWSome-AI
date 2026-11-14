@@ -1,0 +1,6 @@
+# Scripts de données (scripts/) : collecte, critères des actifs, scénarios.
+# Le site Streamlit a ses propres dépendances : mvp_profil/requirements.txt
+pandas>=2.0
+numpy>=1.26
+yfinance>=1.8
+requests>=2.31

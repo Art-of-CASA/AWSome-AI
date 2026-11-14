@@ -1,0 +1,42 @@
+etf,holding_symbol,holding_name,weight
+XIU.TO,RY,Royal Bank of Canada,0.0952828
+XIU.TO,TD,The Toronto-Dominion Bank,0.069281705
+XIU.TO,SHOP,Shopify Inc Registered Shs -A- Subord Vtg,0.064465396
+XIU.TO,BMO.TO,Bank of Montreal,0.0405514
+XIU.TO,CNQ.TO,Canadian Natural Resources Ltd,0.039142698
+XIU.TO,BNS.TO,Bank of Nova Scotia,0.0386568
+XIU.TO,ENB.TO,Enbridge Inc,0.0371821
+XIU.TO,CM.TO,Canadian Imperial Bank of Commerce,0.0359997
+XIU.TO,SU.TO,Suncor Energy Inc,0.031452402
+XIU.TO,BN.TO,Brookfield Corp Registered Shs -A- Limited Vtg,0.028387401
+SPY,AAPL,Apple Inc,0.0770069
+SPY,NVDA,NVIDIA Corp,0.0758232
+SPY,MSFT,Microsoft Corp,0.0593322
+SPY,AMZN,Amazon.com Inc,0.0361188
+SPY,GOOGL,Alphabet Inc Class A,0.0251408
+SPY,AVGO,Broadcom Inc,0.0237518
+SPY,META,Meta Platforms Inc Class A,0.020762898
+SPY,GOOG,Alphabet Inc Class C,0.020247199
+SPY,LLY,Eli Lilly and Co,0.0173671
+SPY,TSLA,Tesla Inc,0.017252099
+QQQ,AAPL,Apple Inc,0.0815917
+QQQ,NVDA,NVIDIA Corp,0.080005705
+QQQ,MSFT,Microsoft Corp,0.062867396
+QQQ,MU,Micron Technology Inc,0.0447466
+QQQ,AMZN,Amazon.com Inc,0.0420532
+QQQ,AMD,Advanced Micro Devices Inc,0.0369033
+QQQ,TSLA,Tesla Inc,0.0340695
+QQQ,META,Meta Platforms Inc Class A,0.029663898
+QQQ,WMT,Walmart Inc,0.026898898
+QQQ,GOOGL,Alphabet Inc Class A,0.026636802
+ESGV,NVDA,NVIDIA Corp,0.0891658
+ESGV,AAPL,Apple Inc,0.080584295
+ESGV,MSFT,Microsoft Corp,0.0637763
+ESGV,AMZN,Amazon.com Inc,0.040451698
+ESGV,GOOGL,Alphabet Inc Class A,0.0335331
+ESGV,AVGO,Broadcom Inc,0.027344
+ESGV,GOOG,Alphabet Inc Class C,0.0271386
+ESGV,META,Meta Platforms Inc Class A,0.0266791
+ESGV,MU,Micron Technology Inc,0.0200946
+ESGV,TSLA,Tesla Inc,0.017347
+AGG,BISXX,BlackRock Cash Funds Instl SL Agency,0.0293451
