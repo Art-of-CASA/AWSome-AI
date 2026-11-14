@@ -1,0 +1,27 @@
+# Local environment files may contain API keys or developer-only credentials.
+.env
+.env.*
+!.env.example
+
+# AWS local credentials and profiles
+.aws/
+
+# Node / Python build outputs
+node_modules/
+dist/
+build/
+.venv/
+__pycache__/
+*.py[cod]
+
+# Test, coverage, editor, and operating-system files
+.coverage
+coverage/
+.pytest_cache/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# CDK-generated files
+cdk.out/
