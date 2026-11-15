@@ -52,6 +52,11 @@ def _df(lignes, **kw) -> pd.DataFrame:
     return df
 
 
+def _nom_critere(code: str) -> str:
+    """Nom lisible du critère pour les libellés affichés à la personne."""
+    return CRITERES.get(code, {}).get("nom", code)
+
+
 def _etat(code: str) -> str:
     return f"{ICONES.get(code, '')} {ETATS.get(code, code)}".strip()
 
@@ -140,7 +145,7 @@ def afficher_reponse(rep: dict):
 
 
 def tableau_criteres(lignes: list[dict]):
-    df = _df([{"critère": l["critere"], "type": EFFETS[l["effet"]], "état": _etat(l["etat"]), "ce qui est vérifié": l["libelle"],
+    df = _df([{"critère": _nom_critere(l["critere"]), "type": EFFETS[l["effet"]], "état": _etat(l["etat"]), "ce qui est vérifié": l["libelle"],
                         "constat": l["raison"], "poids": l["poids"] or None, "preuves": ", ".join(l["preuves"])} for l in lignes])
     st.dataframe(df, hide_index=True, width="stretch")
 
@@ -177,7 +182,7 @@ def page_portefeuille(a: Analyse):
     st.caption(f"Entrée dans le portefeuille : score d'au moins {pf['seuil_entree']} ({pf['nb_candidats']} candidats), "
                f"{pf['hypotheses']['positions maximales']} positions au plus. Hypothèses ajustables : config/hypotheses_recommandation.json.")
     st.subheader("Chaque contrainte, avec sa preuve")
-    st.dataframe(_df([{"contrainte": x["contrainte"], "critère": x["critere"], "valeur": x["valeur"],
+    st.dataframe(_df([{"contrainte": x["contrainte"], "critère": _nom_critere(x["critere"]), "valeur": x["valeur"],
                                 "limite": x["limite"] if x["limite"] is not None else "—", "état": _etat(x["etat"]),
                                 "détail": x["detail"], "preuves": ", ".join(x["preuves"])} for x in pf["controles"]]).astype(str),
                  hide_index=True, width="stretch")
@@ -214,7 +219,7 @@ def page_portefeuille(a: Analyse):
         for b in gouvernance.bilan(a, pf):
             st.markdown(f"- **{b['controle']}** : {b['detail']}")
         if s["inconnus"]:
-            st.dataframe(_df(s["inconnus"]).rename(columns={"critere": "critère", "etat": "état"}), hide_index=True, width="stretch")
+            st.dataframe(_df([{**x, "critere": _nom_critere(x["critere"])} for x in s["inconnus"]]).rename(columns={"critere": "critère", "etat": "état"}), hide_index=True, width="stretch")
     st.subheader("Résumé du Conseiller")
     if st.button("Rédiger le résumé", key="btn_resume"):
         with st.spinner("Le Conseiller appelle ses outils…"):
@@ -301,7 +306,7 @@ def page_comparaison(a: Analyse):
         col.metric(r["ticker"], f"{ICONES[r['verdict']]} {r['libelle_verdict']}", None if r["score"] is None else f"score {r['score']}", delta_color="off")
     e = c["ecart_decisif"]
     if e.get("critere"):
-        st.success(f"**Écart décisif : {e['libelle']} ({e['critere']}, {EFFETS[e['effet']].lower()})**, en faveur de **{e['en_faveur_de']}**.\n\n{e['raison']}")
+        st.success(f"**Écart décisif : {e['libelle']} ({EFFETS[e['effet']].lower()})**, en faveur de **{e['en_faveur_de']}**.\n\n{e['raison']}")
     else:
         st.info(e["raison"])
     st.caption(c["regle"])
@@ -367,7 +372,7 @@ def page_et_si(a: Analyse):
     st.caption("Scénario fictif : la réponse est modifiée dans une copie, tout est recalculé, et le profil enregistré ne change pas.")
     import synthese
     g, d = st.columns(2)
-    cid = g.selectbox("Réponse à modifier", MODIFIABLES, format_func=lambda c: f"{c} — {CRITERES[c]['nom']}", key="reco_si_cid")
+    cid = g.selectbox("Réponse à modifier", MODIFIABLES, format_func=lambda c: CRITERES[c]["nom"], key="reco_si_cid")
     actuelle = (a.profil.get(cid) or {}).get("valeurs") or []
     valeur = d.selectbox("Nouvelle valeur", CRITERES[cid]["valeurs"], format_func=lambda v: synthese.libelle_valeur(cid, v), key=f"reco_si_val_{cid}")
     st.markdown("Réponse actuelle : " + (", ".join(f"**{synthese.libelle_valeur(cid, v)}**" for v in actuelle) or "**non renseignée**"))
@@ -433,12 +438,12 @@ def page_pourquoi(a: Analyse):
                      hide_index=True, width="stretch")
         p = s["plafonds"]
         st.markdown("**Plafonds**")
-        st.dataframe(_df([("Par titre individuel (D9)", p["titre_pct"]), ("Cryptoactifs (D2)", p["crypto_pct"]),
-                                   ("Placements spéculatifs (D12)", "aucun plafond" if p["speculatif_pct"] is None else p["speculatif_pct"]),
+        st.dataframe(_df([("Par titre individuel", p["titre_pct"]), ("Cryptoactifs", p["crypto_pct"]),
+                                   ("Placements spéculatifs", "aucun plafond" if p["speculatif_pct"] is None else p["speculatif_pct"]),
                                    ("Par secteur (hypothèse)", p["secteur_pct"]),
-                                   (f"Secteur de l'emploi : {', '.join(p['secteur_emploi']['secteurs']) or 'sans objet'} (A12)", p["secteur_emploi"]["pct"] if p["secteur_emploi"]["secteurs"] else "—"),
-                                   ("Exposition au change (D4)", "non renseigné" if p["hors_cad_pct"] is None else p["hors_cad_pct"]),
-                                   ("Par fonds (hypothèse)", p["fonds_pct"]), ("Complexité maximale (C1)", p["complexite_max"])] +
+                                   (f"Secteur de l'emploi : {', '.join(p['secteur_emploi']['secteurs']) or 'sans objet'}", p["secteur_emploi"]["pct"] if p["secteur_emploi"]["secteurs"] else "—"),
+                                   ("Exposition au change", "non renseigné" if p["hors_cad_pct"] is None else p["hors_cad_pct"]),
+                                   ("Par fonds (hypothèse)", p["fonds_pct"]), ("Complexité maximale", p["complexite_max"])] +
                                   [(g["libelle"], g["plafond_pct"]) for g in s["plafonds_groupes"]], columns=["plafond", "% ou niveau"]).astype(str),
                      hide_index=True, width="stretch")
         st.markdown("**Préférences pondérées** (ne compensent jamais une tension)")
