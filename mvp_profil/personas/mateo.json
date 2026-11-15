@@ -1,228 +1,481 @@
 {
- "nom": "Mateo",
- "description": "41 ans, gestionnaire des opérations. Profil de risque modéré, horizon de 8 à 12 ans (énoncé, p. 6).",
- "source": "Énoncé officiel Datathon 2026, AlphaForge AI (PDF)",
- "avertissement": "Profil FICTIF. Les valeurs « énoncé » reprennent le texte officiel ; les valeurs « hypothèse de test » complètent ce que l'énoncé ne dit pas et sont choisies par l'équipe.",
- "profil": {
-  "A1": {
-   "valeurs": [
-    "milieu_carriere"
-   ],
-   "source": "énoncé",
-   "citation": "41 ans · Gestionnaire des opérations",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": ""
+  "nom": "Mateo",
+  "description": "41 ans, gestionnaire des opérations. Profil de risque modéré, horizon de 8 à 12 ans (énoncé, p. 6).",
+  "source": "Énoncé officiel Datathon 2026, AlphaForge AI, p. 6 ; questionnaire complété par simulation",
+  "avertissement": "Profil FICTIF fondé sur le persona officiel. Toutes les réponses à la première personne et les décisions de mise en situation sont simulées ; les motifs indiquent leur lien avec l'énoncé ou les détails ajoutés. Le score de confiance décrit le classement de ces réponses, pas leur authenticité ni le comportement futur d'une personne.",
+  "profil": {
+    "A1": {
+      "valeurs": [
+        "milieu_carriere"
+      ],
+      "source": "hypothèse de test",
+      "citation": "J'ai 41 ans et je travaille comme gestionnaire des opérations.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Réponse simulée cohérente avec l'énoncé, p. 6 : « 41 ans · Gestionnaire des opérations ». Les précisions et chiffres ajoutés sont fictifs."
+    },
+    "A2": {
+      "valeurs": [
+        "5_10_ans"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je vise environ neuf ans, avec une marge entre huit et douze ans selon nos projets familiaux.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Réponse simulée cohérente avec l'énoncé, p. 6 : « 8 à 12 ans (à cheval sur deux classes : la plus courte est retenue) ». Les précisions et chiffres ajoutés sont fictifs."
+    },
+    "A3": {
+      "valeurs": [
+        "croissance"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je veux faire croître notre capital, mais de façon équilibrée : le rendement ne doit pas mettre la stabilité familiale en danger.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Réponse simulée cohérente avec l'énoncé, p. 6 : « Faire croître son capital de façon équilibrée à moyen et à long terme ». Les précisions et chiffres ajoutés sont fictifs."
+    },
+    "A4": {
+      "valeurs": [
+        "moyenne_25_60"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je place 60 000 dollars sur 140 000 dollars d'épargne, donc un peu moins de la moitié.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "A5": {
+      "valeurs": [
+        "3_6_mois"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Notre réserve de 24 000 dollars couvre six mois de dépenses essentielles à 4 000 dollars par mois, sans toucher à ce placement.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "A6": {
+      "valeurs": [
+        "stables"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Mon salaire de gestionnaire est stable. Nous faisons notre budget familial à partir du revenu habituel, sans compter les primes.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "A7": {
+      "valeurs": [
+        "non"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Nous avons une hypothèque à 4,5 %, mais aucun solde de carte ni prêt personnel à taux élevé.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "A8": {
+      "valeurs": [
+        "1_2"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je suis en couple et père de deux enfants. Nous assumons leurs dépenses au quotidien.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Réponse simulée cohérente avec l'énoncé, p. 6 : « En couple, père de deux enfants ». Les précisions et chiffres ajoutés sont fictifs."
+    },
+    "A9": {
+      "valeurs": [
+        "aucun"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je ne prévois pas de retirer de ce capital avant l'échéance ; les dépenses courantes et les projets proches des enfants ont leur propre budget.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "A10": {
+      "valeurs": [
+        "non"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Nos salaires paient les dépenses. Je préfère réinvestir les revenus du placement pour le moment.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "A12": {
+      "valeurs": [
+        "industrie"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je gère les opérations d'une entreprise industrielle. C'est dans ce secteur que se situe mon emploi.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "B1R": {
+      "valeurs": [
+        "attendre"
+      ],
+      "source": "hypothèse de test",
+      "citation": "À moins 20 %, j'attendrais plutôt que de vendre dans la panique. Je vérifierais que la diversification et notre horizon restent adaptés.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "B1": {
+      "valeurs": [
+        "30"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Vers moins 30 %, je ne serais plus à l'aise et je vendrais. Ce seuil est une limite, pas une perte que je recherche.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "B5": {
+      "valeurs": [
+        "moderee_8_15"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je suis à l'aise avec des variations annuelles de l'ordre de 8 à 15 %, pas avec un portefeuille qui bouge de 30 % chaque année.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Réponse simulée cohérente avec l'énoncé, p. 6 : « Profil de risque : modéré ». Les précisions et chiffres ajoutés sont fictifs."
+    },
+    "B7": {
+      "valeurs": [
+        "longue_plus_2_ans"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je pourrais attendre trois ans après une baisse, puisque mon horizon est encore d'environ neuf ans.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "B3": {
+      "valeurs": [
+        "oui_garde"
+      ],
+      "source": "hypothèse de test",
+      "citation": "En 2022, j'ai vu mes fonds reculer. Je n'ai pas vendu et j'ai conservé mon plan de placement.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "B4": {
+      "valeurs": [
+        "mensuelle"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je regarde mes placements une fois par mois et je fais un bilan plus détaillé à intervalles réguliers.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "C2": {
+      "valeurs": [
+        "fonds_communs",
+        "fnb",
+        "actions"
+      ],
+      "source": "hypothèse de test",
+      "citation": "J'ai détenu des fonds communs, des FNB et quelques actions. J'ai une expérience intermédiaire, sans utiliser de produits complexes.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "D1": {
+      "valeurs": [
+        "actions",
+        "fnb_actions",
+        "obligations"
+      ],
+      "source": "hypothèse de test",
+      "citation": "J'accepte les actions, les FNB d'actions et les obligations, tant que leur niveau de risque et leurs caractéristiques ESG me conviennent.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "D2": {
+      "valeurs": [
+        "0"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je choisis zéro crypto dans ce portefeuille : je préfère consacrer le risque à des placements que je comprends mieux.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "D9": {
+      "valeurs": [
+        "10"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je fixe un maximum de 10 % par entreprise pour éviter qu'un seul titre mette le projet familial en difficulté.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "D11": {
+      "valeurs": [
+        "mixte"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Un mélange de fonds diversifiés et de quelques entreprises solides me convient.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "D12": {
+      "valeurs": [
+        "sans_speculatif"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je ne veux pas de placements hautement spéculatifs. Une technologie émergente ne m'intéresse que si son risque reste compatible avec mon profil modéré.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Réponse simulée cohérente avec l'énoncé, p. 6 : « Peu intéressé par les placements hautement spéculatifs ». Les précisions et chiffres ajoutés sont fictifs."
+    },
+    "D4": {
+      "valeurs": [
+        "limite"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je souhaite limiter l'exposition aux devises étrangères, même si j'accepte une part pour diversifier.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "D3": {
+      "valeurs": [
+        "canada",
+        "etats_unis",
+        "europe"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je souhaite diversifier entre le Canada, les États-Unis et l'Europe, notamment par des fonds.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "D5": {
+      "valeurs": [
+        "ia",
+        "infrastructures"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Les infrastructures et l'IA m'intéressent, à condition de respecter mes exigences ESG et mon risque modéré. Ce n'est pas une raison de tout miser dessus.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "D6": {
+      "valeurs": [
+        "tabac",
+        "armes"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Pour ce portefeuille, je refuse le tabac et les armes, en plus de mon attention aux controverses graves.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "D7": {
+      "valeurs": [
+        "indifferent"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je n'ai pas de préférence rigide entre croissance et entreprises établies : je recherche un équilibre entre potentiel et stabilité.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Réponse simulée cohérente avec l'énoncé, p. 6 : « Recherche un équilibre entre potentiel de croissance et stabilité ». Les précisions et chiffres ajoutés sont fictifs."
+    },
+    "D8": {
+      "valeurs": [
+        "non"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Le fait qu'une action fasse la une ne me donne pas envie de l'acheter. Je regarde d'abord son risque et ses pratiques ESG.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "E1": {
+      "valeurs": [
+        "limiter"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je veux limiter l'exposition aux énergies fossiles, sans prétendre exclure toute entreprise qui en utilise indirectement.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "E2": {
+      "valeurs": [
+        "pas_de_grave"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je refuse les entreprises liées à des controverses environnementales ou sociales importantes. Une condamnation grave pour pollution serait rédhibitoire.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Réponse simulée cohérente avec l'énoncé, p. 6 : « Souhaite éviter les entreprises liées à des controverses environnementales ou sociales importantes ». Les précisions et chiffres ajoutés sont fictifs."
+    },
+    "E4": {
+      "valeurs": [
+        "exige"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Les critères ESG doivent être une exigence dans la sélection, pas seulement une mention secondaire après le rendement.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Réponse simulée cohérente avec l'énoncé, p. 6 : « Accorde une grande importance aux facteurs ESG ». Les précisions et chiffres ajoutés sont fictifs."
+    },
+    "E5": {
+      "valeurs": [
+        "armes",
+        "tabac"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Mes exclusions sectorielles explicites sont les armes et le tabac.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "F2": {
+      "valeurs": [
+        "aucune"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je n'ai pas d'exclusion géographique systématique en plus de mes critères ESG.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "G1": {
+      "valeurs": [
+        "25000_100000"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Dans cette simulation, je souhaite investir 60 000 dollars canadiens.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "G2": {
+      "valeurs": [
+        "reer"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je choisis un REER dans ce scénario, avec des droits de cotisation disponibles suffisants pour le versement.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "G3": {
+      "valeurs": [
+        "canada_usa"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Mon courtier donne accès au Canada et aux États-Unis ; pour l'Europe, je passe par des fonds cotés sur ces marchés.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Complément fictif : ce détail n'est pas précisé dans l'énoncé, p. 6. Il complète le questionnaire en respectant l'horizon et les préférences du persona."
+    },
+    "C1": {
+      "valeurs": [
+        "intermediaire"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Quiz simulé : 2/3 bonnes réponses. Plus de 1 100 $. plus. Je ne sais pas.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Score calculé à partir des trois réponses simulées. Compatible avec l'expérience intermediaire décrite p. 6 ; le PDF ne fournit pas de résultats de quiz."
+    },
+    "B2": {
+      "valeurs": [
+        "non_atteint"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je garde aux quatre arrêts. La baisse m'inquiète, mais je n'ai pas besoin de cet argent maintenant et je ne veux pas vendre dans la panique.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Replay simulé sur le portefeuille equilibre. Baisse maximale montrée : 15.0 %. Aucune vente totale ; une réduction partielle ne constitue pas le seuil de rupture.",
+      "reduction": null,
+      "baisse_max_montree": 15.0
+    },
+    "B6": {
+      "valeurs": [
+        "equilibre"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Je choisis le portefeuille équilibré. Je préfère un compromis entre croissance et stabilité plutôt que le rendement potentiel maximal.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Choix fictif de fourchette, cohérent avec le risque et l'horizon du persona ; ce n'est pas une prévision de rendement."
+    },
+    "D8O": {
+      "valeurs": [
+        "non"
+      ],
+      "source": "hypothèse de test",
+      "citation": "Aucun, je préférerais un fonds diversifié. Les chiffres seuls ne suffisent pas à vérifier mes exigences ESG.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Choix simulé de l'option fonds diversifié ; aucun titre médiatisé choisi."
+    },
+    "H1": {
+      "valeurs": [
+        "non_teste"
+      ],
+      "source": "hypothèse de test",
+      "citation": "déclaré 30 %, non atteint (baisse montrée : 15 %)",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Comparaison déterministe des réponses simulées. Le replay n'a montré qu'une baisse de 15 % : la tolérance déclarée (−30 %) n'a pas été mise à l'épreuve."
+    }
   },
-  "A2": {
-   "valeurs": [
-    "5_10_ans"
-   ],
-   "source": "énoncé",
-   "citation": "8 à 12 ans (à cheval sur deux classes : la plus courte est retenue)",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": ""
-  },
-  "A3": {
-   "valeurs": [
-    "croissance"
-   ],
-   "source": "énoncé",
-   "citation": "Faire croître son capital de façon équilibrée à moyen et à long terme",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": ""
-  },
-  "A8": {
-   "valeurs": [
-    "1_2"
-   ],
-   "source": "énoncé",
-   "citation": "En couple, père de deux enfants",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": ""
-  },
-  "C1": {
-   "valeurs": [
-    "intermediaire"
-   ],
-   "source": "énoncé",
-   "citation": "Expérience en investissement : intermédiaire",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": ""
-  },
-  "B5": {
-   "valeurs": [
-    "moderee_8_15"
-   ],
-   "source": "énoncé",
-   "citation": "Profil de risque : modéré",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": ""
-  },
-  "E4": {
-   "valeurs": [
-    "exige"
-   ],
-   "source": "énoncé",
-   "citation": "Accorde une grande importance aux facteurs ESG",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": ""
-  },
-  "E2": {
-   "valeurs": [
-    "pas_de_grave"
-   ],
-   "source": "énoncé",
-   "citation": "Souhaite éviter les entreprises liées à des controverses environnementales ou sociales importantes",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": ""
-  },
-  "D12": {
-   "valeurs": [
-    "sans_speculatif"
-   ],
-   "source": "énoncé",
-   "citation": "Peu intéressé par les placements hautement spéculatifs",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": ""
-  },
-  "D7": {
-   "valeurs": [
-    "indifferent"
-   ],
-   "source": "énoncé",
-   "citation": "Recherche un équilibre entre potentiel de croissance et stabilité",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": ""
-  },
-  "B1": {
-   "valeurs": [
-    "30"
-   ],
-   "source": "hypothèse de test",
-   "citation": "",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": "« Risque modéré » traduit en point de rupture ; non chiffré dans l'énoncé"
-  },
-  "B3": {
-   "valeurs": [
-    "oui_garde"
-   ],
-   "source": "hypothèse de test",
-   "citation": "",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": "Expérience intermédiaire"
-  },
-  "A4": {
-   "valeurs": [
-    "moyenne_25_60"
-   ],
-   "source": "hypothèse de test",
-   "citation": "",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": "Non précisé"
-  },
-  "A5": {
-   "valeurs": [
-    "3_6_mois"
-   ],
-   "source": "hypothèse de test",
-   "citation": "",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": "Non précisé"
-  },
-  "A6": {
-   "valeurs": [
-    "stables"
-   ],
-   "source": "hypothèse de test",
-   "citation": "",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": "Non précisé"
-  },
-  "A7": {
-   "valeurs": [
-    "non"
-   ],
-   "source": "hypothèse de test",
-   "citation": "",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": "Non précisé"
-  },
-  "D2": {
-   "valeurs": [
-    "0"
-   ],
-   "source": "hypothèse de test",
-   "citation": "",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": "Découle du refus du spéculatif"
-  },
-  "E1": {
-   "valeurs": [
-    "limiter"
-   ],
-   "source": "hypothèse de test",
-   "citation": "",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": "L'énoncé ne parle PAS d'énergies fossiles : hypothèse minimale liée à l'importance des facteurs ESG"
-  },
-  "D9": {
-   "valeurs": [
-    "10"
-   ],
-   "source": "hypothèse de test",
-   "citation": "",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": "Défaut"
-  },
-  "D11": {
-   "valeurs": [
-    "mixte"
-   ],
-   "source": "hypothèse de test",
-   "citation": "",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": "Non précisé"
-  },
-  "B6": {
-   "valeurs": [
-    "equilibre"
-   ],
-   "source": "hypothèse de test",
-   "citation": "",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": "Comportement supposé cohérent avec le déclaré"
-  },
-  "G3": {
-   "valeurs": [
-    "canada_usa"
-   ],
-   "source": "hypothèse de test",
-   "citation": "",
-   "confiance": 1.0,
-   "statut": "validé",
-   "motif": "Défaut prudent"
+  "quiz": [
+    {
+      "question": "Vous placez 1 000 $ à 5 % par an pendant 2 ans, intérêts réinvestis. Au bout de 2 ans, vous avez :",
+      "reponse": "Plus de 1 100 $"
+    },
+    {
+      "question": "Acheter une seule action est en général … risqué qu'acheter un fonds qui en contient des centaines.",
+      "reponse": "plus"
+    },
+    {
+      "question": "Si les taux d'intérêt montent, le prix des obligations existantes a tendance à :",
+      "reponse": "Je ne sais pas"
+    }
+  ],
+  "replay": {
+    "portefeuille": "equilibre",
+    "decisions": [
+      {
+        "mois": 3,
+        "variation_marche": -0.0543,
+        "decision": "Garder"
+      },
+      {
+        "mois": 6,
+        "variation_marche": -0.1487,
+        "decision": "Garder"
+      },
+      {
+        "mois": 9,
+        "variation_marche": -0.1505,
+        "decision": "Garder"
+      },
+      {
+        "mois": 12,
+        "variation_marche": -0.1094,
+        "decision": "Garder"
+      }
+    ],
+    "final": 11678,
+    "apports": 10000.0,
+    "sans_rien_faire": 11678.0
   }
- }
 }

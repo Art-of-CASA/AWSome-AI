@@ -12,7 +12,9 @@ Site Streamlit qui établit un profil à partir d'une conversation, de questions
 
 ## Parcours
 
-L'accueil propose une conversation exclusivement orale et un questionnaire à choix complété oralement. Il permet aussi de charger les trois personas fictifs de l'énoncé, avec leurs hypothèses de test identifiées.
+L'accueil propose une conversation exclusivement orale et un questionnaire à choix complété oralement. Il permet aussi de charger **Amira, Mateo et Robert**, les trois personas fictifs de l'énoncé (pages 5 à 7), comme s'ils avaient chacun terminé le questionnaire et les trois mises en situation. Chaque profil contient les 42 critères, des réponses simulées à la première personne, un motif par hypothèse, les réponses au quiz et les décisions du replay. L'onglet **Hypothèses du profil** affiche les réponses et leur justification ; les motifs distinguent les références à l'énoncé des compléments fictifs. Le chargement ne fait aucun appel au modèle et l'export JSON conserve le profil et la trace du replay.
+
+Les choix restent propres à chaque persona : Amira accepte un risque élevé mais plafonne les titres individuels et la spéculation ; Mateo privilégie un équilibre financier assorti d'exigences ESG ; Robert reste prudent à l'approche de la retraite tout en choisissant, dans la mise en situation, un titre médiatisé. Ce dernier choix conserve la tension voulue par l'énoncé et ne relève pas ses plafonds de risque. Les montants, comptes, seuils chiffrés et détails non fournis par le PDF sont des hypothèses de test, pas des faits officiels.
 
 ### Conversation et analyse en arrière-plan
 
