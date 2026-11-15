@@ -134,6 +134,15 @@ CRITERES: dict[str, dict] = {
            "aide": "", "relance": ""},
 }
 
+# Critères qu'une réponse libre peut renseigner (les autres sont MESURÉS : quiz et mises en situation).
+MESURES = {"C1", "B2", "B6", "D8O", "H1"}
+DECLARATIFS = [c for c in CRITERES if c not in MESURES]
+
+
+def est_deduit(justification: str) -> bool:
+    return justification.strip().lower().startswith("déduit")
+
+
 NSP = ("Je ne sais pas", None)
 
 # Questionnaire fixe : 6 pages, mêmes questions dans le même ordre pour tout le monde.

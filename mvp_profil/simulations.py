@@ -28,7 +28,7 @@ VERS_B6 = {"tres_prudent": "prudent", "prudent": "prudent", "equilibre": "equili
 
 def _v(profil, cid):
     e = profil.get(cid)
-    return e["valeurs"] if e and e["statut"] == "validé" else []
+    return e["valeurs"] if e and e["statut"] in ("validé", "retenu") else []
 
 
 def portefeuille_replay(profil) -> str:

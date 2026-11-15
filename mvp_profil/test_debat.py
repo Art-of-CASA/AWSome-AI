@@ -70,7 +70,7 @@ assert d.resultats["A2"].confiance == 0.88  # min des deux confiances
 b = ENVOIS[0]
 assert b["model"] == "claude-haiku-5-5"
 assert b["output_config"]["effort"] == "low"
-assert b["thinking"] == {"type": "disabled"} and b["max_tokens"] == 1500  # réglages de rapidité
+assert b["thinking"] == {"type": "disabled"} and b["max_tokens"] == 3000  # réglages de rapidité
 assert b["output_config"]["format"]["type"] == "json_schema"
 assert "propositions" in json.dumps(b["output_config"]["format"]["schema"])
 

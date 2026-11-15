@@ -6,6 +6,9 @@ from __future__ import annotations
 
 from criteres import CRITERES
 
+# « retenu » : meilleure réponse obtenue après une reformulation, sous le seuil mais au-dessus du plancher de 50 %.
+UTILISABLES = ("validé", "retenu")
+
 # ---------- Réponses fermées -> valeurs ----------
 
 def valeur_curseur(item: dict, x: float) -> str:
@@ -32,7 +35,7 @@ def entree(valeurs: list[str], source: str, citation: str = "", confiance: float
 
 def _v(profil: dict, cid: str) -> list[str]:
     e = profil.get(cid)
-    return e["valeurs"] if e and e["statut"] == "validé" else []
+    return e["valeurs"] if e and e["statut"] in UTILISABLES else []
 
 
 def incoherences(profil: dict) -> list[dict]:
@@ -110,6 +113,38 @@ def incoherences(profil: dict) -> list[dict]:
                     "options": [("J'ai été tenté : je préfère que l'outil limite ce type de titre", {"D8": ["parfois"], "D12": ["plafonne_5"]}),
                                 ("C'était un choix réfléchi, je l'assume", {"D8": ["oui"]})]})
     return out
+
+
+# ---------- Déductions certaines (sans IA) : une réponse en entraîne une autre, qu'on ne demande donc plus ----------
+# (critère source, valeur(s) qui déclenchent, critère déduit, valeur déduite, raison affichée)
+REGLES_DEDUCTION = [
+    ("A12", ["retraite"], "A6", ["retraite"], "à la retraite : les revenus sont ceux de la retraite"),
+    ("A6", ["retraite"], "A12", ["retraite"], "revenus de retraite : la personne est à la retraite"),
+    ("C2", ["aucun"], "B3", ["jamais"], "aucun placement détenu : jamais vécu de baisse de ses placements"),
+    ("D1", None, "D2", ["0"], "cryptoactifs non retenus parmi les placements acceptés : 0 % de cryptoactifs"),
+]
+
+
+def deduire(profil: dict) -> list[str]:
+    """Applique les déductions certaines aux critères encore inconnus. Renvoie les critères ajoutés."""
+    ajoutes = []
+    for src, declencheurs, cible, valeurs, raison in REGLES_DEDUCTION:
+        v = _v(profil, src)
+        if not v or _v(profil, cible) or profil.get(cible, {}).get("statut") == "analyse en cours":
+            continue
+        if declencheurs is None:  # cas D1 : la règle porte sur l'absence de « crypto » parmi les placements acceptés
+            if "crypto" in v:
+                continue
+        elif not set(v) & set(declencheurs):
+            continue
+        profil[cible] = entree(valeurs, "déduction (règle)", citation=f"{src} = {', '.join(v)}", motif=raison)
+        ajoutes.append(cible)
+    return ajoutes
+
+
+def connu(profil: dict, cid: str) -> bool:
+    """Critère déjà renseigné de façon utilisable (validé ou retenu), quelle qu'en soit la source."""
+    return profil.get(cid, {}).get("statut") in UTILISABLES
 
 
 ORDRE_RUPTURE = ["5", "10", "20", "30", "40", "50_plus"]

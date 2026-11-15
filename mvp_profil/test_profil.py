@@ -56,6 +56,17 @@ assert [c["id"] for c in incoherences(P(E5=["alcool", "tabac"], D5=["alcool", "i
 assert incoherences(P(E5=["aucune"], D5=["aucun"])) == []
 print("Règles R5, R6, R7 OK")
 
+# Déductions certaines : ce qui se déduit d'une réponse n'est plus demandé
+from profil import connu, deduire  # noqa: E402
+p = {"A12": entree(["retraite"], "QCM"), "C2": entree(["aucun"], "QCM"), "D1": entree(["actions", "obligations"], "QCM"),
+     "B3": entree(["oui_garde"], "QCM")}
+ajoutes = deduire(p)
+assert sorted(ajoutes) == ["A6", "D2"], ajoutes  # B3 déjà répondu : pas écrasé
+assert p["A6"]["valeurs"] == ["retraite"] and p["A6"]["source"] == "déduction (règle)" and p["D2"]["valeurs"] == ["0"]
+assert p["B3"]["valeurs"] == ["oui_garde"] and connu(p, "A6") and not connu(p, "A8")
+assert deduire({"D1": entree(["actions", "crypto"], "QCM")}) == []
+print("Déductions certaines OK : retraite -> revenus de retraite, pas de crypto acceptée -> 0 %")
+
 # Déclaré vs observé (replay) : le plus prudent l'emporte
 from profil import recouper_rupture
 p = P(B1=["40"], B2=["10"])

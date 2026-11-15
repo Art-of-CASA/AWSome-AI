@@ -1,0 +1,3900 @@
+{
+ "source": "data_extra/ et data_extended/",
+ "actifs": {
+  "RY.TO": {
+   "nom": "Royal Bank of Canada",
+   "classe": "equity",
+   "secteur": "Financials",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "CAD",
+   "themes": "banque",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "TD.TO": {
+   "nom": "Toronto-Dominion Bank",
+   "classe": "equity",
+   "secteur": "Financials",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "CAD",
+   "themes": "banque",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": "Lutte contre le blanchiment"
+  },
+  "MFC.TO": {
+   "nom": "Manulife Financial",
+   "classe": "equity",
+   "secteur": "Financials",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "CAD",
+   "themes": "assurance",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "ENB.TO": {
+   "nom": "Enbridge",
+   "classe": "equity",
+   "secteur": "Energy",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "CAD",
+   "themes": "pipelines;infrastructures",
+   "exclusions": "energie_fossile;atteinte_droits_autochtones",
+   "fossile": "directe",
+   "controverses": "Ligne 5, terres autochtones (Bad River)"
+  },
+  "CNQ.TO": {
+   "nom": "Canadian Natural Resources",
+   "classe": "equity",
+   "secteur": "Energy",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "CAD",
+   "themes": "petrole;sables_bitumineux",
+   "exclusions": "energie_fossile",
+   "fossile": "directe",
+   "controverses": ""
+  },
+  "CNR.TO": {
+   "nom": "Canadian National Railway",
+   "classe": "equity",
+   "secteur": "Industrials",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "CAD",
+   "themes": "chemin_de_fer;infrastructures",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "FTS.TO": {
+   "nom": "Fortis",
+   "classe": "equity",
+   "secteur": "Utilities",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "CAD",
+   "themes": "services_publics;infrastructures",
+   "exclusions": "aucune_connue",
+   "fossile": "partielle",
+   "controverses": ""
+  },
+  "ATD.TO": {
+   "nom": "Alimentation Couche-Tard",
+   "classe": "equity",
+   "secteur": "Consumer Staples",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "CAD",
+   "themes": "depanneurs",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "SHOP.TO": {
+   "nom": "Shopify",
+   "classe": "equity",
+   "secteur": "Information Technology",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "CAD",
+   "themes": "commerce_en_ligne;logiciel",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "CSU.TO": {
+   "nom": "Constellation Software",
+   "classe": "equity",
+   "secteur": "Information Technology",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "CAD",
+   "themes": "logiciel",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "AAPL": {
+   "nom": "Apple",
+   "classe": "equity",
+   "secteur": "Information Technology",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "USD",
+   "themes": "electronique_grand_public",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": "Concurrence"
+  },
+  "MSFT": {
+   "nom": "Microsoft",
+   "classe": "equity",
+   "secteur": "Information Technology",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "USD",
+   "themes": "ia;logiciel;infonuagique",
+   "exclusions": "contrats_de_defense",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "NVDA": {
+   "nom": "NVIDIA",
+   "classe": "equity",
+   "secteur": "Information Technology",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "USD",
+   "themes": "ia;semi-conducteurs",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "GOOGL": {
+   "nom": "Alphabet (Class A)",
+   "classe": "equity",
+   "secteur": "Communication Services",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "USD",
+   "themes": "ia;publicite_numerique;infonuagique",
+   "exclusions": "contrats_de_defense",
+   "fossile": "aucune",
+   "controverses": "Concurrence"
+  },
+  "AMZN": {
+   "nom": "Amazon",
+   "classe": "equity",
+   "secteur": "Consumer Discretionary",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "USD",
+   "themes": "commerce_en_ligne;infonuagique;ia",
+   "exclusions": "contrats_de_defense",
+   "fossile": "aucune",
+   "controverses": "Protection du consommateur (Prime)"
+  },
+  "TSLA": {
+   "nom": "Tesla",
+   "classe": "equity",
+   "secteur": "Consumer Discretionary",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "USD",
+   "themes": "vehicule_electrique;ia",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": "Sécurité des produits (Autopilot)"
+  },
+  "JPM": {
+   "nom": "JPMorgan Chase",
+   "classe": "equity",
+   "secteur": "Financials",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "USD",
+   "themes": "banque",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": "Affaire Epstein"
+  },
+  "JNJ": {
+   "nom": "Johnson & Johnson",
+   "classe": "equity",
+   "secteur": "Health Care",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "USD",
+   "themes": "pharmacie;dispositifs_medicaux",
+   "exclusions": "tests_sur_animaux",
+   "fossile": "aucune",
+   "controverses": "Sécurité des produits (talc)"
+  },
+  "PG": {
+   "nom": "Procter & Gamble",
+   "classe": "equity",
+   "secteur": "Consumer Staples",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "USD",
+   "themes": "produits_menagers",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "XOM": {
+   "nom": "Exxon Mobil",
+   "classe": "equity",
+   "secteur": "Energy",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "USD",
+   "themes": "petrole;gaz",
+   "exclusions": "energie_fossile",
+   "fossile": "directe",
+   "controverses": "Recyclage du plastique"
+  },
+  "XIU.TO": {
+   "nom": "iShares S&P/TSX 60 Index ETF",
+   "classe": "etf_equity",
+   "secteur": "Broad market (Canada)",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "CAD",
+   "themes": "",
+   "exclusions": "aucune_connue",
+   "fossile": "part énergie 18.0%",
+   "controverses": ""
+  },
+  "SPY": {
+   "nom": "SPDR S&P 500 ETF Trust",
+   "classe": "etf_equity",
+   "secteur": "Broad market (U.S.)",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "USD",
+   "themes": "",
+   "exclusions": "aucune_connue",
+   "fossile": "part énergie 3.9%",
+   "controverses": ""
+  },
+  "QQQ": {
+   "nom": "Invesco QQQ Trust (Nasdaq-100)",
+   "classe": "etf_equity",
+   "secteur": "Broad market (U.S. growth/tech-heavy)",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "USD",
+   "themes": "technologie_large",
+   "exclusions": "aucune_connue",
+   "fossile": "part énergie 0.5%",
+   "controverses": ""
+  },
+  "ESGV": {
+   "nom": "Vanguard ESG U.S. Stock ETF",
+   "classe": "etf_equity",
+   "secteur": "Broad market (U.S., ESG-screened)",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "USD",
+   "themes": "esg",
+   "exclusions": "aucune_connue",
+   "fossile": "part énergie 0.0%",
+   "controverses": ""
+  },
+  "XBB.TO": {
+   "nom": "iShares Core Canadian Universe Bond Index ETF",
+   "classe": "etf_bond",
+   "secteur": "Bonds (Canada aggregate)",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "CAD",
+   "themes": "",
+   "exclusions": "aucune_connue",
+   "fossile": "non applicable",
+   "controverses": ""
+  },
+  "ZST.TO": {
+   "nom": "BMO Ultra Short-Term Bond ETF",
+   "classe": "etf_bond",
+   "secteur": "Bonds (Canada ultra short-term)",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "CAD",
+   "themes": "",
+   "exclusions": "aucune_connue",
+   "fossile": "non applicable",
+   "controverses": ""
+  },
+  "AGG": {
+   "nom": "iShares Core U.S. Aggregate Bond ETF",
+   "classe": "etf_bond",
+   "secteur": "Bonds (U.S. aggregate)",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "USD",
+   "themes": "",
+   "exclusions": "aucune_connue",
+   "fossile": "non applicable",
+   "controverses": ""
+  },
+  "TLT": {
+   "nom": "iShares 20+ Year Treasury Bond ETF",
+   "classe": "etf_bond",
+   "secteur": "Bonds (U.S. long Treasury)",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "USD",
+   "themes": "",
+   "exclusions": "aucune_connue",
+   "fossile": "non applicable",
+   "controverses": ""
+  },
+  "GLD": {
+   "nom": "SPDR Gold Shares",
+   "classe": "etf_commodity",
+   "secteur": "Gold",
+   "pays": "Amérique du Nord",
+   "region": "Amérique du Nord",
+   "devise": "USD",
+   "themes": "or",
+   "exclusions": "aucune_connue",
+   "fossile": "non applicable",
+   "controverses": ""
+  },
+  "BTC-USD": {
+   "nom": "Bitcoin",
+   "classe": "crypto",
+   "secteur": "Crypto asset",
+   "pays": "Crypto",
+   "region": "Crypto",
+   "devise": "USD",
+   "themes": "crypto",
+   "exclusions": "aucune_connue",
+   "fossile": "indirecte",
+   "controverses": ""
+  },
+  "ETH-USD": {
+   "nom": "Ether",
+   "classe": "crypto",
+   "secteur": "Crypto asset",
+   "pays": "Crypto",
+   "region": "Crypto",
+   "devise": "USD",
+   "themes": "crypto;contrats_intelligents",
+   "exclusions": "aucune_connue",
+   "fossile": "indirecte",
+   "controverses": ""
+  },
+  "ASML.AS": {
+   "nom": "ASML Holding",
+   "classe": "equity",
+   "secteur": "Information Technology",
+   "pays": "Pays-Bas",
+   "region": "Europe",
+   "devise": "EUR",
+   "themes": "ia;semi-conducteurs",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "MC.PA": {
+   "nom": "LVMH Moët Hennessy Louis Vuitton",
+   "classe": "equity",
+   "secteur": "Consumer Discretionary",
+   "pays": "France",
+   "region": "Europe",
+   "devise": "EUR",
+   "themes": "luxe",
+   "exclusions": "alcool",
+   "fossile": "aucune",
+   "controverses": "Chaîne d'approvisionnement (travail)"
+  },
+  "NESN.SW": {
+   "nom": "Nestlé",
+   "classe": "equity",
+   "secteur": "Consumer Staples",
+   "pays": "Suisse",
+   "region": "Europe",
+   "devise": "CHF",
+   "themes": "alimentation",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": "Eaux minérales (traitements interdits)"
+  },
+  "NOVO-B.CO": {
+   "nom": "Novo Nordisk (B)",
+   "classe": "equity",
+   "secteur": "Health Care",
+   "pays": "Danemark",
+   "region": "Europe",
+   "devise": "DKK",
+   "themes": "pharmacie;obesite",
+   "exclusions": "tests_sur_animaux",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "SAP.DE": {
+   "nom": "SAP",
+   "classe": "equity",
+   "secteur": "Information Technology",
+   "pays": "Allemagne",
+   "region": "Europe",
+   "devise": "EUR",
+   "themes": "logiciel;ia",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": "Corruption (FCPA)"
+  },
+  "SIE.DE": {
+   "nom": "Siemens",
+   "classe": "equity",
+   "secteur": "Industrials",
+   "pays": "Allemagne",
+   "region": "Europe",
+   "devise": "EUR",
+   "themes": "automatisation;infrastructures",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "TTE.PA": {
+   "nom": "TotalEnergies",
+   "classe": "equity",
+   "secteur": "Energy",
+   "pays": "France",
+   "region": "Europe",
+   "devise": "EUR",
+   "themes": "petrole;gaz;gnl",
+   "exclusions": "energie_fossile",
+   "fossile": "directe",
+   "controverses": "Écoblanchiment (allégations climatiques)"
+  },
+  "SHEL.L": {
+   "nom": "Shell",
+   "classe": "equity",
+   "secteur": "Energy",
+   "pays": "Royaume-Uni",
+   "region": "Europe",
+   "devise": "GBP",
+   "themes": "petrole;gaz;gnl",
+   "exclusions": "energie_fossile",
+   "fossile": "directe",
+   "controverses": "Procès climatique (Milieudefensie)"
+  },
+  "AZN.L": {
+   "nom": "AstraZeneca",
+   "classe": "equity",
+   "secteur": "Health Care",
+   "pays": "Royaume-Uni",
+   "region": "Europe",
+   "devise": "GBP",
+   "themes": "pharmacie;oncologie",
+   "exclusions": "tests_sur_animaux",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "HSBA.L": {
+   "nom": "HSBC Holdings",
+   "classe": "equity",
+   "secteur": "Financials",
+   "pays": "Royaume-Uni",
+   "region": "Europe",
+   "devise": "GBP",
+   "themes": "banque",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "2330.TW": {
+   "nom": "Taiwan Semiconductor Manufacturing (TSMC)",
+   "classe": "equity",
+   "secteur": "Information Technology",
+   "pays": "Taïwan",
+   "region": "Asie",
+   "devise": "TWD",
+   "themes": "ia;semi-conducteurs",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "005930.KS": {
+   "nom": "Samsung Electronics",
+   "classe": "equity",
+   "secteur": "Information Technology",
+   "pays": "Corée du Sud",
+   "region": "Asie",
+   "devise": "KRW",
+   "themes": "semi-conducteurs;electronique_grand_public",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "7203.T": {
+   "nom": "Toyota Motor",
+   "classe": "equity",
+   "secteur": "Consumer Discretionary",
+   "pays": "Japon",
+   "region": "Asie",
+   "devise": "JPY",
+   "themes": "automobile;hybride",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": "Certification des véhicules"
+  },
+  "6758.T": {
+   "nom": "Sony Group",
+   "classe": "equity",
+   "secteur": "Consumer Discretionary",
+   "pays": "Japon",
+   "region": "Asie",
+   "devise": "JPY",
+   "themes": "jeux_video;divertissement;electronique_grand_public",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "0700.HK": {
+   "nom": "Tencent Holdings",
+   "classe": "equity",
+   "secteur": "Communication Services",
+   "pays": "Chine",
+   "region": "Asie",
+   "devise": "HKD",
+   "themes": "jeux_video;reseaux_sociaux;ia",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": "Désignation militaire américaine"
+  },
+  "9988.HK": {
+   "nom": "Alibaba Group",
+   "classe": "equity",
+   "secteur": "Consumer Discretionary",
+   "pays": "Chine",
+   "region": "Asie",
+   "devise": "HKD",
+   "themes": "commerce_en_ligne;infonuagique;ia",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": "Concurrence"
+  },
+  "1211.HK": {
+   "nom": "BYD Company",
+   "classe": "equity",
+   "secteur": "Consumer Discretionary",
+   "pays": "Chine",
+   "region": "Asie",
+   "devise": "HKD",
+   "themes": "vehicule_electrique;batteries",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": "Conditions de travail (Brésil)"
+  },
+  "RELIANCE.NS": {
+   "nom": "Reliance Industries",
+   "classe": "equity",
+   "secteur": "Energy",
+   "pays": "Inde",
+   "region": "Asie",
+   "devise": "INR",
+   "themes": "raffinage;telecoms;commerce",
+   "exclusions": "energie_fossile",
+   "fossile": "directe",
+   "controverses": ""
+  },
+  "HDFCBANK.NS": {
+   "nom": "HDFC Bank",
+   "classe": "equity",
+   "secteur": "Financials",
+   "pays": "Inde",
+   "region": "Asie",
+   "devise": "INR",
+   "themes": "banque",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "INFY.NS": {
+   "nom": "Infosys",
+   "classe": "equity",
+   "secteur": "Information Technology",
+   "pays": "Inde",
+   "region": "Asie",
+   "devise": "INR",
+   "themes": "services_informatiques",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "NPN.JO": {
+   "nom": "Naspers",
+   "classe": "equity",
+   "secteur": "Consumer Discretionary",
+   "pays": "Afrique du Sud",
+   "region": "Afrique",
+   "devise": "ZAR",
+   "themes": "holding;internet",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "FSR.JO": {
+   "nom": "FirstRand",
+   "classe": "equity",
+   "secteur": "Financials",
+   "pays": "Afrique du Sud",
+   "region": "Afrique",
+   "devise": "ZAR",
+   "themes": "banque",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "SBK.JO": {
+   "nom": "Standard Bank Group",
+   "classe": "equity",
+   "secteur": "Financials",
+   "pays": "Afrique du Sud",
+   "region": "Afrique",
+   "devise": "ZAR",
+   "themes": "banque",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "MTN.JO": {
+   "nom": "MTN Group",
+   "classe": "equity",
+   "secteur": "Communication Services",
+   "pays": "Afrique du Sud",
+   "region": "Afrique",
+   "devise": "ZAR",
+   "themes": "telecoms;paiement_mobile",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": "Financement présumé du terrorisme"
+  },
+  "VOD.JO": {
+   "nom": "Vodacom Group",
+   "classe": "equity",
+   "secteur": "Communication Services",
+   "pays": "Afrique du Sud",
+   "region": "Afrique",
+   "devise": "ZAR",
+   "themes": "telecoms;paiement_mobile",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "GFI.JO": {
+   "nom": "Gold Fields",
+   "classe": "equity",
+   "secteur": "Materials",
+   "pays": "Afrique du Sud",
+   "region": "Afrique",
+   "devise": "ZAR",
+   "themes": "or;mines",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "SOL.JO": {
+   "nom": "Sasol",
+   "classe": "equity",
+   "secteur": "Materials",
+   "pays": "Afrique du Sud",
+   "region": "Afrique",
+   "devise": "ZAR",
+   "themes": "chimie;carburants_synthetiques",
+   "exclusions": "energie_fossile",
+   "fossile": "directe",
+   "controverses": ""
+  },
+  "SHP.JO": {
+   "nom": "Shoprite Holdings",
+   "classe": "equity",
+   "secteur": "Consumer Staples",
+   "pays": "Afrique du Sud",
+   "region": "Afrique",
+   "devise": "ZAR",
+   "themes": "supermarches",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "APN.JO": {
+   "nom": "Aspen Pharmacare",
+   "classe": "equity",
+   "secteur": "Health Care",
+   "pays": "Afrique du Sud",
+   "region": "Afrique",
+   "devise": "ZAR",
+   "themes": "pharmacie;generiques",
+   "exclusions": "tests_sur_animaux",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "COMI.CA": {
+   "nom": "Commercial International Bank (Égypte)",
+   "classe": "equity",
+   "secteur": "Financials",
+   "pays": "Égypte",
+   "region": "Afrique",
+   "devise": "EGP",
+   "themes": "banque",
+   "exclusions": "aucune_connue",
+   "fossile": "aucune",
+   "controverses": ""
+  },
+  "VT": {
+   "nom": "Vanguard Total World Stock ETF",
+   "classe": "etf_equity",
+   "secteur": "Broad market (monde)",
+   "pays": "États-Unis (fonds)",
+   "region": "Monde",
+   "devise": "USD",
+   "themes": "",
+   "exclusions": "aucune_connue",
+   "fossile": "part énergie 4.0%",
+   "controverses": ""
+  },
+  "VEA": {
+   "nom": "Vanguard FTSE Developed Markets ETF",
+   "classe": "etf_equity",
+   "secteur": "Broad market (pays développés hors Amérique du Nord)",
+   "pays": "États-Unis (fonds)",
+   "region": "Monde",
+   "devise": "USD",
+   "themes": "",
+   "exclusions": "aucune_connue",
+   "fossile": "part énergie 5.1%",
+   "controverses": ""
+  },
+  "VWO": {
+   "nom": "Vanguard FTSE Emerging Markets ETF",
+   "classe": "etf_equity",
+   "secteur": "Broad market (pays émergents)",
+   "pays": "États-Unis (fonds)",
+   "region": "Monde",
+   "devise": "USD",
+   "themes": "",
+   "exclusions": "aucune_connue",
+   "fossile": "part énergie 4.1%",
+   "controverses": ""
+  },
+  "XEQT.TO": {
+   "nom": "iShares Core Equity ETF Portfolio",
+   "classe": "etf_equity",
+   "secteur": "Broad market (monde, portefeuille tout-en-un)",
+   "pays": "Canada (fonds)",
+   "region": "Monde",
+   "devise": "CAD",
+   "themes": "",
+   "exclusions": "aucune_connue",
+   "fossile": "part énergie 7.5%",
+   "controverses": ""
+  },
+  "BNDW": {
+   "nom": "Vanguard Total World Bond ETF",
+   "classe": "etf_bond",
+   "secteur": "Bonds (monde, couvert en USD)",
+   "pays": "États-Unis (fonds)",
+   "region": "Monde",
+   "devise": "USD",
+   "themes": "",
+   "exclusions": "aucune_connue",
+   "fossile": "non applicable",
+   "controverses": ""
+  }
+ },
+ "fnb": {
+  "XIU.TO": [
+   {
+    "symbole": "RY",
+    "nom": "Royal Bank of Canada",
+    "poids": 0.095283,
+    "ticker": "RY.TO"
+   },
+   {
+    "symbole": "TD",
+    "nom": "The Toronto-Dominion Bank",
+    "poids": 0.069282,
+    "ticker": "TD.TO"
+   },
+   {
+    "symbole": "SHOP",
+    "nom": "Shopify Inc Registered Shs -A- Subord Vtg",
+    "poids": 0.064465,
+    "ticker": "SHOP.TO"
+   },
+   {
+    "symbole": "BMO.TO",
+    "nom": "Bank of Montreal",
+    "poids": 0.040551,
+    "ticker": ""
+   },
+   {
+    "symbole": "CNQ.TO",
+    "nom": "Canadian Natural Resources Ltd",
+    "poids": 0.039143,
+    "ticker": "CNQ.TO"
+   },
+   {
+    "symbole": "BNS.TO",
+    "nom": "Bank of Nova Scotia",
+    "poids": 0.038657,
+    "ticker": ""
+   },
+   {
+    "symbole": "ENB.TO",
+    "nom": "Enbridge Inc",
+    "poids": 0.037182,
+    "ticker": "ENB.TO"
+   },
+   {
+    "symbole": "CM.TO",
+    "nom": "Canadian Imperial Bank of Commerce",
+    "poids": 0.036,
+    "ticker": ""
+   },
+   {
+    "symbole": "SU.TO",
+    "nom": "Suncor Energy Inc",
+    "poids": 0.031452,
+    "ticker": ""
+   },
+   {
+    "symbole": "BN.TO",
+    "nom": "Brookfield Corp Registered Shs -A- Limited Vtg",
+    "poids": 0.028387,
+    "ticker": ""
+   }
+  ],
+  "SPY": [
+   {
+    "symbole": "AAPL",
+    "nom": "Apple Inc",
+    "poids": 0.077007,
+    "ticker": "AAPL"
+   },
+   {
+    "symbole": "NVDA",
+    "nom": "NVIDIA Corp",
+    "poids": 0.075823,
+    "ticker": "NVDA"
+   },
+   {
+    "symbole": "MSFT",
+    "nom": "Microsoft Corp",
+    "poids": 0.059332,
+    "ticker": "MSFT"
+   },
+   {
+    "symbole": "AMZN",
+    "nom": "Amazon.com Inc",
+    "poids": 0.036119,
+    "ticker": "AMZN"
+   },
+   {
+    "symbole": "GOOGL",
+    "nom": "Alphabet Inc Class A",
+    "poids": 0.025141,
+    "ticker": "GOOGL"
+   },
+   {
+    "symbole": "AVGO",
+    "nom": "Broadcom Inc",
+    "poids": 0.023752,
+    "ticker": ""
+   },
+   {
+    "symbole": "META",
+    "nom": "Meta Platforms Inc Class A",
+    "poids": 0.020763,
+    "ticker": ""
+   },
+   {
+    "symbole": "GOOG",
+    "nom": "Alphabet Inc Class C",
+    "poids": 0.020247,
+    "ticker": ""
+   },
+   {
+    "symbole": "LLY",
+    "nom": "Eli Lilly and Co",
+    "poids": 0.017367,
+    "ticker": ""
+   },
+   {
+    "symbole": "TSLA",
+    "nom": "Tesla Inc",
+    "poids": 0.017252,
+    "ticker": "TSLA"
+   }
+  ],
+  "QQQ": [
+   {
+    "symbole": "AAPL",
+    "nom": "Apple Inc",
+    "poids": 0.081592,
+    "ticker": "AAPL"
+   },
+   {
+    "symbole": "NVDA",
+    "nom": "NVIDIA Corp",
+    "poids": 0.080006,
+    "ticker": "NVDA"
+   },
+   {
+    "symbole": "MSFT",
+    "nom": "Microsoft Corp",
+    "poids": 0.062867,
+    "ticker": "MSFT"
+   },
+   {
+    "symbole": "MU",
+    "nom": "Micron Technology Inc",
+    "poids": 0.044747,
+    "ticker": ""
+   },
+   {
+    "symbole": "AMZN",
+    "nom": "Amazon.com Inc",
+    "poids": 0.042053,
+    "ticker": "AMZN"
+   },
+   {
+    "symbole": "AMD",
+    "nom": "Advanced Micro Devices Inc",
+    "poids": 0.036903,
+    "ticker": ""
+   },
+   {
+    "symbole": "TSLA",
+    "nom": "Tesla Inc",
+    "poids": 0.03407,
+    "ticker": "TSLA"
+   },
+   {
+    "symbole": "META",
+    "nom": "Meta Platforms Inc Class A",
+    "poids": 0.029664,
+    "ticker": ""
+   },
+   {
+    "symbole": "WMT",
+    "nom": "Walmart Inc",
+    "poids": 0.026899,
+    "ticker": ""
+   },
+   {
+    "symbole": "GOOGL",
+    "nom": "Alphabet Inc Class A",
+    "poids": 0.026637,
+    "ticker": "GOOGL"
+   }
+  ],
+  "ESGV": [
+   {
+    "symbole": "NVDA",
+    "nom": "NVIDIA Corp",
+    "poids": 0.089166,
+    "ticker": "NVDA"
+   },
+   {
+    "symbole": "AAPL",
+    "nom": "Apple Inc",
+    "poids": 0.080584,
+    "ticker": "AAPL"
+   },
+   {
+    "symbole": "MSFT",
+    "nom": "Microsoft Corp",
+    "poids": 0.063776,
+    "ticker": "MSFT"
+   },
+   {
+    "symbole": "AMZN",
+    "nom": "Amazon.com Inc",
+    "poids": 0.040452,
+    "ticker": "AMZN"
+   },
+   {
+    "symbole": "GOOGL",
+    "nom": "Alphabet Inc Class A",
+    "poids": 0.033533,
+    "ticker": "GOOGL"
+   },
+   {
+    "symbole": "AVGO",
+    "nom": "Broadcom Inc",
+    "poids": 0.027344,
+    "ticker": ""
+   },
+   {
+    "symbole": "GOOG",
+    "nom": "Alphabet Inc Class C",
+    "poids": 0.027139,
+    "ticker": ""
+   },
+   {
+    "symbole": "META",
+    "nom": "Meta Platforms Inc Class A",
+    "poids": 0.026679,
+    "ticker": ""
+   },
+   {
+    "symbole": "MU",
+    "nom": "Micron Technology Inc",
+    "poids": 0.020095,
+    "ticker": ""
+   },
+   {
+    "symbole": "TSLA",
+    "nom": "Tesla Inc",
+    "poids": 0.017347,
+    "ticker": "TSLA"
+   }
+  ],
+  "AGG": [
+   {
+    "symbole": "BISXX",
+    "nom": "BlackRock Cash Funds Instl SL Agency",
+    "poids": 0.029345,
+    "ticker": ""
+   }
+  ],
+  "VT": [
+   {
+    "symbole": "NVDA",
+    "nom": "NVIDIA Corp",
+    "poids": 0.045432,
+    "ticker": "NVDA"
+   },
+   {
+    "symbole": "AAPL",
+    "nom": "Apple Inc",
+    "poids": 0.041058,
+    "ticker": "AAPL"
+   },
+   {
+    "symbole": "MSFT",
+    "nom": "Microsoft Corp",
+    "poids": 0.032492,
+    "ticker": "MSFT"
+   },
+   {
+    "symbole": "AMZN",
+    "nom": "Amazon.com Inc",
+    "poids": 0.020609,
+    "ticker": "AMZN"
+   },
+   {
+    "symbole": "GOOGL",
+    "nom": "Alphabet Inc Class A",
+    "poids": 0.017322,
+    "ticker": "GOOGL"
+   },
+   {
+    "symbole": "2330.TW",
+    "nom": "Taiwan Semiconductor Manufacturing Co Ltd",
+    "poids": 0.016246,
+    "ticker": "2330.TW"
+   },
+   {
+    "symbole": "AVGO",
+    "nom": "Broadcom Inc",
+    "poids": 0.013932,
+    "ticker": ""
+   },
+   {
+    "symbole": "META",
+    "nom": "Meta Platforms Inc Class A",
+    "poids": 0.013592,
+    "ticker": ""
+   },
+   {
+    "symbole": "GOOG",
+    "nom": "Alphabet Inc Class C",
+    "poids": 0.013586,
+    "ticker": ""
+   },
+   {
+    "symbole": "MU",
+    "nom": "Micron Technology Inc",
+    "poids": 0.010239,
+    "ticker": ""
+   }
+  ],
+  "VEA": [
+   {
+    "symbole": "005930.KQ",
+    "nom": "Samsung Electronics Co Ltd",
+    "poids": 0.028149,
+    "ticker": "005930.KS"
+   },
+   {
+    "symbole": "000660.KQ",
+    "nom": "SK hynix Inc",
+    "poids": 0.022973,
+    "ticker": ""
+   },
+   {
+    "symbole": "ASML.AS",
+    "nom": "ASML Holding NV",
+    "poids": 0.021403,
+    "ticker": "ASML.AS"
+   },
+   {
+    "symbole": "HSBA.L",
+    "nom": "HSBC Holdings PLC",
+    "poids": 0.010495,
+    "ticker": "HSBA.L"
+   },
+   {
+    "symbole": "ROP.SW",
+    "nom": "Roche Holding AG Ordinary Shares new",
+    "poids": 0.009048,
+    "ticker": ""
+   },
+   {
+    "symbole": "SHEL.L",
+    "nom": "Shell PLC",
+    "poids": 0.008566,
+    "ticker": "SHEL.L"
+   },
+   {
+    "symbole": "RY",
+    "nom": "Royal Bank of Canada",
+    "poids": 0.008518,
+    "ticker": "RY.TO"
+   },
+   {
+    "symbole": "NOVN.SW",
+    "nom": "Novartis AG Registered Shares",
+    "poids": 0.008233,
+    "ticker": ""
+   },
+   {
+    "symbole": "8306.T",
+    "nom": "Mitsubishi UFJ Financial Group Inc",
+    "poids": 0.007828,
+    "ticker": ""
+   },
+   {
+    "symbole": "AZN.L",
+    "nom": "AstraZeneca PLC",
+    "poids": 0.007496,
+    "ticker": "AZN.L"
+   }
+  ],
+  "VWO": [
+   {
+    "symbole": "2330.TW",
+    "nom": "Taiwan Semiconductor Manufacturing Co Ltd",
+    "poids": 0.15745,
+    "ticker": "2330.TW"
+   },
+   {
+    "symbole": "0700.HK",
+    "nom": "Tencent Holdings Ltd",
+    "poids": 0.028167,
+    "ticker": "0700.HK"
+   },
+   {
+    "symbole": "9988.HK",
+    "nom": "Alibaba Group Holding Ltd Ordinary Shares",
+    "poids": 0.02112,
+    "ticker": "9988.HK"
+   },
+   {
+    "symbole": "2454.TW",
+    "nom": "MediaTek Inc",
+    "poids": 0.01875,
+    "ticker": ""
+   },
+   {
+    "symbole": "2308.TW",
+    "nom": "Delta Electronics Inc",
+    "poids": 0.009456,
+    "ticker": ""
+   },
+   {
+    "symbole": "00939",
+    "nom": "China Construction Bank Corp Class H",
+    "poids": 0.009099,
+    "ticker": ""
+   },
+   {
+    "symbole": "2317.TW",
+    "nom": "Hon Hai Precision Industry Co Ltd",
+    "poids": 0.007944,
+    "ticker": ""
+   },
+   {
+    "symbole": "HDFCBANK.NS",
+    "nom": "HDFC Bank Ltd",
+    "poids": 0.006969,
+    "ticker": "HDFCBANK.NS"
+   },
+   {
+    "symbole": "RELIANCE.NS",
+    "nom": "Reliance Industries Ltd",
+    "poids": 0.006882,
+    "ticker": "RELIANCE.NS"
+   },
+   {
+    "symbole": "01398",
+    "nom": "Industrial And Commercial Bank Of China Ltd Class H",
+    "poids": 0.00648,
+    "ticker": ""
+   }
+  ],
+  "XEQT.TO": [
+   {
+    "symbole": "XTOT.TO",
+    "nom": "iShares Core S&P Total U.S. Stk Mktt ETF",
+    "poids": 0.312599,
+    "ticker": ""
+   },
+   {
+    "symbole": "XIC.TO",
+    "nom": "iShares Core S&P/TSX Cap Composite ETF",
+    "poids": 0.257178,
+    "ticker": ""
+   },
+   {
+    "symbole": "XEF.TO",
+    "nom": "iShares Core MSCI EAFE IMI ETF",
+    "poids": 0.241392,
+    "ticker": ""
+   },
+   {
+    "symbole": "ITOT",
+    "nom": "iShares Core S&P Total US Stock Mkt ETF",
+    "poids": 0.143202,
+    "ticker": ""
+   },
+   {
+    "symbole": "XEC.TO",
+    "nom": "iShares Core MSCI Emer Mkts IMI ETF",
+    "poids": 0.044765,
+    "ticker": ""
+   }
+  ],
+  "BNDW": [
+   {
+    "symbole": "BND",
+    "nom": "Vanguard Total Bond Market ETF",
+    "poids": 0.513101,
+    "ticker": ""
+   },
+   {
+    "symbole": "BNDX",
+    "nom": "Vanguard Total International Bond ETF",
+    "poids": 0.486877,
+    "ticker": ""
+   }
+  ]
+ },
+ "actualites": {
+  "GLD": [
+   {
+    "date": "2026-11-14",
+    "titre": "Ray Dalio Keeps Telling Investors to Hold Gold. Gold Just Lost 28% From Its Record. Here’s His Rule for a 66-Year-Old With $800,000 in an IRA and $2,800 a Month in Social Security",
+    "url": "https://247wallst.com/investing/2026/11/14/ray-dalio-keeps-telling-investors-to-hold-gold-gold-just-lost-28-from-its-record-heres-his-rule-for-a-66-year-old-with-800000-in-an-ira-and-2800-a-month-in-social-security/"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "What If You Had Invested $10,000 in Bitcoin 5 Years Ago?",
+    "url": "https://247wallst.com/investing/cryptocurrency/2026/11/12/what-if-you-had-invested-10000-in-bitcoin-5-years-ago/"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Gold Prices Plunge as Fed Rate Hike Fears Intensify",
+    "url": "https://finance.yahoo.com/markets/commodities/articles/gold-prices-plunge-fed-rate-194427220.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "What $10,000 in Silver on Jan. 1 Is Worth Today",
+    "url": "https://www.fool.com/investing/2026/11/12/what-10000-in-silver-on-jan-1-is-worth-today/"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Tether Gold Passes KPMG Audit: Can It Beat America’s Biggest Gold Fund?",
+    "url": "https://beincrypto.com/tether-gold-kpmg-audit-america-gold-fund/"
+   },
+   {
+    "date": "2026-11-10",
+    "titre": "Forget the ETF Outflows: Gold Miners Offer 3X Leverage As Cash Flow Surges",
+    "url": "https://finance.yahoo.com/markets/commodities/articles/forget-etf-outflows-gold-miners-133032447.html"
+   },
+   {
+    "date": "2026-11-09",
+    "titre": "Defiance Goes Mad ‘Maxx’ on Single-Stock ETFs",
+    "url": "https://www.thedailyupside.com/etf/industry-news-etf/defiance-goes-mad-maxx-on-single-stock-etfs/"
+   },
+   {
+    "date": "2026-11-06",
+    "titre": "Guide to Gold ETF Investing",
+    "url": "https://finance.yahoo.com/markets/commodities/articles/guide-gold-etf-investing-120000135.html"
+   }
+  ],
+  "AAPL": [
+   {
+    "date": "2026-11-14",
+    "titre": "Apple's Market Value Grew From $350 Billion to $4 Trillion During Tim Cook's 15 Years as CEO. Here's What That Growth Curve Means for Apple's Next Chapter Under John Ternus",
+    "url": "https://www.fool.com/investing/2026/11/14/apples-market-value-grew-from-350-billion-to-4-trillion-during-tim-cooks-15-years-as-ceo-heres-what-that-growth-curve-means-for-apples-next-chapter-under-john-ternus/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Arm vs. ASML: Which Technology Stock Is a Better Buy for 2027?",
+    "url": "https://www.fool.com/coverage/better-buy/2026/11/14/arm-vs-asml-which-technology-stock-is-a-better-buy-for-2027/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Apple users are about to lose something they've had for 28 years",
+    "url": "https://www.thestreet.com/investing/apple-users-are-about-to-lose-something-theyve-had-for-28-years"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Nvidia lost $1.6 trillion after Jensen Huang's exit, but Apple's and Uber's CEO transitions offer a blueprint",
+    "url": "https://finance.yahoo.com/technology/articles/nvidia-lost-1-6-trillion-154500086.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Apple Leads Five Stocks Standing Tall Near Buy Points Despite Nvidia, Other Headwinds",
+    "url": "https://www.investors.com/news/apple-five-stocks-buy-points-nvidia-market-headwinds/?src=A00220&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Elon Musk, Trump, Kress, Nvidia’s Board On Jensen Huang’s Exit: Mag 7 Voices This Week",
+    "url": "https://stocktwits.com/news-articles/markets/equity/elon-musk-trump-kress-nvidia-board-on-jensen-huang-exit/cNbPJ1xR9Qk"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "In Jensen Huang’s Ouster, Tech Billionaires See a Mistake—and a Lesson",
+    "url": "https://www.wsj.com/tech/in-jensen-huangs-ouster-tech-billionaires-see-a-mistakeand-a-lesson-2bea613c?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Is Apple Stock a Buy Right Now?",
+    "url": "https://www.fool.com/investing/2026/11/13/is-apple-stock-a-buy-right-now/"
+   }
+  ],
+  "NVDA": [
+   {
+    "date": "2026-11-14",
+    "titre": "Apple's Market Value Grew From $350 Billion to $4 Trillion During Tim Cook's 15 Years as CEO. Here's What That Growth Curve Means for Apple's Next Chapter Under John Ternus",
+    "url": "https://www.fool.com/investing/2026/11/14/apples-market-value-grew-from-350-billion-to-4-trillion-during-tim-cooks-15-years-as-ceo-heres-what-that-growth-curve-means-for-apples-next-chapter-under-john-ternus/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "NVIDIA (NVDA): Can AI Demand Sustain Growth Through Leadership Uncertainty?",
+    "url": "https://finance.yahoo.com/technology/ai/articles/nvidia-nvda-ai-demand-sustain-192430760.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Coca-Cola Has Paid a Growing Dividend for 64 Years. Here's the Income $5,000 Can Start You With.",
+    "url": "https://www.fool.com/investing/2026/11/14/coca-cola-has-paid-a-growing-dividend-for-64-years-heres-the-income-5000-can-start-you-with/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Nvidia Shock Has Investors Rethinking AI Infrastructure Stocks",
+    "url": "https://finance.yahoo.com/technology/ai/articles/nvidia-shock-investors-rethinking-ai-190934918.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Sandisk’s Stock Split Takes Effect Nov. 19. Should You Buy It Now?",
+    "url": "https://www.fool.com/investing/2026/11/14/sandisks-stock-split-takes-effect-nov-19-should-you-buy-it-now/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Bill Ackman Says Freeing Fannie Mae and Freddie Mac From Government Control Could Unlock $500 Billion in Value, Just as Both Stocks Have Jumped Over 23% in the Past Month. Is Now the Time to Bet on That Payoff?",
+    "url": "https://www.fool.com/investing/2026/11/14/bill-ackman-says-freeing-fannie-mae-and-freddie-mac-from-government-control-could-unlock-usd500-billion-in-value-just-as-both-stocks-have-jumped-over-23-in-the-past-month-is-now-the-time-to-bet-on/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Most AI Stocks Need Perfect Conditions to Win. This One Doesn't.",
+    "url": "https://www.fool.com/investing/2026/11/14/most-ai-stocks-need-perfect-conditions-to-win-this/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Anthropic IPO to test Wall Street's faith in AI as skepticism mounts",
+    "url": "https://finance.yahoo.com/markets/stocks/article/anthropic-ipo-to-test-wall-streets-faith-in-ai-as-skepticism-mounts-180007104.html"
+   }
+  ],
+  "BTC-USD": [
+   {
+    "date": "2026-11-14",
+    "titre": "Why Is XRP Crashing Below $1?",
+    "url": "https://247wallst.com/investing/cryptocurrency/2026/11/14/why-is-xrp-crashing-below-1/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Bitcoin Is Slumping, but Michael Saylor Says Strategy Can Create $10 Billion to $30 Billion in \"Digital Credit\"",
+    "url": "https://www.fool.com/investing/2026/11/14/michael-saylor-says-strategy-can-generate-10-billi/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Bitcoin Just Crashed Toward $66,000. History Says the Worst May Not Be Over",
+    "url": "https://247wallst.com/investing/cryptocurrency/2026/11/14/bitcoin-just-crashed-toward-66000-history-says-the-worst-may-not-be-over/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Why Tech and Crypto Sold Off After the Blue Wave",
+    "url": "https://www.entrepreneur.com/business-news/tech/why-tech-and-crypto-sold-off-after-the-blue-wave"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Hyperliquid's HYPE Token Shows Resilience as Crypto Market Crash Deepens",
+    "url": "https://beincrypto.com/hyperliquid-hype-price-resilience-crypto-market-crash/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "The Blockchain Boom Is Still Happening Behind the Scenes. These 3 Growth Stocks Will Benefit.",
+    "url": "https://www.fool.com/investing/2026/11/14/the-blockchain-boom-is-still-happening-behind-the/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Trump Media group stares down $1bn debt crunch as bitcoin bet fades",
+    "url": "https://finance.yahoo.com/markets/crypto/articles/trump-media-group-stares-down-130009593.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Strategy's Michael Saylor Says Bitcoin Is Now a Bipartisan Issue That Crosses Party Lines. Here's Why He's Right.",
+    "url": "https://www.fool.com/investing/2026/11/14/strategys-michael-saylor-says-bitcoin-is-now-a-bip/"
+   }
+  ],
+  "9988.HK": [
+   {
+    "date": "2026-11-14",
+    "titre": "What Citi Expects From Alibaba (BABA) Before November 19",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/citi-expects-alibaba-baba-november-191647796.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Alibaba vs. Uber Technologies: Which Tech Platform Stock Is a Better Buy for 2027?",
+    "url": "https://www.fool.com/coverage/better-buy/2026/11/14/alibaba-vs-uber-technologies-which-tech-platform-stock-is-a-better-buy-for-2027/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Alibaba vs. Coupang: Which Asia Consumer Giant Is the Better Stock Buy for 2027?",
+    "url": "https://www.fool.com/coverage/better-buy/2026/11/14/alibaba-vs-coupang-which-asia-consumer-giant-is-the-better-stock-buy-for-2027/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Anthropic’s $1.4 Trillion IPO Is Nov. 19. U.S. AI Giants Are Trouncing China 10-to-1",
+    "url": "https://247wallst.com/investing/2026/11/14/anthropics-1-4-trillion-ipo-is-nov-19-u-s-ai-giants-are-trouncing-china-10-to-1/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "“Very Bad” News for Alibaba: Nvidia’s B300 Servers Now Cost Nearly $3 Million in China.",
+    "url": "https://www.tikr.com/blog/very-bad-news-for-alibaba-nvidias-b300-servers-now-cost-nearly-3-million-in-china?ref=yahoofinance&tlnk=yf-261114-gw9r3274"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Alibaba’s (BABA) AI Growth Prospects Remain Masked by Short-Term Challenges",
+    "url": "https://finance.yahoo.com/technology/ai/articles/alibaba-baba-ai-growth-prospects-205249409.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "How Nvidia’s Scandal Will Reverberate Across Washington",
+    "url": "https://www.barrons.com/articles/nvidia-export-controls-change-jensen-huang-scandal-5311bfd7?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Forget Nvidia: Curbs on China’s Remote Chip Access Are a “Nightmare Scenario” for Oracle",
+    "url": "https://www.tikr.com/blog/forget-nvidia-curbs-on-chinas-remote-chip-access-are-a-nightmare-scenario-for-oracle?ref=yahoofinance&tlnk=yf-261113-ff3m8w53"
+   }
+  ],
+  "TSLA": [
+   {
+    "date": "2026-11-14",
+    "titre": "Tesla (TSLA) Breaks Ground On $10 Billion Texas Solar Factory As EU Approvals Advance",
+    "url": "https://finance.yahoo.com/energy/articles/tesla-tsla-breaks-ground-10-190728186.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Tesla Just Started Taking Orders for a Car With No Steering Wheel",
+    "url": "https://247wallst.com/investing/2026/11/14/tesla-just-started-taking-orders-for-a-car-with-no-steering-wheel/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Elon Musk joins 100,000+ signers on a petition to reinstate Jensen Huang — including 5,000+ who say they work at Nvidia",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/elon-musk-joins-100-000-172500045.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Texas’ Next Attorney General Vows “Tremendous Scrutiny” of a Tesla–SpaceX Merger",
+    "url": "https://247wallst.com/investing/2026/11/14/texas-next-attorney-general-vows-tremendous-scrutiny-of-a-tesla-spacex-merger/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Here’s Why Tesla (TSLA) Is One of the Top High P/E Stocks Under the 200-Day SMA",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/why-tesla-tsla-one-top-152951928.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Why Tesla Is Pulling the Plug on Cybertruck",
+    "url": "https://www.wsj.com/business/autos/why-tesla-is-pulling-the-plug-on-cybertruck-b6c2f97b?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Tesla Opens Sales of Autonomous Cybercab for ‘Select’ Customers",
+    "url": "https://www.wsj.com/business/autos/tesla-opens-sales-of-autonomous-cybercab-for-select-customers-8d2feae3?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Why Tesla Is Pulling the Plug on Cybertruck",
+    "url": "https://finance.yahoo.com/video/why-tesla-pulling-plug-cybertruck-150000385.html"
+   }
+  ],
+  "1211.HK": [
+   {
+    "date": "2026-11-14",
+    "titre": "Ford’s Jim Farley Isn’t the Only One Worried About BYD, Geely and Chinese Automakers: UAW Sends Warning to Congress, Says ‘China Must Not Gain a Foothold’",
+    "url": "https://finance.yahoo.com/economy/policy/articles/ford-jim-farley-isn-t-184639069.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Jaguar Land Rover: We will do what it takes to combat copycat carmakers",
+    "url": "https://uk.finance.yahoo.com/news/jaguar-land-rover-takes-combat-090000174.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Jaguar Land Rover: We will do what it takes to combat copycat carmakers",
+    "url": "https://www.telegraph.co.uk/business/2026/11/14/jaguar-land-rover-do-what-takes-combat-copycat-carmakers/"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Tesla vs. BYD: One Has a $14 Billion Problem, and the Other Has a Sky-High Valuation",
+    "url": "https://www.fool.com/coverage/better-buy/2026/11/13/tesla-vs-byd-one-has-a-usd14-billion-problem-and-the-other-has-a-sky-high-valuation/"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Cathie Wood Boosts Bets On 2 AI Firms Amid Nvidia’s Huang Upheaval — Here’s How Her Trading Week Unfolded",
+    "url": "https://stocktwits.com/news-articles/markets/equity/cathie-wood-bets-2-ai-firms-nvidia-huang-upheaval-how-trading-week-unfolded/cNbbpHTR9Ol"
+   },
+   {
+    "date": "2026-11-11",
+    "titre": "Chinese car giant puts SUV wheels on the wrong way",
+    "url": "https://uk.finance.yahoo.com/news/chinese-car-giant-apologises-putting-133712805.html"
+   },
+   {
+    "date": "2026-11-11",
+    "titre": "BYD's Profits Rebounded. These 2 Questions Will Decide What Comes Next.",
+    "url": "https://www.fool.com/investing/2026/11/10/byds-profits-rebounded-these-2-questions-will-deci/"
+   },
+   {
+    "date": "2026-11-09",
+    "titre": "EU states oppose Franco-German car emissions pact – report",
+    "url": "https://www.just-auto.com/news/eu-states-oppose-franco-german-car-emissions-pact-report/"
+   }
+  ],
+  "AMZN": [
+   {
+    "date": "2026-11-14",
+    "titre": "Italy fines Meta $880 million over accessing users' photos",
+    "url": "https://www.cbsnews.com/news/italy-fines-meta-880-million-users-photos/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Packaging, Package Delivery and Pickup Trucks: $90,000 Across These 3 Household Names Pays $5,067 a Year",
+    "url": "https://247wallst.com/investing/2026/11/14/packaging-package-delivery-and-pickup-trucks-90000-across-these-3-household-names-pays-5067-a-year/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Anthropic’s $1.4 Trillion IPO Is Nov. 19. U.S. AI Giants Are Trouncing China 10-to-1",
+    "url": "https://247wallst.com/investing/2026/11/14/anthropics-1-4-trillion-ipo-is-nov-19-u-s-ai-giants-are-trouncing-china-10-to-1/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "MercadoLibre vs. Uber Technologies: Which Consumer Network Stock Is a Better Buy for 2027?",
+    "url": "https://www.fool.com/coverage/better-buy/2026/11/14/mercadolibre-vs-uber-technologies-which-consumer-network-stock-is-a-better-buy-for-2027/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Billionaire Bill Ackman Says There’s a Huge Disconnect in Wall Street’s Expectations for Amazon, Microsoft, Meta, and Alphabet",
+    "url": "https://www.fool.com/investing/2026/11/14/bill-ackman-huge-disconnect-wall-street-expectations-for-hyperscalers/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Lawyers could pocket up to $100M of Amazon's $309.5M refund settlement — claims are due by Dec. 1",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/lawyers-could-pocket-100m-amazons-150000256.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "A $2.8 Billion Fund Dumps These 3 Stocks",
+    "url": "https://www.tikr.com/blog/a-2-8-billion-fund-dumps-these-3-stocks?ref=yahoofinance&tlnk=yf-261114-cf8fgp4v"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Scott Galloway Predicts Anthropic’s First Trade Opens “15% to 40% Higher.” That’s Great News for Alphabet and Amazon",
+    "url": "https://www.tikr.com/blog/scott-galloway-predicts-anthropics-first-trade-opens-15-to-40-higher-thats-great-news-for-alphabet-and-amazon?ref=yahoofinance&tlnk=yf-261114-5vwf9544"
+   }
+  ],
+  "GOOGL": [
+   {
+    "date": "2026-11-14",
+    "titre": "Planet Labs PBC vs. Red Cat: Which Industrials Stock Is a Better Buy for 2027?",
+    "url": "https://www.fool.com/coverage/better-buy/2026/11/14/planet-labs-pbc-vs-red-cat-which-industrials-stock-is-a-better-buy-for-2027/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Crocs And 2 Other Undervalued Cash Flow Stocks",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/crocs-2-other-undervalued-cash-180928201.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Anthropic’s $1.4 Trillion IPO Is Nov. 19. U.S. AI Giants Are Trouncing China 10-to-1",
+    "url": "https://247wallst.com/investing/2026/11/14/anthropics-1-4-trillion-ipo-is-nov-19-u-s-ai-giants-are-trouncing-china-10-to-1/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "AMD Just Beat Nvidia by the Widest Margin Since 1999",
+    "url": "https://247wallst.com/investing/2026/11/14/amd-just-beat-nvidia-by-the-widest-margin-since-1999/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Billionaire Bill Ackman Says There’s a Huge Disconnect in Wall Street’s Expectations for Amazon, Microsoft, Meta, and Alphabet",
+    "url": "https://www.fool.com/investing/2026/11/14/bill-ackman-huge-disconnect-wall-street-expectations-for-hyperscalers/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Harvard Cut Nvidia by a Third and Bought AMD",
+    "url": "https://247wallst.com/investing/2026/11/14/harvard-cut-nvidia-by-a-third-and-bought-amd/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "SpaceX Hollows Out Its AI Video Division. Elon Musk Now Has Different Priorities",
+    "url": "https://247wallst.com/investing/2026/11/14/spacex-hollows-out-its-ai-video-division-elon-musk-now-has-different-priorities/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Sundar Pichai Reported Alphabet's Cloud Revenue Grew 103% Last Quarter While the Gemini App Reached 1 Billion Monthly Users. Is Google Cloud Becoming a Bigger Growth Driver Than Search?",
+    "url": "https://www.fool.com/investing/2026/11/14/sundar-pichai-alphabet-cloud-revenue-gemini-search/"
+   }
+  ],
+  "MSFT": [
+   {
+    "date": "2026-11-14",
+    "titre": "Anthropic IPO to test Wall Street's faith in AI as skepticism mounts",
+    "url": "https://finance.yahoo.com/markets/stocks/article/anthropic-ipo-to-test-wall-streets-faith-in-ai-as-skepticism-mounts-180007104.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Credo Technology Group vs. Marvell Technology: Which Technology Stock Is a Better Buy for 2027?",
+    "url": "https://www.fool.com/coverage/better-buy/2026/11/14/credo-technology-group-vs-marvell-technology-which-technology-stock-is-a-better-buy-for-2027/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "C3.ai vs. SentinelOne: Which Technology Stock Is a Better Buy for 2027?",
+    "url": "https://www.fool.com/coverage/better-buy/2026/11/14/c3ai-vs-sentinelone-which-technology-stock-is-a-better-buy-for-2027/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Billionaire Bill Ackman Says There’s a Huge Disconnect in Wall Street’s Expectations for Amazon, Microsoft, Meta, and Alphabet",
+    "url": "https://www.fool.com/investing/2026/11/14/bill-ackman-huge-disconnect-wall-street-expectations-for-hyperscalers/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Why the Microsoft Outage Came at the Worst Possible Time for the Stock",
+    "url": "https://www.barrons.com/articles/microsoft-stock-office-outage-365-a8356c9e?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Harvard Cut Nvidia by a Third and Bought AMD",
+    "url": "https://247wallst.com/investing/2026/11/14/harvard-cut-nvidia-by-a-third-and-bought-amd/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "SpaceX Hollows Out Its AI Video Division. Elon Musk Now Has Different Priorities",
+    "url": "https://247wallst.com/investing/2026/11/14/spacex-hollows-out-its-ai-video-division-elon-musk-now-has-different-priorities/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Nvidia, Alphabet, Microsoft, and Micron Are All Buying Anthropic’s IPO. Should You Buy Too?",
+    "url": "https://www.fool.com/investing/2026/11/14/nvidia-alphabet-microsoft-and-micron-are-buying-anthropic-ipo/"
+   }
+  ],
+  "NOVO-B.CO": [
+   {
+    "date": "2026-11-14",
+    "titre": "Novo Nordisk vs. Pfizer: Does a Weight Loss or Cancer Focused Pharma Stock Make a Better Buy for 2027?",
+    "url": "https://www.fool.com/coverage/better-buy/2026/11/14/novo-nordisk-vs-pfizer-does-a-weight-loss-or-cancer-focused-pharma-stock-make-a-better-buy-for-2027/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "CVS says GLP-1s save money when priced below $350 per month",
+    "url": "https://finance.yahoo.com/healthcare/articles/cvs-says-glp-1s-save-110514978.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Novo Nordisk Submits Sickle Cell Disease Treatment Etavopivat for US and European Regulatory Approval",
+    "url": "https://investorshub.advfn.com/market-news/article/39972/novo-nordisk-submits-sickle-cell-disease-treatment-etavopivat-for-us-and-european-regulatory-approval"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Pfizer Stock Down 6% Post Q3 Earnings: Time to Buy, Hold or Exit?",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/pfizer-stock-down-6-post-133000501.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "4 Key Stocks to Watch Across Diabetes and Obesity This Awareness Day",
+    "url": "https://finance.yahoo.com/healthcare/articles/4-key-stocks-watch-across-131300920.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Novo Nordisk Seeks FDA, EMA Approval For Sickle Cell Disease Treatment – Here Are The Key Takeaways",
+    "url": "https://stocktwits.com/news-articles/markets/equity/novo-nordisk-seeks-fda-ema-approval-for-sickle-cell-disease-treatment-here-are-the-key-takeaways/cNbRT6aR9ff"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Novo Nordisk (CPSE:NOVO B) Taps DJ Khaled As Oral Weight Loss Race Heats Up",
+    "url": "https://finance.yahoo.com/healthcare/articles/novo-nordisk-cpse-novo-b-121601383.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Eli Lilly Stocks Rise as China Approves Orforglipron Weight-Loss Pill",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/eli-lilly-stocks-rise-china-115704045.html"
+   }
+  ],
+  "ASML.AS": [
+   {
+    "date": "2026-11-14",
+    "titre": "Arm vs. ASML: Which Technology Stock Is a Better Buy for 2027?",
+    "url": "https://www.fool.com/coverage/better-buy/2026/11/14/arm-vs-asml-which-technology-stock-is-a-better-buy-for-2027/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Prediction: ASML Will Join the $800 Billion Club in 2029",
+    "url": "https://www.fool.com/investing/2026/11/14/prediction-asml-will-join-the-800-billion-club/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "ASML Soars 10% in a Week as Chip Stocks Bounce and Musk’s Terafab Eyes a Million Wafers",
+    "url": "https://www.tikr.com/blog/asml-soars-10-in-a-week-as-chip-stocks-bounce-and-musks-terafab-eyes-a-million-wafers?ref=yahoofinance&tlnk=yf-261114-g2565jf3"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "ASML Holding (ENXTAM:ASML) Faces Sector Selling, Is The 25% Undervaluation Case Still Intact?",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/asml-holding-enxtam-asml-faces-222140528.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Xanadu Breakthroughs & Partnerships Advance Roadmap – Quarterly Update Report",
+    "url": "https://finance.yahoo.com/technology/ai/articles/xanadu-breakthroughs-partnerships-advance-roadmap-221337932.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Applied Materials Is 47% Off Its High. Summit Insights Downgraded It, and It’s Not About Demand",
+    "url": "https://www.tikr.com/blog/applied-materials-is-47-off-its-high-summit-insights-downgraded-it-and-its-not-about-demand?ref=yahoofinance&tlnk=yf-261113-qxvgfm6m"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Nvidia stock slips as investors digest CEO exit, broader chip sell-off accelerates",
+    "url": "https://finance.yahoo.com/markets/article/nvidia-stock-slips-as-investors-digest-ceo-exit-rest-of-chip-sector-falls-144818245.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "5 High P/E Stocks Under the 200-Day SMA",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/5-high-p-e-stocks-143958502.html"
+   }
+  ],
+  "SAP.DE": [
+   {
+    "date": "2026-11-14",
+    "titre": "Cellebrite DI (CLBT) Appoints Rogerio Rizzi As EVP For Corporate Strategy And Development",
+    "url": "https://finance.yahoo.com/technology/ai/articles/cellebrite-di-clbt-appoints-rogerio-170559225.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Should SAP AI Partnership Require Action From BlackLine Stock Investors?",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/sap-ai-partnership-require-action-150935393.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "SAP (XTRA:SAP) Stock Could Be 34% Undervalued Despite Fresh AI Retail News",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/sap-xtra-sap-stock-could-211416465.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "New SAP Study Questions Whether CX Businesses May Be Overpromising On AI",
+    "url": "https://wwd.com/sourcing-journal/industry-news/sap-artificial-intelligence-consumer-autonomy-gap-1239411991/"
+   },
+   {
+    "date": "2026-11-10",
+    "titre": "Why JPMorgan Says SAP (SAP) Is “No Longer Priced For AI Disruption”",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/why-jpmorgan-says-sap-sap-222205895.html"
+   },
+   {
+    "date": "2026-11-09",
+    "titre": "SAP Stocks Rise 1.73% After JPMorgan Upgrade on AI Production Shift",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/sap-stocks-rise-1-73-181034858.html"
+   },
+   {
+    "date": "2026-11-09",
+    "titre": "Descartes Systems Group (TSX:DSG) Has A Fresh Update, So What Is Drawing Attention Now?",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/descartes-systems-group-tsx-dsg-131040331.html"
+   },
+   {
+    "date": "2026-11-09",
+    "titre": "Descartes Systems Group (TSX:DSG) Stock Could Be 20% Undervalued After Ocean Visibility Integration",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/descartes-systems-group-tsx-dsg-120838622.html"
+   }
+  ],
+  "AZN.L": [
+   {
+    "date": "2026-11-14",
+    "titre": "Cigarette Sales Keep Falling. These 2 Tobacco Stocks Still Pay 5.5% Dividends",
+    "url": "https://247wallst.com/investing/2026/11/14/cigarette-sales-keep-falling-these-2-tobacco-stocks-still-pay-5-5-dividends/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "3 British Healthcare Stocks With Revenue Growth Up To 13%",
+    "url": "https://finance.yahoo.com/healthcare/articles/3-british-healthcare-stocks-revenue-031225751.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Is AstraZeneca (LSE:AZN) Reasonable After Its Oncology Led Cash Flow Push?",
+    "url": "https://finance.yahoo.com/healthcare/articles/astrazeneca-lse-azn-reasonable-oncology-011102768.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "AstraZeneca (LSE:AZN) Will Transfer Its Primary Listing To The NYSE In 2026",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/astrazeneca-lse-azn-transfer-primary-002438027.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Cellectis SA (CLLS) (Q3 2026) Earnings Call Highlights: Strategic Shift to Gene Editing ...",
+    "url": "https://finance.yahoo.com/healthcare/articles/cellectis-sa-clls-q3-2026-230355977.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Sector Update: Healthcare Stocks Rise Late Afternoon",
+    "url": "https://finance.yahoo.com/healthcare/articles/sector-healthcare-stocks-rise-afternoon-203155220.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Sector Update: Healthcare Stocks Rise Friday Afternoon",
+    "url": "https://finance.yahoo.com/healthcare/articles/sector-healthcare-stocks-rise-friday-182615396.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "AstraZeneca Reportedly Eliminates 600 US Sales Positions To Fund Pipeline",
+    "url": "https://stocktwits.com/news-articles/markets/equity/astra-zeneca-reportedly-eliminates-600-us-sales-positions-to-fund-pipeline/cNbR9TyR9fu"
+   }
+  ],
+  "JPM": [
+   {
+    "date": "2026-11-14",
+    "titre": "She Moves $500,000 Into Municipal Bonds amid ‘Rare Opportunity’, Expecting Every Dollar of Interest to Stay Tax-Free. The IRS Counts That Interest When It Taxes Her Social Security, Pushing $16,900 More of Her Benefits Into Taxable Income",
+    "url": "https://247wallst.com/personal-finance/social-security/2026/11/14/she-moves-500000-into-municipal-bonds-amid-rare-opportunity-expecting-every-dollar-of-interest-to-stay-tax-free-the-irs-counts-that-interest-when-it-taxes-her-social-security-pushing-16900/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "JPMorgan Chase (JPM) Sees 40% Jump In Asia Pacific Alternative Asset Allocations",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/jpmorgan-chase-jpm-sees-40-042637965.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "JPMorgan’s Top Credit Cards Executive Is Leaving the Bank",
+    "url": "https://www.barrons.com/articles/jpmorgan-credit-cards-allison-beer-5f0c928d?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Amodei Highlights Computing Power, Capex Dilemma Ahead Of Anthropic IPO",
+    "url": "https://stocktwits.com/news-articles/markets/equity/amodei-highlights-computing-power-capex-dilemma-ahead-of-anthropic-ipo/cNbR0noR9QR"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "JPMorgan’s latest filing reveals a bigger Bitcoin footprint",
+    "url": "https://www.thestreet.com/crypto/investing/jpmorgans-latest-filing-reveals-a-bigger-bitcoin-footprint"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "4 Takeaways From Dario Amodei’s Anthropic IPO Chat With Jamie Dimon",
+    "url": "https://www.barrons.com/articles/anthropic-ipo-jamie-dimon-chase-3e44342b?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Weekly Wrap: Bitcoin Falls Below $70,000 As Crypto Selling Worsens",
+    "url": "https://www.cryptoprowl.com/releases/weekly-wrap-bitcoin-falls-below-70000-as-crypto-selling-worsens-7907"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "JPMorgan’s Bitcoin and Crypto-Linked Holdings Approach $1 Billion",
+    "url": "https://decrypt.co/383267/jpmorgan-bitcoin-crypto-linked-holdings-approach-1-billion"
+   }
+  ],
+  "2330.TW": [
+   {
+    "date": "2026-11-14",
+    "titre": "Harvard Cut Nvidia by a Third and Bought AMD",
+    "url": "https://247wallst.com/investing/2026/11/14/harvard-cut-nvidia-by-a-third-and-bought-amd/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Why a Rising TSMC Challenger Could Reshape the Chip Foundry Landscape",
+    "url": "https://www.fool.com/investing/2026/11/14/why-a-rising-tsmc-challenger-could-reshape-the-chi/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "A $164 Billion Fund Dumps These 3 Stocks",
+    "url": "https://www.tikr.com/blog/a-164-billion-fund-dumps-these-3-stocks?ref=yahoofinance&tlnk=yf-261114-g646hx73"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "ASML Soars 10% in a Week as Chip Stocks Bounce and Musk’s Terafab Eyes a Million Wafers",
+    "url": "https://www.tikr.com/blog/asml-soars-10-in-a-week-as-chip-stocks-bounce-and-musks-terafab-eyes-a-million-wafers?ref=yahoofinance&tlnk=yf-261114-g2565jf3"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Nvidia Has Real Problems—but Don’t Fall for Fear Mongering",
+    "url": "https://www.barrons.com/articles/nvidia-balance-sheet-math-f210c291?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Thierry Borgeat Says Chip Stocks Peak Every Two Years. His Chart Points to Another Top",
+    "url": "https://247wallst.com/investing/2026/11/13/thierry-borgeat-says-chip-stocks-peak-every-two-years-his-chart-points-to-another-top/"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "'Nothing has changed': Why some Nvidia stock bulls aren't wavering after Jensen Huang ouster",
+    "url": "https://finance.yahoo.com/technology/article/nothing-has-changed-why-some-nvidia-stock-bulls-arent-wavering-after-jensen-huang-ouster-204522204.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Taiwan Semiconductor Manufacturing (TSM) Takes A $1 Billion Step Further Into AI",
+    "url": "https://finance.yahoo.com/technology/ai/articles/taiwan-semiconductor-manufacturing-tsm-takes-191146480.html"
+   }
+  ],
+  "PG": [
+   {
+    "date": "2026-11-14",
+    "titre": "3 Consumer Compounders That Fit Warren Buffett's Playbook. I'd Hold Them Forever.",
+    "url": "https://www.fool.com/investing/2026/11/14/3-consumer-compounders-that-fit-warren-buffetts-pl/"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Procter & Gamble (PG), Why Is It Back In The Spotlight?",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/procter-gamble-pg-why-back-210940743.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "If the Stock Market Crashes, These Are the First 3 Dividend Stocks I Want to Buy",
+    "url": "https://www.fool.com/investing/2026/11/13/if-the-stock-market-crashes-these-are-the-first-3-dividend-stocks-i-want-to-buy/"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Better Dividend Stock for Retirees: Coca-Cola vs. Procter & Gamble",
+    "url": "https://www.tikr.com/blog/better-dividend-stock-for-retirees-coca-cola-vs-procter-gamble?ref=yahoofinancedividend&tlnk=yf-261114-f82jxg33"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Is Procter & Gamble Stock Worth More Than Its Rivals?",
+    "url": "https://www.trefis.com/stock/pg/articles/624961/is-procter-gamble-stock-worth-more-than-its-rivals/2026-11-13"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Amazon's secret AI plan could change how Americans shop",
+    "url": "https://finance.yahoo.com/technology/ai/articles/amazons-secret-ai-plan-could-170609826.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Procter & Gamble or PepsiCo: The One Dividend Stock I’d Hold for the Next 20 Years",
+    "url": "https://www.tikr.com/blog/procter-gamble-or-pepsico-the-one-dividend-stock-id-hold-for-the-next-20-years?ref=yahoofinancedividend&tlnk=yf-261113-mwffm7fr"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "5 Dividend Aristocrats and Kings to Consider if the Stock Market Sells Off",
+    "url": "https://247wallst.com/investing/2026/11/13/5-dividend-aristocrats-and-kings-to-consider-if-the-stock-market-sells-off/"
+   }
+  ],
+  "ENB.TO": [
+   {
+    "date": "2026-11-14",
+    "titre": "3 Defensive Dividend Stocks for Retirees Worried About the Next Market Downturn",
+    "url": "https://247wallst.com/investing/2026/11/14/3-defensive-dividend-stocks-for-retirees-worried-about-the-next-market-downturn/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "A $164 Billion Fund Dumps These 3 Stocks",
+    "url": "https://www.tikr.com/blog/a-164-billion-fund-dumps-these-3-stocks?ref=yahoofinance&tlnk=yf-261114-g646hx73"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Market Chatter: Enbridge's Woodfibre LNG Project to Receive $140 Million From Canadian Government",
+    "url": "https://finance.yahoo.com/energy/articles/market-chatter-enbridge-apos-woodfibre-121312211.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "A $15 Billion Fund Just Bought These 3 Stocks",
+    "url": "https://www.tikr.com/blog/15-billion-fund-bought-3-stocks-meta-nisource-enbridge?ref=yahoofinance&tlnk=yf-261113-gjrpc542"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Can Williams Afford Its Spending Bill?",
+    "url": "https://www.trefis.com/stock/wmb/articles/624695/can-williams-afford-its-spending-bill/2026-11-12"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Enbridge Inc (ENB) Is a Trending Stock: Facts to Know Before Betting on It",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/enbridge-inc-enb-trending-stock-130003276.html"
+   },
+   {
+    "date": "2026-11-11",
+    "titre": "How Strong Quarterly Results Will Impact Enbridge (TSX:ENB) Investors",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/strong-quarterly-results-impact-enbridge-021437452.html"
+   },
+   {
+    "date": "2026-11-10",
+    "titre": "Enbridge vs. Occidental Petroleum: Does a Midstream or Upstream Energy Focus Make for a Better Stock Buy for 2027?",
+    "url": "https://www.fool.com/coverage/better-buy/2026/11/10/enbridge-vs-occidental-petroleum-does-a-midstream-or-upstream-energy-focus-make-for-a-better-stock-buy-for-2027/"
+   }
+  ],
+  "ETH-USD": [
+   {
+    "date": "2026-11-14",
+    "titre": "SharpLink (SBET) Stock May Trade At A Premium Following Ethereum Treasury News",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/sharplink-sbet-stock-may-trade-141132706.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Hyperliquid's HYPE Token Shows Resilience as Crypto Market Crash Deepens",
+    "url": "https://beincrypto.com/hyperliquid-hype-price-resilience-crypto-market-crash/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Should Ethereum Tax Its Apps Like a Nation? Arca’s Jeff Dorman Says It Has To",
+    "url": "https://unchainedcrypto.com/should-ethereum-tax-its-apps-like-a-nation-arcas-jeff-dorman-says-it-has-to/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Should Ethereum Tax Its Apps to Prove Its Security Is Worth It?",
+    "url": "https://unchainedcrypto.com/should-ethereum-tax-its-apps-to-prove-its-security-is-worth-it/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Crypto Market’s Nearly 6% Slide Costs Bulls $1 Billion in a Day",
+    "url": "https://beincrypto.com/bitcoin-below-68000-crypto-liquidations-bulls/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Arca’s Jeff Dorman Calls Vitalik Buterin’s ETH Store-of-Value Pitch ‘Really Misguided’",
+    "url": "https://unchainedcrypto.com/arcas-jeff-dorman-calls-vitalik-buterins-eth-store-of-value-pitch-really-misguided/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "What Could 5,000 XRP, 5,000 Cardano and 5,000 Stellar Be Worth by 2028?",
+    "url": "https://247wallst.com/investing/cryptocurrency/2026/11/13/what-could-5000-xrp-5000-cardano-and-5000-stellar-be-worth-by-2028/"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Ledger and the Metadata Your Hardware Wallet Sends After You Sign – Uneasy Money",
+    "url": "https://unchainedcrypto.com/ledger-and-the-metadata-your-hardware-wallet-sends-after-you-sign-uneasy-money/"
+   }
+  ],
+  "HSBA.L": [
+   {
+    "date": "2026-11-14",
+    "titre": "Labcorp (LH) Stock Sees Fair Value Lift After Q3 Analyst Target Increases",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/labcorp-lh-stock-sees-fair-141101308.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "HSBC (LSE:HSBA) Stock Looks Cheap After A 326% Five Year Run",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/hsbc-lse-hsba-stock-looks-130921411.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Bank of England likely to raise rates further in 2027, Huw Pill says - FT",
+    "url": "https://finance.yahoo.com/economy/policy/articles/bank-england-likely-raise-rates-085406552.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Stock Market Today, Nov. 13: Nvidia Slides After HSBC Downgrades Stock to Hold on CEO Uncertainty",
+    "url": "https://www.fool.com/coverage/stock-market-today/2026/11/13/stock-market-today-nov-13-nvidia-slides-after-hsbc-downgrades-stock-to-hold-on-ceo-uncertainty/"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "HSBC Downgraded NVIDIA With a $170 Target, and It’s Not Just About Jensen Huang",
+    "url": "https://www.tikr.com/blog/hsbc-downgraded-nvidia-with-a-170-target-and-its-not-just-about-jensen-huang?ref=yahoofinance&tlnk=yf-261113-8f9j369v"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Big banks ‘short-changing’ savers by failing to pass on rate rise",
+    "url": "https://uk.finance.yahoo.com/news/big-banks-short-changing-savers-150550573.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Fundamentals first: Here is how HSBC expects global markets to perform in 2027",
+    "url": "https://finance.yahoo.com/markets/articles/fundamentals-first-hsbc-expects-global-153026213.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "‘Don’t waste a good sell-off’: HSBC names 11 Buy-rated stocks after pullbacks",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/don-t-waste-good-sell-130226304.html"
+   }
+  ],
+  "SPY": [
+   {
+    "date": "2026-11-14",
+    "titre": "Bessent Tells the Fed Not to Hike “Too Much”",
+    "url": "https://247wallst.com/investing/2026/11/14/bessent-tells-the-fed-not-to-hike-too-much/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Think politicians have an unfair edge in the stock market? These investments can help you trade the way they do",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/think-politicians-unfair-edge-stock-123000103.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "‘65% of the S&P Is Basically AI’: Eisman’s Warning as Ramsey Tells Disabled Veteran His $500,000 Is ‘Safe’",
+    "url": "https://247wallst.com/personal-finance/2026/11/14/65-of-the-sp-is-basically-ai-eismans-warning-as-ramsey-tells-disabled-veteran-his-500000-is-safe/"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Will ETF Buying Change Meta Stock Narrative",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/etf-buying-change-meta-stock-002017757.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "S&P 500, Dow, Nasdaq End Lower Amid Nvidia Turmoil, But Record Best Week Since August —  SPCX, NVDA, ARM, AZN In Focus",
+    "url": "https://stocktwits.com/news-articles/markets/equity/s-and-p-500-dow-nasdaq-end-lower-amid-nvidia-turmoil-but-record-best-week-since-august-spcx-nvda-arm-azn-in-focus/cNbRj3uR9Q2"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Never bought Nvidia stock? Its slide could still hit your 401(k).",
+    "url": "https://www.cbsnews.com/news/nvidia-stock-slide-401k-index-funds/"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Intel attracts $79 million in ETF buying despite warning",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/intel-attracts-79-million-etf-171801765.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Kevin Warsh’s Fed Will Vote on Rates Only 7 Times in 2027",
+    "url": "https://247wallst.com/investing/2026/11/13/kevin-warshs-fed-will-vote-on-rates-only-7-times-in-2027/"
+   }
+  ],
+  "TLT": [
+   {
+    "date": "2026-11-14",
+    "titre": "Bessent Tells the Fed Not to Hike “Too Much”",
+    "url": "https://247wallst.com/investing/2026/11/14/bessent-tells-the-fed-not-to-hike-too-much/"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Kevin Warsh’s Fed Will Vote on Rates Only 7 Times in 2027",
+    "url": "https://247wallst.com/investing/2026/11/13/kevin-warshs-fed-will-vote-on-rates-only-7-times-in-2027/"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "The U.S. Just Ran Its Biggest October Deficit Ever: $404 Billion",
+    "url": "https://247wallst.com/investing/2026/11/13/the-u-s-just-ran-its-biggest-october-deficit-ever-404-billion/"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "How Large Does Your Portfolio Need to Be to Generate $9,400 a Month?",
+    "url": "https://247wallst.com/personal-finance/2026/11/12/how-large-does-your-portfolio-need-to-be-to-generate-9400-a-month/"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "The Treasury Secretary Is Now Living on a Military Base After Iranian Threats",
+    "url": "https://247wallst.com/investing/2026/11/12/the-treasury-secretary-is-now-living-on-a-military-base-after-iranian-threats/"
+   },
+   {
+    "date": "2026-11-11",
+    "titre": "Which Long-Term Bond ETF Is the Better Buy: State Street’s SPLB or iShares’ TLT?",
+    "url": "https://www.fool.com/coverage/etfs/2026/11/11/which-long-term-bond-etf-is-the-better-buy-state-street-s-splb-or-ishares-tlt/"
+   },
+   {
+    "date": "2026-11-11",
+    "titre": "The 2-Year Treasury Yield Just Had Its Biggest Jump in 19 Months",
+    "url": "https://247wallst.com/investing/2026/11/11/the-2-year-treasury-yield-just-had-its-biggest-jump-in-19-months/"
+   },
+   {
+    "date": "2026-11-10",
+    "titre": "Foreign-Linked Buyers Took Their Smallest Share of a 3-Year Treasury Auction in 15 Months",
+    "url": "https://247wallst.com/investing/2026/11/10/foreign-linked-buyers-took-their-smallest-share-of-a-3-year-treasury-auction-in-15-months/"
+   }
+  ],
+  "6758.T": [
+   {
+    "date": "2026-11-14",
+    "titre": "Forget Take-Two: Sony Is the Overlooked Winner of GTA VI’s Huge Preorders",
+    "url": "https://www.tikr.com/blog/forget-take-two-sony-is-the-overlooked-winner-of-gta-vis-huge-preorders?ref=yahoofinance&tlnk=yf-261114-x48mvw35"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Game On: The Hidden Value in Take-Two's Stock",
+    "url": "https://www.marketbeat.com/articles/game-on-the-hidden-value-in-take-twos-stock/?utm_source=yahoofinance&utm_medium=yahoofinance"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "GTA 6 Nears Launch With $1 Billion in Estimated Preorders: Bettors See 97% Chance of Record First-Day Sales",
+    "url": "https://www.benzinga.com/markets/prediction-markets/26/11/63248840/gta-6-preorders?utm_source=yahooFinance&utm_campaign=partner_feed&utm_medium=referral"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Grand Theft Auto VI Makes Take-Two Stock Look Like a Steal",
+    "url": "https://www.barrons.com/articles/buy-take-two-stock-grand-theft-auto-vi-1b7b9907?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Should You Invest in Sony (SONY) Based on Bullish Wall Street Views?",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/invest-sony-sony-based-bullish-133003257.html"
+   },
+   {
+    "date": "2026-11-11",
+    "titre": "Are Consumer Discretionary Stocks Lagging  Airbnb (ABNB) This Year?",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/consumer-discretionary-stocks-lagging-airbnb-200711703.html"
+   },
+   {
+    "date": "2026-11-10",
+    "titre": "Sony Is Finally Becoming The Second Mouse That Wins",
+    "url": "https://cdn.jwplayer.com/previews/e8vbopLN"
+   },
+   {
+    "date": "2026-11-10",
+    "titre": "Take-Two Jumps 8% as GTA VI Preorders Run ‘Far in Excess’ of Expectations; Sony and Roblox Slide 2%",
+    "url": "https://247wallst.com/investing/2026/11/10/take-two-jumps-8-as-gta-vi-preorders-run-far-in-excess-of-expectations-sony-and-roblox-slide-2/"
+   }
+  ],
+  "005930.KS": [
+   {
+    "date": "2026-11-14",
+    "titre": "Samsung Electronics (KOSE:A005930) Expands Samsung Pay, Is The Stock Still Undervalued?",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/samsung-electronics-kose-a005930-expands-121510717.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Modine Manufacturing (MOD) is Soaring by Double Digits — This Development May Explain Why",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/modine-manufacturing-mod-soaring-double-050520038.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Modine Manufacturing (MOD) In Reported Talks Over Data Center Cooling Business",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/modine-manufacturing-mod-reported-talks-011851223.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Samsung Eyeing Deal To Buy Data Center Supplier Modine; Stock Soars 35%",
+    "url": "https://www.investors.com/news/samsung-modine-manufacturing-ai-data-center/?src=A00220&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "MOD Stock Jumps 30% as Samsung Reportedly Explores Acquisition of Modine",
+    "url": "https://www.barchart.com/story/news/8827949/mod-stock-jumps-30-as-samsung-reportedly-explores-acquisition-of-modine"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Modine Stock Just Soared 29% on a Report That Samsung Wants to Buy It. Is It Too Late to Buy?",
+    "url": "https://www.fool.com/investing/2026/11/13/modine-stock-just-soared-29-on-a-report-that-samsung-wants-to-buy-it-is-it-too-late-to-buy/"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "SK hynix Stocks Fall 3.03% as Nvidia Leadership Shock Hits Key HBM Supplier",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/sk-hynix-stocks-fall-3-183209379.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Samsung Electronics Stocks Move Lower as Nvidia CEO Exit Tests AI Memory Rally",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/samsung-electronics-stocks-move-lower-183110049.html"
+   }
+  ],
+  "7203.T": [
+   {
+    "date": "2026-11-14",
+    "titre": "Forget Elon Musk’s Tesla Roadster ‘Rocket’ — a Chinese rival has 7,000+ orders for its nearly $300K flying car, due 2027",
+    "url": "https://finance.yahoo.com/technology/articles/forget-elon-musk-tesla-roadster-120500645.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Toyota plans annual Y1tn spend to modernise production equipment",
+    "url": "https://www.just-auto.com/news/toyota-plans-annual-y1tn/"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Can FCEL's Tri-gen Platform Expand Its Hydrogen Business?",
+    "url": "https://finance.yahoo.com/energy/articles/fcels-tri-gen-platform-expand-143300855.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Honda After H1'27 Earnings: Buy, Hold or Sell the Stock Now?",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/honda-h127-earnings-buy-hold-133600765.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "The Snag In Toyota's Little Plan To Bring Tiny Trucks To America",
+    "url": "https://www.investors.com/news/the-snag-in-toyotas-little-plan-to-bring-tiny-trucks-to-america/?src=A00220&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Buy, Sell, or Hold? Thursday’s Top Upgrades and Downgrades: Advanced Micro Devices, Alibaba Group, Cleveland-Cliffs, Conoco Phillips, Diamondback Energy, General Mills, NVIDIA, Toyota, Wendy’s and More",
+    "url": "https://247wallst.com/investing/2026/11/12/buy-sell-or-hold-thursdays-top-upgrades-and-downgrades-advanced-micro-devices-alibaba-group-cleveland-cliffs-conoco-phillips-diamondback-energy-general-mills-nvidia-toyota-wendys-and-m/"
+   },
+   {
+    "date": "2026-11-11",
+    "titre": "Toyota Motor (TSE:7203) Revives Scion With KEI 01 U.S. Truck Plan for 2027",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/toyota-motor-tse-7203-revives-121627350.html"
+   },
+   {
+    "date": "2026-11-11",
+    "titre": "Musk Calls Model Y “the Best-Selling Car” on Earth. Inside China, Tesla Sales Hit a 4-Year Low",
+    "url": "https://www.tikr.com/blog/musk-calls-model-y-the-best-selling-car-on-earth-inside-china-tesla-sales-hit-a-4-year-low?ref=yahoofinance&tlnk=yf-261111-h5qmxg8q"
+   }
+  ],
+  "XOM": [
+   {
+    "date": "2026-11-14",
+    "titre": "Top 3 Energy Stocks To Watch In November 2026",
+    "url": "https://finance.yahoo.com/energy/articles/top-3-energy-stocks-watch-101140336.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Is ExxonMobil Holdings (XOM) Undervalued After Its $12.5b Guyana Longtail Approval?",
+    "url": "https://finance.yahoo.com/energy/articles/exxonmobil-holdings-xom-undervalued-12-011312124.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "The Price Tag on Jensen Huang’s Resignation: $639 Billion and Counting",
+    "url": "https://www.barrons.com/articles/nvidia-stock-jensen-huang-resignation-cost-1893df0f?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Top Stock Reports for Visa, ExxonMobil & Pfizer",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/top-stock-reports-visa-exxonmobil-201900445.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Why You Need To Pay Attention To Occidental Petroleum Stock?",
+    "url": "https://www.trefis.com/stock/oxy/articles/625003/why-you-need-to-pay-attention-to-occidental-petroleum-stock/2026-11-13"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "If You'd Invested $1,000 in ExxonMobil 1 Year Ago, Here's How Much You'd Have Today",
+    "url": "https://www.fool.com/investing/2026/11/13/if-invested-1000-exxonmobil-year-ago-how-much-have-today-xom/"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Chevron Bets $7B on Venezuela While Exxon Mobil Plays It Safe: One Has a Distinct Edge Now",
+    "url": "https://247wallst.com/investing/2026/11/13/chevron-bets-7b-on-venezuela-while-exxon-mobil-plays-it-safe-one-has-a-distinct-edge-now/"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "ConocoPhillips' Lower 48 and Willow Assets: Key to Long-Term Growth?",
+    "url": "https://finance.yahoo.com/energy/articles/conocophillips-lower-48-willow-assets-171100025.html"
+   }
+  ],
+  "SHOP.TO": [
+   {
+    "date": "2026-11-14",
+    "titre": "Jensen Huang Misled Nvidia Leadership, Lawyer On Affair With Alleged Chinese Spy: Report",
+    "url": "https://stocktwits.com/news-articles/markets/equity/jensen-huang-mislead-nvidia-leadership-lawyer-affair-chinese-spy/cNbP5mxR9Q0"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Elon Musk, Tom Lee, Shopify CEO Sign ‘Stand With Jensen’ Petition To Reinstate Him As Nvidia CEO",
+    "url": "https://stocktwits.com/news-articles/markets/equity/elon-musk-tom-lee-stand-with-jensen-petition-reinstate-nvidia-ceo/cNb2xkrR9Qe"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Shopify (SHOP) Stock Could Be 23% Overvalued As Shop.com Bet Draws Focus",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/shopify-shop-stock-could-23-011701360.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Chewy vs. Shopify: Which Consumer Stock Is a Better Buy for 2027?",
+    "url": "https://www.fool.com/coverage/better-buy/2026/11/13/chewy-vs-shopify-which-consumer-stock-is-a-better-buy-for-2027/"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "What Are PayPal Stock Bulls Not Worried About?",
+    "url": "https://www.trefis.com/stock/pypl/articles/624980/what-are-paypal-stock-bulls-not-worried-about/2026-11-13"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "What Capital Group Growth ETF (CGGR) Bought: SpaceX Leads on Wednesday",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/capital-group-growth-etf-cggr-110419112.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "RBC’s Paul Treiber Held Firm on Shopify (SHOP) After a Slight Miss. Here’s the AI Pitch",
+    "url": "https://finance.yahoo.com/technology/ai/articles/rbc-paul-treiber-held-firm-231241818.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Shopify (SHOP) Positioned as Key Beneficiary of AI Discovery and Agentic Checkout",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/shopify-shop-positioned-key-beneficiary-145210911.html"
+   }
+  ],
+  "JNJ": [
+   {
+    "date": "2026-11-14",
+    "titre": "3 Biotech Stocks With Revenue Up To 11%",
+    "url": "https://finance.yahoo.com/healthcare/articles/3-biotech-stocks-revenue-11-061542278.html"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "Could You Have Held Glaukos Stock Through Its Falls?",
+    "url": "https://www.trefis.com/stock/gkos/articles/624885/could-you-have-held-glaukos-stock-through-its-falls/2026-11-13"
+   },
+   {
+    "date": "2026-11-14",
+    "titre": "What Is The Market Seeing In Eli Lilly Stock?",
+    "url": "https://www.trefis.com/stock/lly/articles/624864/what-is-the-market-seeing-in-eli-lilly-stock/2026-11-13"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "4 Healthcare Dividend Stocks for Retirees. One Yields Over 4%",
+    "url": "https://247wallst.com/investing/2026/11/13/4-healthcare-dividend-stocks-for-retirees-one-yields-over-4/"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "The Price Tag on Jensen Huang’s Resignation: $639 Billion and Counting",
+    "url": "https://www.barrons.com/articles/nvidia-stock-jensen-huang-resignation-cost-1893df0f?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Did Bipolar Drug Win Just Shift JNJ's Investment Narrative?",
+    "url": "https://finance.yahoo.com/healthcare/articles/did-bipolar-drug-win-just-200845101.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Pfizer or Johnson & Johnson: The One Dividend Stock I’d Hold for the Next 20 Years",
+    "url": "https://www.tikr.com/blog/pfizer-or-johnson-johnson-the-one-dividend-stock-id-hold-for-the-next-20-years?ref=yahoofinancedividend&tlnk=yf-261114-g5fm49rg"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "What Will Decide Merck Stock Over The Next Six Months?",
+    "url": "https://www.trefis.com/stock/mrk/articles/625024/what-will-decide-merck-stock-over-the-next-six-months/2026-11-13"
+   }
+  ],
+  "QQQ": [
+   {
+    "date": "2026-11-13",
+    "titre": "S&P 500, Dow, Nasdaq End Lower Amid Nvidia Turmoil, But Record Best Week Since August —  SPCX, NVDA, ARM, AZN In Focus",
+    "url": "https://stocktwits.com/news-articles/markets/equity/s-and-p-500-dow-nasdaq-end-lower-amid-nvidia-turmoil-but-record-best-week-since-august-spcx-nvda-arm-azn-in-focus/cNbRj3uR9Q2"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "The Stock Market's Early Rally Fades as Wholesale Inflation Hits 6.5%",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/stock-markets-early-rally-fades-185155071.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Exchange-Traded Funds Lower as US Equities Drop After Midday",
+    "url": "https://finance.yahoo.com/markets/articles/exchange-traded-funds-lower-us-181215784.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Nvidia Is 6.1% Of Your S&P 500 Fund. What Is Your Number?",
+    "url": "https://www.trefis.com/stock/nvda/articles/624815/nvidia-is-6-1-of-your-s-p-500-fund-what-is-your-number/2026-11-13"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "PPI +6.5% YoY: Highest in Nearly 4 Years",
+    "url": "https://finance.yahoo.com/economy/articles/ppi-6-5-yoy-highest-142200557.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Stock Market Today: Nvidia Rebounds After Huang’s Exit as Treasury Yields Top 5%",
+    "url": "https://247wallst.com/investing/2026/11/13/stock-market-today-nvidia-rebounds-after-huangs-exit-as-treasury-yields-top-5/"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Exchange-Traded Funds, Equity Futures Higher Pre-Bell Friday as Producer Inflation Trails Forecasts",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/exchange-traded-funds-equity-futures-141316665.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "QQQ Is in a Correction (Down 10%). Should You Buy More of This Popular Tech ETF?",
+    "url": "https://www.fool.com/investing/2026/11/13/qqq-is-in-a-correction-down-10-should-you-buy-more/"
+   }
+  ],
+  "SHEL.L": [
+   {
+    "date": "2026-11-13",
+    "titre": "LNG Prices Soar. These Exporters Could Benefit as Europe Faces a Tough Winter.",
+    "url": "https://www.barrons.com/articles/lng-prices-europe-venture-global-woodside-stocks-9946520c?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Drilling at Jackdaw in North Sea to start within days",
+    "url": "https://uk.finance.yahoo.com/news/drilling-jackdaw-north-sea-start-164323641.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Hornbeck Offshore Is 48% Below Its High. Its CEO Scrapped a Stock Sale, Then Bought $1.5 Million",
+    "url": "https://www.tikr.com/blog/hornbeck-offshore-is-48-below-its-high-its-ceo-scrapped-a-stock-sale-then-bought-1-5-million?ref=yahoofinance&tlnk=yf-261113-6w38h84x"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "FTSE 100 today: Stocks edge up as energy names track oil on U.S.-Iran tension",
+    "url": "https://finance.yahoo.com/markets/world-indices/articles/ftse-100-today-stocks-edge-084813171.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Seplat Energy And 2 British Energy Stocks To Watch",
+    "url": "https://finance.yahoo.com/energy/articles/seplat-energy-2-british-energy-232020296.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "5 Stocks Analysts Are Downgrading Right Now",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/5-stocks-analysts-downgrading-now-205623990.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Chevron Q3 Earnings Surge on Strong Refining: Is the Stock a Buy Now?",
+    "url": "https://finance.yahoo.com/energy/articles/chevron-q3-earnings-surge-strong-123000894.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Exxon, Chevron, and Shell Just Reported. Here's What Each One Said About Where Oil Goes Next.",
+    "url": "https://www.fool.com/investing/2026/11/11/exxon-chevron-and-shell-just-reported-heres-what-e/"
+   }
+  ],
+  "MC.PA": [
+   {
+    "date": "2026-11-13",
+    "titre": "Shuffle Board: Capri Names Justin Boxford CEO",
+    "url": "https://wwd.com/sourcing-journal/industry-news/shuffle-board-capri-justin-boxford-tods-lim-college-1239415542/"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "“Premiumisation is happening and will continue” – Volcan de mi Tierra talks Tequila craft opportunity",
+    "url": "https://www.just-drinks.com/interviews/premiumisation-is-happening-and-will-continue-volcan-de-mi-tierra-talks-tequila-craft-opportunity/"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Cartier Owner’s Stock Slides on Slowing Demand for Jewelry",
+    "url": "https://www.wsj.com/livecoverage/stock-market-today-dow-sp-500-nasdaq-11-13-2026/card/cartier-owner-s-stock-slides-on-slowing-demand-for-jewelry-oKZCc350A2dhP4Ieyymt?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Richemont Shares Drop After Cartier-Parent’s Sales Growth Loses Some Shine",
+    "url": "https://www.wsj.com/business/retail/cartier-parent-richemont-post-sales-rise-despite-uncertain-market-backdrop-2e5ad747?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "'Right now, we're focused on being Starbucks': CEO addresses Chipotle merger rumors",
+    "url": "https://finance.yahoo.com/video/right-now-were-focused-on-being-starbucks-ceo-addresses-chipotle-merger-rumors-203902524.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "How to Play the Luxury Slump: Bet on the Ultra-Rich",
+    "url": "https://www.barrons.com/articles/cartier-luxury-stocks-wealth-consumer-1c320dc3?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Capri Holdings (CPRI) Names Justin Boxford CEO In 2027 Leadership Handover",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/capri-holdings-cpri-names-justin-121609901.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Stocks to Watch: Nvidia, Broadcom, Micron",
+    "url": "https://www.wsj.com/livecoverage/stock-market-today-dow-sp-500-nasdaq-11-12-2026/card/stocks-to-watch-nvidia-broadcom-micron-m8xZB5aBvJl1JweXiL8C?siteid=yhoof2&yptr=yahoo"
+   }
+  ],
+  "CNQ.TO": [
+   {
+    "date": "2026-11-13",
+    "titre": "Cenovus' Oil Sands Strength and Cost Discipline Support Growth",
+    "url": "https://finance.yahoo.com/energy/articles/cenovus-oil-sands-strength-cost-171400902.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "Chevron Eyes Biodiesel Growth With Iowa Facility Restart",
+    "url": "https://finance.yahoo.com/energy/articles/chevron-eyes-biodiesel-growth-iowa-151900022.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Petrobras Lifts 2026 Cash Flow Forecast on Higher Oil Production",
+    "url": "https://finance.yahoo.com/energy/articles/petrobras-lifts-2026-cash-flow-152500177.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "3 Top Dividend Stocks to Maximize Your Retirement Income",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/3-top-dividend-stocks-maximize-131003449.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Patterson-UTI Expects Higher Rig Demand as 2027 Outlook Improves",
+    "url": "https://finance.yahoo.com/energy/articles/patterson-uti-expects-higher-rig-122400146.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Halliburton Expands Geothermal Footprint With Sage Geosystems Deal",
+    "url": "https://finance.yahoo.com/energy/articles/halliburton-expands-geothermal-footprint-sage-122200542.html"
+   },
+   {
+    "date": "2026-11-11",
+    "titre": "How Earnings And Buybacks Will Impact Canadian Natural Resources Stock Investors",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/earnings-buybacks-impact-canadian-natural-191056075.html"
+   },
+   {
+    "date": "2026-11-11",
+    "titre": "NGL Energy Advances Texas Water Treatment Project With Draft Permit",
+    "url": "https://finance.yahoo.com/energy/articles/ngl-energy-advances-texas-water-160400923.html"
+   }
+  ],
+  "HDFCBANK.NS": [
+   {
+    "date": "2026-11-13",
+    "titre": "WF vs. HDB: Which Stock Should Value Investors Buy Now?",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/wf-vs-hdb-stock-value-154003319.html"
+   },
+   {
+    "date": "2026-11-10",
+    "titre": "Here's Where Investors Turned To As They Fled AI Stocks",
+    "url": "https://www.investors.com/news/india-stocks-inda-etf-ai-stocks/?src=A00220&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-10",
+    "titre": "Asian Equities Traded in the US as American Depositary Receipts Rise Modestly in Tuesday Trading",
+    "url": "https://finance.yahoo.com/markets/world-indices/articles/asian-equities-traded-us-american-154141712.html"
+   },
+   {
+    "date": "2026-11-09",
+    "titre": "Standard Chartered hires HDFC executive to lead India private banking arm",
+    "url": "https://www.privatebankerinternational.com/news/standard-chartered-india-private-banking-arm/"
+   },
+   {
+    "date": "2026-11-04",
+    "titre": "Asian Equities Traded in the US as American Depositary Receipts Surge in Wednesday Trading",
+    "url": "https://finance.yahoo.com/markets/world-indices/articles/asian-equities-traded-us-american-154159877.html"
+   },
+   {
+    "date": "2026-11-03",
+    "titre": "Asian Equities Traded in the US as American Depositary Receipts Higher in Tuesday Trading",
+    "url": "https://finance.yahoo.com/markets/world-indices/articles/asian-equities-traded-us-american-154953483.html"
+   },
+   {
+    "date": "2026-11-02",
+    "titre": "Mastercard scales in India",
+    "url": "https://www.paymentsdive.com/news/mastercard-scales-in-india/873405/"
+   },
+   {
+    "date": "2026-11-02",
+    "titre": "Asian Equities Traded in the US as American Depositary Receipts Surge in Monday Trading",
+    "url": "https://finance.yahoo.com/markets/world-indices/articles/asian-equities-traded-us-american-155452713.html"
+   }
+  ],
+  "TTE.PA": [
+   {
+    "date": "2026-11-13",
+    "titre": "Murphy Oil Signs Offshore Production Sharing Contracts in Cameroon",
+    "url": "https://finance.yahoo.com/energy/articles/murphy-oil-signs-offshore-production-134600650.html"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "The Zacks Analyst Blog Highlights Home Depot, Gilead Sciences, TotalEnergies, Key Tronic and iPower",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/zacks-analyst-blog-highlights-home-065100996.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Top Research Reports for Home Depot, Gilead & TotalEnergies",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/top-research-reports-home-depot-200700776.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "TotalEnergies or Plains All American: I Can Only Pick One Dividend Stock for the Next 20 Years. Here’s Mine",
+    "url": "https://www.tikr.com/blog/totalenergies-or-plains-all-american-i-can-only-pick-one-dividend-stock-for-the-next-20-years-heres-mine?ref=yahoofinancedividend&tlnk=yf-261112-2925w54p"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "TotalEnergies (ENXTPA:TTE) Deepens Methane Reduction Alliances Across Three Countries",
+    "url": "https://finance.yahoo.com/energy/articles/totalenergies-enxtpa-tte-deepens-methane-161554477.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Meren Energy completes Impact restructuring, sharpening focus on Namibia’s Venus project",
+    "url": "https://www.proactiveinvestors.com/companies/news/1101676/meren-energy-completes-impact-restructuring-sharpening-focus-on-namibia-s-venus-project-1101676.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Meren Energy completes Impact restructuring, sharpening focus on Namibia’s Venus project",
+    "url": "https://www.proactiveinvestors.com/companies/news/1101676/meren-energy-completes-impact-restructuring-sharpening-focus-on-namibia-s-venus-project-1101676.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Occidental Petroleum Q3 Earnings Beat Estimates on Strong Oil Prices",
+    "url": "https://finance.yahoo.com/energy/articles/occidental-petroleum-q3-earnings-beat-121000987.html"
+   }
+  ],
+  "SIE.DE": [
+   {
+    "date": "2026-11-13",
+    "titre": "European Stock Indexes Turn Positive as Oil Drops",
+    "url": "https://www.wsj.com/finance/stocks/nikkei-rises-1-1-led-by-chip-stocks-eb2ed881?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Siemens AG (SIEGY) (Q4 2026) Earnings Call Highlights: Record Orders, Accelerating Growth and ...",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/siemens-ag-siegy-q4-2026-210447254.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Siemens Aktiengesellschaft Q4 Earnings Call Highlights",
+    "url": "https://www.marketbeat.com/instant-alerts/transcript-siemens-aktiengesellschaft-q4-earnings-call-highlights-2026-11-12/?utm_source=yahoofinance&utm_medium=yahoofinance"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Siemens to acquire German chip tools firm Lauterbach",
+    "url": "https://www.verdict.co.uk/siemens-acquire-lauterbach/"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "What Siemens Aktiengesellschaft (SIE) Said on Its Q4 Earnings Call",
+    "url": "https://www.marketbeat.com/instant-alerts/transcript-what-siemens-aktiengesellschaft-sie-said-on-its-q4-earnings-call-2026-11-12/?utm_source=yahoofinance&utm_medium=yahoofinance"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Siemens (XTRA:SIE) Stock Could Trade At A Discount To Fair Value",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/siemens-xtra-sie-stock-could-101326198.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Siemens (XTRA:SIE) Plans Lauterbach Acquisition",
+    "url": "https://finance.yahoo.com/technology/articles/siemens-xtra-sie-plans-lauterbach-091519781.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "European Stock Indexes Higher as Investors Rotate Away From AI",
+    "url": "https://www.wsj.com/finance/stocks/nikkei-falls-0-2-dragged-by-electronics-stocks-0da84013?siteid=yhoof2&yptr=yahoo"
+   }
+  ],
+  "RELIANCE.NS": [
+   {
+    "date": "2026-11-13",
+    "titre": "Reliance plans $4.6bn investment in Andhra Pradesh coal-to-gas project",
+    "url": "https://www.offshore-technology.com/news/reliance-investment-coal-to-gas-project/"
+   },
+   {
+    "date": "2026-11-03",
+    "titre": "Reliance Industries Ltd (WBO:RLI) (Q2 2027) Earnings Call Highlights: Record EBITDA and PAT as ...",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/reliance-industries-ltd-wbo-rli-070425946.html"
+   },
+   {
+    "date": "2026-11-02",
+    "titre": "Reliance Adds Record $19 Billion in Market Value on Profit Beat",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/reliance-adds-record-19-billion-111336617.html"
+   },
+   {
+    "date": "2026-11-02",
+    "titre": "3 Oil Stocks Worth Watching If Energy Prices Stay High",
+    "url": "https://finance.yahoo.com/energy/articles/3-oil-stocks-worth-watching-021124324.html"
+   },
+   {
+    "date": "2026-10-28",
+    "titre": "Jio Platforms breaks India's IPO record",
+    "url": "https://www.axios.com/2026/10/28/jio-platforms-ipo-india#utm_source=yahoo_finance&utm_medium=partner&utm_campaign=subs-partner-yahoo-finance-AI"
+   },
+   {
+    "date": "2026-10-28",
+    "titre": "Jio Platforms breaks India's IPO record",
+    "url": "https://www.axios.com/2026/10/28/jio-platforms-ipo-india#utm_source=yahoo_finance&utm_medium=partner&utm_campaign=subs-partner-yahoo-finance-media"
+   },
+   {
+    "date": "2026-10-28",
+    "titre": "Billionaire Ambani's Jio soars in market debut after India's biggest IPO",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/billionaire-ambanis-jio-jumps-21-051824469.html"
+   },
+   {
+    "date": "2026-10-28",
+    "titre": "Jio shares surge over 20% in blockbuster market debut",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/jio-shares-surge-over-20-061143874.html"
+   }
+  ],
+  "0700.HK": [
+   {
+    "date": "2026-11-13",
+    "titre": "Oracle Now Gets “$16 Billion a Year” per Gigawatt, Up From $10 Billion",
+    "url": "https://www.tikr.com/blog/oracle-now-gets-16-billion-a-year-per-gigawatt-up-from-10-billion?ref=yahoofinance&tlnk=yf-261113-wx42c469"
+   },
+   {
+    "date": "2026-11-13",
+    "titre": "China AI stocks tumble as Nvidia fallout fuels fears of tighter U.S. chip curbs",
+    "url": "https://finance.yahoo.com/technology/ai/articles/china-ai-stocks-tumble-nvidia-064035259.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Why Jensen Huang’s Exit Is Bad News for Alibaba and China",
+    "url": "https://www.barrons.com/articles/nvidia-alibaba-tencent-china-stocks-462175ef?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Wall Street ends lower as Nvidia CEO resigns; US yields up",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/asian-stocks-fragile-nvidia-plummets-015524144.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "DBS’s $290 Oracle Target Still Implies 126% Upside, Even After a Cut",
+    "url": "https://www.tikr.com/blog/dbss-290-oracle-target-still-implies-126-upside-even-after-a-cut?ref=yahoofinance&tlnk=yf-261112-cv8xpwhw"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Tencent Stocks Slip 2% as U.S. Remote Chip Rule Threatens AI Compute Access",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/tencent-stocks-slip-2-u-161708956.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Nvidia shares plunge as Jensen Huang resigns as CEO",
+    "url": "https://www.independent.co.uk/tech/nvidia-share-price-huang-ceo-b3083807.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Alibaba, Tencent shares fall on report U.S. weighs curbs on remote AI chip access",
+    "url": "https://finance.yahoo.com/technology/ai/articles/alibaba-tencent-shares-fall-report-054436336.html"
+   }
+  ],
+  "GFI.JO": [
+   {
+    "date": "2026-11-13",
+    "titre": "AU Jumps 16.5% in One Week With Gold and Production Risks in Focus",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/au-jumps-16-5-one-054200798.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "AU Q3 Earnings Rise 17.4% as Gold Prices Offset Weaker Production",
+    "url": "https://finance.yahoo.com/markets/commodities/articles/au-q3-earnings-rise-17-155700011.html"
+   },
+   {
+    "date": "2026-11-07",
+    "titre": "What Gold Fields (GFI) Said on Its Q3 Earnings Call",
+    "url": "https://www.marketbeat.com/instant-alerts/transcript-what-gold-fields-gfi-said-on-its-q3-earnings-call-2026-11-07/?utm_source=yahoofinance&utm_medium=yahoofinance"
+   },
+   {
+    "date": "2026-11-05",
+    "titre": "Gold's 2026 Pullback Raises a Bigger Question: Buy the Metal or the Miners?",
+    "url": "https://www.marketbeat.com/articles/golds-2026-pullback-raises-a-bigger-question-buy-the-metal-or-the-miners/?utm_source=yahoofinance&utm_medium=yahoofinance"
+   },
+   {
+    "date": "2026-10-19",
+    "titre": "BHP to Sell Few Nickel Assets: What's Next for Its Nickel Business?",
+    "url": "https://finance.yahoo.com/markets/commodities/articles/bhp-sell-few-nickel-assets-121000844.html"
+   },
+   {
+    "date": "2026-10-07",
+    "titre": "BHP to sell Kambalda concentrator and tenements to Gold Fields",
+    "url": "https://www.mining-technology.com/news/bhp-kambalda-nickel-gold-fields/"
+   },
+   {
+    "date": "2026-10-01",
+    "titre": "Gold Fields Pursues Northern Star Deal While Advancing Standalone Growth Plan",
+    "url": "https://www.marketbeat.com/instant-alerts/event-gold-fields-pursues-northern-star-deal-while-advancing-standalone-growth-plan-2026-10-01/?utm_source=yahoofinance&utm_medium=yahoofinance"
+   },
+   {
+    "date": "2026-09-30",
+    "titre": "Gold Fields (JSE:GFI) Stock Fair Value Edges Lower After More Cautious Analyst Targets",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/gold-fields-jse-gfi-stock-010809730.html"
+   }
+  ],
+  "SOL.JO": [
+   {
+    "date": "2026-11-13",
+    "titre": "What Comes Next For Sasol After A 125% Gain",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/comes-next-sasol-125-gain-011304985.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Learn Why The Bull Case For Marathon Petroleum Stock Could Change Following Earnings Beat",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/learn-why-bull-case-marathon-121051253.html"
+   },
+   {
+    "date": "2026-11-10",
+    "titre": "Best Momentum Stocks to Buy for November 10th",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/best-momentum-stocks-buy-november-140000715.html"
+   },
+   {
+    "date": "2026-11-10",
+    "titre": "New Strong Buy Stocks for November 10th",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/strong-buy-stocks-november-10th-080100512.html"
+   },
+   {
+    "date": "2026-11-10",
+    "titre": "Best Value Stocks to Buy for November 10th",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/best-value-stocks-buy-november-063200018.html"
+   },
+   {
+    "date": "2026-11-05",
+    "titre": "Are Investors Undervaluing Sasol (SSL) Right Now?",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/investors-undervaluing-sasol-ssl-now-134002884.html"
+   },
+   {
+    "date": "2026-10-29",
+    "titre": "Sasol Is Up 173%, But The Story Isn't Finished",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/sasol-173-story-isnt-finished-201209536.html"
+   },
+   {
+    "date": "2026-10-20",
+    "titre": "TotalEnergies (ENXTPA:TTE) Takes Center Stage In Mozambique’s $250 Million Gas Plan",
+    "url": "https://finance.yahoo.com/energy/articles/totalenergies-enxtpa-tte-takes-center-171558760.html"
+   }
+  ],
+  "VWO": [
+   {
+    "date": "2026-11-12",
+    "titre": "Does Vanguard or iShares Have the Better Emerging Markets ETF?",
+    "url": "https://www.fool.com/coverage/etfs/2026/11/12/does-vanguard-or-ishares-have-the-better-emerging-markets-etf/"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "VWO vs IXUS: Does Emerging Markets Focus or Broad International Exposure Make for a Better ETF Now?",
+    "url": "https://www.fool.com/coverage/etfs/2026/11/12/vwo-vs-ixus-emerging-markets-focus-or-broad-international-exposure/"
+   },
+   {
+    "date": "2026-11-11",
+    "titre": "Wall Street Sees 37% Upside Over the Next 12 Months for This Vanguard ETF",
+    "url": "https://www.fool.com/investing/2026/11/11/wall-street-sees-37-upside-over-the-next-12-months-for-this-vanguard-etf/"
+   },
+   {
+    "date": "2026-11-09",
+    "titre": "Here's the Thing iShares' Emerging Markets ETF (IEMG) ETF Has That Vanguard's VWO Doesn't",
+    "url": "https://www.fool.com/coverage/etfs/2026/11/09/here-s-the-thing-ishares-emerging-markets-etf-iemg-etf-has-that-vanguard-s-vwo-doesn-t/"
+   },
+   {
+    "date": "2026-10-30",
+    "titre": "SPDW vs VWO: Two International ETFs Face Off, but One Offers a Better Mix of Income and Growth for Long-Term Investors",
+    "url": "https://www.fool.com/coverage/etfs/2026/10/30/spdw-vs-vwo-two-international-etfs-face-off-but-one-offers-a-better-mix-of-income-and-growth/"
+   },
+   {
+    "date": "2026-10-19",
+    "titre": "Better Emerging Markets ETF: Schwab's SCHE vs. Vanguard's VWO",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/better-emerging-markets-etf-schwabs-165753859.html"
+   },
+   {
+    "date": "2026-10-13",
+    "titre": "You Have Three Old 401(k)s From Three Jobs and None of Them Talk to Each Other. These 4 ETFs Are the One Account They Roll Into",
+    "url": "https://247wallst.com/investing/etf/2026/10/13/you-have-three-old-401ks-from-three-jobs-and-none-of-them-talk-to-each-other-these-4-etfs-are-the-one-account-they-roll-into/"
+   },
+   {
+    "date": "2026-10-09",
+    "titre": "Looking for International Exposure? iShares' EAFE ETF Beats Vanguard's Emerging Markets ETF on Dividend Yield and Stability",
+    "url": "https://www.fool.com/coverage/etfs/2026/10/09/looking-for-international-exposure-ishares-eafe-etf-beats-vanguard-s-emerging-markets-etf-on-dividend-yield-and-stability/"
+   }
+  ],
+  "BNDW": [
+   {
+    "date": "2026-11-12",
+    "titre": "For the Couple Where One Wants to Spend It and the Other Wants to Leave It to the Kids: 3 ETFs That Do Both",
+    "url": "https://247wallst.com/investing/etf/2026/11/12/for-the-couple-where-one-wants-to-spend-it-and-the-other-wants-to-leave-it-to-the-kids-3-etfs-that-do-both/"
+   },
+   {
+    "date": "2026-09-15",
+    "titre": "You Own 47 Positions at 70 and Cannot Explain Half of Them. These 3 ETFs Replace Every One",
+    "url": "https://247wallst.com/investing/etf/2026/09/15/you-own-47-positions-at-70-and-cannot-explain-half-of-them-these-3-etfs-replace-every-one/"
+   },
+   {
+    "date": "2026-03-06",
+    "titre": "Baby Boomers Won the Retirement Lottery and Everyone Else Is Playing Catch-Up",
+    "url": "https://247wallst.com/personal-finance/2026/03/06/baby-boomers-hit-the-retirement-jackpot/"
+   }
+  ],
+  "AGG": [
+   {
+    "date": "2026-11-12",
+    "titre": "He Has $100,000 in His Federal Retirement Bond Fund as Treasury Yields Hit 5%. Another 1-Point Rise Could Cost Him $6,000. A Different Fund Protects His Principal",
+    "url": "https://247wallst.com/personal-finance/2026/11/12/he-has-100000-in-his-federal-retirement-bond-fund-as-treasury-yields-hit-5-another-1-point-rise-could-cost-him-6000-a-different-fund-protects-his-principal/"
+   },
+   {
+    "date": "2026-11-10",
+    "titre": "These 3 ETFs Replace the In-House Funds Your Broker Filled Your Account With",
+    "url": "https://247wallst.com/investing/etf/2026/11/10/these-3-etfs-replace-the-in-house-funds-your-broker-filled-your-account-with/"
+   },
+   {
+    "date": "2026-11-09",
+    "titre": "IUSB- Why this Bond ETF is Gaining Ground on AGG",
+    "url": "https://finance.yahoo.com/markets/options/articles/iusb-why-bond-etf-gaining-050100580.html"
+   },
+   {
+    "date": "2026-11-06",
+    "titre": "How These 5 Bond ETFs Differ and When Each One Fits",
+    "url": "https://www.fool.com/retirement/2026/11/06/how-these-5-bond-etfs-differ-and-when-each-one-fit/"
+   },
+   {
+    "date": "2026-11-02",
+    "titre": "\"Capital... Is Growing More Discerning and More Expensive\"",
+    "url": "http://www.etf.com/sections/podcasts/capital-growing-more-discerning-and-more-expensive?utm_source=yahoo-finance&utm_medium=rss&utm_campaign=yahoo-finance-rss"
+   },
+   {
+    "date": "2026-10-28",
+    "titre": "The ETF Industry Is About to Get Weird",
+    "url": "http://www.etf.com/sections/podcasts/etf-industry-about-get-weird?utm_source=yahoo-finance&utm_medium=rss&utm_campaign=yahoo-finance-rss"
+   },
+   {
+    "date": "2026-10-21",
+    "titre": "An Engineer's Guide to the AI Trade",
+    "url": "http://www.etf.com/sections/conferences/engineers-guide-ai-trade?utm_source=yahoo-finance&utm_medium=rss&utm_campaign=yahoo-finance-rss"
+   },
+   {
+    "date": "2026-10-17",
+    "titre": "Should You Sell BND Now, or Is It the Best Bond Buy in 3 Years?",
+    "url": "https://247wallst.com/investing/etf/2026/10/17/should-you-sell-bnd-now-or-is-it-the-best-bond-buy-in-3-years/"
+   }
+  ],
+  "CNR.TO": [
+   {
+    "date": "2026-11-12",
+    "titre": "Could You Have Seen The Run In CSX Stock Coming?",
+    "url": "https://www.trefis.com/stock/csx/articles/624603/could-you-have-seen-the-run-in-csx-stock-coming/2026-11-12"
+   },
+   {
+    "date": "2026-11-08",
+    "titre": "CSX Stock And Rail Peers Facing A New Intermodal Volume Test",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/csx-stock-rail-peers-facing-210935714.html"
+   },
+   {
+    "date": "2026-11-06",
+    "titre": "CNI Sets Record With 3.54 Million Tons of Grain Shipments in October",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/cni-sets-record-3-54-123500694.html"
+   },
+   {
+    "date": "2026-11-05",
+    "titre": "CNI Shares Rise 4.3% Since Third-Quarter 2026 Earnings Release",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/cni-shares-rise-4-3-151000450.html"
+   },
+   {
+    "date": "2026-11-04",
+    "titre": "What Are CSX Investors Betting On?",
+    "url": "https://www.trefis.com/stock/csx/articles/622610/what-are-csx-investors-betting-on/2026-11-04"
+   },
+   {
+    "date": "2026-11-01",
+    "titre": "Canadian National Railway (TSX:CNR) Stock Faces A Q3 Earnings Valuation Question",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/canadian-national-railway-tsx-cnr-011136925.html"
+   },
+   {
+    "date": "2026-10-31",
+    "titre": "Canadian National Railway (TSX:CNR) Earnings Growth Keeps Its Undervalued Narrative In Play",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/canadian-national-railway-tsx-cnr-200946027.html"
+   },
+   {
+    "date": "2026-10-31",
+    "titre": "Why Is Canadian National Railway (TSX:CNR) Changing Its CFO Now?",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/why-canadian-national-railway-tsx-190820625.html"
+   }
+  ],
+  "MFC.TO": [
+   {
+    "date": "2026-11-12",
+    "titre": "ETF Activity: QQQ Leads With $3.06 Billion Inflow on Nov. 10",
+    "url": "https://finance.yahoo.com/markets/options/articles/etf-activity-qqq-leads-3-110013527.html"
+   },
+   {
+    "date": "2026-11-12",
+    "titre": "Sun Life Financial And 2 Canadian Dividend Stocks To Watch",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/sun-life-financial-2-canadian-031356617.html"
+   },
+   {
+    "date": "2026-11-09",
+    "titre": "Can CB's Life Insurance Growth Boost Its Wealth Protection Business?",
+    "url": "https://finance.yahoo.com/healthcare/articles/cbs-life-insurance-growth-boost-171100290.html"
+   },
+   {
+    "date": "2026-11-07",
+    "titre": "Manulife Financial Q3 Earnings Call Highlights",
+    "url": "https://www.marketbeat.com/instant-alerts/transcript-manulife-financial-q3-earnings-call-highlights-2026-11-07/?utm_source=yahoofinance&utm_medium=yahoofinance"
+   },
+   {
+    "date": "2026-11-05",
+    "titre": "Manulife Financial Corp (MFC) (Q3 2026) Earnings Call Highlights: Record Core EPS, Strong ...",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/manulife-financial-corp-mfc-q3-232247495.html"
+   },
+   {
+    "date": "2026-11-04",
+    "titre": "Manulife Financial (MFC) Q3 Earnings and Revenues Top Estimates",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/manulife-financial-mfc-q3-earnings-234519761.html"
+   },
+   {
+    "date": "2026-11-04",
+    "titre": "Manulife: Q3 Earnings Snapshot",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/manulife-q3-earnings-snapshot-231949959.html"
+   },
+   {
+    "date": "2026-10-29",
+    "titre": "Earnings Preview: F&G Annuities & Life, Inc. (FG) Q3 Earnings Expected to Decline",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/earnings-preview-f-g-annuities-130011579.html"
+   }
+  ],
+  "VOD.JO": [
+   {
+    "date": "2026-11-11",
+    "titre": "What Vodacom Group Buyers Were Betting On",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/vodacom-group-buyers-were-betting-231558011.html"
+   },
+   {
+    "date": "2026-10-16",
+    "titre": "Missed Vodacom Group's Run? Here's The Bet Holders Made",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/missed-vodacom-groups-run-heres-211110544.html"
+   },
+   {
+    "date": "2026-06-21",
+    "titre": "Tech, crypto firms to help tackle illegal wildlife trade",
+    "url": "https://finance.yahoo.com/technology/ai/articles/tech-crypto-firms-help-tackle-230522796.html"
+   },
+   {
+    "date": "2026-06-21",
+    "titre": "Tech, crypto firms to help tackle illegal wildlife trade",
+    "url": "https://finance.yahoo.com/technology/ai/articles/tech-crypto-firms-help-tackle-230522050.html"
+   },
+   {
+    "date": "2026-06-12",
+    "titre": "Vodacom Group Limited (JSE:VOD) Stock Goes Ex-Dividend In Just Four Days",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/vodacom-group-limited-jse-vod-044200293.html"
+   },
+   {
+    "date": "2026-05-12",
+    "titre": "Does Vodacom Group (JSE:VOD) Deserve A Spot On Your Watchlist?",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/does-vodacom-group-jse-vod-054620722.html"
+   }
+  ],
+  "FTS.TO": [
+   {
+    "date": "2026-11-11",
+    "titre": "Canadian AI-buildout stocks: hardware, power, engineering and software",
+    "url": "https://finance.yahoo.com/technology/ai/articles/canadian-ai-buildout-stocks-hardware-211135535.html"
+   },
+   {
+    "date": "2026-11-08",
+    "titre": "Sell Alert: 5 High-Profile Stocks Just Dumped by Top Analysts",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/sell-alert-5-high-profile-203124084.html"
+   },
+   {
+    "date": "2026-11-06",
+    "titre": "Molson Coors downgraded, SiTime upgraded: Wall Street's top analyst calls",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/molson-coors-downgraded-sitime-upgraded-150719956.html"
+   },
+   {
+    "date": "2026-11-04",
+    "titre": "Fortis (TSX:FTS) Just Gave Investors Something To Parse",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/fortis-tsx-fts-just-gave-232324941.html"
+   },
+   {
+    "date": "2026-11-04",
+    "titre": "What Fortis (TSX:FTS)'s Record Capital Plan Means For Shareholders",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/fortis-tsx-fts-record-capital-221321984.html"
+   },
+   {
+    "date": "2026-11-04",
+    "titre": "What Fortis (FTS) Said on Its Q3 Earnings Call",
+    "url": "https://www.marketbeat.com/instant-alerts/transcript-what-fortis-fts-said-on-its-q3-earnings-call-2026-11-04/?utm_source=yahoofinance&utm_medium=yahoofinance"
+   },
+   {
+    "date": "2026-11-04",
+    "titre": "Fortis Inc (FTS) (Q3 2026) Earnings Call Highlights: Record $32. ...",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/fortis-inc-fts-q3-2026-050515491.html"
+   },
+   {
+    "date": "2026-11-03",
+    "titre": "4 Companies Just Raised Their Dividends. Which Payout Has the Most Room to Grow?",
+    "url": "https://247wallst.com/investing/2026/11/03/4-companies-just-raised-their-dividends-which-payout-has-the-most-room-to-grow/"
+   }
+  ],
+  "VEA": [
+   {
+    "date": "2026-11-11",
+    "titre": "If Your Business Is Your Whole Retirement Plan at 60, These 3 ETFs Build the Part That Does Not Depend on It",
+    "url": "https://247wallst.com/investing/etf/2026/11/11/if-your-business-is-your-whole-retirement-plan-at-60-these-3-etfs-build-the-part-that-does-not-depend-on-it/"
+   },
+   {
+    "date": "2026-11-06",
+    "titre": "Wall Street’s AI Crash Just Hit Asia: Korea Halted, Japan in a Bear Market",
+    "url": "https://247wallst.com/investing/2026/11/06/wall-streets-ai-crash-just-hit-asia-korea-halted-japan-in-a-bear-market/"
+   },
+   {
+    "date": "2026-11-04",
+    "titre": "Most Investors Own VEA. Few Know About This International Cash Cows ETF",
+    "url": "https://247wallst.com/investing/etf/2026/11/04/most-investors-own-vea-few-know-about-this-international-cash-cows-etf/"
+   },
+   {
+    "date": "2026-10-15",
+    "titre": "Choosing an International ETF: The Case For the Developed Market Favorite vs. the Low-Cost Emerging Challenger",
+    "url": "https://www.fool.com/coverage/etfs/2026/10/15/choosing-an-international-etf-the-case-for-the-developed-market-favorite-vs-the-low-cost-emerging-challenger/"
+   },
+   {
+    "date": "2026-10-13",
+    "titre": "You Have Three Old 401(k)s From Three Jobs and None of Them Talk to Each Other. These 4 ETFs Are the One Account They Roll Into",
+    "url": "https://247wallst.com/investing/etf/2026/10/13/you-have-three-old-401ks-from-three-jobs-and-none-of-them-talk-to-each-other-these-4-etfs-are-the-one-account-they-roll-into/"
+   },
+   {
+    "date": "2026-10-12",
+    "titre": "Vanguard Total World Stock ETF vs. FTSE Developed Markets ETF: What's Better for Diversification?",
+    "url": "https://www.fool.com/coverage/etfs/2026/10/12/vanguard-total-world-stock-etf-vs-ftse-developed-markets-etf/"
+   },
+   {
+    "date": "2026-10-10",
+    "titre": "A Guide to Low-Cost ETFs",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/guide-low-cost-etfs-081900377.html"
+   },
+   {
+    "date": "2026-10-09",
+    "titre": "Vanguard VEA vs. State Street SPDW: Which Developed Markets ETF Wins This Tight Race?",
+    "url": "https://www.fool.com/coverage/etfs/2026/10/09/vanguard-vea-vs-state-street-spdw-which-developed-markets-etf-wins-this-tight-race/"
+   }
+  ],
+  "INFY.NS": [
+   {
+    "date": "2026-11-11",
+    "titre": "Asian Equities Traded in the US as American Depositary Receipts Rise in Wednesday Trading",
+    "url": "https://finance.yahoo.com/markets/world-indices/articles/asian-equities-traded-us-american-154814184.html"
+   },
+   {
+    "date": "2026-11-10",
+    "titre": "The Overlooked AI Trade Hiding in a Beaten-Down Corner of the Market",
+    "url": "https://www.fool.com/investing/2026/11/10/the-overlooked-ai-trade-hiding-in-a-beaten-down-corner-of-the-market/"
+   },
+   {
+    "date": "2026-11-05",
+    "titre": "Asian Equities Traded in the US as American Depositary Receipts Drop Sharply in Thursday Trading",
+    "url": "https://finance.yahoo.com/markets/world-indices/articles/asian-equities-traded-us-american-155825220.html"
+   },
+   {
+    "date": "2026-11-05",
+    "titre": "Infosys: 3 Key Takeaways for Long-Term Investors",
+    "url": "https://www.fool.com/earnings/takeaways/2026/11/04/infosys-3-key-takeaways-for-long-term-investors/"
+   },
+   {
+    "date": "2026-10-30",
+    "titre": "Asian Equities Traded in the US as American Depositary Receipts Fall Sharply in Friday Trading",
+    "url": "https://finance.yahoo.com/markets/world-indices/articles/asian-equities-traded-us-american-144016114.html"
+   },
+   {
+    "date": "2026-10-29",
+    "titre": "Cognizant Sinks as Bookings Drop 7% and AI Shifts “From Capability to Value Realization”",
+    "url": "https://www.tikr.com/blog/cognizant-sinks-as-bookings-drop-7-and-ai-shifts-from-capability-to-value-realization?ref=yahoofinance"
+   },
+   {
+    "date": "2026-10-27",
+    "titre": "Truist Financial (TFC) Expands Hyderabad AI Hub As India Team Tops 1,000",
+    "url": "https://finance.yahoo.com/technology/ai/articles/truist-financial-tfc-expands-hyderabad-111243456.html"
+   },
+   {
+    "date": "2026-10-26",
+    "titre": "Infosys (INFY) Q2 2027 Earnings Call Transcript",
+    "url": "https://www.fool.com/earnings/call-transcripts/2026/10/26/infosys-infy-q2-2027-earnings-call-transcript/"
+   }
+  ],
+  "NESN.SW": [
+   {
+    "date": "2026-11-10",
+    "titre": "Ferrara to shutter Chicago plant, lay off more than 150 workers",
+    "url": "https://www.fooddive.com/news/ferrara-closing-chicago-plant-jobs-snacking/874294/"
+   },
+   {
+    "date": "2026-11-06",
+    "titre": "Three deals carry French PE as deal count hits lowest since 2020",
+    "url": "https://pitchbook.com/news/articles/three-deals-carry-french-pe-as-deal-count-hits-lowest-since-2020"
+   },
+   {
+    "date": "2026-11-06",
+    "titre": "General Mills ‘mulling future of Häagen-Dazs’",
+    "url": "https://www.just-food.com/news/general-mills-haagen-dazs-options/"
+   },
+   {
+    "date": "2026-11-05",
+    "titre": "General Mills Considering Separation of Haagen-Dazs Business Outside North America",
+    "url": "https://www.wsj.com/business/general-mills-considering-separation-of-haagen-dazs-business-outside-north-america-7f110a77?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-04",
+    "titre": "Kraft Heinz is Selling Its Coffee Business. Its Stock is Brewing.",
+    "url": "https://www.barrons.com/articles/kraft-heinz-selling-coffee-business-earnings-stock-d98c37cc?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-04",
+    "titre": "Nestlé sells UK meal-kit firm SimplyCook",
+    "url": "https://www.just-food.com/news/nestle-sells-uk-firm-simplycook/"
+   },
+   {
+    "date": "2026-10-30",
+    "titre": "Why raising your first $1M is the hardest: Little Spoon CEO",
+    "url": "https://finance.yahoo.com/video/why-raising-first-1m-hardest-110000813.html"
+   },
+   {
+    "date": "2026-10-30",
+    "titre": "How a failed Whole Foods deal built Little Spoon: Founder and CEO",
+    "url": "https://finance.yahoo.com/video/failed-whole-foods-deal-built-100000691.html"
+   }
+  ],
+  "COMI.CA": [
+   {
+    "date": "2026-11-10",
+    "titre": "Commercial International Bank (Egypt) S.A.E. Q3 Earnings Call Highlights",
+    "url": "https://www.marketbeat.com/instant-alerts/transcript-commercial-international-bank-egypt-sae-q3-earnings-call-highlights-2026-11-10/?utm_source=yahoofinance&utm_medium=yahoofinance"
+   }
+  ],
+  "CSU.TO": [
+   {
+    "date": "2026-11-10",
+    "titre": "Canadian Stock Market Today: TSX Futures Nudge Higher On Crucial US Inflation Test",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/canadian-stock-market-today-tsx-130817662.html"
+   },
+   {
+    "date": "2026-11-10",
+    "titre": "Constellation Software Inc (CNSWF) (Q3 2026) Earnings Call Highlights: Revenue Jumps 19% to $3. ...",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/constellation-software-inc-cnswf-q3-050200630.html"
+   },
+   {
+    "date": "2026-11-09",
+    "titre": "Constellation Software Q3 Earnings Call Highlights",
+    "url": "https://www.marketbeat.com/instant-alerts/transcript-constellation-software-q3-earnings-call-highlights-2026-11-09/?utm_source=yahoofinance&utm_medium=yahoofinance"
+   },
+   {
+    "date": "2026-11-08",
+    "titre": "Constellation Software (TSX:CSU) Stock Faces Q3 Earnings Margin Squeeze",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/constellation-software-tsx-csu-stock-031707224.html"
+   },
+   {
+    "date": "2026-11-06",
+    "titre": "Constellation Software Inc. (CNSWF) Lags Q3 Earnings Estimates",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/constellation-software-inc-cnswf-lags-223501414.html"
+   },
+   {
+    "date": "2026-11-06",
+    "titre": "IonQ, Inc. (IONQ) Reports Q3 Loss, Tops Revenue Estimates",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/ionq-inc-ionq-reports-q3-000017889.html"
+   },
+   {
+    "date": "2026-10-26",
+    "titre": "What Drives Visa’s (V) Long-Term Compounding Potential?",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/drives-visa-v-long-term-163414429.html"
+   },
+   {
+    "date": "2026-10-26",
+    "titre": "Mastercard (MA): Scaling Network Infrastructure for the Era of Agentic Commerce",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/mastercard-ma-scaling-network-infrastructure-162629108.html"
+   }
+  ],
+  "MTN.JO": [
+   {
+    "date": "2026-11-10",
+    "titre": "Bango CEO Paul Larbey on expanding global growth with Ooredoo partnership",
+    "url": "https://finance.yahoo.com/video/bango-ceo-paul-larbey-expanding-113651664.html"
+   },
+   {
+    "date": "2026-11-09",
+    "titre": "MTN Group Posts Revenue Growth, Higher Profitability",
+    "url": "https://www.wsj.com/business/earnings/mtn-group-posts-revenue-growth-higher-profitability-7240166f?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-11-09",
+    "titre": "Missed MTN Group's Run? What Holders Had To Believe",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/missed-mtn-groups-run-holders-060705261.html"
+   },
+   {
+    "date": "2026-10-25",
+    "titre": "Why MTN Group Rose Even Though Profit Fell",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/why-mtn-group-rose-even-180810617.html"
+   },
+   {
+    "date": "2026-08-24",
+    "titre": "MTN Group Ltd (MTNOF) (H1 2026) Earnings Call Highlights: Record EBITDA Margin and Fintech ...",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/mtn-group-ltd-mtnof-h1-230038452.html"
+   },
+   {
+    "date": "2026-06-19",
+    "titre": "African telcos plan to invest $76B in infrastructure",
+    "url": "https://www.semafor.com/article/06/19/2026/telcos-plan-to-invest-76b-in-infrastructure"
+   },
+   {
+    "date": "2026-06-17",
+    "titre": "MTN Group (JSE:MTN) Stock Sees Modest Fair Value Cut After Split Analyst Revisions",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/mtn-group-jse-mtn-stock-161154838.html"
+   },
+   {
+    "date": "2026-06-02",
+    "titre": "Why The Narrative Around MTN Group (JSE:MTN) Is Evolving Without New Analyst Updates",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/why-narrative-around-mtn-group-131249593.html"
+   }
+  ],
+  "RY.TO": [
+   {
+    "date": "2026-11-09",
+    "titre": "Royal Bank of Canada Enters into Agreement to Acquire Yarra Capital Management Limited",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/royal-bank-canada-enters-agreement-150714772.html"
+   },
+   {
+    "date": "2026-11-08",
+    "titre": "Rayonier Q3 Earnings Call Highlights",
+    "url": "https://www.marketbeat.com/instant-alerts/transcript-rayonier-q3-earnings-call-highlights-2026-11-07/?utm_source=yahoofinance&utm_medium=yahoofinance"
+   },
+   {
+    "date": "2026-11-07",
+    "titre": "Top 3 Canadian Dividend Stocks To Watch In November 2026",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/top-3-canadian-dividend-stocks-191415145.html"
+   },
+   {
+    "date": "2026-11-06",
+    "titre": "Block by Block: Cash App Builds a Stronger Foundation",
+    "url": "https://www.marketbeat.com/articles/block-by-block-cash-app-builds-a-stronger-foundation/?utm_source=yahoofinance&utm_medium=yahoofinance"
+   },
+   {
+    "date": "2026-11-06",
+    "titre": "Rayonier Inc (RYN) (Q3 2026) Earnings Call Highlights: Record Adjusted EBITDA, Aggressive ...",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/rayonier-inc-ryn-q3-2026-090923885.html"
+   },
+   {
+    "date": "2026-11-06",
+    "titre": "Rayonier (RYN) Stock May Be 42% Undervalued On Cash Flow",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/rayonier-ryn-stock-may-42-051602874.html"
+   },
+   {
+    "date": "2026-11-05",
+    "titre": "Rayonier (RYN) Q3 2026 Earnings Call Transcript",
+    "url": "https://www.fool.com/earnings/call-transcripts/2026/11/05/rayonier-ryn-q3-2026-earnings-call-transcript/"
+   },
+   {
+    "date": "2026-11-04",
+    "titre": "Rayonier (RYN) Tops Q3 Earnings and Revenue Estimates",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/rayonier-ryn-tops-q3-earnings-234520552.html"
+   }
+  ],
+  "APN.JO": [
+   {
+    "date": "2026-11-02",
+    "titre": "Is Aspen Pharmacare (APNHY) Outperforming Other Medical Stocks This Year?",
+    "url": "https://finance.yahoo.com/healthcare/articles/aspen-pharmacare-apnhy-outperforming-other-134002794.html"
+   },
+   {
+    "date": "2026-10-15",
+    "titre": "Are Medical Stocks Lagging  Aspen Pharmacare (APNHY) This Year?",
+    "url": "https://finance.yahoo.com/healthcare/articles/medical-stocks-lagging-aspen-pharmacare-124002910.html"
+   },
+   {
+    "date": "2026-09-29",
+    "titre": "Is Aspen Pharmacare (APNHY) Stock Outpacing Its Medical Peers This Year?",
+    "url": "https://finance.yahoo.com/healthcare/articles/aspen-pharmacare-apnhy-stock-outpacing-124002496.html"
+   },
+   {
+    "date": "2026-09-10",
+    "titre": "Is Aspen Pharmacare (APNHY) Outperforming Other Medical Stocks This Year?",
+    "url": "https://finance.yahoo.com/healthcare/articles/aspen-pharmacare-apnhy-outperforming-other-134002546.html"
+   },
+   {
+    "date": "2026-09-03",
+    "titre": "Aspen Pharmacare Holdings Ltd (APNHF) (FY 2026) Earnings Call Highlights: NHEPS Surges 28% as ...",
+    "url": "https://finance.yahoo.com/healthcare/articles/aspen-pharmacare-holdings-ltd-apnhf-210038527.html"
+   },
+   {
+    "date": "2026-04-03",
+    "titre": "Aspen Pharmacare Holdings Insider Ups Holding During Year",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/aspen-pharmacare-holdings-insider-ups-074207892.html"
+   },
+   {
+    "date": "2025-12-29",
+    "titre": "Aspen Shares Surge on $1.6 Billion Asia-Pacific Asset Sale",
+    "url": "https://finance.yahoo.com/news/aspen-shares-surge-1-6-145544737.html"
+   }
+  ],
+  "VT": [
+   {
+    "date": "2026-10-31",
+    "titre": "Buffett’s Berkshire flashes a signal last seen in 2001. S&P 500 fell in 4 of 6 past cases. Protect your 401(k)",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/buffett-berkshire-flashes-signal-last-170000409.html"
+   },
+   {
+    "date": "2026-10-27",
+    "titre": "When the Pension Already Covers the Bills at 63, These 3 ETFs Give the Portfolio a Real Job",
+    "url": "https://247wallst.com/investing/etf/2026/10/27/when-the-pension-already-covers-the-bills-at-63-these-3-etfs-give-the-portfolio-a-real-job/"
+   },
+   {
+    "date": "2026-10-12",
+    "titre": "Forget VOO. “VT and Chill” Owns 9,000 Stocks and Skips the Lost Decade Problem",
+    "url": "https://247wallst.com/investing/etf/2026/10/11/forget-voo-vt-and-chill-owns-9000-stocks-and-skips-the-lost-decade-problem/"
+   },
+   {
+    "date": "2026-09-22",
+    "titre": "The Market Is Near Another All-Time High and You’re 66 With Cash to Invest. Buying Now Feels Like the Top. These 3 ETFs Are How You Get In Anyway",
+    "url": "https://247wallst.com/investing/etf/2026/09/22/the-market-is-near-another-all-time-high-and-youre-66-with-cash-to-invest-buying-now-feels-like-the-top-these-3-etfs-are-how-you-get-in-anyway/"
+   },
+   {
+    "date": "2026-09-15",
+    "titre": "You Own 47 Positions at 70 and Cannot Explain Half of Them. These 3 ETFs Replace Every One",
+    "url": "https://247wallst.com/investing/etf/2026/09/15/you-own-47-positions-at-70-and-cannot-explain-half-of-them-these-3-etfs-replace-every-one/"
+   },
+   {
+    "date": "2026-09-03",
+    "titre": "Looking to Diversify Your U.S.-Heavy Portfolio? Don’t Let the Fund Name Fool You",
+    "url": "https://www.wsj.com/finance/investing/international-overseas-etf-usa-index-stocks-9d4487d5?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-06-26",
+    "titre": "The Case for Holding VT in Your Roth IRA",
+    "url": "https://247wallst.com/investing/2026/06/26/the-case-for-holding-vt-in-your-roth-ira/"
+   },
+   {
+    "date": "2026-06-25",
+    "titre": "Barclays sees global expansion intact, warns against market complacency",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/barclays-sees-global-expansion-intact-105735416.html"
+   }
+  ],
+  "TD.TO": [
+   {
+    "date": "2026-10-29",
+    "titre": "Toronto-Dominion Bank (TSX:TD) Adds In App Transfers, Is The Stock Still Undervalued?",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/toronto-dominion-bank-tsx-td-201106043.html"
+   },
+   {
+    "date": "2026-10-26",
+    "titre": "Canada Proposes Stablecoin Rules Banning Yield Payments",
+    "url": "https://www.cryptoprowl.com/releases/canada-proposes-stablecoin-rules-banning-yield-payments-7462"
+   },
+   {
+    "date": "2026-10-26",
+    "titre": "3 Canadian Bank Stocks Facing A Bank Of Canada Rate Reset",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/3-canadian-bank-stocks-facing-111118005.html"
+   },
+   {
+    "date": "2026-10-24",
+    "titre": "Trump Is Cutting Tariffs on Canada, 11 Days Before the Midterms",
+    "url": "https://247wallst.com/investing/2026/10/24/trump-is-cutting-tariffs-on-canada-11-days-before-the-midterms/"
+   },
+   {
+    "date": "2026-10-23",
+    "titre": "Most banks offer cashback or other incentives on their mortgages. Not all are worth signing up for",
+    "url": "https://financialpost.com/real-estate/mortgages/not-all-cashback-other-incentives-worth-it"
+   },
+   {
+    "date": "2026-10-22",
+    "titre": "Toronto Dominion Bank (TSX:TD) Stock May Be 15% Undervalued Despite Fresh AI Credit Tool News",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/toronto-dominion-bank-tsx-td-211633871.html"
+   },
+   {
+    "date": "2026-10-13",
+    "titre": "Bank of America’s $1.2 Billion in Fines Will Weigh on Earnings",
+    "url": "https://www.barrons.com/articles/bank-of-america-stock-money-laundering-fine-2b5b4eda?siteid=yhoof2&yptr=yahoo"
+   },
+   {
+    "date": "2026-10-09",
+    "titre": "American Express Just Got Fined $350 Million for Missing $13 Billion in Suspicious Activity",
+    "url": "https://247wallst.com/investing/2026/10/09/american-express-just-got-fined-350-million-for-missing-13-billion-in-suspicious-activity/"
+   }
+  ],
+  "ATD.TO": [
+   {
+    "date": "2026-10-27",
+    "titre": "How Cumberland Farms has evolved through the years",
+    "url": "https://www.cstoredive.com/news/another-big-change-for-cumberland-farms/872808/"
+   },
+   {
+    "date": "2026-10-12",
+    "titre": "Couche-Tard to acquire 52 retail sites from Irving Oil",
+    "url": "https://www.cstoredive.com/news/couche-tard-to-acquire-52-retail-sites-from-irving-oil/832642/"
+   },
+   {
+    "date": "2026-09-22",
+    "titre": "Alimentation Couche Tard (TSX:ATD) And The Case For Buying Its Pullback As Zabka Looms",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/alimentation-couche-tard-tsx-atd-151536592.html"
+   },
+   {
+    "date": "2026-09-22",
+    "titre": "Alimentation Couche Tard (TSX:ATD) Stock Looks Below Fair Value On Its 70% Run",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/alimentation-couche-tard-tsx-atd-121446153.html"
+   },
+   {
+    "date": "2026-09-17",
+    "titre": "Convenience store giant closes 80 stores",
+    "url": "https://www.thestreet.com/retail/alimentation-couche-tard-80-store-closures-circle-k"
+   },
+   {
+    "date": "2026-09-11",
+    "titre": "Alimentation Couche-Tard Inc's Dividend Analysis",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/alimentation-couche-tard-incs-dividend-110255358.html"
+   },
+   {
+    "date": "2026-09-04",
+    "titre": "3 Big Numbers: The biggest winners in Couche-Tard’s Q1",
+    "url": "https://www.cstoredive.com/news/3-big-numbers-where-couche-tard-is-getting-its-good-vibes/829598/"
+   },
+   {
+    "date": "2026-09-03",
+    "titre": "Couche-Tard’s merchandise growth keeps on rolling into fiscal 2027",
+    "url": "https://www.cstoredive.com/news/couche-tards-merchandise-growth-keeps-on-rolling-into-fiscal-2027/829491/"
+   }
+  ],
+  "SBK.JO": [
+   {
+    "date": "2026-10-13",
+    "titre": "OPay plans $500m capital raise through IPO and private placement- report",
+    "url": "https://www.electronicpaymentsinternational.com/news/opay-plans-500m-capital-raise-through-ipo-and-private-placement-report/"
+   },
+   {
+    "date": "2026-09-11",
+    "titre": "Standard Bank Group Ltd's Dividend Analysis",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/standard-bank-group-ltds-dividend-110423277.html"
+   },
+   {
+    "date": "2026-08-17",
+    "titre": "Standard Bank Group Ltd (SBGOF) (H1 2026) Earnings Call Highlights: Record Headline Earnings ...",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/standard-bank-group-ltd-sbgof-173110343.html"
+   },
+   {
+    "date": "2026-07-10",
+    "titre": "Standard Bank Group (JSE:SBK) Stock Gets Fair Value Bump As Analyst Tone Turns Cautious",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/standard-bank-group-jse-sbk-161237220.html"
+   },
+   {
+    "date": "2026-07-10",
+    "titre": "Businesses brace for prolonged unrest in South Africa",
+    "url": "https://www.semafor.com/article/07/10/2026/businesses-brace-for-prolonged-unrest-in-south-africa"
+   },
+   {
+    "date": "2026-06-11",
+    "titre": "How The Investment Story For Standard Bank Group (JSE:SBK) Is Evolving Without New Analyst Targets",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/investment-story-standard-bank-group-150832199.html"
+   },
+   {
+    "date": "2026-05-05",
+    "titre": "Standard Bank Group Insiders Added R66.2m Of Stock To Their Holdings",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/standard-bank-group-insiders-added-061211897.html"
+   },
+   {
+    "date": "2026-03-24",
+    "titre": "How The Story Is Shifting For Standard Bank Group (JSE:SBK) After The New Price Target",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/story-shifting-standard-bank-group-090448664.html"
+   }
+  ],
+  "SHP.JO": [
+   {
+    "date": "2026-09-25",
+    "titre": "Shoprite Holdings Ltd's Dividend Analysis",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/shoprite-holdings-ltds-dividend-analysis-110111991.html"
+   },
+   {
+    "date": "2026-03-06",
+    "titre": "Shoprite Holdings Ltd (SRGHY) (Half Year 2026) Earnings Call Highlights: Strong Revenue Growth ...",
+    "url": "https://finance.yahoo.com/news/shoprite-holdings-ltd-srghy-half-010311396.html"
+   }
+  ],
+  "FSR.JO": [
+   {
+    "date": "2026-08-20",
+    "titre": "Aldermore battle heats up as private equity giant CVC motors into auction",
+    "url": "https://uk.finance.yahoo.com/news/aldermore-battle-heats-private-equity-105700874.html"
+   },
+   {
+    "date": "2026-07-10",
+    "titre": "SWIFT's Blockchain Ledger Goes Live With HSBC, Citi and 15 Other Banks: Threat to XRP, XLM Cross-Border Plays?",
+    "url": "https://www.ccn.com/news/crypto/swift-blockchain-ledger-live-17-banks-xrp-xlm-demand-risk/"
+   },
+   {
+    "date": "2026-06-22",
+    "titre": "Botswana secures $100M for solar plant",
+    "url": "https://www.semafor.com/article/06/22/2026/botswana-secures-100-million-funding-for-first-large-scale-solar-plant"
+   },
+   {
+    "date": "2026-05-23",
+    "titre": "How The FirstRand (JSE:FSR) Narrative Is Shifting After The Latest Fair Value Reset",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/firstrand-jse-fsr-narrative-shifting-181026684.html"
+   },
+   {
+    "date": "2026-05-04",
+    "titre": "How The FirstRand (JSE:FSR) Investment Story Is Shifting After Citi Downgrade And New Assumptions",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/firstrand-jse-fsr-investment-story-001819096.html"
+   },
+   {
+    "date": "2026-04-10",
+    "titre": "FirstRand exits UK business after regulatory hit",
+    "url": "https://www.semafor.com/article/04/10/2026/firstrand-exits-uk-business-after-regulatory-hit"
+   },
+   {
+    "date": "2026-04-08",
+    "titre": "Bank to quit Britain in protest against ‘unfair’ £750m car finance bill",
+    "url": "https://www.telegraph.co.uk/business/2026/04/08/bank-quits-britain-protest-against-unfair-750m-car-finance/"
+   },
+   {
+    "date": "2026-03-10",
+    "titre": "Firstrand Ltd (FANDF) (Q1 2026) Earnings Call Highlights: Strong Earnings Growth and Strategic ...",
+    "url": "https://finance.yahoo.com/news/firstrand-ltd-fandf-q1-2026-010403711.html"
+   }
+  ],
+  "NPN.JO": [
+   {
+    "date": "2026-06-29",
+    "titre": "Naspers Ltd (NAPRF) Full Year 2026 Earnings Call Highlights: Revenue Surge and AI Integration ...",
+    "url": "https://finance.yahoo.com/technology/ai/articles/naspers-ltd-naprf-full-2026-150029886.html"
+   },
+   {
+    "date": "2026-06-08",
+    "titre": "How The Naspers (JSE:NPN) Investment Story Is Evolving Without A New Price Target",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/naspers-jse-npn-investment-story-111003734.html"
+   },
+   {
+    "date": "2026-06-01",
+    "titre": "Market Chatter: Uber-Delivery Hero Deal Faces New Challenge as Prosus Considers Stake Increase",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/market-chatter-uber-delivery-hero-155029754.html"
+   },
+   {
+    "date": "2026-03-26",
+    "titre": "At R908, Is Naspers Limited (JSE:NPN) Worth Looking At Closely?",
+    "url": "https://finance.yahoo.com/markets/stocks/articles/r908-naspers-limited-jse-npn-124036836.html"
+   },
+   {
+    "date": "2026-03-17",
+    "titre": "What's Behind Naspers's Steady Exit From Remitly?",
+    "url": "https://www.fool.com/coverage/filings/2026/03/17/what-s-behind-naspers-s-steady-exit-from-remitly/"
+   },
+   {
+    "date": "2026-03-09",
+    "titre": "Is Naspers (NPSNY) Stock Undervalued Right Now?",
+    "url": "https://finance.yahoo.com/news/naspers-npsny-stock-undervalued-now-134003974.html"
+   },
+   {
+    "date": "2026-02-23",
+    "titre": "Zacks Industry Outlook Highlights Naspers, Charter Communications and Cable One",
+    "url": "https://finance.yahoo.com/news/zacks-industry-outlook-highlights-naspers-152100074.html"
+   },
+   {
+    "date": "2025-11-24",
+    "titre": "Prosus doubles half-year core profit amid e-commerce pivot",
+    "url": "https://finance.yahoo.com/news/prosus-half-core-profit-nearly-063340362.html"
+   }
+  ]
+ },
+ "controverses": {
+  "TD.TO": [
+   {
+    "date": "2024-10-10",
+    "sujet": "Lutte contre le blanchiment",
+    "resume": "TD Bank (filiale américaine) plaide coupable de violations de la loi américaine sur le secret bancaire et de complot de blanchiment ; pénalités totales d'environ 3 G$ US et restrictions d'activité.",
+    "source": "https://www.justice.gov/criminal/case/united-states-america-v-td-bank-na"
+   }
+  ],
+  "ENB.TO": [
+   {
+    "date": "2026-07-30",
+    "sujet": "Ligne 5, terres autochtones (Bad River)",
+    "resume": "La Cour d'appel du 7e circuit confirme que la ligne 5 empiète sans droit sur la réserve de la bande de Bad River depuis 2013 et doit être déplacée ; dommages à recalculer. Enbridge conteste.",
+    "source": "https://www.mprnews.org/story/2026/08/06/federal-appeals-court-finds-enbridge-trespassing-on-tribal-lands-must-remove-line-5"
+   }
+  ],
+  "GOOGL": [
+   {
+    "date": "2024-08-05",
+    "sujet": "Concurrence",
+    "resume": "Jugement fédéral (juge Mehta) : Google a maintenu illégalement un monopole sur la recherche générale ; mesures correctives prononcées le 2 septembre 2025.",
+    "source": "https://www.jenner.com/en/news-insights/client-alerts/key-takeaways-from-united-states-v-google"
+   }
+  ],
+  "JNJ": [
+   {
+    "date": "2025-03-31",
+    "sujet": "Sécurité des produits (talc)",
+    "resume": "Rejet du troisième plan de faillite (Red River Talc) visant à régler les poursuites liées au talc ; J&J n'a pas fait appel et défend les dossiers un par un.",
+    "source": "https://www.pharmaceutical-technology.com/news/judge-rejects-jjs-9bn-talc-settlement-for-third-time/"
+   }
+  ],
+  "TSLA": [
+   {
+    "date": "2023-12-12",
+    "sujet": "Sécurité des produits (Autopilot)",
+    "resume": "Rappel NHTSA 23V838000 d'environ 2 millions de véhicules : contrôles de l'Autopilot jugés insuffisants contre une mauvaise utilisation ; correctif logiciel, enquête poursuivie.",
+    "source": "https://www.insurancejournal.com/news/national/2023/12/13/751849.htm"
+   }
+  ],
+  "AMZN": [
+   {
+    "date": "2025-09-25",
+    "sujet": "Protection du consommateur (Prime)",
+    "resume": "Règlement de 2,5 G$ US avec la FTC (1 G$ de pénalité civile, 1,5 G$ de remboursements) pour des inscriptions et résiliations Prime trompeuses ; sans admission de faute.",
+    "source": "https://www.retailtouchpoints.com/features/news-briefs/amazon-settles-ftc-suit-alleging-prime-membership-trickery-for-2-5-billion"
+   }
+  ],
+  "AAPL": [
+   {
+    "date": "2024-03-21",
+    "sujet": "Concurrence",
+    "resume": "Le département de la Justice et 16 procureurs généraux poursuivent Apple pour monopolisation du marché des téléphones intelligents. Apple conteste.",
+    "source": "https://www.justice.gov/archives/opa/pr/justice-department-sues-apple-monopolizing-smartphone-markets"
+   }
+  ],
+  "XOM": [
+   {
+    "date": "2024-09-23",
+    "sujet": "Recyclage du plastique",
+    "resume": "La Californie poursuit ExxonMobil pour avoir présenté le recyclage du plastique comme une solution en le sachant inefficace. ExxonMobil conteste.",
+    "source": "https://www.nbcnews.com/science/environment/california-sues-exxonmobil-plastic-recycling-deception-rcna172267"
+   }
+  ],
+  "JPM": [
+   {
+    "date": "2023-09-26",
+    "sujet": "Affaire Epstein",
+    "resume": "Règlement de 75 M$ US avec les Îles Vierges américaines, après 290 M$ US versés aux victimes en juin 2023, pour des liens avec Jeffrey Epstein ; sans admission de faute.",
+    "source": "https://www.cnbc.com/2023/09/26/jpmorgan-to-settle-jeffrey-epstein-suit-by-virgin-islands.html"
+   }
+  ],
+  "TTE.PA": [
+   {
+    "date": "2025-10-23",
+    "sujet": "Écoblanchiment (allégations climatiques)",
+    "resume": "Le tribunal judiciaire de Paris juge trompeuses certaines allégations de neutralité carbone et de transition énergétique sur le site grand public ; la plupart des autres demandes sont rejetées.",
+    "source": "https://www.pwclegal.be/en/news/paris-court-issues-landmark-greenwashing-ruling-against-totalene.html"
+   }
+  ],
+  "SHEL.L": [
+   {
+    "date": "2024-11-12",
+    "sujet": "Procès climatique (Milieudefensie)",
+    "resume": "La Cour d'appel de La Haye annule l'obligation de réduire les émissions de 45 % d'ici 2030 imposée en 2021, tout en reconnaissant une obligation générale de réduction.",
+    "source": "https://www.rechtspraak.nl/organisatie-en-contact/organisatie/gerechtshoven/gerechtshof-den-haag/nieuws/2024/11/hague-court-denies-claim-for-reduction-in-shells-co2-emissions"
+   }
+  ],
+  "SAP.DE": [
+   {
+    "date": "2024-01-10",
+    "sujet": "Corruption (FCPA)",
+    "resume": "Règlement de plus de 220 M$ US avec le DOJ et la SEC pour des pots-de-vin versés à des agents publics (Afrique du Sud, Indonésie et autres) ; accord de poursuite différée de trois ans.",
+    "source": "https://www.davispolk.com/insights/client-update/sap-resolves-fcpa-case-220-million"
+   }
+  ],
+  "MC.PA": [
+   {
+    "date": "2024-06-10",
+    "sujet": "Chaîne d'approvisionnement (travail)",
+    "resume": "Un tribunal de Milan place l'unité italienne de Dior sous administration judiciaire pour défaut de contrôle de sous-traitants exploitant des travailleurs ; mesure levée de façon anticipée en 2025.",
+    "source": "https://fortune.com/europe/2024/06/11/lvmh-italian-dior-maker-investigation-luxury-goods-labor-exploitation-workers/"
+   }
+  ],
+  "NESN.SW": [
+   {
+    "date": "2024-09",
+    "sujet": "Eaux minérales (traitements interdits)",
+    "resume": "Nestlé Waters paie 2 M€ (convention judiciaire d'intérêt public, sans reconnaissance de culpabilité) pour des traitements et forages illégaux en France ; enquête pour fraude ouverte en 2025.",
+    "source": "https://www.just-drinks.com/news/nestle-fined-e2m-to-close-mineral-water-investigations-in-france"
+   }
+  ],
+  "7203.T": [
+   {
+    "date": "2024-06-03",
+    "sujet": "Certification des véhicules",
+    "resume": "Toyota reconnaît des essais de certification non conformes aux normes japonaises sur sept modèles ; arrêt de livraisons et inspection du ministère des Transports.",
+    "source": "https://www.just-auto.com/newsletters/toyota-admits-improper-safety-tests"
+   }
+  ],
+  "1211.HK": [
+   {
+    "date": "2025-05-27",
+    "sujet": "Conditions de travail (Brésil)",
+    "resume": "Le ministère public du travail brésilien poursuit BYD et deux sous-traitants pour des conditions analogues à l'esclavage sur le chantier de son usine de Camaçari (220 travailleurs secourus).",
+    "source": "https://fortune.com/2025/05/29/brazil-sues-byd-china-worker-conditions-analogous-to-slavery/"
+   }
+  ],
+  "9988.HK": [
+   {
+    "date": "2021-04-10",
+    "sujet": "Concurrence",
+    "resume": "Amende record de 18,2 G yuans (environ 2,8 G$ US) du régulateur chinois du marché pour exclusivité imposée aux commerçants ; Alibaba accepte la sanction.",
+    "source": "https://www.caixinglobal.com/2021-04-10/alibaba-fined-28-billion-in-landmark-china-antitrust-ruling-101688439.html"
+   }
+  ],
+  "MTN.JO": [
+   {
+    "date": "2023-09",
+    "sujet": "Financement présumé du terrorisme",
+    "resume": "Un tribunal fédéral de New York laisse avancer une poursuite (Anti-Terrorism Act) alléguant des paiements aux talibans et des liens avec l'Iran ; MTN nie les allégations.",
+    "source": "https://www.connectingafrica.com/regulation/mtn-s-us-anti-terrorism-cases-move-to-discovery-phase"
+   }
+  ],
+  "0700.HK": [
+   {
+    "date": "2025-01-06",
+    "sujet": "Désignation militaire américaine",
+    "resume": "Le Pentagone ajoute Tencent à la liste 1260H des « entreprises militaires chinoises » ; Tencent conteste. Pas de sanction immédiate.",
+    "source": "https://www.morganlewis.com/pubs/2025/01/dods-expanding-list-of-chinese-military-companies"
+   }
+  ]
+ }
+}

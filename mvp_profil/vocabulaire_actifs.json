@@ -1,0 +1,1811 @@
+{
+ "source": "data_extended/asset_criteria.csv",
+ "nb_actifs": 66,
+ "noms": {
+  "RY.TO": "Royal Bank of Canada",
+  "TD.TO": "Toronto-Dominion Bank",
+  "MFC.TO": "Manulife Financial",
+  "ENB.TO": "Enbridge",
+  "CNQ.TO": "Canadian Natural Resources",
+  "CNR.TO": "Canadian National Railway",
+  "FTS.TO": "Fortis",
+  "ATD.TO": "Alimentation Couche-Tard",
+  "SHOP.TO": "Shopify",
+  "CSU.TO": "Constellation Software",
+  "AAPL": "Apple",
+  "MSFT": "Microsoft",
+  "NVDA": "NVIDIA",
+  "GOOGL": "Alphabet (Class A)",
+  "AMZN": "Amazon",
+  "TSLA": "Tesla",
+  "JPM": "JPMorgan Chase",
+  "JNJ": "Johnson & Johnson",
+  "PG": "Procter & Gamble",
+  "XOM": "Exxon Mobil",
+  "XIU.TO": "iShares S&P/TSX 60 Index ETF",
+  "SPY": "SPDR S&P 500 ETF Trust",
+  "QQQ": "Invesco QQQ Trust (Nasdaq-100)",
+  "ESGV": "Vanguard ESG U.S. Stock ETF",
+  "XBB.TO": "iShares Core Canadian Universe Bond Index ETF",
+  "ZST.TO": "BMO Ultra Short-Term Bond ETF",
+  "AGG": "iShares Core U.S. Aggregate Bond ETF",
+  "TLT": "iShares 20+ Year Treasury Bond ETF",
+  "GLD": "SPDR Gold Shares",
+  "BTC-USD": "Bitcoin",
+  "ETH-USD": "Ether",
+  "ASML.AS": "ASML Holding",
+  "MC.PA": "LVMH Moët Hennessy Louis Vuitton",
+  "NESN.SW": "Nestlé",
+  "NOVO-B.CO": "Novo Nordisk (B)",
+  "SAP.DE": "SAP",
+  "SIE.DE": "Siemens",
+  "TTE.PA": "TotalEnergies",
+  "SHEL.L": "Shell",
+  "AZN.L": "AstraZeneca",
+  "HSBA.L": "HSBC Holdings",
+  "2330.TW": "Taiwan Semiconductor Manufacturing (TSMC)",
+  "005930.KS": "Samsung Electronics",
+  "7203.T": "Toyota Motor",
+  "6758.T": "Sony Group",
+  "0700.HK": "Tencent Holdings",
+  "9988.HK": "Alibaba Group",
+  "1211.HK": "BYD Company",
+  "RELIANCE.NS": "Reliance Industries",
+  "HDFCBANK.NS": "HDFC Bank",
+  "INFY.NS": "Infosys",
+  "NPN.JO": "Naspers",
+  "FSR.JO": "FirstRand",
+  "SBK.JO": "Standard Bank Group",
+  "MTN.JO": "MTN Group",
+  "VOD.JO": "Vodacom Group",
+  "GFI.JO": "Gold Fields",
+  "SOL.JO": "Sasol",
+  "SHP.JO": "Shoprite Holdings",
+  "APN.JO": "Aspen Pharmacare",
+  "COMI.CA": "Commercial International Bank (Égypte)",
+  "VT": "Vanguard Total World Stock ETF",
+  "VEA": "Vanguard FTSE Developed Markets ETF",
+  "VWO": "Vanguard FTSE Emerging Markets ETF",
+  "XEQT.TO": "iShares Core Equity ETF Portfolio",
+  "BNDW": "Vanguard Total World Bond ETF"
+ },
+ "dimensions": {
+  "titre": {
+   "colonne": "ticker",
+   "description": "un titre précis de l'univers (ticker), par exemple l'employeur de la personne ou une entreprise qu'elle refuse",
+   "valeurs": {
+    "005930.KS": [
+     "005930.KS"
+    ],
+    "0700.HK": [
+     "0700.HK"
+    ],
+    "1211.HK": [
+     "1211.HK"
+    ],
+    "2330.TW": [
+     "2330.TW"
+    ],
+    "6758.T": [
+     "6758.T"
+    ],
+    "7203.T": [
+     "7203.T"
+    ],
+    "9988.HK": [
+     "9988.HK"
+    ],
+    "AAPL": [
+     "AAPL"
+    ],
+    "AGG": [
+     "AGG"
+    ],
+    "AMZN": [
+     "AMZN"
+    ],
+    "APN.JO": [
+     "APN.JO"
+    ],
+    "ASML.AS": [
+     "ASML.AS"
+    ],
+    "ATD.TO": [
+     "ATD.TO"
+    ],
+    "AZN.L": [
+     "AZN.L"
+    ],
+    "BNDW": [
+     "BNDW"
+    ],
+    "BTC-USD": [
+     "BTC-USD"
+    ],
+    "CNQ.TO": [
+     "CNQ.TO"
+    ],
+    "CNR.TO": [
+     "CNR.TO"
+    ],
+    "COMI.CA": [
+     "COMI.CA"
+    ],
+    "CSU.TO": [
+     "CSU.TO"
+    ],
+    "ENB.TO": [
+     "ENB.TO"
+    ],
+    "ESGV": [
+     "ESGV"
+    ],
+    "ETH-USD": [
+     "ETH-USD"
+    ],
+    "FSR.JO": [
+     "FSR.JO"
+    ],
+    "FTS.TO": [
+     "FTS.TO"
+    ],
+    "GFI.JO": [
+     "GFI.JO"
+    ],
+    "GLD": [
+     "GLD"
+    ],
+    "GOOGL": [
+     "GOOGL"
+    ],
+    "HDFCBANK.NS": [
+     "HDFCBANK.NS"
+    ],
+    "HSBA.L": [
+     "HSBA.L"
+    ],
+    "INFY.NS": [
+     "INFY.NS"
+    ],
+    "JNJ": [
+     "JNJ"
+    ],
+    "JPM": [
+     "JPM"
+    ],
+    "MC.PA": [
+     "MC.PA"
+    ],
+    "MFC.TO": [
+     "MFC.TO"
+    ],
+    "MSFT": [
+     "MSFT"
+    ],
+    "MTN.JO": [
+     "MTN.JO"
+    ],
+    "NESN.SW": [
+     "NESN.SW"
+    ],
+    "NOVO-B.CO": [
+     "NOVO-B.CO"
+    ],
+    "NPN.JO": [
+     "NPN.JO"
+    ],
+    "NVDA": [
+     "NVDA"
+    ],
+    "PG": [
+     "PG"
+    ],
+    "QQQ": [
+     "QQQ"
+    ],
+    "RELIANCE.NS": [
+     "RELIANCE.NS"
+    ],
+    "RY.TO": [
+     "RY.TO"
+    ],
+    "SAP.DE": [
+     "SAP.DE"
+    ],
+    "SBK.JO": [
+     "SBK.JO"
+    ],
+    "SHEL.L": [
+     "SHEL.L"
+    ],
+    "SHOP.TO": [
+     "SHOP.TO"
+    ],
+    "SHP.JO": [
+     "SHP.JO"
+    ],
+    "SIE.DE": [
+     "SIE.DE"
+    ],
+    "SOL.JO": [
+     "SOL.JO"
+    ],
+    "SPY": [
+     "SPY"
+    ],
+    "TD.TO": [
+     "TD.TO"
+    ],
+    "TLT": [
+     "TLT"
+    ],
+    "TSLA": [
+     "TSLA"
+    ],
+    "TTE.PA": [
+     "TTE.PA"
+    ],
+    "VEA": [
+     "VEA"
+    ],
+    "VOD.JO": [
+     "VOD.JO"
+    ],
+    "VT": [
+     "VT"
+    ],
+    "VWO": [
+     "VWO"
+    ],
+    "XBB.TO": [
+     "XBB.TO"
+    ],
+    "XEQT.TO": [
+     "XEQT.TO"
+    ],
+    "XIU.TO": [
+     "XIU.TO"
+    ],
+    "XOM": [
+     "XOM"
+    ],
+    "ZST.TO": [
+     "ZST.TO"
+    ]
+   }
+  },
+  "classe": {
+   "colonne": "asset_class",
+   "description": "classe d'actif : action, FNB d'actions, FNB d'obligations, FNB de matières premières, cryptoactif",
+   "valeurs": {
+    "crypto": [
+     "BTC-USD",
+     "ETH-USD"
+    ],
+    "equity": [
+     "RY.TO",
+     "TD.TO",
+     "MFC.TO",
+     "ENB.TO",
+     "CNQ.TO",
+     "CNR.TO",
+     "FTS.TO",
+     "ATD.TO",
+     "SHOP.TO",
+     "CSU.TO",
+     "AAPL",
+     "MSFT",
+     "NVDA",
+     "GOOGL",
+     "AMZN",
+     "TSLA",
+     "JPM",
+     "JNJ",
+     "PG",
+     "XOM",
+     "ASML.AS",
+     "MC.PA",
+     "NESN.SW",
+     "NOVO-B.CO",
+     "SAP.DE",
+     "SIE.DE",
+     "TTE.PA",
+     "SHEL.L",
+     "AZN.L",
+     "HSBA.L",
+     "2330.TW",
+     "005930.KS",
+     "7203.T",
+     "6758.T",
+     "0700.HK",
+     "9988.HK",
+     "1211.HK",
+     "RELIANCE.NS",
+     "HDFCBANK.NS",
+     "INFY.NS",
+     "NPN.JO",
+     "FSR.JO",
+     "SBK.JO",
+     "MTN.JO",
+     "VOD.JO",
+     "GFI.JO",
+     "SOL.JO",
+     "SHP.JO",
+     "APN.JO",
+     "COMI.CA"
+    ],
+    "etf_bond": [
+     "XBB.TO",
+     "ZST.TO",
+     "AGG",
+     "TLT",
+     "BNDW"
+    ],
+    "etf_commodity": [
+     "GLD"
+    ],
+    "etf_equity": [
+     "XIU.TO",
+     "SPY",
+     "QQQ",
+     "ESGV",
+     "VT",
+     "VEA",
+     "VWO",
+     "XEQT.TO"
+    ]
+   }
+  },
+  "region": {
+   "colonne": "region",
+   "description": "grande région de cotation ou d'activité",
+   "valeurs": {
+    "Afrique": [
+     "NPN.JO",
+     "FSR.JO",
+     "SBK.JO",
+     "MTN.JO",
+     "VOD.JO",
+     "GFI.JO",
+     "SOL.JO",
+     "SHP.JO",
+     "APN.JO",
+     "COMI.CA"
+    ],
+    "Amérique du Nord": [
+     "RY.TO",
+     "TD.TO",
+     "MFC.TO",
+     "ENB.TO",
+     "CNQ.TO",
+     "CNR.TO",
+     "FTS.TO",
+     "ATD.TO",
+     "SHOP.TO",
+     "CSU.TO",
+     "AAPL",
+     "MSFT",
+     "NVDA",
+     "GOOGL",
+     "AMZN",
+     "TSLA",
+     "JPM",
+     "JNJ",
+     "PG",
+     "XOM",
+     "XIU.TO",
+     "SPY",
+     "QQQ",
+     "ESGV",
+     "XBB.TO",
+     "ZST.TO",
+     "AGG",
+     "TLT",
+     "GLD"
+    ],
+    "Asie": [
+     "2330.TW",
+     "005930.KS",
+     "7203.T",
+     "6758.T",
+     "0700.HK",
+     "9988.HK",
+     "1211.HK",
+     "RELIANCE.NS",
+     "HDFCBANK.NS",
+     "INFY.NS"
+    ],
+    "Crypto": [
+     "BTC-USD",
+     "ETH-USD"
+    ],
+    "Europe": [
+     "ASML.AS",
+     "MC.PA",
+     "NESN.SW",
+     "NOVO-B.CO",
+     "SAP.DE",
+     "SIE.DE",
+     "TTE.PA",
+     "SHEL.L",
+     "AZN.L",
+     "HSBA.L"
+    ],
+    "Monde": [
+     "VT",
+     "VEA",
+     "VWO",
+     "XEQT.TO",
+     "BNDW"
+    ]
+   }
+  },
+  "pays": {
+   "colonne": "country",
+   "description": "pays de l'émetteur",
+   "valeurs": {
+    "Afrique du Sud": [
+     "NPN.JO",
+     "FSR.JO",
+     "SBK.JO",
+     "MTN.JO",
+     "VOD.JO",
+     "GFI.JO",
+     "SOL.JO",
+     "SHP.JO",
+     "APN.JO"
+    ],
+    "Allemagne": [
+     "SAP.DE",
+     "SIE.DE"
+    ],
+    "Amérique du Nord": [
+     "RY.TO",
+     "TD.TO",
+     "MFC.TO",
+     "ENB.TO",
+     "CNQ.TO",
+     "CNR.TO",
+     "FTS.TO",
+     "ATD.TO",
+     "SHOP.TO",
+     "CSU.TO",
+     "AAPL",
+     "MSFT",
+     "NVDA",
+     "GOOGL",
+     "AMZN",
+     "TSLA",
+     "JPM",
+     "JNJ",
+     "PG",
+     "XOM",
+     "XIU.TO",
+     "SPY",
+     "QQQ",
+     "ESGV",
+     "XBB.TO",
+     "ZST.TO",
+     "AGG",
+     "TLT",
+     "GLD"
+    ],
+    "Canada (fonds)": [
+     "XEQT.TO"
+    ],
+    "Chine": [
+     "0700.HK",
+     "9988.HK",
+     "1211.HK"
+    ],
+    "Corée du Sud": [
+     "005930.KS"
+    ],
+    "Crypto": [
+     "BTC-USD",
+     "ETH-USD"
+    ],
+    "Danemark": [
+     "NOVO-B.CO"
+    ],
+    "France": [
+     "MC.PA",
+     "TTE.PA"
+    ],
+    "Inde": [
+     "RELIANCE.NS",
+     "HDFCBANK.NS",
+     "INFY.NS"
+    ],
+    "Japon": [
+     "7203.T",
+     "6758.T"
+    ],
+    "Pays-Bas": [
+     "ASML.AS"
+    ],
+    "Royaume-Uni": [
+     "SHEL.L",
+     "AZN.L",
+     "HSBA.L"
+    ],
+    "Suisse": [
+     "NESN.SW"
+    ],
+    "Taïwan": [
+     "2330.TW"
+    ],
+    "Égypte": [
+     "COMI.CA"
+    ],
+    "États-Unis (fonds)": [
+     "VT",
+     "VEA",
+     "VWO",
+     "BNDW"
+    ]
+   }
+  },
+  "devise": {
+   "colonne": "currency",
+   "description": "devise de cotation",
+   "valeurs": {
+    "CAD": [
+     "RY.TO",
+     "TD.TO",
+     "MFC.TO",
+     "ENB.TO",
+     "CNQ.TO",
+     "CNR.TO",
+     "FTS.TO",
+     "ATD.TO",
+     "SHOP.TO",
+     "CSU.TO",
+     "XIU.TO",
+     "XBB.TO",
+     "ZST.TO",
+     "XEQT.TO"
+    ],
+    "CHF": [
+     "NESN.SW"
+    ],
+    "DKK": [
+     "NOVO-B.CO"
+    ],
+    "EGP": [
+     "COMI.CA"
+    ],
+    "EUR": [
+     "ASML.AS",
+     "MC.PA",
+     "SAP.DE",
+     "SIE.DE",
+     "TTE.PA"
+    ],
+    "GBP": [
+     "SHEL.L",
+     "AZN.L",
+     "HSBA.L"
+    ],
+    "HKD": [
+     "0700.HK",
+     "9988.HK",
+     "1211.HK"
+    ],
+    "INR": [
+     "RELIANCE.NS",
+     "HDFCBANK.NS",
+     "INFY.NS"
+    ],
+    "JPY": [
+     "7203.T",
+     "6758.T"
+    ],
+    "KRW": [
+     "005930.KS"
+    ],
+    "TWD": [
+     "2330.TW"
+    ],
+    "USD": [
+     "AAPL",
+     "MSFT",
+     "NVDA",
+     "GOOGL",
+     "AMZN",
+     "TSLA",
+     "JPM",
+     "JNJ",
+     "PG",
+     "XOM",
+     "SPY",
+     "QQQ",
+     "ESGV",
+     "AGG",
+     "TLT",
+     "GLD",
+     "BTC-USD",
+     "ETH-USD",
+     "VT",
+     "VEA",
+     "VWO",
+     "BNDW"
+    ],
+    "ZAR": [
+     "NPN.JO",
+     "FSR.JO",
+     "SBK.JO",
+     "MTN.JO",
+     "VOD.JO",
+     "GFI.JO",
+     "SOL.JO",
+     "SHP.JO",
+     "APN.JO"
+    ]
+   }
+  },
+  "secteur": {
+   "colonne": "sector",
+   "description": "secteur d'activité (classification GICS) ou type de fonds",
+   "valeurs": {
+    "Bonds (Canada aggregate)": [
+     "XBB.TO"
+    ],
+    "Bonds (Canada ultra short-term)": [
+     "ZST.TO"
+    ],
+    "Bonds (U.S. aggregate)": [
+     "AGG"
+    ],
+    "Bonds (U.S. long Treasury)": [
+     "TLT"
+    ],
+    "Bonds (monde, couvert en USD)": [
+     "BNDW"
+    ],
+    "Broad market (Canada)": [
+     "XIU.TO"
+    ],
+    "Broad market (U.S. growth/tech-heavy)": [
+     "QQQ"
+    ],
+    "Broad market (U.S.)": [
+     "SPY"
+    ],
+    "Broad market (U.S., ESG-screened)": [
+     "ESGV"
+    ],
+    "Broad market (monde)": [
+     "VT"
+    ],
+    "Broad market (monde, portefeuille tout-en-un)": [
+     "XEQT.TO"
+    ],
+    "Broad market (pays développés hors Amérique du Nord)": [
+     "VEA"
+    ],
+    "Broad market (pays émergents)": [
+     "VWO"
+    ],
+    "Communication Services": [
+     "GOOGL",
+     "0700.HK",
+     "MTN.JO",
+     "VOD.JO"
+    ],
+    "Consumer Discretionary": [
+     "AMZN",
+     "TSLA",
+     "MC.PA",
+     "7203.T",
+     "6758.T",
+     "9988.HK",
+     "1211.HK",
+     "NPN.JO"
+    ],
+    "Consumer Staples": [
+     "ATD.TO",
+     "PG",
+     "NESN.SW",
+     "SHP.JO"
+    ],
+    "Crypto asset": [
+     "BTC-USD",
+     "ETH-USD"
+    ],
+    "Energy": [
+     "ENB.TO",
+     "CNQ.TO",
+     "XOM",
+     "TTE.PA",
+     "SHEL.L",
+     "RELIANCE.NS"
+    ],
+    "Financials": [
+     "RY.TO",
+     "TD.TO",
+     "MFC.TO",
+     "JPM",
+     "HSBA.L",
+     "HDFCBANK.NS",
+     "FSR.JO",
+     "SBK.JO",
+     "COMI.CA"
+    ],
+    "Gold": [
+     "GLD"
+    ],
+    "Health Care": [
+     "JNJ",
+     "NOVO-B.CO",
+     "AZN.L",
+     "APN.JO"
+    ],
+    "Industrials": [
+     "CNR.TO",
+     "SIE.DE"
+    ],
+    "Information Technology": [
+     "SHOP.TO",
+     "CSU.TO",
+     "AAPL",
+     "MSFT",
+     "NVDA",
+     "ASML.AS",
+     "SAP.DE",
+     "2330.TW",
+     "005930.KS",
+     "INFY.NS"
+    ],
+    "Materials": [
+     "GFI.JO",
+     "SOL.JO"
+    ],
+    "Utilities": [
+     "FTS.TO"
+    ]
+   }
+  },
+  "theme": {
+   "colonne": "themes",
+   "description": "thème d'activité précis (plusieurs par actif)",
+   "valeurs": {
+    "alimentation": [
+     "NESN.SW"
+    ],
+    "assurance": [
+     "MFC.TO"
+    ],
+    "automatisation": [
+     "SIE.DE"
+    ],
+    "automobile": [
+     "7203.T"
+    ],
+    "banque": [
+     "RY.TO",
+     "TD.TO",
+     "JPM",
+     "HSBA.L",
+     "HDFCBANK.NS",
+     "FSR.JO",
+     "SBK.JO",
+     "COMI.CA"
+    ],
+    "batteries": [
+     "1211.HK"
+    ],
+    "carburants_synthetiques": [
+     "SOL.JO"
+    ],
+    "chemin_de_fer": [
+     "CNR.TO"
+    ],
+    "chimie": [
+     "SOL.JO"
+    ],
+    "commerce": [
+     "RELIANCE.NS"
+    ],
+    "commerce_en_ligne": [
+     "SHOP.TO",
+     "AMZN",
+     "9988.HK"
+    ],
+    "contrats_intelligents": [
+     "ETH-USD"
+    ],
+    "crypto": [
+     "BTC-USD",
+     "ETH-USD"
+    ],
+    "depanneurs": [
+     "ATD.TO"
+    ],
+    "dispositifs_medicaux": [
+     "JNJ"
+    ],
+    "divertissement": [
+     "6758.T"
+    ],
+    "electronique_grand_public": [
+     "AAPL",
+     "005930.KS",
+     "6758.T"
+    ],
+    "esg": [
+     "ESGV"
+    ],
+    "gaz": [
+     "XOM",
+     "TTE.PA",
+     "SHEL.L"
+    ],
+    "generiques": [
+     "APN.JO"
+    ],
+    "gnl": [
+     "TTE.PA",
+     "SHEL.L"
+    ],
+    "holding": [
+     "NPN.JO"
+    ],
+    "hybride": [
+     "7203.T"
+    ],
+    "ia": [
+     "MSFT",
+     "NVDA",
+     "GOOGL",
+     "AMZN",
+     "TSLA",
+     "ASML.AS",
+     "SAP.DE",
+     "2330.TW",
+     "0700.HK",
+     "9988.HK"
+    ],
+    "infonuagique": [
+     "MSFT",
+     "GOOGL",
+     "AMZN",
+     "9988.HK"
+    ],
+    "infrastructures": [
+     "ENB.TO",
+     "CNR.TO",
+     "FTS.TO",
+     "SIE.DE"
+    ],
+    "internet": [
+     "NPN.JO"
+    ],
+    "jeux_video": [
+     "6758.T",
+     "0700.HK"
+    ],
+    "logiciel": [
+     "SHOP.TO",
+     "CSU.TO",
+     "MSFT",
+     "SAP.DE"
+    ],
+    "luxe": [
+     "MC.PA"
+    ],
+    "mines": [
+     "GFI.JO"
+    ],
+    "obesite": [
+     "NOVO-B.CO"
+    ],
+    "oncologie": [
+     "AZN.L"
+    ],
+    "or": [
+     "GLD",
+     "GFI.JO"
+    ],
+    "paiement_mobile": [
+     "MTN.JO",
+     "VOD.JO"
+    ],
+    "petrole": [
+     "CNQ.TO",
+     "XOM",
+     "TTE.PA",
+     "SHEL.L"
+    ],
+    "pharmacie": [
+     "JNJ",
+     "NOVO-B.CO",
+     "AZN.L",
+     "APN.JO"
+    ],
+    "pipelines": [
+     "ENB.TO"
+    ],
+    "produits_menagers": [
+     "PG"
+    ],
+    "publicite_numerique": [
+     "GOOGL"
+    ],
+    "raffinage": [
+     "RELIANCE.NS"
+    ],
+    "reseaux_sociaux": [
+     "0700.HK"
+    ],
+    "sables_bitumineux": [
+     "CNQ.TO"
+    ],
+    "semi-conducteurs": [
+     "NVDA",
+     "ASML.AS",
+     "2330.TW",
+     "005930.KS"
+    ],
+    "services_informatiques": [
+     "INFY.NS"
+    ],
+    "services_publics": [
+     "FTS.TO"
+    ],
+    "supermarches": [
+     "SHP.JO"
+    ],
+    "technologie_large": [
+     "QQQ"
+    ],
+    "telecoms": [
+     "RELIANCE.NS",
+     "MTN.JO",
+     "VOD.JO"
+    ],
+    "vehicule_electrique": [
+     "TSLA",
+     "1211.HK"
+    ]
+   }
+  },
+  "exclusion": {
+   "colonne": "kw_exclusions",
+   "description": "activité controversée détectée (mot-clé kw_exclusions)",
+   "valeurs": {
+    "alcool": [
+     "MC.PA"
+    ],
+    "atteinte_droits_autochtones": [
+     "ENB.TO"
+    ],
+    "aucune_connue": [
+     "RY.TO",
+     "TD.TO",
+     "MFC.TO",
+     "CNR.TO",
+     "FTS.TO",
+     "ATD.TO",
+     "SHOP.TO",
+     "CSU.TO",
+     "AAPL",
+     "NVDA",
+     "TSLA",
+     "JPM",
+     "PG",
+     "XIU.TO",
+     "SPY",
+     "QQQ",
+     "ESGV",
+     "XBB.TO",
+     "ZST.TO",
+     "AGG",
+     "TLT",
+     "GLD",
+     "BTC-USD",
+     "ETH-USD",
+     "ASML.AS",
+     "NESN.SW",
+     "SAP.DE",
+     "SIE.DE",
+     "HSBA.L",
+     "2330.TW",
+     "005930.KS",
+     "7203.T",
+     "6758.T",
+     "0700.HK",
+     "9988.HK",
+     "1211.HK",
+     "HDFCBANK.NS",
+     "INFY.NS",
+     "NPN.JO",
+     "FSR.JO",
+     "SBK.JO",
+     "MTN.JO",
+     "VOD.JO",
+     "GFI.JO",
+     "SHP.JO",
+     "COMI.CA",
+     "VT",
+     "VEA",
+     "VWO",
+     "XEQT.TO",
+     "BNDW"
+    ],
+    "contrats_de_defense": [
+     "MSFT",
+     "GOOGL",
+     "AMZN"
+    ],
+    "energie_fossile": [
+     "ENB.TO",
+     "CNQ.TO",
+     "XOM",
+     "TTE.PA",
+     "SHEL.L",
+     "RELIANCE.NS",
+     "SOL.JO"
+    ],
+    "tests_sur_animaux": [
+     "JNJ",
+     "NOVO-B.CO",
+     "AZN.L",
+     "APN.JO"
+    ]
+   }
+  },
+  "risque_pays": {
+   "colonne": "kw_risque_pays",
+   "description": "exposition à un risque pays (mot-clé kw_risque_pays)",
+   "valeurs": {
+    "devise_instable": [
+     "COMI.CA"
+    ],
+    "exposition_chine": [
+     "0700.HK",
+     "9988.HK",
+     "1211.HK"
+    ],
+    "exposition_chine_partielle": [
+     "VT",
+     "VWO"
+    ],
+    "marche_emergent": [
+     "2330.TW",
+     "005930.KS",
+     "RELIANCE.NS",
+     "HDFCBANK.NS",
+     "INFY.NS",
+     "NPN.JO",
+     "FSR.JO",
+     "SBK.JO",
+     "MTN.JO",
+     "VOD.JO",
+     "GFI.JO",
+     "SOL.JO",
+     "SHP.JO",
+     "APN.JO"
+    ],
+    "pays_developpe": [
+     "RY.TO",
+     "TD.TO",
+     "MFC.TO",
+     "ENB.TO",
+     "CNQ.TO",
+     "CNR.TO",
+     "FTS.TO",
+     "ATD.TO",
+     "SHOP.TO",
+     "CSU.TO",
+     "AAPL",
+     "MSFT",
+     "NVDA",
+     "GOOGL",
+     "AMZN",
+     "TSLA",
+     "JPM",
+     "JNJ",
+     "PG",
+     "XOM",
+     "XIU.TO",
+     "SPY",
+     "QQQ",
+     "ESGV",
+     "XBB.TO",
+     "ZST.TO",
+     "AGG",
+     "TLT",
+     "GLD",
+     "ASML.AS",
+     "MC.PA",
+     "NESN.SW",
+     "NOVO-B.CO",
+     "SAP.DE",
+     "SIE.DE",
+     "TTE.PA",
+     "SHEL.L",
+     "AZN.L",
+     "HSBA.L",
+     "7203.T",
+     "6758.T",
+     "VEA",
+     "XEQT.TO",
+     "BNDW"
+    ],
+    "sans_pays": [
+     "BTC-USD",
+     "ETH-USD"
+    ]
+   }
+  },
+  "exposition_devise": {
+   "colonne": "kw_devise",
+   "description": "exposition au change pour un investisseur canadien (mot-clé kw_devise)",
+   "valeurs": {
+    "autre_devise": [
+     "ASML.AS",
+     "MC.PA",
+     "NESN.SW",
+     "NOVO-B.CO",
+     "SAP.DE",
+     "SIE.DE",
+     "TTE.PA",
+     "SHEL.L",
+     "AZN.L",
+     "HSBA.L",
+     "2330.TW",
+     "005930.KS",
+     "7203.T",
+     "6758.T",
+     "0700.HK",
+     "9988.HK",
+     "1211.HK",
+     "RELIANCE.NS",
+     "HDFCBANK.NS",
+     "INFY.NS",
+     "NPN.JO",
+     "FSR.JO",
+     "SBK.JO",
+     "MTN.JO",
+     "VOD.JO",
+     "GFI.JO",
+     "SOL.JO",
+     "SHP.JO",
+     "APN.JO",
+     "COMI.CA"
+    ],
+    "cad": [
+     "RY.TO",
+     "TD.TO",
+     "MFC.TO",
+     "ENB.TO",
+     "CNQ.TO",
+     "CNR.TO",
+     "FTS.TO",
+     "ATD.TO",
+     "SHOP.TO",
+     "CSU.TO",
+     "XIU.TO",
+     "XBB.TO",
+     "ZST.TO"
+    ],
+    "cad_actifs_etrangers_non_couverts": [
+     "XEQT.TO"
+    ],
+    "sans_devise_souveraine": [
+     "BTC-USD",
+     "ETH-USD"
+    ],
+    "usd": [
+     "AAPL",
+     "MSFT",
+     "NVDA",
+     "GOOGL",
+     "AMZN",
+     "TSLA",
+     "JPM",
+     "JNJ",
+     "PG",
+     "XOM",
+     "SPY",
+     "QQQ",
+     "ESGV",
+     "AGG",
+     "TLT",
+     "GLD",
+     "VT",
+     "VEA",
+     "VWO"
+    ],
+    "usd_couvert": [
+     "BNDW"
+    ]
+   }
+  },
+  "taille": {
+   "colonne": "kw_capitalisation",
+   "description": "taille de l'entreprise (mot-clé kw_capitalisation)",
+   "valeurs": {
+    "grande": [
+     "RY.TO",
+     "TD.TO",
+     "MFC.TO",
+     "ENB.TO",
+     "CNQ.TO",
+     "CNR.TO",
+     "FTS.TO",
+     "ATD.TO",
+     "SHOP.TO",
+     "CSU.TO",
+     "AAPL",
+     "MSFT",
+     "NVDA",
+     "GOOGL",
+     "AMZN",
+     "TSLA",
+     "JPM",
+     "JNJ",
+     "PG",
+     "XOM",
+     "ASML.AS",
+     "MC.PA",
+     "NESN.SW",
+     "NOVO-B.CO",
+     "SAP.DE",
+     "SIE.DE",
+     "TTE.PA",
+     "SHEL.L",
+     "AZN.L",
+     "HSBA.L",
+     "2330.TW",
+     "005930.KS",
+     "7203.T",
+     "6758.T",
+     "0700.HK",
+     "9988.HK",
+     "1211.HK",
+     "RELIANCE.NS",
+     "HDFCBANK.NS",
+     "INFY.NS",
+     "NPN.JO",
+     "FSR.JO",
+     "SBK.JO",
+     "MTN.JO",
+     "VOD.JO",
+     "GFI.JO",
+     "SHP.JO"
+    ],
+    "moyenne": [
+     "SOL.JO",
+     "APN.JO",
+     "COMI.CA"
+    ],
+    "non_applicable": [
+     "XIU.TO",
+     "SPY",
+     "QQQ",
+     "ESGV",
+     "XBB.TO",
+     "ZST.TO",
+     "AGG",
+     "TLT",
+     "GLD",
+     "BTC-USD",
+     "ETH-USD",
+     "VT",
+     "VEA",
+     "VWO",
+     "XEQT.TO",
+     "BNDW"
+    ]
+   }
+  },
+  "distribution": {
+   "colonne": "kw_distribution",
+   "description": "verse ou non des distributions (mot-clé kw_distribution)",
+   "valeurs": {
+    "capitalisant": [
+     "SHOP.TO",
+     "AMZN",
+     "TSLA",
+     "GLD",
+     "BTC-USD",
+     "ETH-USD",
+     "SOL.JO"
+    ],
+    "distribuant": [
+     "RY.TO",
+     "TD.TO",
+     "MFC.TO",
+     "ENB.TO",
+     "CNQ.TO",
+     "CNR.TO",
+     "FTS.TO",
+     "ATD.TO",
+     "CSU.TO",
+     "AAPL",
+     "MSFT",
+     "NVDA",
+     "GOOGL",
+     "JPM",
+     "JNJ",
+     "PG",
+     "XOM",
+     "XIU.TO",
+     "SPY",
+     "QQQ",
+     "ESGV",
+     "ASML.AS",
+     "MC.PA",
+     "NESN.SW",
+     "NOVO-B.CO",
+     "SAP.DE",
+     "SIE.DE",
+     "TTE.PA",
+     "SHEL.L",
+     "AZN.L",
+     "HSBA.L",
+     "2330.TW",
+     "005930.KS",
+     "7203.T",
+     "6758.T",
+     "0700.HK",
+     "9988.HK",
+     "1211.HK",
+     "RELIANCE.NS",
+     "HDFCBANK.NS",
+     "INFY.NS",
+     "NPN.JO",
+     "FSR.JO",
+     "SBK.JO",
+     "MTN.JO",
+     "VOD.JO",
+     "GFI.JO",
+     "SHP.JO",
+     "APN.JO",
+     "COMI.CA",
+     "VT",
+     "VEA",
+     "VWO",
+     "XEQT.TO"
+    ],
+    "distribution_mensuelle": [
+     "XBB.TO",
+     "ZST.TO",
+     "AGG",
+     "TLT",
+     "BNDW"
+    ]
+   }
+  },
+  "cycle": {
+   "colonne": "kw_cycle",
+   "description": "comportement dans le cycle économique (mot-clé kw_cycle)",
+   "valeurs": {
+    "cyclique": [
+     "RY.TO",
+     "TD.TO",
+     "MFC.TO",
+     "ENB.TO",
+     "CNQ.TO",
+     "CNR.TO",
+     "SHOP.TO",
+     "CSU.TO",
+     "AAPL",
+     "MSFT",
+     "NVDA",
+     "AMZN",
+     "TSLA",
+     "JPM",
+     "XOM",
+     "ASML.AS",
+     "MC.PA",
+     "SAP.DE",
+     "SIE.DE",
+     "TTE.PA",
+     "SHEL.L",
+     "HSBA.L",
+     "2330.TW",
+     "005930.KS",
+     "7203.T",
+     "6758.T",
+     "9988.HK",
+     "1211.HK",
+     "RELIANCE.NS",
+     "HDFCBANK.NS",
+     "INFY.NS",
+     "NPN.JO",
+     "FSR.JO",
+     "SBK.JO",
+     "GFI.JO",
+     "SOL.JO",
+     "COMI.CA"
+    ],
+    "defensif": [
+     "FTS.TO",
+     "ATD.TO",
+     "GOOGL",
+     "JNJ",
+     "PG",
+     "NESN.SW",
+     "NOVO-B.CO",
+     "AZN.L",
+     "0700.HK",
+     "MTN.JO",
+     "VOD.JO",
+     "SHP.JO",
+     "APN.JO"
+    ],
+    "marche_large": [
+     "XIU.TO",
+     "SPY",
+     "QQQ",
+     "ESGV",
+     "VT",
+     "VEA",
+     "VWO",
+     "XEQT.TO"
+    ],
+    "obligataire": [
+     "XBB.TO",
+     "ZST.TO",
+     "AGG",
+     "TLT",
+     "BNDW"
+    ],
+    "refuge": [
+     "GLD"
+    ],
+    "speculatif": [
+     "BTC-USD",
+     "ETH-USD"
+    ]
+   }
+  },
+  "concentration": {
+   "colonne": "kw_concentration",
+   "description": "titre individuel ou fonds diversifié (mot-clé kw_concentration)",
+   "valeurs": {
+    "actif_unique": [
+     "GLD",
+     "BTC-USD",
+     "ETH-USD"
+    ],
+    "fonds_de_fonds_diversifie": [
+     "XEQT.TO",
+     "BNDW"
+    ],
+    "fonds_diversifie": [
+     "XIU.TO",
+     "SPY",
+     "QQQ",
+     "ESGV",
+     "XBB.TO",
+     "ZST.TO",
+     "AGG",
+     "TLT",
+     "VT",
+     "VEA",
+     "VWO"
+    ],
+    "forte_ponderation_10_premiers": [
+     "XIU.TO",
+     "QQQ",
+     "ESGV"
+    ],
+    "titre_individuel": [
+     "RY.TO",
+     "TD.TO",
+     "MFC.TO",
+     "ENB.TO",
+     "CNQ.TO",
+     "CNR.TO",
+     "FTS.TO",
+     "ATD.TO",
+     "SHOP.TO",
+     "CSU.TO",
+     "AAPL",
+     "MSFT",
+     "NVDA",
+     "GOOGL",
+     "AMZN",
+     "TSLA",
+     "JPM",
+     "JNJ",
+     "PG",
+     "XOM",
+     "ASML.AS",
+     "MC.PA",
+     "NESN.SW",
+     "NOVO-B.CO",
+     "SAP.DE",
+     "SIE.DE",
+     "TTE.PA",
+     "SHEL.L",
+     "AZN.L",
+     "HSBA.L",
+     "2330.TW",
+     "005930.KS",
+     "7203.T",
+     "6758.T",
+     "0700.HK",
+     "9988.HK",
+     "1211.HK",
+     "RELIANCE.NS",
+     "HDFCBANK.NS",
+     "INFY.NS",
+     "NPN.JO",
+     "FSR.JO",
+     "SBK.JO",
+     "MTN.JO",
+     "VOD.JO",
+     "GFI.JO",
+     "SOL.JO",
+     "SHP.JO",
+     "APN.JO",
+     "COMI.CA"
+    ]
+   }
+  },
+  "attention": {
+   "colonne": "kw_attention",
+   "description": "attention médiatique (mot-clé kw_attention)",
+   "valeurs": {
+    "non_applicable": [
+     "XIU.TO",
+     "SPY",
+     "QQQ",
+     "ESGV",
+     "XBB.TO",
+     "AGG",
+     "TLT",
+     "GLD",
+     "VT",
+     "VEA",
+     "VWO",
+     "BNDW"
+    ],
+    "peu_mediatise": [
+     "RY.TO",
+     "TD.TO",
+     "MFC.TO",
+     "ENB.TO",
+     "CNQ.TO",
+     "CNR.TO",
+     "FTS.TO",
+     "ATD.TO",
+     "SHOP.TO",
+     "CSU.TO",
+     "JNJ",
+     "PG",
+     "XOM",
+     "ETH-USD",
+     "ASML.AS",
+     "NOVO-B.CO",
+     "SIE.DE",
+     "TTE.PA",
+     "SHEL.L",
+     "AZN.L",
+     "005930.KS",
+     "1211.HK",
+     "NPN.JO",
+     "FSR.JO",
+     "SBK.JO",
+     "MTN.JO",
+     "VOD.JO",
+     "GFI.JO",
+     "SOL.JO",
+     "SHP.JO",
+     "APN.JO",
+     "COMI.CA"
+    ],
+    "pic_de_volume_anormal": [
+     "NVDA",
+     "GOOGL",
+     "ZST.TO",
+     "SHEL.L",
+     "2330.TW",
+     "7203.T",
+     "RELIANCE.NS",
+     "INFY.NS",
+     "APN.JO",
+     "COMI.CA",
+     "XEQT.TO"
+    ],
+    "tres_mediatise": [
+     "AAPL",
+     "NVDA",
+     "GOOGL",
+     "TSLA",
+     "BTC-USD",
+     "MC.PA",
+     "NESN.SW",
+     "2330.TW",
+     "6758.T",
+     "RELIANCE.NS",
+     "INFY.NS"
+    ],
+    "tres_suivi": [
+     "MSFT",
+     "AMZN",
+     "JPM",
+     "SAP.DE",
+     "HSBA.L",
+     "7203.T",
+     "0700.HK",
+     "9988.HK",
+     "HDFCBANK.NS"
+    ]
+   }
+  },
+  "fiscalite": {
+   "colonne": "kw_fiscalite",
+   "description": "nature fiscale des revenus pour un résident canadien (mot-clé kw_fiscalite)",
+   "valeurs": {
+    "distributions_canadiennes": [
+     "XIU.TO",
+     "XEQT.TO"
+    ],
+    "dividendes_canadiens_admissibles": [
+     "RY.TO",
+     "TD.TO",
+     "MFC.TO",
+     "ENB.TO",
+     "CNQ.TO",
+     "CNR.TO",
+     "FTS.TO",
+     "ATD.TO",
+     "CSU.TO"
+    ],
+    "dividendes_etrangers": [
+     "AAPL",
+     "MSFT",
+     "NVDA",
+     "GOOGL",
+     "JPM",
+     "JNJ",
+     "PG",
+     "XOM",
+     "SPY",
+     "QQQ",
+     "ESGV",
+     "ASML.AS",
+     "MC.PA",
+     "NESN.SW",
+     "NOVO-B.CO",
+     "SAP.DE",
+     "SIE.DE",
+     "TTE.PA",
+     "SHEL.L",
+     "AZN.L",
+     "HSBA.L",
+     "2330.TW",
+     "005930.KS",
+     "7203.T",
+     "6758.T",
+     "0700.HK",
+     "9988.HK",
+     "1211.HK",
+     "RELIANCE.NS",
+     "HDFCBANK.NS",
+     "INFY.NS",
+     "NPN.JO",
+     "FSR.JO",
+     "SBK.JO",
+     "MTN.JO",
+     "VOD.JO",
+     "GFI.JO",
+     "SHP.JO",
+     "APN.JO",
+     "COMI.CA",
+     "VT",
+     "VEA",
+     "VWO"
+    ],
+    "gains_en_capital_seulement": [
+     "SHOP.TO",
+     "AMZN",
+     "TSLA",
+     "GLD",
+     "BTC-USD",
+     "ETH-USD",
+     "SOL.JO"
+    ],
+    "revenu_interets": [
+     "XBB.TO",
+     "ZST.TO",
+     "AGG",
+     "TLT",
+     "BNDW"
+    ]
+   }
+  },
+  "role": {
+   "colonne": "role",
+   "description": "rôle de l'actif dans un portefeuille",
+   "valeurs": {
+    "coeur": [
+     "ATD.TO",
+     "AAPL",
+     "GOOGL",
+     "AMZN",
+     "JPM",
+     "XOM",
+     "XIU.TO",
+     "SPY",
+     "QQQ",
+     "ESGV",
+     "SAP.DE",
+     "SIE.DE",
+     "TTE.PA",
+     "AZN.L",
+     "HSBA.L",
+     "005930.KS",
+     "7203.T",
+     "6758.T",
+     "0700.HK",
+     "RELIANCE.NS",
+     "SHP.JO",
+     "COMI.CA",
+     "VT",
+     "VEA",
+     "VWO",
+     "XEQT.TO"
+    ],
+    "couverture": [
+     "GLD"
+    ],
+    "croissance": [
+     "CSU.TO",
+     "MSFT",
+     "ASML.AS",
+     "2330.TW",
+     "1211.HK",
+     "HDFCBANK.NS"
+    ],
+    "defensif": [
+     "RY.TO",
+     "TD.TO",
+     "CNR.TO",
+     "JNJ",
+     "PG"
+    ],
+    "revenu": [
+     "MFC.TO",
+     "ENB.TO",
+     "CNQ.TO",
+     "FTS.TO",
+     "MC.PA",
+     "NESN.SW",
+     "NOVO-B.CO",
+     "SHEL.L",
+     "INFY.NS",
+     "FSR.JO",
+     "SBK.JO",
+     "VOD.JO",
+     "GFI.JO"
+    ],
+    "speculatif": [
+     "SHOP.TO",
+     "NVDA",
+     "TSLA",
+     "BTC-USD",
+     "ETH-USD",
+     "9988.HK",
+     "NPN.JO",
+     "MTN.JO",
+     "SOL.JO",
+     "APN.JO"
+    ],
+    "stabilisateur": [
+     "XBB.TO",
+     "ZST.TO",
+     "AGG",
+     "TLT",
+     "BNDW"
+    ]
+   }
+  }
+ }
+}

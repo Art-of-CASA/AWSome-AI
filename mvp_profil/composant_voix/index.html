@@ -21,7 +21,7 @@
   .ecoute .orbe { background: #2e7d32; }
   .parle .orbe { background: #1565c0; animation: respire 1.2s ease-in-out infinite; }
   .reflexion .orbe { background: #f9a825; animation: pulse 0.9s ease-in-out infinite; }
-  .pause .orbe, .fin .orbe { background: #9e9e9e; }
+  .pause .orbe, .fin .orbe, .veille .orbe { background: #9e9e9e; }
   @keyframes pulse { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
   @keyframes respire { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
   .etat { font-size: 16px; font-weight: 600; }
@@ -103,8 +103,14 @@ function base64(buf) {
   return btoa(s);
 }
 
+function veiller() {
+  afficher("veille", "Micro en veille", "Répondez aux questions à choix ; la conversation reprendra pour les précisions.");
+}
+
 function ecouter() {
-  if (enPause || !demarre || etat === "fin") return;
+  if (enPause || !demarre) return;
+  if (args.veille) { veiller(); return; }
+  if (etat === "fin") return;
   parole = false; msAuDessus = 0; msSilence = 0; msEnonce = 0; tampon = []; preroll = []; msPreroll = 0;
   afficher("ecoute", "Je vous écoute…", "Parlez quand vous voulez ; je réponds dès que vous avez fini.");
 }
@@ -220,10 +226,12 @@ window.addEventListener("message", (evenement) => {
   }
   hauteur();
   if (!demarre || enPause) return;
+  // En veille (questions à choix) : micro coupé, mais on laisse l'IA finir sa phrase.
+  if (args.veille) { if (etat !== "parle") veiller(); return; }
   // Python a traité notre dernier énoncé : nouvelle réplique à jouer, ou rien compris -> on réécoute.
   const nouvelleReplique = (args.n || 0) > dernierJoue;
   if (nouvelleReplique && etat !== "parle") jouer();
-  else if (etat === "reflexion" && (args.ack || 0) >= nEnvoye) ecouter();
+  else if (etat === "veille" || (etat === "reflexion" && (args.ack || 0) >= nEnvoye)) ecouter();
 });
 
 // Petit point d'accès pour les tests automatiques (simuler un énoncé sans micro).
