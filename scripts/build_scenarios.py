@@ -1,8 +1,9 @@
 """Précalcule les données des mises en situation du questionnaire (fichier JSON livré avec le site).
 
 Sortie : mvp_profil/scenarios.json
-  replay      : trajectoire mensuelle de 10 000 $ (CAD) de janvier 2022 à décembre 2024 pour 3 portefeuilles,
-                arrêts de décision à fin mars, juin, septembre et décembre 2022 (identiques pour tous)
+  replay      : trajectoire mensuelle de 10 000 $ (CAD) de janvier 2022 à décembre 2024 pour 3 portefeuilles ;
+                les anciens arrêts restent des métadonnées de compatibilité, sans interrompre le replay.
+  replay_quotidien.json : mêmes portefeuilles, séances réelles pour l'animation continue et sa révélation.
   fourchettes : pour 5 portefeuilles, rendements sur un an glissant (centile 5, médiane, centile 95) et volatilité
   mode        : 4 titres anonymisés (2 très médiatisés, 2 établis peu médiatisés) avec leurs faits mesurés
 Toutes les valeurs viennent de nos données (jeu de départ + univers étendu), converties en CAD.
@@ -53,6 +54,7 @@ REPLAY = {"equilibre": PORTEFEUILLES["equilibre"], "actions": PORTEFEUILLES["act
           "technologie": ("Actions technologiques", {"QQQ": 1.0})}
 ARRETS = ["2022-03-31", "2022-06-30", "2022-09-30", "2022-12-30"]
 replay = {}
+replay_quotidien = {}
 for cle, (nom, poids) in REPLAY.items():
     s = portefeuille(poids, "2022-01-03").loc[:"2024-12-31"] * 10000
     mensuel = s.resample("ME").last()
@@ -64,6 +66,11 @@ for cle, (nom, poids) in REPLAY.items():
                    "arrets": [{"date": d, "mois_index": int(np.searchsorted(mensuel.index, pd.Timestamp(d))) + 1,
                                "valeur": round(float(s.loc[:d].iloc[-1]), 0)} for d in ARRETS],
                    "creux": round(float(s.min()), 0), "fin": round(float(s.iloc[-1]), 0)}
+    dates = [pd.Timestamp("2022-01-01")] + list(s.index)
+    replay_quotidien[cle] = {"nom": nom, "dates": [d.strftime("%Y-%m-%d") for d in dates],
+                            "valeurs": [10000.0] + [round(float(v), 4) for v in s],
+                            "mois_positions": [round((d - dates[0]).days / 30.4375, 4) for d in dates],
+                            "crise_fin": sum(d.year == 2022 for d in s.index)}
 
 # ---------- Fourchettes de résultats sur un an ----------
 # Les fenêtres glissantes d'un an sur 5 ans seulement donnent un résultat trompeur (en 2022, obligations et
@@ -124,6 +131,8 @@ for lettre, c in zip("ABCD", choix):
 out = {"genere_le": pd.Timestamp.today().strftime("%Y-%m-%d"), "source": "jeu de départ + univers étendu, en CAD",
        "replay": replay, "fourchettes": fourchettes, "mode": choix}
 (ROOT / "mvp_profil" / "scenarios.json").write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+(ROOT / "mvp_profil" / "replay_quotidien.json").write_text(
+    json.dumps(replay_quotidien, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 for k, v in replay.items():
     print(f"replay {k}: arrêts {[a['valeur'] for a in v['arrets']]}, creux {v['creux']}, fin {v['fin']}")
 for k, v in fourchettes.items():

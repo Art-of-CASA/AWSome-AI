@@ -1,5 +1,7 @@
 # MVP : profil d'investisseur explicable
 
+**Refonte visuelle du 15 novembre 2026, locale.** Nouvelle présentation du parcours, cartes de questions, aides courtes et aperçu du profil en langage courant. Le replay présente une courbe animée en continu, sans arrêt imposé : observer conserve le portefeuille et les décisions restent facultatives. Le navigateur anime ; le serveur vérifie le journal des décisions et recalcule les montants. [Détail de la refonte](../docs/refonte_interface_2026-11-15.md). Aucun déploiement AWS n'a été effectué pour cette refonte.
+
 **Correctifs du 15 novembre 2026, après revue de code (publiés, version `profil-970d7c7ff946`).** Les questions et réponses ouvertes restent exclusivement orales. Le composant reçoit la question avant d'écouter, identifie chaque session/question/lecture et rejette les anciens enregistrements. Les contrôles sont bornés et leurs échecs conservent les réponses ; leurs résultats périmés ne remplacent pas les choix récents. Les citations, les plafonds et les preuves du chercheur sont vérifiés plus strictement. Voir [le détail des corrections](../docs/corrections_revue_2026-11-15.md). La dernière version publiée documentée auparavant était `profil-afe8ed38fc7d` ; la version actuellement installée sur CloudFront n'a pas été vérifiée.
 
 La version est affichée dans la barre latérale et exportée avec les questions et les échanges oraux. `python scripts/preparer_mvp.py` construit un paquet intégral avec un manifeste vérifié, sans accès AWS. Détails : [diagnostic et protocole](../docs/fiabilite_questions.md), [recherche de questionnaires](../docs/recherche_questionnaires.md).
@@ -13,6 +15,8 @@ Site Streamlit qui établit un profil à partir d'une conversation, de questions
 ## Parcours
 
 L'accueil propose une conversation exclusivement orale et un questionnaire à choix complété oralement. Il permet aussi de charger **Amira, Mateo et Robert**, les trois personas fictifs de l'énoncé (pages 5 à 7), comme s'ils avaient chacun terminé le questionnaire et les trois mises en situation. Chaque profil contient les 42 critères, des réponses simulées à la première personne, un motif par hypothèse, les réponses au quiz et les décisions du replay. L'onglet **Hypothèses du profil** affiche les réponses et leur justification ; les motifs distinguent les références à l'énoncé des compléments fictifs. Le chargement ne fait aucun appel au modèle et l'export JSON conserve le profil et la trace du replay.
+
+**Découvrir le replay** ouvre une démonstration interactive sans identifiants AWS ni clé API. L'utilisateur observe le marché, peut intervenir, découvre la période, puis revient à l'accueil ; aucun profil n'est créé par cet aperçu.
 
 Les choix restent propres à chaque persona : Amira accepte un risque élevé mais plafonne les titres individuels et la spéculation ; Mateo privilégie un équilibre financier assorti d'exigences ESG ; Robert reste prudent à l'approche de la retraite tout en choisissant, dans la mise en situation, un titre médiatisé. Ce dernier choix conserve la tension voulue par l'énoncé et ne relève pas ses plafonds de risque. Les montants, comptes, seuils chiffrés et détails non fournis par le PDF sont des hypothèses de test, pas des faits officiels.
 
@@ -49,7 +53,7 @@ Les réponses fermées donnent leurs valeurs sans IA. Les réponses libres sont 
 
 | Mise en situation | Observation conservée |
 |---|---|
-| Replay de 2022, date masquée | « Tout vendre » fixe le point de rupture observé B2 avec la perte réelle. « Réduire » reste un signal distinct. Si la baisse montrée n'a pas atteint le seuil déclaré, la tolérance est marquée non testée. |
+| Replay continu de 2022, date masquée | La courbe défile sans décision obligatoire. L'utilisateur peut réduire, renforcer ou tout vendre à la séance de son choix. « Tout vendre » fixe B2 avec la perte réelle à cet instant ; « Réduire » reste un signal distinct. La baisse maximale réellement montrée borne ce qui a été testé. |
 | Cinq fourchettes de résultats | Le choix renseigne B6. Les fourchettes sont simulées par bootstrap de blocs sur 2021-2026, centrées sur les hypothèses FP Canada/IPF 2026 ; leur limite face aux crises extrêmes est affichée. |
 | Quatre titres aux noms masqués | Le choix renseigne D8O et peut déclencher une précision face au déclaré. Ce signal ne démontre pas à lui seul que la médiatisation a causé le choix. |
 
@@ -96,6 +100,8 @@ Le code précontrôle les listes autorisées, la citation et la confiance avant 
 
 Le SDK lit les identifiants AWS temporaires dans les variables `AWS_*` ou `~/.aws`. La barre latérale permet aussi d'utiliser l'API Anthropic avec une clé. Ne versionner aucun identifiant.
 
+Le thème clair est configuré par `.streamlit/config.toml` à la racine du dépôt et dans ce dossier. Ces deux configurations identiques couvrent le lancement depuis la racine et depuis le paquet installé ; le fichier du MVP est inclus dans l'inventaire de production.
+
 ## Fichiers principaux
 
 | Fichier | Rôle |
@@ -105,8 +111,11 @@ Le SDK lit les identifiants AWS temporaires dans les variables `AWS_*` ou `~/.aw
 | `agents.py` | Classement, critique contextualisé, contrôles, débat et maintien prudent |
 | `entretien.py` | Réplique, classement en arrière-plan, Transcribe et Polly |
 | `app.py` | Orchestration, versions des analyses, précisions, confirmations et restitution |
+| `interface.py`, `design.css` | Présentation du parcours, cartes de questions et résumé visuel du profil |
 | `profil.py` | Déductions déterministes, quiz, curseur et cohérence |
 | `simulations.py`, `scenarios.json` | Replay, fourchettes et choix de titres |
+| `replay_moteur.py`, `replay_quotidien.json` | Séries historiques quotidiennes et comptabilité vérifiée du replay continu |
+| `replay_composant.py`, `composant_replay/` | Courbe et interactions animées dans le navigateur |
 | `synthese.py`, `hypotheses_profil.json` | Calcul, réponses décisives et robustesse locale |
 | `criteres_dynamiques.py` | Critères personnels, pourcentages à confirmer et applicabilité |
 | `chercheur.py`, `donnees_chercheur.json` | Recherche à quatre états, preuves, couverture et cache versionné |

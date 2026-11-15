@@ -40,6 +40,7 @@ from uuid import uuid4
 import pandas as pd
 import streamlit as st
 
+import interface
 import chercheur
 import criteres_dynamiques
 import entretien
@@ -66,11 +67,13 @@ LOG = logging.getLogger(__name__)
 # Une clarification exige une ambiguïté identifiée ; jamais une panne ou un simple score faible.
 MAX_RELANCES = 1
 
-st.set_page_config(page_title="AlphaForge · Profil", page_icon="📊", layout="wide")
+st.set_page_config(page_title="AlphaForge · Votre profil", page_icon="🌿", layout="wide",
+                   initial_sidebar_state="auto")
+interface.style()
 
 
 def reset():
-    for k in ("rp", "replay_trace", "mode_revelation", "persona"):
+    for k in ("rp", "replay_trace", "mode_revelation", "persona", "demo_replay"):
         st.session_state.pop(k, None)
     st.session_state.update(
         phase="accueil", section=0, sections=SECTIONS, profil={}, en_cours=[], file=[], coherences_posees=set(),
@@ -96,30 +99,33 @@ for nom, valeur in {"session_id": uuid4().hex, "acks": {}, "texte": ""}.items():
 
 # ---------- Barre latérale ----------
 with st.sidebar:
-    st.header("Réglages")
-    source = st.radio("Accès au modèle", ["AWS Bedrock (compte du datathon)", "API Anthropic (clé)"])
-    if source.startswith("AWS"):
-        cle = ""
-        pret = aws_identifiants_presents()
-        st.caption("✅ Identifiants AWS détectés" if pret else "❌ Aucun identifiant AWS sur cette machine")
-    else:
-        cle_saisie = st.text_input("Clé API Anthropic", type="password")
-        # Un secret configuré sur le serveur ne doit jamais devenir une valeur de widget.
-        cle = cle_saisie or os.environ.get("ANTHROPIC_API_KEY", "")
-        pret = bool(cle)
-        if not cle_saisie and pret:
-            st.caption("Accès Anthropic configuré sur le serveur")
-    seuil = st.slider("Seuil de sûreté", 0.50, 0.95, 0.80, 0.05,
-                      help="Une réponse libre est validée si les deux agents sont d'accord avec au moins ce niveau de confiance.")
-    max_tours = st.slider("Tours de débat maximum", 1, 3, 2)
+    interface.parcours(S.phase)
+    st.caption("Un échange, des expériences concrètes, un profil que vous comprenez.")
+    st.divider()
+    with st.expander("Connexion et réglages"):
+        source = st.radio("Accès au modèle", ["AWS Bedrock (compte du datathon)", "API Anthropic (clé)"])
+        if source.startswith("AWS"):
+            cle = ""
+            pret = aws_identifiants_presents()
+            st.caption("Identifiants AWS détectés" if pret else "Aucun identifiant AWS sur cette machine")
+        else:
+            cle_saisie = st.text_input("Clé API Anthropic", type="password")
+            # Un secret configuré sur le serveur ne doit jamais devenir une valeur de widget.
+            cle = cle_saisie or os.environ.get("ANTHROPIC_API_KEY", "")
+            pret = bool(cle)
+            if not cle_saisie and pret:
+                st.caption("Accès Anthropic configuré sur le serveur")
+        seuil = st.slider("Seuil de sûreté", 0.50, 0.95, 0.80, 0.05,
+                          help="Une réponse libre est validée si les deux agents sont d'accord avec au moins ce niveau de confiance.")
+        max_tours = st.slider("Tours de débat maximum", 1, 3, 2)
+        st.caption("Modèle : Claude Haiku 5.5 (classificateur et critique)")
+        st.caption("Version du profil : " + version_courante())
     voix = True
-    st.caption("Les questions ouvertes et leurs réponses se font à l'oral.")
-    st.caption("Modèle : Claude Haiku 5.5 (classificateur et critique)")
     if st.button("Recommencer", width="stretch"):
         reset()
         st.rerun()
-    st.caption("Simulation éducative. Aucun conseil financier personnalisé.")
-    st.caption("Version du profil : " + version_courante())
+    st.html('<div class="af-footer-note">CONÇU POUR COMPRENDRE<br>AlphaForge AI · PolyFinances 2026<br>'
+            'Simulation éducative en dollars canadiens.</div>')
 
 
 @st.cache_resource
@@ -243,23 +249,27 @@ def enregistrer_debat(debat, item_id: str, definitif: bool, job: dict | None = N
 
 # ---------- Accueil : choix du parcours ----------
 def page_accueil():
-    st.write("Deux façons de commencer. Dans les deux cas, vous aurez ensuite quelques questions à choix, trois mises "
-             "en situation, puis votre profil.")
+    interface.accueil()
     c1, c2 = st.columns(2)
-    with c1.container(border=True):
-        st.markdown("**🎙️ Conversation (recommandé)**\n\nUne courte discussion à l'oral : l'outil pose les "
-                    "questions sur votre projet et votre situation, et coche les critères au fur et à mesure.")
+    with c1.container(border=True, key="start_voice"):
+        interface.carte("01", "On en parle ?", "Racontez votre projet avec vos mots. Votre profil se construit "
+                        "pendant l’échange, puis quelques choix viennent le compléter.", "RECOMMANDÉ")
         if st.button("Commencer en conversation", type="primary", disabled=not pret, width="stretch"):
             # suivi : {critère: nb de réponses au moment où il a été jugé « à reformuler »} ; reformules : déjà redemandés
             S.conv = moteur_conversation.creer(S.questions_posees)
             dire(OUVERTURE, "conv:0")
             S.phase = "conversation"
             st.rerun()
-    with c2.container(border=True):
-        st.markdown("**📝 Questionnaire classique**\n\nDes choix à l'écran, complétés par des réponses ouvertes à l'oral.")
+    with c2.container(border=True, key="start_questions"):
+        interface.carte("02", "Je préfère être guidé", "Avancez avec des choix clairs, étape par étape. "
+                        "Les questions ouvertes se répondent à l’oral.")
         if st.button("Questionnaire classique", disabled=not pret, width="stretch"):
             S.phase, S.sections = "questionnaire", prioriser_sections(S.profil, SECTIONS)
             st.rerun()
+    st.caption("Dans les deux parcours : des questions adaptées, trois expériences de marché et votre synthèse expliquée.")
+    if not pret:
+        st.info("Pour commencer votre profil, configurez l’accès au modèle dans « Connexion et réglages ». "
+                "Le replay et les profils de démonstration sont déjà accessibles.")
     page_personas()
 
 
@@ -275,10 +285,8 @@ def charger_persona(nom: str):
 
 def page_personas():
     st.divider()
-    st.markdown("**Démonstration : les trois profils fictifs de l'énoncé**")
-    st.caption("Amira, Mateo et Robert ont chacun un questionnaire complet simulé, cohérent avec leur persona. "
-               "L'onglet « Hypothèses du profil » présente leurs réponses et distingue, dans les motifs, "
-               "les éléments de l'énoncé des compléments fictifs.")
+    st.markdown("**Envie de découvrir le résultat ?**")
+    st.caption("Explorez trois profils fictifs. Leurs réponses et leurs hypothèses restent consultables dans la synthèse.")
     for col, nom in zip(st.columns(3), ("amira", "mateo", "robert")):
         if col.button(f"Charger {nom.capitalize()}", width="stretch", key=f"persona_{nom}"):
             charger_persona(nom)
@@ -445,6 +453,7 @@ def repondre(texte: str):
 
 def page_conversation():
     c = S.conv
+    interface.titre_questionnaire("Faisons connaissance", 1)
     appliquer_verifications()
     if c.get("cloture_demandee") and not c["jobs"]:
         fin_conversation()
@@ -459,7 +468,7 @@ def page_conversation():
         repondre(enonce["texte"])
     if c["attente"]:
         st.info("Vos réponses sont conservées. Le contrôle termine son travail ; inutile de les répéter.")
-    st.caption("Réponses ouvertes exclusivement à l'oral. La transcription ci-dessous est une trace de vos paroles.")
+    st.caption("Parlez avec vos mots. Vous pouvez demander de répéter à tout moment.")
     with st.expander("Transcription de la conversation", expanded=False):
         for q, r in c["echanges"]:
             st.chat_message("assistant").write(q)
@@ -489,7 +498,8 @@ def liste_criteres_conversation():
         v = S.profil.get(cid)
         if v and v["statut"] in UTILISABLES:
             marque = "✅" if v["statut"] == "validé" else f"☑️ retenu ({v['confiance']:.0%})"
-            st.markdown(f"{marque} **{CRITERES[cid]['nom']}** : {', '.join(v['valeurs'])}  \n<small>« {v['citation']} »</small>",
+            valeurs = ", ".join(libelle_valeur(cid, x) for x in v["valeurs"])
+            st.markdown(f"{marque} **{CRITERES[cid]['nom']}** : {html.escape(valeurs)}  \n<small>« {html.escape(v['citation'])} »</small>",
                         unsafe_allow_html=True)
         elif cid in S.conv["suivi"]:
             st.markdown(f"🔁 {CRITERES[cid]['nom']} : pas assez clair, l'IA reformule une fois")
@@ -532,6 +542,7 @@ def page_questionnaire():
     if not fermes:
         avancer_questionnaire(libres)
     st.progress(S.section / len(sections), text=f"Étape {S.section + 1} sur {len(sections)} · {sec['titre']}")
+    interface.titre_questionnaire(sec["titre"], len(fermes))
     if retires:
         st.caption(f"{len(retires)} question(s) retirée(s) : vos réponses sont déjà renseignées.")
     if libres:
@@ -539,30 +550,32 @@ def page_questionnaire():
     with st.form(f"section_{S.section}"):
         rep = {}
         sans_reponse = set()
-        for it in fermes:
+        for numero, it in enumerate(fermes, 1):
             k = f"{S.section}_{it['id']}"
-            if it["type"] == "qcm":
-                rep[it["id"]] = st.radio(it["texte"], [o[0] for o in it["options"]], index=None, key=k)
-            elif it["type"] == "qcm_multi":
-                rep[it["id"]] = st.multiselect(it["texte"], [o[0] for o in it["options"]], key=k,
-                                               placeholder="Choisissez une ou plusieurs réponses")
-            elif it["type"] == "curseur":
-                if it["critere"] == "B1":
-                    choix = st.selectbox(it["texte"], list(range(it["min"], it["max"] + 1, it["pas"])) + [it["case_jamais"], it["case_nsp"]],
-                                         index=None, placeholder="Choisissez une baisse ou « Je ne sais pas »", key=k,
-                                         format_func=lambda x: f"{x} %" if isinstance(x, int) else x)
-                    if choix is None:
-                        sans_reponse.add(it["id"])
-                    rep[it["id"]] = None if choix == it["case_nsp"] else choix
-                else:
-                    x = st.slider(f"{it['texte']} (en {it['unite']})", it["min"], it["max"], it["defaut"], it["pas"], key=k)
-                    st.caption("Montant fictif de scénario ; la valeur proposée n'est pas une déclaration de patrimoine.")
-                    nsp = st.checkbox(it["case_nsp"], key=k + "_nsp")
-                    rep[it["id"]] = None if nsp else x
-            elif it["type"] == "quiz":
-                st.markdown(f"**{it['texte']}**")
-                rep[it["id"]] = [st.radio(q["texte"], q["options"], index=None, key=f"{k}_{i}")
-                                 for i, q in enumerate(it["questions"])]
+            with st.container(border=True, key=f"question_card_{k}"):
+                interface.repere_question(it, numero, len(fermes))
+                if it["type"] == "qcm":
+                    rep[it["id"]] = st.radio(it["texte"], [o[0] for o in it["options"]], index=None, key=k)
+                elif it["type"] == "qcm_multi":
+                    rep[it["id"]] = st.multiselect(it["texte"], [o[0] for o in it["options"]], key=k,
+                                                   placeholder="Choisissez une ou plusieurs réponses")
+                elif it["type"] == "curseur":
+                    if it["critere"] == "B1":
+                        choix = st.selectbox(it["texte"], list(range(it["min"], it["max"] + 1, it["pas"])) + [it["case_jamais"], it["case_nsp"]],
+                                             index=None, placeholder="Choisissez une baisse ou « Je ne sais pas »", key=k,
+                                             format_func=lambda x: f"{x} %" if isinstance(x, int) else x)
+                        if choix is None:
+                            sans_reponse.add(it["id"])
+                        rep[it["id"]] = None if choix == it["case_nsp"] else choix
+                    else:
+                        x = st.slider(f"{it['texte']} (en {it['unite']})", it["min"], it["max"], it["defaut"], it["pas"], key=k)
+                        st.caption("Montant fictif de scénario ; la valeur proposée n'est pas une déclaration de patrimoine.")
+                        nsp = st.checkbox(it["case_nsp"], key=k + "_nsp")
+                        rep[it["id"]] = None if nsp else x
+                elif it["type"] == "quiz":
+                    st.markdown(f"**{it['texte']}**")
+                    rep[it["id"]] = [st.radio(q["texte"], q["options"], index=None, key=f"{k}_{i}")
+                                     for i, q in enumerate(it["questions"])]
         envoye = st.form_submit_button("Continuer" if S.section < len(sections) - 1 else "Terminer le questionnaire",
                                        type="primary", disabled=not pret)
     if not envoye:
@@ -676,8 +689,12 @@ def page_libre_oral():
 # ---------- Phase 1 bis : mises en situation (ce que l'utilisateur fait, pas seulement ce qu'il dit) ----------
 def page_simulations():
     avant = deepcopy(S.profil)
-    st.progress(S.sim_etape / len(ETAPES), text=f"Mises en situation · {S.sim_etape + 1} sur {len(ETAPES)}")
+    if not S.get("demo_replay"):
+        st.progress(S.sim_etape / len(ETAPES), text=f"Mises en situation · {S.sim_etape + 1} sur {len(ETAPES)}")
     if ETAPES[S.sim_etape](S):
+        if S.get("demo_replay"):
+            reset()
+            st.rerun()
         for cid in S.profil:
             if S.profil[cid] != avant.get(cid):
                 S.versions_profil[cid] = S.versions_profil.get(cid, 0) + 1
@@ -1061,7 +1078,8 @@ def afficher_synthese():
                      ("Tolérance observée (mises en situation)", "tolerance_observee")):
         for f in s[cle]["facteurs"]:
             lignes.append({"composante": nom, "critère": f["critere"], "réponse": f["valeur"], "effet": f["effet"]})
-    st.dataframe(pd.DataFrame(lignes), hide_index=True, width="stretch")
+    with st.expander("Comment les trois composantes déterminent votre profil"):
+        st.dataframe(pd.DataFrame(lignes), hide_index=True, width="stretch")
     for a in s["alertes"]:
         st.warning(a)
     signaux = signaux_coherence(S.profil)
@@ -1135,7 +1153,10 @@ def synthese_existante():
 
 
 # ---------- Mise en page ----------
-st.title("Votre profil d'investisseur")
+interface.entete(S.phase)
+if S.phase not in PHASES_VOCALES:
+    # Le composant reste monté au même endroit ; seule sa place visuelle disparaît hors des échanges oraux.
+    st.html("<style>.st-key-voice_slot, [data-testid='stLayoutWrapper']:has(> .st-key-voice_slot) { display: none; }</style>")
 if S.phase == "conversation" and S.conv and "versions_reponses" not in S.conv:
     # Rechargement d'une ancienne version : conserver les paroles et les faits déjà fournis.
     ancien = S.conv
@@ -1147,19 +1168,17 @@ if S.phase == "conversation" and S.conv and "versions_reponses" not in S.conv:
     S.sections = sections_apres_conversation([cid for cid in CRITERES_CONVERSATION if not connu(S.profil, cid)])
     S.section, S.phase = 0, "questionnaire"
     st.info("Le parcours a été mis à jour. Vos réponses sont conservées ; les informations reconnues ne seront pas redemandées.")
-st.info("**Simulation éducative.** Cet outil n'exécute aucune transaction et ne fournit pas de conseil financier "
-        "personnalisé. Les profils et les montants sont fictifs.", icon="ℹ️")
-if not pret:
-    st.warning("Aucun accès au modèle : lancez le site avec les identifiants AWS du datathon (voir mvp_profil/README.md), "
-               "ou choisissez « API Anthropic » et collez une clé.")
+if not pret and S.phase not in ("accueil", "termine") and not S.get("demo_replay"):
+    st.warning("L’accès au modèle est indisponible. Vérifiez « Connexion et réglages » dans la barre latérale.")
 
 if S.en_cours:
     recuperer_analyses(attendre=False)
 
-col, col_profil = st.columns([3, 2], gap="large")
+with st.container(key="page_layout"):
+    col, col_profil = st.columns([3.2, 1.1], gap="large")
 with col:
     # Même emplacement de composant à chaque rendu, rempli APRÈS la préparation de la question.
-    ZONE_VOIX = st.container()
+    ZONE_VOIX = st.container(key="voice_slot")
     VOIX_RENDUE = False
     {"accueil": page_accueil, "conversation": page_conversation, "questionnaire": page_questionnaire,
      "simulations": page_simulations, "libre_oral": page_libre_oral, "precisions": page_precisions, "ouverte": page_ouverte,
@@ -1188,23 +1207,38 @@ with col:
                             st.markdown(f"- `{a['critere_id']}` ({a['confiance']:.0%}) "
                                         + ("✅ d'accord" if a["accord"] else f"❌ {a['objection']}"))
 
-with col_profil:
+with col_profil, st.container(key="profile_rail"):
     if S.en_cours or S.analyse_ouverte:
         suivi_analyses_questionnaire()
+    if S.phase == "accueil":
+        interface.teaser_replay()
+        if st.button("Découvrir le replay", width="stretch", key="decouvrir_replay"):
+            S.demo_replay = True
+            S.phase, S.sim_etape = "simulations", 0
+            st.rerun()
+        st.caption("Essayez librement, sans créer de profil.")
+    else:
+        interface.accompagnement(S.phase)
     if S.phase == "conversation":
-        st.subheader("Critères de la conversation")
-        liste_criteres_conversation()
-        st.divider()
-    st.subheader("Profil en cours")
+        with st.expander("Ce que nous avons compris", expanded=True):
+            liste_criteres_conversation()
     en_attente = sum(1 for j in S.en_cours if not j["future"].done())
     if en_attente:
         st.caption(f"⏳ {en_attente} réponse(s) libre(s) en cours d'analyse par les agents…")
     if S.profil:
+        reperes = []
+        for cid, nom in (("A3", "Votre objectif"), ("A2", "Votre horizon"),
+                         ("B5", "Les fluctuations acceptées"), ("E4", "Vos convictions ESG")):
+            if connu(S.profil, cid):
+                reperes.append((nom, ", ".join(libelle_valeur(cid, x) for x in S.profil[cid]["valeurs"])))
+        etablis = sum(connu(S.profil, cid) for cid in CRITERES)
+        interface.apercu_profil(reperes, etablis, len(CRITERES))
         df = pd.DataFrame([{"id": c, "critère": CRITERES[c]["nom"], "valeurs": ", ".join(v["valeurs"]) or "—",
                             "nature": nature(v["source"]), "source": v["source"], "confiance": v["confiance"],
                             "statut": v["statut"]}
                            for c, v in S.profil.items()])
-        st.dataframe(df, hide_index=True, width="stretch")
+        with st.expander("Toutes les réponses et leurs sources"):
+            st.dataframe(df, hide_index=True, width="stretch")
         if S.dynamiques:
             st.markdown("**Critères propres à vous**")
             afficher_dynamiques()
@@ -1218,5 +1252,7 @@ with col_profil:
                                "echanges_oraux": (S.conv or {}).get("echanges", [])}}
         st.download_button("Télécharger le profil (JSON)", json.dumps(export, ensure_ascii=False, indent=2, default=str),
                            file_name="profil_investisseur.json", mime="application/json", width="stretch")
-    else:
-        st.caption("Les critères apparaîtront ici au fil de vos réponses.")
+    elif S.phase != "accueil" and not S.get("demo_replay"):
+        st.caption("Vos repères apparaîtront ici au fil de vos réponses.")
+
+interface.note_simulation()

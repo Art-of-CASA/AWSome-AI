@@ -18,6 +18,7 @@ import agents  # noqa: E402
 import chercheur  # noqa: E402
 import entretien  # noqa: E402
 import voix_composant  # noqa: E402
+import replay_composant  # noqa: E402
 import criteres_dynamiques  # noqa: E402
 from agents import Debat, Resultat  # noqa: E402
 from criteres import CRITERES  # noqa: E402
@@ -28,6 +29,23 @@ APPELS = []
 
 SEUILS, OUVERTES, FACULTATIFS = [], [], []
 VOIX = {"n": 0, "texte": None}  # micro simulé : chaque appel à parler() envoie un nouvel énoncé
+REPLAY = {"args": None, "payload": None}
+
+
+def faux_replay(**kw):
+    REPLAY["args"] = kw
+    return REPLAY["payload"]
+
+
+def terminer_replay(actions=None, cursor=None):
+    """Le navigateur transmet une fin naturelle, ou une vente choisie entre deux séances."""
+    args = REPLAY["args"]
+    REPLAY["payload"] = {"session_id": args["session_id"], "seq": args["ack"] + 1,
+                         "cursor": len(args["values"]) - 1 if cursor is None else cursor,
+                         "actions": actions or [], "complete": True}
+    at.run()
+    REPLAY["payload"] = None
+    assert not at.exception, at.exception
 
 
 def fausse_voix(**kw):
@@ -93,6 +111,7 @@ agents.aws_identifiants_presents = lambda: True
 agents.backend_bedrock = lambda: agents.Backend(None, agents.MODELES["bedrock"], "test hors ligne")
 criteres_dynamiques.creer = faux_creer
 voix_composant.conversation_vocale = fausse_voix
+replay_composant.replay_marche = faux_replay
 entretien.transcrire = lambda wav: VOIX["texte"]
 entretien.synthese_vocale = pas_de_voix
 entretien.choisir_option = faux_choix
@@ -178,10 +197,9 @@ def choisir(label_radio, valeur, bouton):
     assert not at.exception, at.exception
 
 
-# Mise en situation 1 : replay, l'utilisateur garde tout aux 4 arrêts -> rupture observée « non atteinte »
-for _ in range(4):
-    choisir("Que faites-vous ?", "Garder", "Décider")
-assert at.session_state.rp["fini"] and len(at.session_state.rp["decisions"]) == 4
+# Mise en situation 1 : le marché défile sans intervention ni question imposée.
+terminer_replay()
+assert at.session_state.rp["fini"] and not at.session_state.rp["actions"]
 [b for b in at.button if b.label == "Continuer"][0].click(); at.run()
 assert at.session_state.profil["B2"]["valeurs"] == ["non_atteint"]
 # Mise en situation 2 : fourchettes, choix du plus dynamique
@@ -250,7 +268,7 @@ p = at.session_state.profil
 print(f"Parcours OK : {len(p)} critères, {sum(v['statut'] == 'validé' for v in p.values())} validés, "
       f"{sum(v['statut'] != 'validé' for v in p.values())} incertains, contradictions résolues : {', '.join(sorted(vus))}")
 
-# Second scénario : l'utilisateur déclare −40 % mais vend dès le 2e arrêt du replay -> on retient l'observé
+# Second scénario : l'utilisateur déclare −40 %, puis vend librement pendant la baisse.
 VOIX["texte"] = None
 at = AppTest.from_file(os.path.join(os.path.dirname(__file__), "app.py"), default_timeout=30)
 at.run()
@@ -260,8 +278,8 @@ at.session_state.profil = {"B1": {"valeurs": ["40"], "source": "curseur", "citat
                            "B5": {"valeurs": ["moderee_8_15"], "source": "QCM", "citation": "", "confiance": 1.0,
                                   "statut": "validé", "motif": ""}}
 at.run()
-choisir("Que faites-vous ?", "Garder", "Décider")
-choisir("Que faites-vous ?", "Tout vendre", "Décider")
+indice_vente = next(i for i, valeur in enumerate(REPLAY["args"]["values"]) if valeur <= 9000)
+terminer_replay([{"index": indice_vente, "action": "vendre"}], cursor=indice_vente)
 assert at.session_state.rp["fini"] and at.session_state.rp["cle"] == "equilibre"
 [b for b in at.button if b.label == "Continuer"][0].click(); at.run()
 b2 = at.session_state.profil["B2"]["valeurs"][0]
@@ -270,7 +288,7 @@ choisir("Votre choix", "Aucun, je préférerais un fonds diversifié", "Choisir"
 p = at.session_state.profil
 assert p["B1"]["valeurs"] == [b2] and p["B1"]["source"].startswith("replay") and p["H1"]["valeurs"] == ["grand"], (b2, p["B1"])
 assert any("retient le plus prudent" in w.value for w in at.warning)
-print(f"Replay avec vente OK : déclaré −40 %, vendu au 2e arrêt -> rupture retenue −{b2} % (écart grand)")
+print(f"Replay avec vente libre OK : déclaré −40 %, vente pendant la baisse -> rupture retenue −{b2} % (écart grand)")
 
 # Mode démonstration : un persona de l'énoncé se charge en un clic et sa synthèse s'affiche
 VOIX["texte"] = None
@@ -331,3 +349,26 @@ assert not at.exception, at.exception
 minimum = at.session_state.dynamiques[1]
 assert minimum["minimum_pct"] == 12 and minimum["applicable"] and minimum["regle"].startswith("Garder au moins 12 %"), minimum
 print("Critères personnels : part minimale confirmée, ✅ réservé aux règles applicables, texte échappé : OK")
+
+# L'aperçu est utilisable sans accès au modèle et n'enregistre aucun profil d'investisseur.
+from unittest.mock import patch  # noqa: E402
+
+VOIX["texte"] = None
+with patch("agents.aws_identifiants_presents", return_value=False), \
+     patch("agents.backend_bedrock", side_effect=AssertionError("L'aperçu ne doit pas appeler le modèle")):
+    at = AppTest.from_file(os.path.join(os.path.dirname(__file__), "app.py"), default_timeout=30).run()
+    assert not at.exception, at.exception
+    assert next(b for b in at.button if b.label == "Commencer en conversation").disabled
+    assert next(b for b in at.button if b.label == "Questionnaire classique").disabled
+    assert not at.button(key="decouvrir_replay").disabled
+    at.button(key="decouvrir_replay").click().run()
+    assert not at.exception, at.exception
+    assert at.session_state.phase == "simulations" and at.session_state.demo_replay
+    assert not at.session_state.profil
+    terminer_replay()
+    assert at.session_state.rp["fini"] and not at.session_state.profil
+    at.button(key="replay_suite").click().run()
+    assert not at.exception, at.exception
+    assert at.session_state.phase == "accueil" and not at.session_state.profil
+    assert "demo_replay" not in at.session_state and "rp" not in at.session_state
+print("Aperçu sans identifiants : lancement, replay complet et retour à l'accueil sans création de profil OK")

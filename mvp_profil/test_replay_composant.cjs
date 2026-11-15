@@ -1,0 +1,20 @@
+/* Contrats financiers et absence de fuite des valeurs futures, sans navigateur. */
+"use strict";
+const assert = require("node:assert/strict");
+const replay = require("./composant_replay/replay.js");
+const values = [10000, 9000, 8000, 12000];
+assert.equal(replay.validValues(values), true);
+for (const bad of [[], [10000], [10000, 0], [10000, NaN], [10000, Infinity]]) assert.equal(replay.validValues(bad), false);
+assert.equal(replay.validateActions([{ index: 1, action: "reduire" }], values, 1), true);
+for (const actions of [[{ index: 2, action: "reduire" }], [{ index: 1.2, action: "reduire" }], [{ index: 1, action: "acheter" }], [{ index: 1, action: "vendre" }, { index: 1, action: "renforcer" }], [{ index: 1, action: "reduire" }, { index: 0, action: "vendre" }]]) assert.equal(replay.validateActions(actions, values, 1), false);
+assert.equal(replay.validateActions(Array.from({ length: 11 }, () => ({ index: 0, action: "renforcer" })), values, 0), false);
+assert.equal(replay.accountAt(values, [], 2).total, 8000);
+assert.equal(replay.accountAt(values, [{ index: 1, action: "reduire" }], 2).total, 8500);
+assert.equal(replay.accountAt(values, [{ index: 1, action: "vendre" }], 3).total, 9000);
+assert.equal(replay.accountAt(values, [{ index: 2, action: "renforcer" }], 3).total, 15000);
+assert.deepEqual(replay.accountAt(values, [{ index: 1, action: "reduire" }, { index: 2, action: "renforcer" }], 3), { investi: 9000, cash: 4500, apports: 12000, total: 13500 });
+assert.equal(replay.positionValue(values, 1.5), 8500);
+assert.deepEqual(replay.visibleSeries([10000, 9000, 1], 1), [{ index: 0, value: 10000 }, { index: 1, value: 9000 }]);
+assert.deepEqual(replay.visibleSeries(values, 1.5), [{ index: 0, value: 10000 }, { index: 1, value: 9000 }, { index: 1.5, value: 8500 }]);
+assert.deepEqual(replay.visibleSeries([10000, 9000, 123456789], 1), replay.visibleSeries([10000, 9000, 1], 1));
+console.log("Replay : calculs des décisions, bornes, interpolation et historique visible vérifiés.");

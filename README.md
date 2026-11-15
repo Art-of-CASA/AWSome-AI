@@ -2,6 +2,8 @@
 
 Prototype du cas « AlphaForge AI » (Banque Nationale, AWS) : un outil **agentique et explicable** qui établit le profil d'un investisseur par une conversation et prépare sa comparaison à des actifs décrits par des données publiques datées. Le moteur d'appariement et les suggestions personnalisées restent à construire. **Simulation éducative uniquement** : aucun conseil financier personnalisé, aucune transaction réelle.
 
+**Refonte de l'interface du 15 novembre 2026, locale.** Le parcours présente les questions dans des cartes avec des explications courtes, une progression visible et un résumé lisible du profil. Le replay de marché défile en continu : aucune décision n'est imposée et l'utilisateur peut intervenir au moment de son choix. La voix conserve son composant unique et les règles de calcul restent déterministes. Voir [les changements de présentation et de replay](docs/refonte_interface_2026-11-15.md). Cette refonte n'a pas été publiée sur AWS.
+
 Ce document explique toute la démarche : le but, les principes, les données, les critères, le fonctionnement du site et des agents, ce qui reste à faire. Il s'adresse aussi aux **assistants IA** qui reprendront le projet (voir « Pour les assistants IA » à la fin).
 
 **Site en ligne : https://d29e3l5vv5fmjy.cloudfront.net** (accès limité aux IP de l'équipe ; voir [mvp_profil/DEPLOIEMENT.md](mvp_profil/DEPLOIEMENT.md)).
