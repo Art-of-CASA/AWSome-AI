@@ -12,8 +12,10 @@ Méthode (toutes les valeurs sont descriptives : le passé ne prédit pas l'aven
   - Corrélation et bêta : rendements HEBDOMADAIRES (vendredi) en CAD contre VT (monde) et SPY,
     pour neutraliser le décalage horaire entre l'Asie, l'Europe et l'Amérique.
   - Classe de risque 1 à 7 : bandes de volatilité de type SRRI (hypothèse à valider).
-  - Temps de récupération : jours civils entre le creux de la pire baisse et le retour au sommet
-    précédent ; vide si le sommet n'est pas encore retrouvé.
+  - Durée sous l'eau (underwater_days) : jours civils entre le SOMMET qui précède la pire baisse et le
+    retour à ce sommet. C'est ce que demande la question B7 (« combien de temps pour retrouver sa valeur »).
+    Vide si le sommet n'est pas encore retrouvé ; underwater_days_so_far donne alors la durée écoulée.
+  - recovery_days (du CREUX au retour) est gardé pour information : il sous-estime l'attente réelle.
 """
 from __future__ import annotations
 
@@ -76,8 +78,10 @@ def metrics(cad: pd.DataFrame) -> pd.DataFrame:
             ticker=tk, first_date=s.index[0].date(), last_date=s.index[-1].date(), observations=len(s),
             cagr_cad=(s.iloc[-1] / s.iloc[0]) ** (1 / years) - 1,
             vol_cad=vol, risk_class=risk_class(vol),
-            max_drawdown=dd.min(), drawdown_trough=trough.date(),
+            max_drawdown=dd.min(), drawdown_peak=peak_before.date(), drawdown_trough=trough.date(),
             recovery_days=(rec.index[0] - trough).days if len(rec) else None,
+            underwater_days=(rec.index[0] - peak_before).days if len(rec) else None,
+            underwater_days_so_far=None if len(rec) else (s.index[-1] - peak_before).days,
             current_drawdown=dd.iloc[-1],
             return_2022=y22.iloc[-1] / y22.iloc[0] - 1 if len(y22) > 1 else None,
             var95_daily=np.percentile(r, 5),

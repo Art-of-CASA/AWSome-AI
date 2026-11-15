@@ -26,7 +26,7 @@ from agents import (REGION, AgentError, Backend, Classification, Proposition, _a
 from criteres import CRITERES, describe
 
 # Critères de contexte couverts par la conversation (les autres restent en QCM, quiz et mises en situation).
-CRITERES_CONVERSATION = ["A3", "A2", "A9", "A10", "A4", "A5", "A6", "A12", "A8", "A7", "B3", "C2", "D3", "D5", "D6"]
+CRITERES_CONVERSATION = ["A3", "A2", "A9", "A10", "A1", "A4", "A5", "A6", "A12", "A8", "A7", "B3", "C2", "D3", "D5", "D6"]
 MAX_TOURS = 10
 OUVERTURE = ("Bonjour ! Je vais vous poser quelques questions pour mieux vous connaître ; répondez librement, "
              "comme dans une conversation. Pour commencer : à quoi servira l'argent que vous voulez placer, "

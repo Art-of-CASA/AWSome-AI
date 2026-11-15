@@ -1,0 +1,228 @@
+{
+ "nom": "Mateo",
+ "description": "41 ans, gestionnaire des opérations. Profil de risque modéré, horizon de 8 à 12 ans (énoncé, p. 6).",
+ "source": "Énoncé officiel Datathon 2026, AlphaForge AI (PDF)",
+ "avertissement": "Profil FICTIF. Les valeurs « énoncé » reprennent le texte officiel ; les valeurs « hypothèse de test » complètent ce que l'énoncé ne dit pas et sont choisies par l'équipe.",
+ "profil": {
+  "A1": {
+   "valeurs": [
+    "milieu_carriere"
+   ],
+   "source": "énoncé",
+   "citation": "41 ans · Gestionnaire des opérations",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "A2": {
+   "valeurs": [
+    "5_10_ans"
+   ],
+   "source": "énoncé",
+   "citation": "8 à 12 ans (à cheval sur deux classes : la plus courte est retenue)",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "A3": {
+   "valeurs": [
+    "croissance"
+   ],
+   "source": "énoncé",
+   "citation": "Faire croître son capital de façon équilibrée à moyen et à long terme",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "A8": {
+   "valeurs": [
+    "1_2"
+   ],
+   "source": "énoncé",
+   "citation": "En couple, père de deux enfants",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "C1": {
+   "valeurs": [
+    "intermediaire"
+   ],
+   "source": "énoncé",
+   "citation": "Expérience en investissement : intermédiaire",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "B5": {
+   "valeurs": [
+    "moderee_8_15"
+   ],
+   "source": "énoncé",
+   "citation": "Profil de risque : modéré",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "E4": {
+   "valeurs": [
+    "exige"
+   ],
+   "source": "énoncé",
+   "citation": "Accorde une grande importance aux facteurs ESG",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "E2": {
+   "valeurs": [
+    "pas_de_grave"
+   ],
+   "source": "énoncé",
+   "citation": "Souhaite éviter les entreprises liées à des controverses environnementales ou sociales importantes",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "D12": {
+   "valeurs": [
+    "sans_speculatif"
+   ],
+   "source": "énoncé",
+   "citation": "Peu intéressé par les placements hautement spéculatifs",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "D7": {
+   "valeurs": [
+    "indifferent"
+   ],
+   "source": "énoncé",
+   "citation": "Recherche un équilibre entre potentiel de croissance et stabilité",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "B1": {
+   "valeurs": [
+    "30"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "« Risque modéré » traduit en point de rupture ; non chiffré dans l'énoncé"
+  },
+  "B3": {
+   "valeurs": [
+    "oui_garde"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Expérience intermédiaire"
+  },
+  "A4": {
+   "valeurs": [
+    "moyenne_25_60"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Non précisé"
+  },
+  "A5": {
+   "valeurs": [
+    "3_6_mois"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Non précisé"
+  },
+  "A6": {
+   "valeurs": [
+    "stables"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Non précisé"
+  },
+  "A7": {
+   "valeurs": [
+    "non"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Non précisé"
+  },
+  "D2": {
+   "valeurs": [
+    "0"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Découle du refus du spéculatif"
+  },
+  "E1": {
+   "valeurs": [
+    "limiter"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "L'énoncé ne parle PAS d'énergies fossiles : hypothèse minimale liée à l'importance des facteurs ESG"
+  },
+  "D9": {
+   "valeurs": [
+    "10"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Défaut"
+  },
+  "D11": {
+   "valeurs": [
+    "mixte"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Non précisé"
+  },
+  "B6": {
+   "valeurs": [
+    "equilibre"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Comportement supposé cohérent avec le déclaré"
+  },
+  "G3": {
+   "valeurs": [
+    "canada_usa"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Défaut prudent"
+  }
+ }
+}

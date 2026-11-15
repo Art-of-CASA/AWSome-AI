@@ -8,7 +8,7 @@ Site Streamlit qui établit le profil d'un investisseur. Il combine des question
 
 L'accueil propose deux parcours.
 
-**🎙️ Conversation vocale mains libres (recommandé).** Une discussion à voix haute, comme le mode vocal de ChatGPT, couvre les 15 critères de contexte : objectif, horizon, retraits, revenu, épargne, fonds d'urgence, situation, emploi, personnes à charge, dettes, expérience d'une baisse, produits détenus, régions et thèmes.
+**🎙️ Conversation vocale mains libres (recommandé).** Une discussion à voix haute, comme le mode vocal de ChatGPT, couvre les 16 critères de contexte : objectif, horizon, retraits, revenu, épargne, fonds d'urgence, situation, emploi, personnes à charge, dettes, expérience d'une baisse, produits détenus, régions et thèmes.
 - **Un seul clic, « Démarrer »**, exigé par les navigateurs pour le micro et le son. Ensuite, aucun bouton ni enregistrement à gérer. Le composant ([composant_voix/index.html](composant_voix/index.html)) détecte dans le navigateur quand l'utilisateur commence à parler, puis quand il a fini (0,8 s de silence), et envoie la phrase tout seul.
 - **Voix (services AWS)** : la phrase est transcrite par **Amazon Transcribe** (fr-CA). La réplique de l'IA est lue par **Amazon Polly** (voix neuronale « Gabrielle », fr-CA), sans lecteur visible, puis l'écoute reprend automatiquement. Pendant que l'IA parle, le micro n'écoute pas, pour qu'elle ne s'entende pas elle-même.
 - **« Pouvez-vous répéter ? »** à l'oral suffit : l'IA répète ou reformule sa question.
@@ -21,7 +21,7 @@ Mesuré en ligne le 14 novembre 2026 : réplique de l'IA en **1,7 s** sur le ser
 
 **📝 Questionnaire classique.** Toutes les questions page par page, comme ci-dessous.
 
-**1. Questionnaire fixe : les mêmes 29 questions, dans le même ordre, pour tout le monde.** 6 pages (4 en parcours conversation) :
+**1. Questionnaire fixe : les mêmes 34 questions, dans le même ordre, pour tout le monde.** 6 pages (4 en parcours conversation) :
 
 | Page | Contenu |
 |---|---|
@@ -95,7 +95,9 @@ En local, le SDK a besoin d'identifiants AWS : il les lit dans les variables `AW
 
 | Fichier | Rôle |
 |---|---|
-| `criteres.py` | Les 37 critères fixes (valeurs autorisées, question de précision) et le questionnaire fixe |
+| `synthese.py`, `hypotheses_profil.json` | Synthèse déterministe du profil : capacité, tolérance déclarée et observée, budget de perte, réglages prudents appliqués. Toutes les tables sont des hypothèses déclarées |
+| `personas/` | Les trois profils fictifs de l'énoncé (Amira, Mateo, Robert) ; chaque valeur est marquée « énoncé » ou « hypothèse de test » |
+| `criteres.py` | Les 42 critères fixes (valeurs autorisées, question de précision) et le questionnaire fixe |
 | `profil.py` | Logique déterministe : curseur et quiz vers valeurs, règles de cohérence, comparaison déclaré/observé |
 | `simulations.py` | Les 3 mises en situation (replay, fourchettes, effet de mode) |
 | `entretien.py` | Conversation : réplique rapide, analyse en arrière-plan (classificateur + critique), Transcribe et Polly |
@@ -128,7 +130,7 @@ En local, le SDK a besoin d'identifiants AWS : il les lit dans les variables `AW
 - **Micro :** les navigateurs n'autorisent le micro qu'en **HTTPS** (ou sur `localhost`) : utiliser l'adresse CloudFront. Le navigateur demande l'autorisation au clic sur « Démarrer ». L'adresse HTTP directe reste utilisable à l'écrit.
 - **Conversation à l'alternat :** on ne peut pas couper la parole à l'IA pendant qu'elle parle ; on répond quand elle a fini. Dans une pièce bruyante, la détection de la parole peut se déclencher sur un bruit (une phrase vide est ignorée) ; le seuil est calibré sur le bruit ambiant pendant 0,7 s au démarrage.
 - **Transcription :** Transcribe peut mal entendre un mot (« dettes » compris « de ») ; le critère concerné reste alors sous le seuil et l'IA le redemande.
-- **Couverture :** le questionnaire couvre 33 critères (32 de la grille + la réaction à −20 %). Les autres (frais, accès du courtier, inquiétude face aux taux…) restent à ajouter.
+- **Couverture :** le questionnaire couvre 38 critères déclarés ou mesurés par le quiz. Restent hors parcours, par choix : A11, C3, D10, E3, F1, G4, G5 (voir la colonne `demande` de la grille). (Ancienne note : frais, inquiétude face aux taux…) restent à ajouter.
 - **Mises en situation :** en simulation, on est souvent plus courageux qu'avec son propre argent. C'est pourquoi le plus prudent entre le déclaré et l'observé l'emporte. Un utilisateur qui reconnaît 2022 peut aussi anticiper la remontée.
 - **Seuils :** les seuils, les classes du curseur et les règles de cohérence sont des hypothèses. Les confiances des modèles ne sont pas des probabilités calibrées.
 - **Aucun lien avec les actifs :** l'étape suivante est de comparer le profil à [asset_criteria.csv](../data_extended/asset_criteria.csv).

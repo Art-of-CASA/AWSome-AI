@@ -115,7 +115,7 @@ suivant()
 assert at.session_state.section == 1 and at.session_state.profil["A3"]["valeurs"] == ["coussin_securite"]
 
 # Page 2 : question oubliée -> message, puis « Je ne sais pas » + réponse libre floue
-radio("1_q_a4", "Moins du quart")
+radio("1_q_a4", "Moins du quart"); radio("1_q_a1", "En milieu de carrière")
 suivant()
 assert at.session_state.section == 1 and len(at.warning) >= 1  # A5 manquant : on reste sur la page
 radio("1_q_a5", "Je ne sais pas")
@@ -145,13 +145,13 @@ assert not [r for r in at.radio if r.key == "4_q_d7"] and any("1 question(s) ret
 at.multiselect(key="4_q_d1").set_value(["FNB d'actions", "Obligations"])
 radio("4_q_d2", "Jusqu'à 10 %"); at.multiselect(key="4_q_d3").set_value(["Canada"])
 radio("4_q_d12", "Au plus 10 % du portefeuille"); radio("4_q_d4", "Limiter la part en devises étrangères")
-radio("4_q_d8", "Non")
+radio("4_q_d8", "Non"); radio("4_q_d11", "Un mélange des deux"); radio("4_q_d9", "10 % au plus")
 at.text_area(key="4_q_themes").input("L'IA et la santé m'intéressent, je refuse le tabac.")
 suivant()
 
 # Page 6 -> fin du questionnaire fixe
 radio("5_q_e1", "Ce n'est pas un critère pour moi"); radio("5_q_e2", "Je refuse seulement les cas graves")
-radio("5_q_g2", "CELI"); radio("5_q_e4", "Une préférence, sans obligation")
+radio("5_q_g2", "CELI"); radio("5_q_g3", "Non, Canada et États-Unis seulement"); radio("5_q_e4", "Une préférence, sans obligation")
 at.multiselect(key="5_q_e5").set_value(["Aucune exclusion", "Tabac"])  # « Aucune » + Tabac : on garde Tabac
 at.multiselect(key="5_q_f2").set_value(["Aucune exclusion"])
 suivant()
@@ -178,7 +178,8 @@ assert at.session_state.profil["B6"]["valeurs"] == ["dynamique"]
 # Mise en situation 3 : effet de mode, choix du titre A (très médiatisé) alors que D8 déclaré = « Non » -> R9
 choisir("Votre choix", "Titre A", "Choisir")
 assert at.session_state.profil["D8O"]["valeurs"] == ["oui"]
-assert at.session_state.phase == "precisions" and at.session_state.profil["H1"]["valeurs"] == ["aucun"]
+# Déclaré −40 %, tout gardé, mais le replay n'a montré qu'environ −15 % : la tolérance n'a PAS été testée
+assert at.session_state.phase == "precisions" and at.session_state.profil["H1"]["valeurs"] == ["non_teste"]
 assert ["A6", "A12", "A8", "A7"] in APPELS and ["D5", "D6"] in APPELS  # analysés en arrière-plan
 # Chaque réponse libre est aussi lue pour les autres critères encore inconnus (facultatifs), sauf ceux déjà connus
 fac_situation = FACULTATIFS[APPELS.index(["A6", "A12", "A8", "A7"])]
@@ -252,3 +253,13 @@ p = at.session_state.profil
 assert p["B1"]["valeurs"] == [b2] and p["B1"]["source"].startswith("replay") and p["H1"]["valeurs"] == ["grand"], (b2, p["B1"])
 assert any("retient le plus prudent" in w.value for w in at.warning)
 print(f"Replay avec vente OK : déclaré −40 %, vendu au 2e arrêt -> rupture retenue −{b2} % (écart grand)")
+
+# Mode démonstration : un persona de l'énoncé se charge en un clic et sa synthèse s'affiche
+at = AppTest.from_file(os.path.join(os.path.dirname(__file__), "app.py"), default_timeout=30)
+at.run()
+[b for b in at.button if b.label == "Charger Robert"][0].click(); at.run()
+assert not at.exception, at.exception
+assert at.session_state.phase == "termine" and at.session_state.persona["nom"] == "Robert"
+assert any(m.label == "Budget de perte du portefeuille" and m.value == "15 %" for m in at.metric), [(m.label, m.value) for m in at.metric]
+assert any("Simulation éducative" in i.value for i in at.info)
+print("Mode démonstration OK : Robert chargé, budget de perte 15 %, bandeau de simulation affiché")

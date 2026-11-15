@@ -113,7 +113,9 @@ for tk, r in pd.concat([hype, calmes]).iterrows():
     choix.append({"ticker": tk, "nom": str(r["name"]), "mediatise": bool(r.media_hype == "tres_mediatise"),
                   "secteur": SECTEURS.get(r.sector, r.sector), "rendement_3m": round(float(r.return_3m), 4),
                   "volatilite": round(float(r.vol_cad), 4), "perte_max": round(float(r.max_drawdown), 4),
-                  "dividende": round(float(r.dividend_yield_ttm), 4), "pic_recent": str(r.attention_spike_last_30d) == "True"})
+                  "dividende": round(float(r.dividend_yield_ttm), 4), "pic_recent": str(r.attention_spike_last_30d) == "True",
+                  # fait neutre affiché pour les quatre titres (médiane quotidienne, Wikipédia en anglais)
+                  "vues_par_jour": round(float(r.attention_median_daily_views))})
 # Ordre fixe, alterné, pour que tout le monde voie la même liste
 choix = [choix[i] for i in (0, 2, 1, 3)]
 for lettre, c in zip("ABCD", choix):

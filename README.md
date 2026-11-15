@@ -21,7 +21,7 @@ Le cas demande un outil qui aide trois profils fictifs à prendre une décision 
 ## 2. L'idée centrale : un profil reproductible, comparé aux actifs par des mots-clés
 
 1. **On pose des questions** (conversation orale ou écrite, QCM, curseurs, quiz, mises en situation).
-2. **L'IA classe les réponses dans une liste fermée de mots-clés** par critère (exemple : horizon = `moins_3_ans`, `3_5_ans`, `5_10_ans`, `10_15_ans` ou `plus_15_ans`). Avec la même réponse, on obtient le même profil : il est **reproductible**.
+2. **L'IA classe les réponses dans une liste fermée de mots-clés** par critère (exemple : horizon = `moins_3_ans`, `3_5_ans`, `5_10_ans`, `10_15_ans` ou `plus_15_ans`). Les réponses fermées (QCM, curseurs, quiz, mises en situation) donnent toujours la même valeur. Pour les réponses libres, classées par un modèle, la répétabilité se mesure avec `mvp_profil/evaluer_classement.py` : **cette mesure reste à lancer** (voir `docs/plan_et_suivi.md`).
 3. **Chaque actif est classé sous les mêmes mots-clés**, cette fois par du code, à partir de données datées : volatilité, perte maximale, récupération, exclusions ESG, risque pays, devise, attention médiatique…
 4. **Une règle d'appariement écrite à l'avance** compare les deux côtés. Elle donne un verdict par critère : cohérent, à surveiller ou en tension.
 
@@ -39,10 +39,10 @@ Les principes qui en découlent, à respecter partout :
   prix, change, dividendes, états financiers, FNB, ESG, attention, macro
                               │  code (scripts/build_asset_criteria.py)
                               ▼
-     asset_criteria.csv : 66 actifs × 100 colonnes, dont 23 mots-clés kw_*
+     asset_criteria.csv : 66 actifs × 109 colonnes, dont 23 mots-clés kw_*
                               │
   PROFIL (mvp_profil/, site Streamlit + Claude Haiku 5.5 sur Bedrock)     │
-  conversation ─▶ classificateur ⇄ critique ─▶ critères fixes (37)        │
+  conversation ─▶ classificateur ⇄ critique ─▶ critères fixes (42)        │
   questionnaire, quiz, mises en situation ─▶ valeurs sans IA              │
   question ouverte ─▶ découvreur ⇄ critique ─▶ critères dynamiques (X1…) ─┤
         └─ concept sans valeur ─▶ chercheur (données + Wikipédia) ⇄ critique  │
@@ -60,10 +60,10 @@ Les principes qui en découlent, à respecter partout :
 | `Datathon2026/alphaforge_starter/` | Jeu de départ des organisateurs : 31 actifs (Canada, États-Unis, FNB, obligations, or, cryptos), prix, USD/CAD, taux | Organisateurs |
 | `data_extra/` | Pour les 31 actifs de départ : états financiers et ratios, FNB (frais, positions, secteurs), ESG (implication fossile, controverses sourcées), attention Wikipédia, actualités, dates de publication macro (ALFRED) | `scripts/fetch_extra_data.py`, `build_esg.py`, `fetch_macro_release_dates.py` |
 | `data_extended/` | **35 actifs ajoutés** (10 Europe, 10 Asie, 10 Afrique, 5 FNB mondiaux), même jeu de données ; change vers le CAD pour 12 devises ; puis **indicateurs et mots-clés des 66 actifs** | `build_extended_prices.py`, `compute_metrics.py`, `fetch_market_caps.py`, `build_asset_criteria.py` |
-| `config/` | `criteres_appariement.csv` (50 critères : question, valeurs du profil, critère d'actif, règle, type de règle, personas) et `seuils_criteres.json` (tous les seuils, qui sont des hypothèses) | Équipe |
+| `config/` | `criteres_appariement.csv` (51 critères, alignés sur `criteres.py` par `scripts/sync_grille.py` : question, valeurs du profil, critère d'actif, règle, type de règle, personas) et `seuils_criteres.json` (tous les seuils, qui sont des hypothèses) | Équipe |
 | `docs/criteres_profil_actifs.md` | La grille lisible : principe, 8 blocs de critères (A situation à H gouvernance), calcul des mots-clés, test sur les 3 personas | Équipe |
 
-Ordre pour tout régénérer : `fetch_extra_data.py` → `fetch_macro_release_dates.py` → `build_esg.py` → `build_extended_prices.py` → `compute_metrics.py` → `fetch_market_caps.py` → `build_asset_criteria.py` → `build_scenarios.py` → `build_vocabulaire.py` → `build_donnees_chercheur.py`.
+Ordre pour tout régénérer : `fetch_extra_data.py` → `fetch_macro_release_dates.py` → `build_esg.py` → `build_extended_prices.py` → `compute_metrics.py` → `fetch_market_caps.py` → `build_asset_criteria.py` → `build_scenarios.py` → `build_vocabulaire.py` → `build_donnees_chercheur.py` → `sync_grille.py` → `test_grille.py`. Les quatre premiers scripts téléchargent des données : les relancer change les prix (Yahoo réajuste l'historique). Pour appliquer une correction de calcul, repartir de `compute_metrics.py`.
 
 Points à connaître (le détail est dans les README de chaque dossier) :
 - Tout est **converti en CAD**, car l'investisseur est canadien. Change de la Banque du Canada ; taux croisés pour DKK et EGP.
@@ -73,9 +73,9 @@ Points à connaître (le détail est dans les README de chaque dossier) :
 
 ## 5. Les critères
 
-### Côté profil : 37 critères fixes ([mvp_profil/criteres.py](mvp_profil/criteres.py))
+### Côté profil : 42 critères fixes ([mvp_profil/criteres.py](mvp_profil/criteres.py))
 
-Les identifiants sont ceux de la grille : A situation et capacité, B risque, C connaissances, D préférences, E valeurs, F pays, G compte, H cohérence. Chaque critère a une **liste fermée** de valeurs et une question de précision. Quatre sont **mesurés** par les mises en situation et non déclarés :
+Les identifiants sont ceux de la grille : A situation et capacité, B risque, C connaissances, D préférences, E valeurs, F pays, G compte, H cohérence. Chaque critère a une **liste fermée** de valeurs et une question de précision. Le profil se termine par une **synthèse déterministe** ([synthese.py](mvp_profil/synthese.py)) : le budget de perte du portefeuille est le plus prudent de la capacité, de la tolérance déclarée et de la tolérance observée, et la composante qui limite est affichée. Quatre critères sont **mesurés** par les mises en situation et non déclarés :
 - B2, le point de rupture observé au replay ;
 - B6, l'arbitrage risque-rendement choisi dans les fourchettes ;
 - D8O, l'attrait observé pour un titre médiatisé ;
@@ -153,7 +153,7 @@ Site Streamlit. Les modèles sont **Claude Haiku 5.5 sur Amazon Bedrock**, dans 
 
 ### Parcours
 
-1. **Conversation orale mains libres (recommandé) ou écrite.** Elle couvre 15 critères de contexte : objectif, horizon, retraits, revenu, épargne, situation, emploi, personnes à charge, dettes, expérience d'une baisse, produits détenus, régions, thèmes.
+1. **Conversation orale mains libres (recommandé) ou écrite.** Elle couvre 16 critères de contexte : objectif, horizon, étape de vie, retraits, revenu, épargne, situation, emploi, personnes à charge, dettes, expérience d'une baisse, produits détenus, régions, thèmes.
    - La voix est détectée dans le navigateur, transcrite par **Amazon Transcribe** (fr-CA) et lue par **Amazon Polly** (voix Gabrielle).
    - L'utilisateur n'attend qu'un appel court par tour (la réplique, environ 1,7 s). Le classement se fait en arrière-plan, et le panneau de droite coche ✅ au fil de l'eau.
 2. **Questions fixes**, les mêmes pour tous : QCM, curseur, quiz de connaissances, deux questions libres. En parcours conversation, il ne reste que ce que la conversation n'a pas validé, dans une page « Compléments ».
@@ -235,13 +235,18 @@ En local, il faut des identifiants AWS temporaires (variables `AWS_*` ou `~/.aws
 .venv/Scripts/python mvp_profil/test_chercheur.py
 .venv/Scripts/python mvp_profil/test_app.py
 .venv/Scripts/python mvp_profil/test_conversation.py
+.venv/Scripts/python mvp_profil/test_synthese.py
+.venv/Scripts/python scripts/test_grille.py
+.venv/Scripts/python mvp_profil/evaluer_classement.py --verifier
 ```
 
 ## 9. Où on en est, et où on veut aller
 
 **Fait :**
 - les données des 66 actifs et les mots-clés ;
-- la grille de 50 critères ;
+- la grille de 51 critères, alignée sur le code et vérifiée par `scripts/test_grille.py` ;
+- la synthèse du profil : capacité, tolérance déclarée et observée, budget de perte ([mvp_profil/synthese.py](mvp_profil/synthese.py)) ;
+- le mode démonstration : les trois personas de l'énoncé, chargés en un clic ;
 - le profil complet : conversation vocale, questionnaire, mises en situation, cohérence, critères dynamiques ;
 - le déploiement HTTPS sur AWS.
 
@@ -259,7 +264,7 @@ Datathon2026/         matériel des organisateurs (les PDF et PPTX ne sont pas v
 scripts/              collecte et calcul des données, scénarios, vocabulaire des actifs
 data_extra/           données ajoutées pour les 31 actifs de départ
 data_extended/        univers étendu (35 actifs) + indicateurs et mots-clés des 66 actifs
-config/               grille d'appariement (50 critères) et seuils
+config/               grille d'appariement (51 critères), seuils et correspondances profil ↔ actifs
 docs/                 grille lisible des critères
 mvp_profil/           site Streamlit : agents, critères, conversation vocale, simulations, tests, déploiement
 ```
@@ -270,29 +275,23 @@ mvp_profil/           site Streamlit : agents, critères, conversation vocale, s
 - **Ne laissez jamais un modèle décider.** Un modèle propose une valeur d'une liste fermée, avec une citation et une confiance. Le code valide (`agents.evaluer`, `precontrole`, `retenable`, `criteres_dynamiques._nettoyer`). Toute nouvelle sortie de modèle doit passer par un schéma Pydantic et un contrôle déterministe.
 - **Listes fermées des deux côtés.** Si vous ajoutez une valeur à un critère d'actif, relancez `scripts/build_asset_criteria.py` puis `scripts/build_vocabulaire.py`. Si vous ajoutez un critère de profil, ajoutez-le dans `criteres.py` (valeurs, question de précision) et dans `config/criteres_appariement.csv` (règle d'appariement).
 - **Chercheur** : il n'invente jamais un lien. Le code jette tout verdict dont le passage n'a pas été lu mot pour mot pendant la recherche (`chercheur._preuve_valide`). Pour ajouter une source web, ajoutez un outil qui enregistre ce qu'il lit dans `Recherche.journal`. Regénérez `donnees_chercheur.json` avec `scripts/build_donnees_chercheur.py` quand les données changent.
-- **Seuils** : ce sont des hypothèses, centralisées dans `config/seuils_criteres.json` pour les actifs. Pour le profil, ils sont dans `agents.py` : seuil réglable, `BAISSE_REFORMULATION`, `SEUIL_PLANCHER`.
+- **Seuils** : ce sont des hypothèses, centralisées dans `config/seuils_criteres.json` pour les actifs et dans `mvp_profil/hypotheses_profil.json` pour la synthèse du profil (capacité, stress, réglages prudents). Pour le profil, ils sont dans `agents.py` : seuil réglable, `BAISSE_REFORMULATION`, `SEUIL_PLANCHER`.
 - **Statuts du profil** : `validé`, `retenu` (meilleure réponse sous le seuil, au-dessus du plancher), `incertain` et `à préciser`. Seuls `validé` et `retenu` sont utilisables (`profil.UTILISABLES`, `profil.connu`).
 - **Sources du profil** : QCM, curseur, quiz, réponse libre (IA), conversation (IA), **déduit (IA)**, **déduction (règle)**, cohérence, replay… Une question n'est posée que si son critère n'est pas déjà connu (`app.a_demander`). Pour ajouter une déduction certaine, il suffit d'ajouter une ligne à `profil.REGLES_DEDUCTION`.
 - **Voix** : `app.dire(texte, etape)` fait dire une nouvelle phrase à l'IA, une seule fois par étape. `app.entendu()` renvoie ce que la personne vient de dire. Le composant (`composant_voix/index.html`) n'existe qu'en un seul exemplaire, en haut de la colonne principale. Ne le déplacez pas : il serait recréé, et la voix serait coupée.
-- **Tests** : faites passer les 6 tests de la section 8 avant tout commit. Les tests d'interface utilisent `streamlit.testing.v1.AppTest`, avec des agents simulés et de faux identifiants AWS.
+- **Tests** : faites passer les 7 tests de la section 8 et `scripts/test_grille.py` avant tout commit. Les tests d'interface utilisent `streamlit.testing.v1.AppTest`, avec des agents simulés et de faux identifiants AWS.
 - **Windows** : utilisez `py` ou `.venv/Scripts/python`, avec `PYTHONIOENCODING=utf-8` pour les accents dans la console.
-- **Déploiement** : zip du dossier `mvp_profil` (y compris `vocabulaire_actifs.json`, `donnees_chercheur.json` et `scenarios.json`), envoi sur S3, puis redémarrage par Session Manager (voir DEPLOIEMENT.md).
+- **Cohérence** : un correctif de cohérence n'écrit jamais une valeur que la personne n'a pas choisie (`None` = critère redemandé), et `profil.recouper_rupture` est rappelée après chaque correctif : le point de rupture retenu ne dépasse jamais celui observé au replay.
+- **Déploiement** : zip du dossier `mvp_profil` (y compris `vocabulaire_actifs.json`, `donnees_chercheur.json`, `scenarios.json`, `hypotheses_profil.json`, `synthese.py` et le dossier `personas/`), envoi sur S3, puis redémarrage par Session Manager (voir DEPLOIEMENT.md).
 - **Collaboration** : travaillez sur une branche, ouvrez une pull request, et attendez la relecture d'un coéquipier avant de fusionner dans `main`. Ne versionnez aucun secret (voir ci-dessous).
 
-## Security and collaboration
+## Sécurité et collaboration
 
-- This repository is private.
-- Do not commit API keys, tokens, passwords, `.env` files, or AWS credential
-  files. The included `.env.example` contains names only, never values.
-- Runtime secrets are stored in AWS Secrets Manager. AWS Lambda receives only
-  the permissions it needs to use its designated secret.
-- Deployment uses GitHub Actions with OIDC-issued, short-lived AWS credentials;
-  it does not use long-lived AWS access keys stored in GitHub.
-- Open a pull request for changes and obtain a teammate review before merging
-  to `main`.
+Ce qui suit décrit l'infrastructure **réellement en place** (détail dans [mvp_profil/DEPLOIEMENT.md](mvp_profil/DEPLOIEMENT.md)).
 
-## Local setup
-
-1. Copy `.env.example` to `.env`.
-2. Add only your own development credentials to `.env`.
-3. Do not share or commit that file.
+- **Aucune clé dans le dépôt ni sur le serveur.** Le site appelle Amazon Bedrock, Transcribe et Polly avec le **rôle IAM de l'instance EC2**, limité à ces actions et à la lecture du paquet du site sur S3.
+- **Accès au site** : HTTPS par CloudFront, avec une fonction CloudFront qui ne laisse passer que les adresses IP de l'équipe. Le groupe de sécurité de l'instance n'accepte que CloudFront et ces mêmes adresses. Il n'y a ni mot de passe ni comptes utilisateurs : c'est suffisant pour une démonstration, pas pour de vrais utilisateurs.
+- **Mises à jour** : un paquet zip déposé sur S3, puis un redémarrage par Session Manager. Aucun port SSH n'est ouvert. Il n'y a pas de déploiement automatique.
+- **Données personnelles** : aucune. Les profils sont fictifs ; le mode démonstration charge les trois personas de l'énoncé.
+- **En local** : identifiants AWS temporaires (variables `AWS_*` ou `~/.aws`), jamais versionnés. Le fichier `.env.example` ne contient que des noms de variables.
+- **Collaboration** : une branche par changement, une pull request, la relecture d'un coéquipier avant de fusionner dans `main`. Ne versionnez aucun secret, aucun identifiant de compte, aucune adresse IP.

@@ -1,0 +1,88 @@
+{
+ "_note": "Correspondances entre les valeurs du PROFIL (mvp_profil/criteres.py) et les colonnes des ACTIFS (data_extended/asset_criteria.csv). Une condition = {colonne, valeurs} : l'actif est concerné si la colonne contient l'une des valeurs (les colonnes à plusieurs étiquettes sont séparées par « ; »). Plusieurs conditions dans « toutes » doivent être vraies ensemble. « aucun_actif » : valeur du profil qu'aucun actif de l'univers ne porte ; l'outil doit le DIRE au lieu de laisser croire que le filtre agit. Vérifié par scripts/test_grille.py.",
+ "themes": {
+  "ia": {"colonne": "themes", "valeurs": ["ia"]},
+  "semi-conducteurs": {"colonne": "themes", "valeurs": ["semi-conducteurs"]},
+  "logiciel": {"colonne": "themes", "valeurs": ["logiciel", "infonuagique", "services_informatiques"]},
+  "sante": {"colonne": "sector", "valeurs": ["Health Care"]},
+  "energie_fossile": {"colonne": "fossil_categorie", "valeurs": ["directe"]},
+  "banque": {"colonne": "themes", "valeurs": ["banque"]},
+  "assurance": {"colonne": "themes", "valeurs": ["assurance"]},
+  "luxe": {"colonne": "themes", "valeurs": ["luxe"]},
+  "vehicule_electrique": {"colonne": "themes", "valeurs": ["vehicule_electrique"]},
+  "or": {"colonne": "themes", "valeurs": ["or"]},
+  "crypto": {"colonne": "asset_class", "valeurs": ["crypto"]},
+  "dividendes": {"colonne": "income_asset", "valeurs": ["True"]},
+  "consommation": {"colonne": "sector", "valeurs": ["Consumer Staples", "Consumer Discretionary"]},
+  "infrastructures": {"colonne": "themes", "valeurs": ["infrastructures"]},
+  "telecoms": {"colonne": "themes", "valeurs": ["telecoms"]},
+  "alcool": {"colonne": "kw_exclusions", "valeurs": ["alcool"]},
+  "immobilier": {"aucun_actif": "Aucune société immobilière dans l'univers."},
+  "armes": {"aucun_actif": "Aucun fabricant d'armes identifié parmi les titres ; non mesuré à l'intérieur des FNB (seules leurs 10 premières positions sont connues)."},
+  "tabac": {"aucun_actif": "Aucun cigarettier parmi les titres ; non mesuré à l'intérieur des FNB."},
+  "jeux_argent": {"aucun_actif": "Aucun exploitant de jeux d'argent parmi les titres ; non mesuré à l'intérieur des FNB."},
+  "aucun": {"sans_effet": "Pas de préférence."}
+ },
+ "secteur_emploi_vers_gics": {
+  "_note": "A12 : plafond plus bas sur le secteur où la personne travaille (son emploi et son portefeuille chuteraient ensemble).",
+  "technologie": ["Information Technology", "Communication Services"],
+  "sante": ["Health Care"],
+  "finance": ["Financials"],
+  "energie": ["Energy"],
+  "industrie": ["Industrials", "Materials"],
+  "commerce": ["Consumer Staples", "Consumer Discretionary"],
+  "telecoms": ["Communication Services"],
+  "immobilier": [], "education": [], "fonction_publique": [], "autre": [], "sans_emploi": [], "etudiant": [], "retraite": []
+ },
+ "secteurs_fnb_vers_gics": {
+  "_note": "Les poids sectoriels des FNB (etf_sector_weights.csv, Yahoo) suivent la nomenclature Morningstar.",
+  "technology": "Information Technology", "communication_services": "Communication Services", "healthcare": "Health Care",
+  "financial_services": "Financials", "energy": "Energy", "industrials": "Industrials", "basic_materials": "Materials",
+  "consumer_defensive": "Consumer Staples", "consumer_cyclical": "Consumer Discretionary", "utilities": "Utilities",
+  "realestate": "Real Estate"
+ },
+ "regions": {
+  "canada": {"toutes": [{"colonne": "region", "valeurs": ["Amérique du Nord"]}, {"colonne": "country", "valeurs": ["Canada", "Canada (fonds)"]}]},
+  "etats_unis": {"toutes": [{"colonne": "region", "valeurs": ["Amérique du Nord"]}, {"colonne": "country", "valeurs": ["États-Unis", "États-Unis (fonds)"]}]},
+  "europe": {"colonne": "region", "valeurs": ["Europe"]},
+  "asie": {"colonne": "region", "valeurs": ["Asie"]},
+  "afrique": {"colonne": "region", "valeurs": ["Afrique"]},
+  "emergents": {"colonne": "kw_risque_pays", "valeurs": ["marche_emergent"]},
+  "monde": {"colonne": "region", "valeurs": ["Monde"]}
+ },
+ "classes": {
+  "actions": {"colonne": "asset_class", "valeurs": ["equity"]},
+  "fnb_actions": {"colonne": "asset_class", "valeurs": ["etf_equity"]},
+  "obligations": {"colonne": "asset_class", "valeurs": ["etf_bond"]},
+  "or": {"colonne": "asset_class", "valeurs": ["etf_commodity"]},
+  "crypto": {"colonne": "asset_class", "valeurs": ["crypto"]}
+ },
+ "E1": {
+  "exclure_directe": {"exclure": {"colonne": "fossil_categorie", "valeurs": ["directe"]}, "plafonner": {"colonne": "kw_exclusions", "valeurs": ["energie_fossile_via_fonds"]}},
+  "exclure_toute_implication": {"exclure": {"colonne": "fossil_categorie", "valeurs": ["directe", "partielle", "indirecte"]}, "plafonner": {"colonne": "kw_exclusions", "valeurs": ["energie_fossile_via_fonds"]}},
+  "limiter": {"plafonner": {"colonne": "fossil_categorie", "valeurs": ["directe", "partielle", "fonds_part_energie"]}},
+  "indifferent": {"sans_effet": "Aucun filtre."}
+ },
+ "E5": {
+  "contrats_de_defense": {"colonne": "kw_exclusions", "valeurs": ["contrats_de_defense"]},
+  "alcool": {"colonne": "kw_exclusions", "valeurs": ["alcool"]},
+  "tests_sur_animaux": {"colonne": "kw_exclusions", "valeurs": ["tests_sur_animaux"]},
+  "atteinte_droits_autochtones": {"colonne": "kw_exclusions", "valeurs": ["atteinte_droits_autochtones"]},
+  "armes": {"aucun_actif": "Aucun titre identifié ; non mesuré à l'intérieur des FNB."},
+  "tabac": {"aucun_actif": "Aucun titre identifié ; non mesuré à l'intérieur des FNB."},
+  "jeux_argent": {"aucun_actif": "Aucun titre identifié ; non mesuré à l'intérieur des FNB."},
+  "energie_nucleaire": {"aucun_actif": "Aucun titre identifié ; non mesuré à l'intérieur des FNB."},
+  "aucune": {"sans_effet": "Aucune exclusion."}
+ },
+ "F2": {
+  "exclure_chine": {"exclure": {"colonne": "kw_risque_pays", "valeurs": ["exposition_chine"]}, "plafonner": {"colonne": "kw_risque_pays", "valeurs": ["exposition_chine_partielle"]}},
+  "exclure_emergents": {"exclure": {"colonne": "kw_risque_pays", "valeurs": ["marche_emergent", "exposition_chine"]}, "plafonner": {"colonne": "kw_risque_pays", "valeurs": ["marche_emergent_partiel"]}},
+  "exclure_devise_instable": {"exclure": {"colonne": "kw_risque_pays", "valeurs": ["devise_instable"]}},
+  "aucune": {"sans_effet": "Aucune exclusion."}
+ },
+ "G3": {
+  "canada_usa": {"accessible": {"colonne": "access_canada", "valeurs": ["directe", "plateforme_crypto"]}, "accessible_aussi_si": "adr_us non vide (cotation américaine, à vérifier auprès du courtier)"},
+  "international": {"sans_effet": "Tous les actifs sont accessibles, sauf via_fnb_seulement."},
+  "je_ne_sais_pas": {"comme": "canada_usa"}
+ }
+}

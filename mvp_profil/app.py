@@ -27,6 +27,7 @@ from __future__ import annotations
 import base64
 import json
 import os
+from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 
@@ -45,6 +46,7 @@ from voix_composant import conversation_vocale
 from profil import (UTILISABLES, appliquer_correctif, connu, deduire, entree, incoherences, niveau_quiz,
                     recouper_rupture, valeur_curseur)
 from simulations import ETAPES
+from synthese import phrase, synthetiser
 
 # Une réponse non validée est redemandée UNE fois, autrement formulée et avec un seuil abaissé ; ensuite on retient
 # la meilleure réponse obtenue (si elle atteint le plancher de 50 %) au lieu de reposer la même question.
@@ -54,7 +56,7 @@ st.set_page_config(page_title="AlphaForge · Profil", page_icon="📊", layout="
 
 
 def reset():
-    for k in ("rp", "replay_trace", "mode_revelation"):
+    for k in ("rp", "replay_trace", "mode_revelation", "persona"):
         st.session_state.pop(k, None)
     st.session_state.update(
         phase="accueil", section=0, sections=SECTIONS, profil={}, en_cours=[], file=[], coherences_posees=set(),
@@ -120,6 +122,20 @@ def retenir_meilleure(cid: str, source: str) -> bool:
     return False
 
 
+def nature(source: str) -> str:
+    """Nature d'une valeur du profil, affichée à l'utilisateur : ce qu'il a dit, ce qu'on a mesuré, ou une hypothèse."""
+    s = source.lower()
+    if s.startswith(("replay", "fourchettes", "test effet", "quiz", "comparaison")):
+        return "mesuré"
+    if "hypothèse" in s:
+        return "hypothèse"
+    if s.startswith(("déduit", "déduction")):
+        return "déduit"
+    if s.startswith("énoncé"):
+        return "énoncé"
+    return "déclaré"
+
+
 def source_ia(r, defaut: str) -> str:
     """« déduit (IA) » quand la valeur découle de ce que l'utilisateur a dit sans qu'il l'ait dite mot pour mot."""
     return "déduit (IA)" if est_deduit(r.motif) else defaut
@@ -168,6 +184,25 @@ def page_accueil():
         if st.button("Questionnaire classique", disabled=not pret, width="stretch"):
             S.phase, S.sections = "questionnaire", SECTIONS
             st.rerun()
+    page_personas()
+
+
+def charger_persona(nom: str):
+    """Mode démonstration : profil fictif de l'énoncé, chargé depuis un fichier versionné (aucun appel au modèle)."""
+    d = json.loads((Path(__file__).parent / "personas" / f"{nom}.json").read_text(encoding="utf-8"))
+    reset()
+    S.profil, S.persona, S.phase = d["profil"], d, "termine"
+    st.rerun()
+
+
+def page_personas():
+    st.divider()
+    st.markdown("**Démonstration : les trois profils fictifs de l'énoncé**")
+    st.caption("Chargés depuis mvp_profil/personas/. Les valeurs tirées de l'énoncé et les hypothèses de test "
+               "sont distinguées dans la colonne « source ».")
+    for col, nom in zip(st.columns(3), ("amira", "mateo", "robert")):
+        if col.button(f"Charger {nom.capitalize()}", width="stretch", key=f"persona_{nom}"):
+            charger_persona(nom)
 
 
 # ---------- Phase 0 : conversation (oral ou écrit) ----------
@@ -489,11 +524,11 @@ def page_questionnaire():
             if r is None:
                 a_preciser([it["critere"]])
             else:
-                S.profil[it["critere"]] = entree([valeur_curseur(it, r)], "curseur", citation=f"{r} {it['unite']}")
+                S.profil[it["critere"]] = entree([valeur_curseur(it, r)], "curseur", citation=f"{r} {it['unite']}", nombre=r)
         elif it["type"] == "quiz":
             idx = [q["options"].index(x) for q, x in zip(it["questions"], r)]
             niveau, score = niveau_quiz(it, idx)
-            S.profil[it["critere"]] = entree([niveau], "quiz", citation=f"{score}/{len(it['questions'])} bonnes réponses")
+            S.profil[it["critere"]] = entree([niveau], "quiz", citation=f"{score}/{len(it['questions'])} bonnes réponses", score=score)
         elif it["type"] == "libre":
             if not r.strip():
                 a_preciser(it["criteres"], motif="Réponse libre vide")
@@ -570,10 +605,12 @@ def oral(item: dict) -> str:
 
 
 def appliquer_coherence(item: dict, choix: str):
-    appliquer_correctif(S.profil, dict(item["options"])[choix], choix)
+    a_redemander = appliquer_correctif(S.profil, dict(item["options"])[choix], choix)
     S.coherences_posees.add(item["id"])
     S.chat += [{"role": "assistant", "content": item["texte"]}, {"role": "user", "content": choix}]
     S.file.pop(0)
+    for cid in a_redemander:  # valeur non devinée : on la redemande (une question de précision par critère)
+        a_preciser([cid], motif="Réponses contradictoires : à préciser")
     st.rerun()
 
 
@@ -602,6 +639,7 @@ def page_precisions():
     if not S.precisions_pretes:
         recuperer_analyses()
     deduire(S.profil)
+    recouper_rupture(S.profil)  # un point de rupture redonné en précision ne dépasse jamais l'observé au replay
     for it in list(S.file):  # ce qui est devenu connu entre-temps (dit au passage, déduit) n'est plus demandé
         if it["kind"] == "libre":
             it["criteres"] = [c for c in it["criteres"] if not connu(S.profil, c)]
@@ -740,6 +778,31 @@ def afficher_dynamiques(details: bool = False):
 
 
 # ---------- Phase 3 : profil ----------
+def afficher_synthese():
+    """Résumé chiffré du profil (synthese.py) : tout est calculé par le code, à partir d'hypothèses déclarées."""
+    if S.get("persona"):
+        st.info(f"Profil fictif de démonstration : **{S.persona['nom']}**. {S.persona['description']}")
+    s = synthetiser(S.profil)
+    st.subheader("Synthèse du profil")
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Niveau de risque", f"{s['niveau']} sur 5 · {s['nom']}")
+    c2.metric("Budget de perte du portefeuille", f"{s['budget_perte_pct']:g} %")
+    c3.metric("Part d'actions indicative", f"{s['part_actions_indicative_pct'][0]} à {s['part_actions_indicative_pct'][1]} %")
+    st.markdown(f"Limité par : **{', '.join(s['limite_par'])}**. Le plus prudent l'emporte.")
+    lignes = []
+    for nom, cle in (("Capacité (ce que vous pouvez perdre)", "capacite"), ("Tolérance déclarée", "tolerance_declaree"),
+                     ("Tolérance observée (mises en situation)", "tolerance_observee")):
+        for f in s[cle]["facteurs"]:
+            lignes.append({"composante": nom, "critère": f["critere"], "réponse": f["valeur"], "effet": f["effet"]})
+    st.dataframe(pd.DataFrame(lignes), hide_index=True, width="stretch")
+    for a in s["alertes"]:
+        st.warning(a)
+    if s["reglages_prudents_appliques"]:
+        st.markdown("**Ce que l'outil ne sait pas** (réglage le plus prudent appliqué) : "
+                    + ", ".join(f"{CRITERES[d['critere']]['nom']} → `{d['valeur']}`" for d in s["reglages_prudents_appliques"]))
+    st.caption("Hypothèse : les tables de capacité, de stress et de part d'actions sont des hypothèses de l'équipe "
+               "(hypotheses_profil.json), pas des normes. Simulation éducative : ce résumé n'est pas un conseil financier.")
+
 def page_termine():
     st.success("Profil terminé. Merci !")
     retours_situations()
@@ -750,6 +813,7 @@ def page_termine():
              + (f", {len(retenus)} retenus avec une confiance plus basse ({', '.join(retenus)})" if retenus else "")
              + (f" et {len(incertains)} incertains ({', '.join(incertains)}) : l'outil appliquera le réglage le plus prudent."
                 if incertains else "."))
+    afficher_synthese()
     integrer_recherches()
     if S.dynamiques:
         st.markdown(f"**{len(S.dynamiques)} critère(s) propre(s) à vous**, tirés de votre dernière réponse :")
@@ -761,6 +825,8 @@ def page_termine():
 
 # ---------- Mise en page ----------
 st.title("Votre profil d'investisseur")
+st.info("**Simulation éducative.** Cet outil n'exécute aucune transaction et ne fournit pas de conseil financier "
+        "personnalisé. Les profils et les montants sont fictifs.", icon="ℹ️")
 if not pret:
     st.warning("Aucun accès au modèle : lancez le site avec les identifiants AWS du datathon (voir mvp_profil/README.md), "
                "ou choisissez « API Anthropic » et collez une clé.")
@@ -773,7 +839,9 @@ with col:
      "termine": page_termine}[S.phase]()
     if S.debats and S.debats[-1]["tours"]:
         d = S.debats[-1]
-        with st.expander(f"Dernier débat des agents ({d['question']}, {len(d['tours'])} tour(s))"):
+        with st.expander(f"Journal des contrôles de la dernière réponse libre ({d['question']}, {len(d['tours'])} passage(s))"):
+            st.caption("Contrôles vérifiables : valeur proposée, citation exacte de vos mots, confiance, accord ou "
+                       "objection du second contrôle. Le code valide ; les modèles ne décident pas.")
             for t in d["tours"]:
                 st.markdown(f"**Tour {t['tour']}** · validés : {', '.join(t['valides']) or 'aucun'}")
                 c1, c2 = st.columns(2)
@@ -801,7 +869,8 @@ with col_profil:
         st.caption(f"⏳ {en_attente} réponse(s) libre(s) en cours d'analyse par les agents…")
     if S.profil:
         df = pd.DataFrame([{"id": c, "critère": CRITERES[c]["nom"], "valeurs": ", ".join(v["valeurs"]) or "—",
-                            "source": v["source"], "confiance": v["confiance"], "statut": v["statut"]}
+                            "nature": nature(v["source"]), "source": v["source"], "confiance": v["confiance"],
+                            "statut": v["statut"]}
                            for c, v in S.profil.items()])
         st.dataframe(df, hide_index=True, width="stretch")
         if S.dynamiques:
@@ -810,7 +879,8 @@ with col_profil:
         export = {"genere_le": datetime.now().isoformat(timespec="seconds"), "modele": backend_pour(cle).model,
                   "acces": backend_pour(cle).nom, "seuil": seuil, "profil": S.profil,
                   "criteres_dynamiques": S.dynamiques, "reponse_ouverte": S.reponse_ouverte, "debats": S.debats,
-                  "replay": S.get("replay_trace")}
+                  "replay": S.get("replay_trace"), "synthese": synthetiser(S.profil) if S.phase == "termine" else None,
+                  "persona": (S.get("persona") or {}).get("nom")}
         st.download_button("Télécharger le profil (JSON)", json.dumps(export, ensure_ascii=False, indent=2, default=str),
                            file_name="profil_investisseur.json", mime="application/json", width="stretch")
     else:
