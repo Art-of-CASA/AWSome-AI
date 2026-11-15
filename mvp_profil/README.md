@@ -122,6 +122,9 @@ Le thème clair est configuré par `.streamlit/config.toml` à la racine du dép
 | `vocabulaire_actifs.json` | Dimensions et valeurs réellement présentes parmi les 111 actifs |
 | `personas/` | Profils fictifs, sources de l'énoncé et hypothèses de test distinguées |
 | `voix_composant.py`, `composant_voix/index.html` | Composant vocal commun aux étapes orales |
+| `recommandation/` | **Étape 4, les propositions** : contraintes tirées du profil, appariement, mini-portefeuille fictif, recherche, comparaison, « Et si… ? », agents Conseiller et Explicateur, vérificateur de fidélité, écrans (`ecrans.py`). Lit le profil sans le modifier |
+| `recommandation/donnees/` | Univers, prix en CAD, positions des FNB et copies de `config/`, préparés par `scripts/build_donnees_recommandation.py` |
+| `test_reco_*.py`, `reco_tests_commun.py` | Suites des propositions : contrat de données, moteur, agents, site entier |
 | `evaluer_classement.py`, `validation/phrases_etiquetees.json` | Évaluation sur 51 phrases et 88 couples, dont des échanges multi-tours |
 
 ## Vérifications hors ligne

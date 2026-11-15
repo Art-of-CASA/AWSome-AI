@@ -1,0 +1,292 @@
+{
+ "limite": "Principales positions seulement (exposition minimale connue) ; secteurs selon les fiches de fonds.",
+ "positions": {
+  "ESGV": {
+   "AAPL": 0.080584,
+   "AMZN": 0.040452,
+   "GOOGL": 0.060672,
+   "META": 0.026679,
+   "MSFT": 0.063776,
+   "NVDA": 0.089166,
+   "TSLA": 0.017347
+  },
+  "ICLN": {
+   "IBE.MC": 0.070403,
+   "VWS.CO": 0.033225
+  },
+  "ITA": {
+   "BA": 0.06825,
+   "LMT": 0.056873
+  },
+  "QQQ": {
+   "AAPL": 0.081592,
+   "AMZN": 0.042053,
+   "GOOGL": 0.026637,
+   "META": 0.029664,
+   "MSFT": 0.062867,
+   "NVDA": 0.080006,
+   "TSLA": 0.03407
+  },
+  "SMH": {
+   "000660.KS": 0.041448,
+   "2330.TW": 0.095757,
+   "ASML.AS": 0.04496,
+   "NVDA": 0.201925
+  },
+  "SPY": {
+   "AAPL": 0.077007,
+   "AMZN": 0.036119,
+   "GOOGL": 0.045388,
+   "META": 0.020763,
+   "MSFT": 0.059332,
+   "NVDA": 0.075823,
+   "TSLA": 0.017252
+  },
+  "USMV": {
+   "JNJ": 0.0147,
+   "MSFT": 0.015853,
+   "XOM": 0.016089
+  },
+  "VDY.TO": {
+   "CNQ.TO": 0.055273,
+   "ENB.TO": 0.059447,
+   "MFC.TO": 0.041015,
+   "RY.TO": 0.158413,
+   "TD.TO": 0.111391
+  },
+  "VEA": {
+   "005930.KS": 0.028149,
+   "ASML.AS": 0.021403,
+   "AZN.L": 0.007496,
+   "HSBA.L": 0.010495,
+   "RY.TO": 0.008518,
+   "SHEL.L": 0.008566
+  },
+  "VNQ": {
+   "O": 0.028477
+  },
+  "VT": {
+   "2330.TW": 0.016246,
+   "AAPL": 0.041058,
+   "AMZN": 0.020609,
+   "GOOGL": 0.030908,
+   "META": 0.013592,
+   "MSFT": 0.032492,
+   "NVDA": 0.045432
+  },
+  "VWO": {
+   "0700.HK": 0.028167,
+   "2330.TW": 0.15745,
+   "9988.HK": 0.02112,
+   "HDFCBANK.NS": 0.006969,
+   "RELIANCE.NS": 0.006882
+  },
+  "XIU.TO": {
+   "CNQ.TO": 0.039143,
+   "ENB.TO": 0.037182,
+   "RY.TO": 0.095283,
+   "SHOP.TO": 0.064465,
+   "TD.TO": 0.069282
+  },
+  "ZLB.TO": {
+   "FTS.TO": 0.044204
+  }
+ },
+ "secteurs": {
+  "ESGV": {
+   "Communication Services": 0.1136,
+   "Consumer Discretionary": 0.1046,
+   "Consumer Staples": 0.0351,
+   "Energy": 0.0,
+   "Financials": 0.1156,
+   "Health Care": 0.1059,
+   "Industrials": 0.0392,
+   "Information Technology": 0.4438,
+   "Materials": 0.0163,
+   "Real Estate": 0.0246,
+   "Utilities": 0.0013
+  },
+  "ICLN": {
+   "Communication Services": 0.0,
+   "Consumer Discretionary": 0.0,
+   "Consumer Staples": 0.0,
+   "Energy": 0.0,
+   "Financials": 0.0,
+   "Health Care": 0.0,
+   "Industrials": 0.2019,
+   "Information Technology": 0.2869,
+   "Materials": 0.0162,
+   "Real Estate": 0.0,
+   "Utilities": 0.495
+  },
+  "ITA": {
+   "Communication Services": 0.0,
+   "Consumer Discretionary": 0.0,
+   "Consumer Staples": 0.0,
+   "Energy": 0.0,
+   "Financials": 0.0,
+   "Health Care": 0.0,
+   "Industrials": 1.0,
+   "Information Technology": 0.0,
+   "Materials": 0.0,
+   "Real Estate": 0.0,
+   "Utilities": 0.0
+  },
+  "QQQ": {
+   "Communication Services": 0.1109,
+   "Consumer Discretionary": 0.1104,
+   "Consumer Staples": 0.0679,
+   "Energy": 0.0051,
+   "Financials": 0.0022,
+   "Health Care": 0.0482,
+   "Industrials": 0.0526,
+   "Information Technology": 0.5801,
+   "Materials": 0.0107,
+   "Real Estate": 0.0,
+   "Utilities": 0.0118
+  },
+  "SMH": {
+   "Communication Services": 0.0,
+   "Consumer Discretionary": 0.0,
+   "Consumer Staples": 0.0,
+   "Energy": 0.0,
+   "Financials": 0.0,
+   "Health Care": 0.0,
+   "Industrials": 0.0,
+   "Information Technology": 1.0,
+   "Materials": 0.0,
+   "Real Estate": 0.0,
+   "Utilities": 0.0
+  },
+  "SPY": {
+   "Communication Services": 0.0842,
+   "Consumer Discretionary": 0.0919,
+   "Consumer Staples": 0.0488,
+   "Energy": 0.0391,
+   "Financials": 0.1203,
+   "Health Care": 0.1025,
+   "Industrials": 0.0761,
+   "Information Technology": 0.3823,
+   "Materials": 0.0158,
+   "Real Estate": 0.018,
+   "Utilities": 0.0209
+  },
+  "USMV": {
+   "Communication Services": 0.0426,
+   "Consumer Discretionary": 0.0522,
+   "Consumer Staples": 0.0982,
+   "Energy": 0.0432,
+   "Financials": 0.139,
+   "Health Care": 0.1454,
+   "Industrials": 0.062,
+   "Information Technology": 0.3134,
+   "Materials": 0.0106,
+   "Real Estate": 0.0251,
+   "Utilities": 0.0681
+  },
+  "VDY.TO": {
+   "Communication Services": 0.0229,
+   "Consumer Discretionary": 0.0273,
+   "Consumer Staples": 0.0032,
+   "Energy": 0.2834,
+   "Financials": 0.5999,
+   "Health Care": 0.0009,
+   "Industrials": 0.0028,
+   "Information Technology": 0.0038,
+   "Materials": 0.0205,
+   "Real Estate": 0.0,
+   "Utilities": 0.0352
+  },
+  "VEA": {
+   "Communication Services": 0.0351,
+   "Consumer Discretionary": 0.0705,
+   "Consumer Staples": 0.0521,
+   "Energy": 0.0506,
+   "Financials": 0.2435,
+   "Health Care": 0.078,
+   "Industrials": 0.1771,
+   "Information Technology": 0.167,
+   "Materials": 0.073,
+   "Real Estate": 0.0233,
+   "Utilities": 0.0299
+  },
+  "VNQ": {
+   "Communication Services": 0.0035,
+   "Consumer Discretionary": 0.0,
+   "Consumer Staples": 0.0,
+   "Energy": 0.0015,
+   "Financials": 0.0,
+   "Health Care": 0.0,
+   "Industrials": 0.0002,
+   "Information Technology": 0.0,
+   "Materials": 0.0,
+   "Real Estate": 0.9948,
+   "Utilities": 0.0
+  },
+  "VT": {
+   "Communication Services": 0.0751,
+   "Consumer Discretionary": 0.0848,
+   "Consumer Staples": 0.0437,
+   "Energy": 0.04,
+   "Financials": 0.1584,
+   "Health Care": 0.0861,
+   "Industrials": 0.1091,
+   "Information Technology": 0.3201,
+   "Materials": 0.0386,
+   "Real Estate": 0.0216,
+   "Utilities": 0.0226
+  },
+  "VWO": {
+   "Communication Services": 0.0639,
+   "Consumer Discretionary": 0.0934,
+   "Consumer Staples": 0.0323,
+   "Energy": 0.0406,
+   "Financials": 0.1948,
+   "Health Care": 0.041,
+   "Industrials": 0.0747,
+   "Information Technology": 0.3377,
+   "Materials": 0.0741,
+   "Real Estate": 0.0215,
+   "Utilities": 0.0261
+  },
+  "XEQT.TO": {
+   "Communication Services": 0.055,
+   "Consumer Discretionary": 0.0732,
+   "Consumer Staples": 0.0452,
+   "Energy": 0.0746,
+   "Financials": 0.2099,
+   "Health Care": 0.0744,
+   "Industrials": 0.1147,
+   "Information Technology": 0.2393,
+   "Materials": 0.0676,
+   "Real Estate": 0.0202,
+   "Utilities": 0.0261
+  },
+  "XIU.TO": {
+   "Communication Services": 0.0154,
+   "Consumer Discretionary": 0.0368,
+   "Consumer Staples": 0.0339,
+   "Energy": 0.1801,
+   "Financials": 0.4102,
+   "Health Care": 0.0,
+   "Industrials": 0.0794,
+   "Information Technology": 0.1006,
+   "Materials": 0.1162,
+   "Real Estate": 0.002,
+   "Utilities": 0.0254
+  },
+  "ZLB.TO": {
+   "Communication Services": 0.0849,
+   "Consumer Discretionary": 0.0882,
+   "Consumer Staples": 0.1804,
+   "Energy": 0.0182,
+   "Financials": 0.2674,
+   "Health Care": 0.0,
+   "Industrials": 0.0854,
+   "Information Technology": 0.0134,
+   "Materials": 0.0557,
+   "Real Estate": 0.0385,
+   "Utilities": 0.1679
+  }
+ }
+}

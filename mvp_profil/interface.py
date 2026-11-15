@@ -18,7 +18,8 @@ def marque():
 
 
 def entete(phase: str):
-    contexte = "Votre espace découverte" if phase == "accueil" else "Votre profil d’investisseur"
+    contexte = ("Votre espace découverte" if phase == "accueil" else "Vos propositions" if phase == "recommandation"
+                else "Votre profil d’investisseur")
     st.html(f'<header class="af-header"><div class="af-brand">{marque()}</div>'
             f'<span class="af-header-context">{contexte}</span>'
             '<span class="af-badge"><i></i> Simulation éducative</span></header>')
@@ -31,6 +32,8 @@ def etape(phase: str) -> int:
         return 1
     if phase == "simulations":
         return 2
+    if phase == "recommandation":
+        return 4
     return 3
 
 
@@ -38,7 +41,8 @@ def parcours(phase: str):
     courant = etape(phase)
     labels = [("Vous connaître", "Votre projet et vos préférences"),
               ("Passer à l’expérience", "Trois situations concrètes"),
-              ("Comprendre votre profil", "Une synthèse expliquée")]
+              ("Comprendre votre profil", "Une synthèse expliquée"),
+              ("Explorer vos propositions", "Un portefeuille fictif et ses preuves")]
     lignes = []
     for i, (titre, detail) in enumerate(labels, 1):
         classe = "done" if i < courant else "active" if i == courant else ""

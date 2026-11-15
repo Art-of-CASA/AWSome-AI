@@ -1,0 +1,23 @@
+{
+ "sources": {
+  "data_extended/asset_criteria.csv": "9a81a89f1256dda1e34aa7e7733b09438897d233a4635cf1cc04bc2829fd46da",
+  "config/correspondances.json": "240354fa5e2e2402a035e7bf731ba8e3a4b40b121a8bae849538fc215d431076",
+  "config/hypotheses_recommandation.json": "a9585779f02388eeec4b94e4bbbe99f41abbadc2a6c1b3d6e74837bfecd2509f",
+  "config/regles_appariement.json": "f7a9e57c37d406d9475f64a8858444d4c0847db3f6c2a88570616ade13b49b6e",
+  "config/sources_colonnes.json": "f47504134858af483e1bc1ce3472bd26bd9e1a19023f540b4cbd7024b3a428d4",
+  "Datathon2026/alphaforge_starter/prices_daily.csv": "ff2a3f2d0a7d72ea835e8d616d041e0510f018340cef3d3e55b918830e8a569d",
+  "data_extended/prices_daily.csv": "9f30c99209c6c9a5e7cd7a93ba7ff18bafdb9d08914255fdadaa350992924d78",
+  "data_extended/fx_to_cad_daily.csv": "4106606f6372e682602e112438e765527b3b65214b162ceb70a51d0e9e2f415f",
+  "data_extra/etf_top_holdings.csv": "46e60028b352ab71716bcee3aa18ab349f9cc30224cd9f147bdd78f62d592151",
+  "data_extended/etf_top_holdings.csv": "e27b8709d1d17d88ada3a20cd040d87f332401b6977e64ae1f256a6dca5f89d6",
+  "data_extra/etf_sector_weights.csv": "105f9b5d73ffcee3ef076c5baf32fc8807837a7b877af07eb8050f85fcb7aae4",
+  "data_extended/etf_sector_weights.csv": "3f907c051eac41fda8a8a458f1bc13ba9956b40487b7ae3fbbbe2c99cac27765",
+  "config/correspondances_positions_fnb.json": "728c7fb6ee83008d63a40e3ad6c875c30abfd82531e898464d759563652fb262"
+ },
+ "periode": [
+  "2021-11-12",
+  "2026-11-12"
+ ],
+ "nb_actifs": 111,
+ "nb_series_de_prix": 111
+}

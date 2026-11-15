@@ -149,6 +149,7 @@ html { scroll-behavior: smooth; }
 [class*="st-key-hypothese_analyse_"] details { border-left: 4px solid var(--af-analyse); }
 [class*="st-key-hypothese_preciser_"] summary { background: #b4553f12; }
 [class*="st-key-hypothese_confirmer_"] summary { background: #c08a2d12; }
+.st-key-vers_propositions { background: #fff; border-radius: 14px; border-left: 4px solid var(--af-green) !important; padding: 16px 20px !important; margin-bottom: 14px; }
 @media (min-width: 1100px) { .st-key-profile_rail { position: sticky; top: 30px; } }
 @media (max-width: 1100px) {
   [data-testid="stMainBlockContainer"] { padding: 1rem 1.7rem 3rem; }
