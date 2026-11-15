@@ -33,3 +33,6 @@ cdk.out/
 # Organizer briefing documents (shared separately by PolyFinances; the starter data stays tracked)
 Datathon2026/*.pdf
 Datathon2026/*.pptx
+
+# Cache des mots-clés dynamiques créés par l'agent chercheur (propre à chaque serveur)
+mvp_profil/cache/
