@@ -1,6 +1,6 @@
-"""Écrans des propositions (Streamlit), dans la charte de mvp_profil/design.css. Aucune décision ici.
+c""Écrans des propositions (Streamlit), dans la charte de mvp_pro"il/design.css. Aucune décision ici.
 
-Quatrième étape du parcours : mini-portefeuille, recherche et fiche d'actif, comparaison, demande d'un titre,
+Quatrième étape du parcours : mini-porte"euille, recherche et fiche d'actif, comparaison, demande d'un titre,
 « Et si… ? », « Pourquoi ? ». Tout vient de recommandation/analyse.py ; le profil de la session est LU, jamais modifié.
 """
 from __future__ import annotations
@@ -434,7 +434,7 @@ def page_pourquoi(a: Analyse):
     with onglets[0]:
         st.markdown(f"**{s['phrase']}** Limité par : {', '.join(s['limite_par'])}.")
         st.markdown("**Exclusions dures** (ne se compensent jamais)")
-        st.dataframe(_df(s["exclusions"] or [{"critere": "—", "libelle": "aucune", "origine": ""}]).rename(columns={"critere": "critère", "libelle": "règle"}),
+        st.dataframe(_df([{**x, "critere": _nom_critere(x["critere"])} for x in s["exclusions"]] or [{"critere": "—", "libelle": "aucune", "origine": ""}]).rename(columns={"critere": "critère", "libelle": "règle"}),
                      hide_index=True, width="stretch")
         p = s["plafonds"]
         st.markdown("**Plafonds**")
@@ -447,10 +447,10 @@ def page_pourquoi(a: Analyse):
                                   [(g["libelle"], g["plafond_pct"]) for g in s["plafonds_groupes"]], columns=["plafond", "% ou niveau"]).astype(str),
                      hide_index=True, width="stretch")
         st.markdown("**Préférences pondérées** (ne compensent jamais une tension)")
-        st.dataframe(_df(s["preferences"]).rename(columns={"critere": "critère", "libelle": "préférence", "poids": "multiplicateur"}), hide_index=True, width="stretch")
+        st.dataframe(_df([{**x, "critere": _nom_critere(x["critere"])} for x in s["preferences"]]).rename(columns={"critere": "critère", "libelle": "préférence", "poids": "multiplicateur"}), hide_index=True, width="stretch")
         if s["reglages_prudents"]:
             st.markdown("**Réglages prudents appliqués faute de réponse** (signalés, jamais présentés comme une réponse)")
-            st.dataframe(_df(s["reglages_prudents"])[["critere", "nom", "libelle"]].rename(columns={"critere": "critère", "libelle": "réglage"}), hide_index=True, width="stretch")
+            st.dataframe(_df([{**x, "critere": _nom_critere(x["critere"])} for x in s["reglages_prudents"]])[["critere", "nom", "libelle"]].rename(columns={"critere": "critère", "libelle": "réglage"}), hide_index=True, width="stretch")
         for x in s["sans_effet"]:
             st.caption(f"Filtre sans effet — {x['critere']} = {x['valeur']} : {x['raison']}")
         for x in s["notes_dynamiques"]:
