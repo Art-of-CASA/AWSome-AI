@@ -5,7 +5,7 @@ Parcours « conversation » (recommandé) : une discussion orale ou écrite avec
 en QCM dans une page « Compléments », puis le parcours continue comme ci-dessous à partir de la page « Vous et le risque ».
 
 Parcours « questionnaire classique » :
-  1. Questionnaire FIXE (identique pour tous) en 6 pages : QCM, curseurs, quiz, et 2 questions libres.
+  1. Banque commune de 6 pages, ordre adaptatif : QCM, curseurs, quiz et 2 questions libres.
      Les réponses fermées donnent directement les valeurs (pas d'IA). Les réponses libres sont classées
      par deux agents Claude Haiku 5.5 qui débattent, EN ARRIÈRE-PLAN pendant que l'utilisateur continue.
   1 bis. Trois mises en situation (replay de 2022, fourchettes de résultats, effet de mode) : on mesure ce que
@@ -38,7 +38,7 @@ import chercheur
 import criteres_dynamiques
 import entretien
 from agents import (AgentError, aws_identifiants_presents, backend_anthropic, backend_bedrock, debattre, meilleur,
-                    retenable, seuil_essai)
+                    retenable, seuil_essai, _citation_presente)
 from criteres import CRITERES, DECLARATIFS, SECTIONS, est_deduit
 from criteres_dynamiques import AIDE_OUVERTE, QUESTION_OUVERTE
 from entretien import CRITERES_CONVERSATION, MAX_TOURS, OUVERTURE, synthese_vocale, transcrire
@@ -46,10 +46,11 @@ from voix_composant import conversation_vocale
 from profil import (UTILISABLES, appliquer_correctif, connu, deduire, entree, incoherences, niveau_quiz,
                     recouper_rupture, valeur_curseur)
 from simulations import ETAPES
-from synthese import phrase, synthetiser
+from synthese import phrase, synthetiser, libelle_valeur
+from pilotage import prioriser_criteres, prioriser_items, prioriser_sections
 
 # Une réponse non validée est redemandée UNE fois, autrement formulée et avec un seuil abaissé ; ensuite on retient
-# la meilleure réponse obtenue (si elle atteint le plancher de 50 %) au lieu de reposer la même question.
+# une réponse vérifiée par le critique (si elle atteint le plancher de 50 %) ; un désaccord reste incertain.
 MAX_RELANCES = 1
 
 st.set_page_config(page_title="AlphaForge · Profil", page_icon="📊", layout="wide")
@@ -111,7 +112,7 @@ def a_preciser(criteres: list[str], texte: str | None = None, echanges=None, mot
 
 
 def retenir_meilleure(cid: str, source: str) -> bool:
-    """Après la reformulation : on garde la meilleure réponse obtenue (« retenu »), ou « incertain » sous le plancher."""
+    """Après la reformulation : accord sous le seuil retenu, désaccord ou contrôle absent incertain."""
     b = S.meilleurs.get(cid)
     if retenable(b):
         S.profil[cid] = entree(b.valeurs, source, b.citation, b.confiance, "retenu",
@@ -174,6 +175,7 @@ def page_accueil():
         if st.button("Commencer en conversation", type="primary", disabled=not pret, width="stretch"):
             # suivi : {critère: nb de réponses au moment où il a été jugé « à reformuler »} ; reformules : déjà redemandés
             S.conv = {"echanges": [], "question": OUVERTURE, "restants": list(CRITERES_CONVERSATION), "jobs": [],
+                      "analyses_couvertes": {}, "versions_integrees": {}, "revisions": {}, "relances_posees": {},
                       "tours": 0, "fin": False, "erreur": None, "suivi": {}, "reformules": []}
             dire(OUVERTURE, "conv:0")
             S.phase = "conversation"
@@ -182,7 +184,7 @@ def page_accueil():
         st.markdown("**📝 Questionnaire classique**\n\nToutes les questions sous forme de choix et de réponses "
                     "écrites, page par page.")
         if st.button("Questionnaire classique", disabled=not pret, width="stretch"):
-            S.phase, S.sections = "questionnaire", SECTIONS
+            S.phase, S.sections = "questionnaire", prioriser_sections(S.profil, SECTIONS)
             st.rerun()
     page_personas()
 
@@ -221,7 +223,7 @@ def sections_apres_conversation(manquants: list[str]) -> list[dict]:
                 complements.append({**it, "criteres": [c for c in crits if c in manquants]} if it["type"] == "libre" else it)
         if items:
             restes.append({**sec, "items": items})
-    return ([{"titre": "Compléments", "items": complements}] if complements else []) + restes
+    return prioriser_sections(S.profil, ([{"titre": "Compléments", "items": complements}] if complements else []) + restes)
 
 
 def _clore(cid: str):
@@ -230,6 +232,31 @@ def _clore(cid: str):
     if cid in c["restants"]:
         c["restants"].remove(cid)
     c["suivi"].pop(cid, None)
+    c.get("relances_posees", {}).pop(cid, None)
+
+
+def planifier_analyse_conversation():
+    """Coalesce les réponses arrivées pendant un contrôle, sans analyser deux fois le même instantané."""
+    c = S.conv
+    n = len(c["echanges"])
+    if not n:
+        return
+    en_verif = {cid for j in c["jobs"] for cid in j["criteres"] + j.get("facultatifs", [])}
+    couvertes = c.setdefault("analyses_couvertes", {})
+    revisions = list(c.setdefault("revisions", {}))
+    candidats = prioriser_criteres(S.profil, list(dict.fromkeys(c["restants"] + revisions)))
+    a_couvrir = [cid for cid in candidats if cid not in en_verif and couvertes.get(cid, 0) < n]
+    autres = [cid for cid in facultatifs(list(CRITERES_CONVERSATION) + revisions)
+              if cid not in en_verif and couvertes.get(cid, 0) < n]
+    if not a_couvrir and not autres:
+        return
+    relances = c.setdefault("relances_posees", {})
+    seuils = {cid: seuil_essai(seuil, 1 if cid in relances and n > relances[cid] else 0)
+              for cid in a_couvrir + autres}
+    fut = executeur().submit(entretien.analyser, backend_pour(cle), list(c["echanges"]), a_couvrir, seuils, autres)
+    c["jobs"].append({"future": fut, "criteres": a_couvrir, "facultatifs": autres, "n": n,
+                      "revisions": {cid: c["revisions"][cid] for cid in a_couvrir if cid in revisions}})
+    couvertes.update({cid: n for cid in a_couvrir + autres})
 
 
 def appliquer_verifications():
@@ -242,12 +269,40 @@ def appliquer_verifications():
     """
     c = S.conv
     for job in [j for j in c["jobs"] if j["future"].done()]:
+        if job["n"] < len(c["echanges"]):
+            c["jobs"].remove(job)
+            continue  # le rattrapage vérifiera le dernier texte, qui peut corriger l'ancien
         try:
             resultats = job["future"].result()
         except AgentError:
             resultats = {}
         for cid in job["criteres"]:
+            versions = c.setdefault("versions_integrees", {})
+            if job["n"] < versions.get(cid, 0):
+                continue  # une ancienne tâche ne remplace jamais une réponse plus récente
+            versions[cid] = job["n"]
             r = resultats.get(cid)
+            revision = cid in job.get("revisions", [])
+            if revision:
+                tour_correction = job["revisions"][cid]
+                if r and r.valide and r.valeurs == S.profil[cid]["valeurs"]:
+                    c["revisions"].pop(cid, None)
+                    continue  # information inchangée : ne pas la reclasser à chaque tour suivant
+                if not r or not _citation_presente(r.citation, c["echanges"][tour_correction - 1:job["n"]]):
+                    continue  # une ancienne citation ne prouve pas une correction de la dernière réponse
+                if c["revisions"].get(cid, 0) <= job["n"]:
+                    c["revisions"].pop(cid, None)
+                if r.valeurs == S.profil[cid]["valeurs"]:
+                    continue
+                if not r.valide:
+                    precedent = S.profil[cid]
+                    S.profil[cid] = entree([], "correction à préciser", statut="à préciser", confiance=0.0,
+                                           motif="La correction doit être clarifiée", precedent=precedent)
+                    if cid not in CRITERES_CONVERSATION:
+                        a_preciser([cid], echanges=list(c["echanges"]), motif="Correction à confirmer")
+                        continue
+                    if cid not in c["restants"]:
+                        c["restants"].append(cid)
             if r is not None and r.valeurs:
                 S.meilleurs[cid] = meilleur(S.meilleurs.get(cid), r)
             if r is not None and r.valide:
@@ -257,7 +312,7 @@ def appliquer_verifications():
             elif r is not None and r.valeurs:
                 if cid not in c["suivi"]:
                     c["suivi"][cid] = len(c["echanges"])  # la prochaine réplique le reformulera
-                elif job["n"] >= c["suivi"][cid] + 2:     # cette analyse inclut la réponse à la reformulation
+                elif cid in c.get("relances_posees", {}) and job["n"] > c["relances_posees"][cid]:
                     retenir_meilleure(cid, "conversation (IA)")
                     _clore(cid)
                 if cid in c["suivi"] and cid not in c["restants"]:
@@ -274,16 +329,19 @@ def appliquer_verifications():
         S.debats.append({"question": "conversation", "tours": [],
                          "resultats": {k: vars(v) for k, v in resultats.items()}})
         c["jobs"].remove(job)
+    planifier_analyse_conversation()
 
 
 def fin_conversation():
     c = S.conv
     with st.spinner("Les agents terminent leurs vérifications…"):
-        for job in c["jobs"]:
-            job["future"].result() if not job["future"].exception() else None
-    appliquer_verifications()
+        planifier_analyse_conversation()
+        while c["jobs"]:
+            for job in list(c["jobs"]):
+                job["future"].result() if not job["future"].exception() else None
+            appliquer_verifications()
     for cid in list(c["suivi"]):  # reformulation sans réponse claire : meilleure réponse obtenue
-        if retenir_meilleure(cid, "conversation (IA)"):
+        if cid in c["reformules"] and retenir_meilleure(cid, "conversation (IA)"):
             _clore(cid)
     manquants = [cid for cid in CRITERES_CONVERSATION if S.profil.get(cid, {}).get("statut") not in UTILISABLES]
     S.sections, S.section, S.phase = sections_apres_conversation(manquants), 0, "questionnaire"
@@ -356,26 +414,23 @@ def voix_b64(texte: str) -> str:
 def repondre(texte: str):
     """Un tour de conversation : on n'attend que la réplique ; le classement part en arrière-plan."""
     c = S.conv
-    en_verif = {cid for j in c["jobs"] for cid in j["criteres"] + j.get("facultatifs", [])}
-    a_couvrir = [cid for cid in c["restants"] if cid not in en_verif]
-    autres = [cid for cid in facultatifs(CRITERES_CONVERSATION) if cid not in en_verif]
     c["echanges"].append((c["question"], texte))
-    if a_couvrir or autres:  # classificateur puis critique, pendant que l'IA parle et que l'utilisateur répond
-        seuils = {cid: seuil_essai(seuil, 1 if cid in c["suivi"] else 0) for cid in a_couvrir + autres}  # 65 % si reformulé
-        fut = executeur().submit(entretien.analyser, backend_pour(cle), list(c["echanges"]), a_couvrir, seuils, autres)
-        c["jobs"].append({"future": fut, "criteres": a_couvrir, "facultatifs": autres, "n": len(c["echanges"])})
+    if entretien.demande_correction(texte):
+        c.setdefault("revisions", {}).update({cid: len(c["echanges"]) for cid in DECLARATIFS if connu(S.profil, cid)})
+    planifier_analyse_conversation()
     # L'IA reformule une seule fois ce qui a été abordé sans être clair, et ne redemande jamais un sujet déjà reformulé.
-    a_reformuler = [cid for cid in c["restants"] if cid in c["suivi"] and cid not in c["reformules"]]
-    nouveaux = [cid for cid in c["restants"] if cid not in c["suivi"]]
+    a_reformuler = prioriser_criteres(S.profil, [cid for cid in c["restants"] if cid in c["suivi"] and cid not in c["reformules"]])[:1]
+    nouveaux = prioriser_criteres(S.profil, [cid for cid in c["restants"] if cid not in c["suivi"]])
     try:
         pistes = {cid: (S.meilleurs[cid].valeurs, S.meilleurs[cid].citation) for cid in a_reformuler
                   if S.meilleurs.get(cid) and S.meilleurs[cid].valeurs}  # « si je comprends bien… ? »
         rep = entretien.replique(backend_pour(cle), c["echanges"], nouveaux, a_reformuler, pistes)
     except AgentError as e:
-        c["echanges"].pop()
         c["erreur"] = str(e)
+        c["question"] = "La réponse vocale est indisponible. Votre réponse est conservée ; vous pouvez continuer ou passer aux questions à choix."
         st.rerun()
     c["reformules"] += a_reformuler
+    c.setdefault("relances_posees", {}).update({cid: len(c["echanges"]) for cid in a_reformuler})
     c["tours"] += 1
     fin = rep.termine or c["tours"] >= MAX_TOURS
     message = rep.message if rep.termine or not fin else \
@@ -461,7 +516,7 @@ def page_questionnaire():
     recuperer_analyses(attendre=False)
     deduire(S.profil)
     sec = SECTIONS[S.section]
-    items = [x for x in (a_demander(it) for it in sec["items"]) if x]
+    items = prioriser_items(S.profil, [x for x in (a_demander(it) for it in sec["items"]) if x])
     retires = [it for it in sec["items"] if not a_demander(it)]
     if not items:
         S.retires += len(retires)
@@ -645,6 +700,9 @@ def page_precisions():
             it["criteres"] = [c for c in it["criteres"] if not connu(S.profil, c)]
             if not it["criteres"]:
                 S.file.remove(it)
+    ordre = prioriser_criteres(S.profil, [c for it in S.file if it["kind"] == "libre" for c in it["criteres"]])
+    rang = {c: i for i, c in enumerate(ordre)}
+    S.file.sort(key=lambda it: -1 if it["kind"] == "coherence" else min(rang[c] for c in it["criteres"]))
     if not S.file:  # plus rien à préciser : on vérifie la cohérence d'ensemble
         nouvelles = [c for c in incoherences(S.profil) if c["id"] not in S.coherences_posees]
         if nouvelles:
@@ -737,7 +795,7 @@ def integrer_recherches() -> bool:
         try:
             criteres_dynamiques.appliquer_etiquetage(c, job["future"].result())
         except Exception as e:  # noqa: BLE001  (réseau, modèle : le critère reste visible, à revoir)
-            c.update(etiquetage="echec", motif=f"Recherche impossible : {e}")
+            c.update(etiquetage="echec", applicable=False, motif=f"Recherche impossible : {e}")
             c["regle"] = criteres_dynamiques.regle(c)
         S.recherches.remove(job)
     return bool(S.recherches)
@@ -756,7 +814,8 @@ def suivi_recherches():
 
 def afficher_dynamiques(details: bool = False):
     for c in S.dynamiques:
-        marque = "✅" if c["statut"] == "validé" else f"☑️ retenu ({c['confiance']:.0%})"
+        marque = ("✅" if c["statut"] == "validé" else f"☑️ retenu ({c['confiance']:.0%})"
+                  if c["statut"] == "retenu" else "❓ À préciser — aucun filtre automatique")
         if c.get("etiquetage") == "en_attente":
             marque += " ⏳"
         st.markdown(f"{marque} **{c['id']} · {c['nom']}**  \n{c['regle']}  \n<small>« {c['citation']} »</small>",
@@ -766,15 +825,41 @@ def afficher_dynamiques(details: bool = False):
                 st.caption(c.get("definition_mot_cle", ""))
                 for v in c["preuves"]:
                     lien = f" ([source]({v['url']}))" if v.get("url") else f" ({v['source']})"
-                    st.markdown(f"- **{v['ticker']}** : {v['valeur']} — « {v['preuve']} »{lien}")
+                    etat = {"oui": "lien établi", "partiel": "lien partiel", "non_concerne": "absence de lien étayée"}.get(v["valeur"], v["valeur"])
+                    st.markdown(f"- **{v['ticker']}** : {etat} — « {v['preuve']} »{lien}")
                 if not c["preuves"]:
-                    st.markdown("- Aucun actif de l'univers n'est concerné, d'après la recherche.")
+                    st.markdown("- Aucun lien établi par cette recherche. Une absence de résultat ne vérifie pas l'absence d'exposition.")
                 rech = c.get("recherche", {})
+                couverture = rech.get("couverture", {})
+                if couverture:
+                    st.caption(f"Couverture : {couverture['avec_verdict']} actifs avec verdict étayé sur {couverture['total']}. "
+                               f"{couverture['inconnus']} restent inconnus. Les principales positions des FNB donnent une exposition minimale connue.")
+                if rech.get("inconnus"):
+                    st.caption("Non vérifiés : " + ", ".join(rech["inconnus"]))
                 st.caption(("Repris du cache (recherche déjà faite le " + rech.get("cree_le", "")[:10] + ")")
                            if rech.get("depuis_cache") else
                            f"Recherche en {rech.get('duree_s', '?')} s, {len(rech.get('appels_outils', []))} appel(s) "
                            f"d'outils, {len(rech.get('rejetes', []))} verdict(s) écarté(s) (preuve introuvable ou "
                            "refusée par le critique)")
+        if details and criteres_dynamiques.a_confirmer(c):
+            st.info(c["motif"] + ". Vous pouvez préciser la règle ici ; sinon elle reste non applicable.")
+            with st.form(f"confirmation_{c['id']}"):
+                pct = None
+                if c["effet"] == "plafonner":
+                    pct = st.number_input(f"Part maximale du portefeuille pour {c['nom']} (en %)",
+                                          min_value=0, max_value=100, value=c.get("plafond_pct"), step=1)
+                confirme = st.checkbox("Je confirme cette règle et la cible indiquée ci-dessus", value=False)
+                envoyer = st.form_submit_button("Confirmer cette précision", type="primary")
+            if envoyer:
+                if not confirme:
+                    st.warning("Cochez la confirmation si cette règle traduit votre intention.")
+                else:
+                    try:
+                        criteres_dynamiques.confirmer(c, pct)
+                    except ValueError as e:
+                        st.warning(str(e))
+                    else:
+                        st.rerun()
 
 
 # ---------- Phase 3 : profil ----------
@@ -802,6 +887,37 @@ def afficher_synthese():
                     + ", ".join(f"{CRITERES[d['critere']]['nom']} → `{d['valeur']}`" for d in s["reglages_prudents_appliques"]))
     st.caption("Hypothèse : les tables de capacité, de stress et de part d'actions sont des hypothèses de l'équipe "
                "(hypotheses_profil.json), pas des normes. Simulation éducative : ce résumé n'est pas un conseil financier.")
+    if s["synthese_provisoire"]:
+        st.info("Cette synthèse reste provisoire : des réponses ou des besoins de liquidité restent à préciser.")
+    st.markdown("**Les réponses qui déterminent votre profil**")
+    for r in s["reponses_decisives"][:6]:
+        st.markdown(f"- **{r['nom']}** : {r['raison']}")
+        if r["citation"]:
+            st.caption(f"Votre réponse : « {r['citation']} » · {r['source']} · {r['statut']}")
+    if len(s["reponses_decisives"]) > 6:
+        with st.expander("Toutes les réponses déterminantes et les contraintes"):
+            st.dataframe(pd.DataFrame([{"critère": r["nom"], "pourquoi": r["raison"],
+                                       "votre réponse": r["citation"] or r["valeur"], "source": r["source"]}
+                                      for r in s["reponses_decisives"]]), hide_index=True, width="stretch")
+    rb = s["robustesse"]
+    st.markdown("**Que se passe-t-il si une réponse voisine change ?**")
+    if rb["etat"] == "a_completer":
+        st.write("Des informations manquent ou restent incertaines : confirmez-les avant d'interpréter la stabilité du profil.")
+    elif rb["etat"] == "sensible":
+        st.write("Le résultat est sensible à au moins une réponse voisine. Les points ci-dessous méritent une relecture.")
+    elif rb["etat"] == "stable_localement":
+        st.write("Le résultat reste stable pour les petites variations testées, une réponse à la fois.")
+    if rb["variations_testees"]:
+        st.caption(f"Budget de perte recalculé : de {rb['budget_min_pct']:g} à {rb['budget_max_pct']:g} %. "
+                   f"{rb['variations_testees']} variantes locales testées. Il s'agit d'une sensibilité des règles, pas d'une probabilité ni d'une perte garantie.")
+    with st.expander("Détail des variations et limites de cette vérification"):
+        if rb["variations_sensibles"]:
+            st.dataframe(pd.DataFrame([{"réponse": v["nom"], "avant": libelle_valeur(v["critere"], v["avant"]),
+                                        "variante": libelle_valeur(v["critere"], v["apres"]),
+                                        "budget de perte (%)": v["budget_perte_pct"], "niveau": v["niveau"],
+                                        "variation (points)": v["ecart_budget_points"]}
+                                       for v in rb["variations_sensibles"]]), hide_index=True, width="stretch")
+        st.caption(rb["limites"])
 
 def page_termine():
     st.success("Profil terminé. Merci !")

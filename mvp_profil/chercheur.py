@@ -8,8 +8,8 @@ rechercher, et ce module :
        fiche_actif            la fiche complète d'un actif (dont ses actualités et, pour un FNB, ses positions)
        recherche_web          recherche Wikipédia (fr ou en)
        lire_page_web          texte d'une page Wikipédia
-     L'agent rend, pour chaque actif concerné, « oui » ou « partiel », avec une PREUVE : un passage recopié d'un
-     résultat d'outil et l'identifiant de ce résultat.
+     L'agent rend « oui », « partiel » ou « non_concerne », avec une PREUVE : un passage recopié d'un résultat
+     d'outil et l'identifiant de ce résultat. Un actif sans conclusion étayée reste « inconnu ».
   2. CONTRÔLE par le code : le ticker existe, la source a vraiment été lue pendant la recherche, et le passage
      s'y trouve mot pour mot (même principe que la citation exacte de l'utilisateur). Sinon le verdict est écarté.
   3. CRITIQUE : l'agent critique vérifie que chaque preuve justifie le verdict ; un désaccord écarte le verdict.
@@ -26,13 +26,14 @@ information sur l'utilisateur.
 from __future__ import annotations
 
 import html
+import hashlib
 import json
 import os
 import re
 import threading
 import time
 import unicodedata
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Literal
 
@@ -45,6 +46,9 @@ ACTIFS: dict[str, dict] = DONNEES["actifs"]
 FNB: dict[str, list[dict]] = DONNEES["fnb"]
 MAX_ETAPES = 5                 # allers-retours d'outils au plus, puis réponse obligatoire
 MOTS_MIN_PREUVE = 3            # une preuve d'un ou deux mots n'explique rien
+SEUIL_PREUVE = 0.80           # accord ET confiance des deux agents, y compris pour un verdict négatif
+VERSION_CACHE = 2            # les anciennes absences de verdict ne valent pas un « non » vérifié
+DUREE_CACHE_JOURS = 7         # hypothèse de fraîcheur ; un changement des données invalide immédiatement
 WIKI_LANGUES = ("fr", "en")
 USER_AGENT = "AlphaForge-datathon/1.0 (prototype etudiant de recherche de faits publics)"
 CACHE = Path(os.environ.get("ALPHAFORGE_CACHE", Path(__file__).with_name("cache"))) / "mots_cles_dynamiques.json"
@@ -54,7 +58,7 @@ _verrou = threading.Lock()
 # ---------- Sortie imposée ----------
 class Verdict(BaseModel):
     ticker: str
-    valeur: Literal["oui", "partiel"]
+    valeur: Literal["oui", "partiel", "non_concerne"]
     preuve: str          # passage recopié mot pour mot d'un résultat d'outil
     source: str          # identifiant [source: …] de ce résultat
     confiance: float
@@ -72,7 +76,7 @@ SCHEMA = {
         "verdicts": {"type": "array", "items": {
             "type": "object", "additionalProperties": False,
             "required": ["ticker", "valeur", "preuve", "source", "confiance"],
-            "properties": {"ticker": {"type": "string"}, "valeur": {"type": "string", "enum": ["oui", "partiel"]},
+            "properties": {"ticker": {"type": "string"}, "valeur": {"type": "string", "enum": ["oui", "partiel", "non_concerne"]},
                            "preuve": {"type": "string"}, "source": {"type": "string"},
                            "confiance": {"type": "number"}}}},
     },
@@ -104,7 +108,11 @@ Ta tâche : trouver, parmi les 66 actifs de l'univers (et seulement eux), ceux q
 - oui : l'actif est directement concerné (l'entreprise elle-même, ou une activité principale de l'entreprise).
 - partiel : l'actif est concerné en partie seulement (activité secondaire, participation, filiale).
   Ne t'occupe pas des FNB qui détiennent un actif concerné : le code les calcule à partir de leurs positions.
-- N'inscris pas les actifs non concernés : l'absence de verdict veut dire « non ».
+- non_concerne : une source explicite et suffisamment complète établit que l'actif ne relève pas du concept.
+  L'absence d'un mot dans une fiche, une recherche sans résultat ou des positions partielles d'un FNB ne sont JAMAIS
+  des preuves de non-implication. Une activité principale différente ne prouve pas l'absence d'activité secondaire.
+- Un actif non étudié, une preuve insuffisante ou une information manquante ne donnent aucun verdict : il reste INCONNU.
+  Ne cherche pas à remplir toute la liste à tout prix et ne transforme jamais « non trouvé » en « non concerné ».
 Méthode : commence par le tableau fourni et par chercher_dans_donnees ; utilise recherche_web puis lire_page_web pour
 vérifier un lien que nos données ne montrent pas. Quelques appels suffisent ; n'en fais pas plus que nécessaire.
 Chaque verdict doit avoir une PREUVE : un passage recopié MOT POUR MOT d'un résultat d'outil (au moins quelques mots, sans
@@ -112,7 +120,8 @@ paraphrase), et la source exacte indiquée par [source: …] devant ce résultat
 crochets). Le code vérifie : une preuve introuvable est écartée. Préfère un passage qui DÉCRIT le lien (une phrase d'une page
 ou d'une actualité) ; si seul un titre d'actualité ou un thème le montre, lis la page Wikipédia de l'entreprise pour confirmer.
 Ne recherche que des entreprises, des personnes publiques ou des notions ; n'envoie jamais d'information sur l'utilisateur.
-confiance : entre 0 et 1. Si rien ne relie le concept à un actif, renvoie une liste de verdicts vide."""
+confiance : entre 0 et 1. Si tu n'as aucune conclusion étayée, renvoie une liste de verdicts vide. Le code signalera
+alors une recherche non concluante, pas une absence d'exposition."""
 
 
 # ---------- Outils ----------
@@ -172,9 +181,14 @@ class Recherche:
             texte = _fiche(tk)
             n = _norm(texte)
             if all(k in n for k in cles):
-                self.journal[f"fiche:{tk}"] = texte
                 extraits = [l for l in texte.split("\n") if any(k in _norm(l) for k in cles)]
-                trouves.append(f"[source: fiche:{tk}]\n" + "\n".join(extraits[:4]))
+                lu = "\n".join(extraits[:4])
+                # Le journal contient uniquement ce qui est réellement renvoyé à l'agent, pas la fiche entière.
+                # Les passages déjà lus restent disponibles lorsqu'une autre recherche vise le même actif.
+                source = f"fiche:{tk}"
+                deja = self.journal.get(source, "")
+                self.journal[source] = deja + ("\n" if deja and lu not in deja else "") + (lu if lu not in deja else "")
+                trouves.append(f"[source: {source}]\n{lu}")
         return "\n\n".join(trouves) if trouves else f"Aucun actif ne mentionne « {mots} » dans nos données."
 
     def fiche_actif(self, ticker: str) -> str:
@@ -267,17 +281,70 @@ def slug(concept: str) -> str:
 
 def _lire_cache() -> dict:
     try:
-        return json.loads(CACHE.read_text(encoding="utf-8"))
+        lu = json.loads(CACHE.read_text(encoding="utf-8"))
+        return lu if isinstance(lu, dict) else {}
     except (OSError, ValueError):
         return {}
 
 
+def _empreinte(concept: str, effet: str, modele: str) -> str:
+    """Identité complète : aucune collision de concepts au-delà des 40 caractères du libellé lisible.
+
+    L'univers, les positions, le modèle et les consignes font partie de la clé. Un résultat qualifie une
+    version des données, jamais tous les futurs états du même concept.
+    """
+    contenu = {
+        "version": VERSION_CACHE,
+        "concept": " ".join(unicodedata.normalize("NFKC", concept).casefold().split()),
+        "effet": effet, "modele": modele,
+        "donnees": DONNEES, "actifs": ACTIFS, "fnb": FNB,
+        "consignes": [SYSTEM_CHERCHEUR, SYSTEM_CRITIQUE], "schema": SCHEMA, "outils": OUTILS,
+        "seuil_preuve": SEUIL_PREUVE, "max_etapes": MAX_ETAPES,
+    }
+    return hashlib.sha256(json.dumps(contenu, ensure_ascii=False, sort_keys=True).encode("utf-8")).hexdigest()
+
+
+def _cache_valide(resultat: dict | None, empreinte: str) -> bool:
+    if not isinstance(resultat, dict) or resultat.get("version_cache") != VERSION_CACHE:
+        return False
+    if resultat.get("empreinte") != empreinte or not isinstance(resultat.get("etats_actifs"), dict):
+        return False
+    try:
+        expiration = datetime.fromisoformat(resultat["expire_le"])
+        return expiration.tzinfo is not None and datetime.now(timezone.utc) < expiration
+    except (KeyError, TypeError, ValueError):
+        return False
+
+
+def _couverture(verdicts: list[dict], fnb_exposes: dict[str, float]) -> tuple[dict, dict[str, str]]:
+    """État explicite de chaque actif. Une exposition FNB calculée est un minimum connu, pas un audit complet."""
+    etats = {tk: "inconnu" for tk in ACTIFS}
+    for v in verdicts:
+        if v["valeur"] == "oui" or etats[v["ticker"]] != "oui":
+            etats[v["ticker"]] = v["valeur"]
+    for tk in fnb_exposes:
+        if tk in etats and etats[tk] != "oui":
+            etats[tk] = "partiel"
+    qualifies = sum(etat != "inconnu" for etat in etats.values())
+    verifies = len({v["ticker"] for v in verdicts})
+    couverture = {
+        "total": len(ACTIFS), "avec_verdict": verifies,
+        "avec_exposition_fnb_calculee": len(fnb_exposes), "inconnus": len(ACTIFS) - qualifies,
+        "pct_verifie": round(100 * verifies / max(1, len(ACTIFS)), 1),
+        "fnb_positions_partielles": sorted(FNB),
+        "limite": "Recherche bornée aux sources lues ; positions principales des FNB seulement. "
+                  "Un actif inconnu n'est ni innocenté ni déclaré concerné.",
+    }
+    return couverture, etats
+
+
 def etiqueter(backend: Backend, concept: str, effet: str = "exclure") -> dict:
-    """Concept -> nouveau mot-clé d'actif kw_dyn_<concept>, avec preuves vérifiées. Repris du cache s'il existe."""
-    cle = f"kw_dyn_{slug(concept)}"
+    """Concept -> mot-clé d'actif avec preuves et couverture. Le cache respecte version, données et fraîcheur."""
+    empreinte = _empreinte(concept, effet, backend.model)
+    cle = f"kw_dyn_{slug(concept)}_{empreinte[:12]}"
     with _verrou:
         deja = _lire_cache().get(cle)
-    if deja:
+    if _cache_valide(deja, empreinte):
         return {**deja, "depuis_cache": True}
     t0 = time.time()
     rech = Recherche()
@@ -286,6 +353,8 @@ def etiqueter(backend: Backend, concept: str, effet: str = "exclure") -> dict:
     retenus, rejetes = [], []
     for v in etiq.verdicts:
         motif = _preuve_valide(v, rech.journal)
+        if not motif and not (SEUIL_PREUVE <= v.confiance <= 1):
+            motif = f"confiance du chercheur sous le seuil de {SEUIL_PREUVE:.0%} ou invalide"
         (rejetes.append({**v.model_dump(), "motif": motif}) if motif else retenus.append(v))
     if retenus:  # le critique vérifie que chaque preuve justifie le verdict
         prompt = (f"Concept : {concept}\nDéfinition retenue : {etiq.definition}\n"
@@ -293,6 +362,10 @@ def etiqueter(backend: Backend, concept: str, effet: str = "exclure") -> dict:
                   "Ici, la « citation » est ce passage de source. critere_id = le ticker. Un thème de nos fiches qui nomme "
                   "exactement le concept (par exemple « reseaux_sociaux » pour les réseaux sociaux) est une preuve suffisante : "
                   "ces thèmes sont établis par l'équipe à partir des activités de l'entreprise.\n"
+                  "IMPORTANT : non_concerne exige une preuve explicite qui écarte le concept. Une recherche sans résultat, "
+                  "une fiche qui ne mentionne pas le concept, une activité principale différente ou une liste partielle de "
+                  "positions FNB ne prouvent pas l'absence d'exposition : refuse ces verdicts négatifs. Ne complète aucune "
+                  "information absente. Une confiance sous le seuil ne suffit pas, même si accord=true.\n"
                   + "\n".join(f"- {v.ticker} ({ACTIFS[v.ticker]['nom']}) : {v.valeur}. Preuve « {v.preuve} » "
                               f"[{v.source}]" for v in retenus))
         crit: Critique = _ask(backend, SYSTEM_CRITIQUE, prompt, Critique)
@@ -300,18 +373,39 @@ def etiqueter(backend: Backend, concept: str, effet: str = "exclure") -> dict:
         gardes = []
         for v in retenus:
             a = avis.get(v.ticker)
-            if a and a.accord:
+            if a and a.accord and SEUIL_PREUVE <= a.confiance <= 1:
                 gardes.append({**v.model_dump(), "confiance": round(min(v.confiance, a.confiance), 2),
                                "url": rech.urls.get(v.source, "")})
             else:
-                rejetes.append({**v.model_dump(), "motif": f"critique : {a.objection if a else 'pas d avis'}"})
+                motif = (a.objection if a and not a.accord else
+                         f"confiance sous le seuil de {SEUIL_PREUVE:.0%} ou invalide" if a else "pas d avis")
+                rejetes.append({**v.model_dump(), "motif": f"critique : {motif}"})
         retenus = gardes
+    # Deux preuves acceptées mais contradictoires ne permettent aucune conclusion automatique.
+    contradictions = {v["ticker"] for v in retenus if v["valeur"] == "non_concerne"} & {
+        v["ticker"] for v in retenus if v["valeur"] in ("oui", "partiel")}
+    if contradictions:
+        rejetes.extend({**v, "motif": "preuves contradictoires pour le même actif"}
+                       for v in retenus if v["ticker"] in contradictions)
+        retenus = [v for v in retenus if v["ticker"] not in contradictions]
     oui = sorted({v["ticker"] for v in retenus if v["valeur"] == "oui"})
     partiels = sorted({v["ticker"] for v in retenus if v["valeur"] == "partiel"} - set(oui))
+    fnb_exposes = expositions_fnb(oui + partiels)
+    # Les positions connues d'un fonds peuvent contredire une affirmation négative ; cette preuve est écartée.
+    negatifs_fnb = [v for v in retenus if v["valeur"] == "non_concerne" and v["ticker"] in fnb_exposes]
+    rejetes.extend({**v, "motif": "exposition identifiée dans les positions connues du FNB"} for v in negatifs_fnb)
+    retenus = [v for v in retenus if v not in negatifs_fnb]
+    couverture, etats = _couverture(retenus, fnb_exposes)
+    maintenant = datetime.now(timezone.utc)
     resultat = {
         "mot_cle": cle, "concept": concept, "definition": etiq.definition, "oui": oui, "partiel": partiels,
-        "fnb_exposes": expositions_fnb(oui + partiels), "verdicts": retenus, "rejetes": rejetes,
-        "appels_outils": rech.appels, "cree_le": datetime.now().isoformat(timespec="seconds"),
+        "non_concernes": sorted(tk for tk, etat in etats.items() if etat == "non_concerne"),
+        "inconnus": sorted(tk for tk, etat in etats.items() if etat == "inconnu"),
+        "etats_actifs": etats, "couverture": couverture,
+        "fnb_exposes": fnb_exposes, "verdicts": retenus, "rejetes": rejetes,
+        "appels_outils": rech.appels, "cree_le": maintenant.isoformat(timespec="seconds"),
+        "expire_le": (maintenant + timedelta(days=DUREE_CACHE_JOURS)).isoformat(timespec="seconds"),
+        "version_cache": VERSION_CACHE, "empreinte": empreinte,
         "modele": backend.model, "duree_s": round(time.time() - t0, 1),
     }
     with _verrou:

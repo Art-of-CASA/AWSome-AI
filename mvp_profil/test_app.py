@@ -84,6 +84,8 @@ def faux_etiqueter(backend, concept, effet="exclure"):
 
 
 agents.debattre = faux_debat
+agents.aws_identifiants_presents = lambda: True
+agents.backend_bedrock = lambda: agents.Backend(None, agents.MODELES["bedrock"], "test hors ligne")
 criteres_dynamiques.creer = faux_creer
 voix_composant.conversation_vocale = fausse_voix
 entretien.transcrire = lambda wav: VOIX["texte"]
@@ -136,26 +138,27 @@ at.multiselect(key="3_q_c2").set_value(["FNB (fonds indiciels)"])
 suivant()
 assert at.session_state.profil["C1"]["valeurs"] == ["intermediaire"]
 
-# Page 5 : le style (D7) est déjà connu (dit au passage dans une réponse libre) -> la question disparaît de la page
+# Page 5 : les exclusions et l'accès passent avant les préférences.
+radio("4_q_e1", "Ce n'est pas un critère pour moi"); radio("4_q_e2", "Je refuse seulement les cas graves")
+radio("4_q_g2", "CELI"); radio("4_q_g3", "Non, Canada et États-Unis seulement"); radio("4_q_e4", "Une préférence, sans obligation")
+at.multiselect(key="4_q_e5").set_value(["Aucune exclusion", "Tabac"])
+at.multiselect(key="4_q_f2").set_value(["Aucune exclusion"])
+suivant()
+assert at.session_state.profil["E5"]["valeurs"] == ["tabac"], at.session_state.profil["E5"]
+
+# Page 6 : le style déjà connu ne doit pas être redemandé.
 from profil import entree  # noqa: E402
 at.session_state.profil["D7"] = entree(["etablie"], "réponse libre (IA)", "des entreprises solides", 0.9)
 at.run()
-assert not [r for r in at.radio if r.key == "4_q_d7"] and any("1 question(s) retirée(s)" in c.value for c in at.caption)
+assert not [r for r in at.radio if r.key == "5_q_d7"] and any("1 question(s) retirée(s)" in c.value for c in at.caption)
 # Cryptos non cochées mais 10 % acceptés -> contradiction R3
-at.multiselect(key="4_q_d1").set_value(["FNB d'actions", "Obligations"])
-radio("4_q_d2", "Jusqu'à 10 %"); at.multiselect(key="4_q_d3").set_value(["Canada"])
-radio("4_q_d12", "Au plus 10 % du portefeuille"); radio("4_q_d4", "Limiter la part en devises étrangères")
-radio("4_q_d8", "Non"); radio("4_q_d11", "Un mélange des deux"); radio("4_q_d9", "10 % au plus")
-at.text_area(key="4_q_themes").input("L'IA et la santé m'intéressent, je refuse le tabac.")
+at.multiselect(key="5_q_d1").set_value(["FNB d'actions", "Obligations"])
+radio("5_q_d2", "Jusqu'à 10 %"); at.multiselect(key="5_q_d3").set_value(["Canada"])
+radio("5_q_d12", "Au plus 10 % du portefeuille"); radio("5_q_d4", "Limiter la part en devises étrangères")
+radio("5_q_d8", "Non"); radio("5_q_d11", "Un mélange des deux"); radio("5_q_d9", "10 % au plus")
+at.text_area(key="5_q_themes").input("L'IA et la santé m'intéressent, je refuse le tabac.")
 suivant()
 
-# Page 6 -> fin du questionnaire fixe
-radio("5_q_e1", "Ce n'est pas un critère pour moi"); radio("5_q_e2", "Je refuse seulement les cas graves")
-radio("5_q_g2", "CELI"); radio("5_q_g3", "Non, Canada et États-Unis seulement"); radio("5_q_e4", "Une préférence, sans obligation")
-at.multiselect(key="5_q_e5").set_value(["Aucune exclusion", "Tabac"])  # « Aucune » + Tabac : on garde Tabac
-at.multiselect(key="5_q_f2").set_value(["Aucune exclusion"])
-suivant()
-assert at.session_state.profil["E5"]["valeurs"] == ["tabac"], at.session_state.profil["E5"]
 assert at.session_state.phase == "simulations"
 
 
@@ -185,15 +188,15 @@ assert ["A6", "A12", "A8", "A7"] in APPELS and ["D5", "D6"] in APPELS  # analys�
 fac_situation = FACULTATIFS[APPELS.index(["A6", "A12", "A8", "A7"])]
 assert "D7" in fac_situation and "A3" not in fac_situation and "C1" not in fac_situation, fac_situation
 
-# Précisions : A5 (« je ne sais pas »), puis la réponse floue (reformulée UNE fois, puis incertaine : rien d'exploitable)
+# Précisions : le groupe comportant les dettes passe d'abord, puis la réserve d'urgence.
 file = at.session_state.file
-assert [f["criteres"] for f in file] == [["A5"], ["A6", "A12", "A8", "A7"]], file
+assert [f["criteres"] for f in file] == [["A6", "A12", "A8", "A7"], ["A5"]], file
 assert at.session_state.vocal["etape"] == "prec:0"  # la question est lue à voix haute
-parler("environ 4 mois de dépenses")  # réponse à l'oral
-assert at.session_state.profil["A5"]["statut"] == "validé" and APPELS[-1] == ["A5"]
 at.chat_input[0].set_value("toujours flou").run()
 assert at.session_state.profil["A6"]["statut"] == "incertain"  # pas de 3e question
 assert APPELS[-1] == ["A6", "A12", "A8", "A7"] and SEUILS[-1] == 0.65  # précision = 2e tentative, seuil abaissé
+parler("environ 4 mois de dépenses")  # réponse à l'oral
+assert at.session_state.profil["A5"]["statut"] == "validé" and APPELS[-1] == ["A5"]
 
 # Cohérence : R1, R2, R3 et R9 (déclaré « pas tenté » mais titre médiatisé choisi) posées une à une
 vus = []
@@ -263,3 +266,24 @@ assert at.session_state.phase == "termine" and at.session_state.persona["nom"] =
 assert any(m.label == "Budget de perte du portefeuille" and m.value == "15 %" for m in at.metric), [(m.label, m.value) for m in at.metric]
 assert any("Simulation éducative" in i.value for i in at.info)
 print("Mode démonstration OK : Robert chargé, budget de perte 15 %, bandeau de simulation affiché")
+
+# Les explications et la sensibilité sont visibles, et un plafond qualitatif se confirme sans exclusion.
+assert any("réponses qui déterminent" in m.value for m in at.markdown)
+assert any("Détail des variations" in e.label for e in at.expander)
+limite = {"id": "X1", "nom": "Limiter les banques", "effet": "plafonner", "dimension": "theme",
+          "valeurs": ["banque"], "plafond_pct": None, "actifs": ["RY.TO"], "citation": "Limiter les banques",
+          "confiance": 0.9, "statut": "à préciser", "applicable": False, "motif": "Pourcentage maximal à préciser",
+          "regle": "Limiter (plafond à préciser) : theme = banque", "source": "question ouverte (IA)"}
+at.session_state.dynamiques = [limite]
+at.run()
+assert not at.exception, at.exception
+assert at.session_state.dynamiques[0]["plafond_pct"] is None
+at.number_input[0].set_value(7)
+[c for c in at.checkbox if c.label.startswith("Je confirme cette règle")][0].check()
+[b for b in at.button if b.label == "Confirmer cette précision"][0].click()
+at.run()
+assert not at.exception, at.exception
+limite = at.session_state.dynamiques[0]
+assert limite["effet"] == "plafonner" and limite["plafond_pct"] == 7 and limite["applicable"], limite
+assert limite["statut"] == "validé" and "Plafonner à 7 %" in limite["regle"]
+print("Synthèse explicable, robustesse et confirmation d'un plafond sans exclusion : OK")

@@ -5,7 +5,7 @@ Pour que la conversation soit fluide, l'utilisateur n'attend qu'UN appel court p
 pendant qu'il répond : le CLASSIFICATEUR range ses paroles dans les critères (liste fermée, citation exacte,
 confiance), puis le CRITIQUE vérifie ; un critère n'est coché ✅ qu'après son accord (seuil 80 %).
 Un sujet abordé mais pas assez clair est reformulé UNE seule fois (seuil abaissé à 65 %) ; ensuite on retient
-la meilleure réponse obtenue (plancher 50 %) au lieu de redemander. Un sujet jamais abordé reste à couvrir.
+une réponse vérifiée avec accord (plancher 50 %) ; un désaccord reste incertain. Un sujet jamais abordé reste à couvrir.
 
 Voix (services AWS) :
   - Amazon Transcribe en streaming (fr-CA) : la parole de l'utilisateur devient du texte.
@@ -30,7 +30,7 @@ CRITERES_CONVERSATION = ["A3", "A2", "A9", "A10", "A1", "A4", "A5", "A6", "A12",
 MAX_TOURS = 10
 OUVERTURE = ("Bonjour ! Je vais vous poser quelques questions pour mieux vous connaître ; répondez librement, "
              "comme dans une conversation. Pour commencer : à quoi servira l'argent que vous voulez placer, "
-             "et dans combien de temps pensez-vous en avoir besoin ?")
+             "et dans combien d'années devrez-vous en récupérer la majeure partie ?")
 
 
 class Replique(BaseModel):
@@ -41,7 +41,14 @@ class Replique(BaseModel):
 SYSTEM_REPLIQUE = """Tu es la voix d'un court entretien oral, en français, pour établir le profil d'un investisseur (simulation éducative, aucun conseil financier).
 Ta réplique sera lue à voix haute : une ou deux phrases courtes, naturelles, sans liste ni jargon ni symbole.
 - Reprends en quelques mots ce que l'utilisateur vient de dire, puis pose UNE seule question simple sur un ou deux sujets
-  encore à couvrir (les plus importants d'abord : objectif, horizon, retraits, épargne, situation).
+  encore à couvrir. L'ordre fourni est calculé par le code : respecte cette priorité, sauf si la conversation y a déjà répondu.
+- Ordre : projet/horizon, retraits du capital et revenu nécessaire, réserve et dettes, capacité/risque, contraintes, préférences.
+  Groupe seulement deux sujets naturellement liés (objectif + horizon, expérience + produits, thèmes + refus).
+  Pose séparément réserve de sécurité et part de l'épargne : leurs dénominateurs diffèrent. Pose séparément retrait de
+  capital et besoin de revenu : l'absence de retrait ne dit rien sur les dividendes/intérêts nécessaires pour vivre.
+- Pour une information numérique, donne le référent : part du placement ENTIER dans l'épargne, mois de dépenses couverts
+  SANS toucher au placement. Une réponse courte et précise est préférable à plusieurs questions ambiguës.
+- Un simple oui/non à deux sujets ne les résout pas automatiquement. Précise uniquement le sujet resté sans réponse.
 - Ne redemande jamais ce que l'utilisateur a déjà dit dans la conversation, même si le sujet figure encore dans la liste.
 - S'il y a des sujets « à reformuler » : l'utilisateur en a parlé, mais pas assez clairement. Commence par eux, UNE fois,
   avec une formulation différente de la précédente et un exemple concret (montant, durée, choix entre deux options).
@@ -59,8 +66,8 @@ def replique(backend: Backend, echanges: list[tuple[str, str]], restants: list[s
     """pistes : {critère: (valeurs, citation)} déjà entrevues pour les sujets à reformuler -> l'IA demande confirmation."""
     """Appel court et rapide : uniquement ce que l'IA va dire. Le classement se fait à part, en arrière-plan."""
     conv = "\n".join(f"IA : {q}\nUtilisateur : {r}" for q, r in echanges)
-    sujets = "\n".join(f"- {CRITERES[c]['nom']}" for c in restants) or "(aucun)"
-    prompt = f"Sujets encore à couvrir :\n{sujets}\n\nConversation :\n{conv}"
+    sujets = "\n".join(f"{i + 1}. {CRITERES[c]['nom']} — {CRITERES[c]['relance']}" for i, c in enumerate(restants)) or "(aucun)"
+    prompt = f"Sujets encore à couvrir, par ordre d'utilité (formulations de référence, à adapter naturellement) :\n{sujets}\n\nConversation :\n{conv}"
     if a_reformuler:
         prompt = ("Sujets à reformuler (abordés, mais pas assez clairement) :\n"
                   + "\n".join(f"- {CRITERES[c]['nom']}" + (f" (piste : {', '.join(pistes[c][0])}, d'après « {pistes[c][1]} »)"
@@ -103,6 +110,11 @@ def verifier(backend: Backend, echanges, propositions: list[Proposition], seuil:
 
 # ---------- Précisions et question ouverte à la voix ----------
 _REPETER = re.compile(r"\b(r[ée]p[ée]t|pardon|redi[rst]|reformul|pas compris|pas entendu|pas saisi)\w*")
+
+
+def demande_correction(texte: str) -> bool:
+    """Déclenche une relecture, jamais une modification automatique du profil."""
+    return bool(re.search(r"\b(en fait|je me corrige|correction|je voulais dire|finalement|rectifi\w*)\b", texte.lower()))
 
 
 def demande_repetition(texte: str) -> bool:

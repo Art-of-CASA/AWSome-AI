@@ -1,8 +1,8 @@
-"""Critères du profil et questionnaire FIXE (identique pour tous les utilisateurs).
+"""Critères fermés du profil et banque commune de questions, ordonnés par pilotage.py.
 
 Les identifiants (A2, B1…) sont ceux de config/criteres_appariement.csv : chaque valeur pourra être
 comparée au critère correspondant des actifs (data_extended/asset_criteria.csv).
-Les valeurs possibles forment une liste FERMÉE : c'est ce qui rend le profil reproductible.
+Les valeurs possibles forment une liste FERMÉE ; la fiabilité du classement libre est mesurée séparément.
 
 Types de questions :
   qcm        une réponse ; chaque option donne directement la valeur (pas d'IA)
@@ -35,7 +35,7 @@ CRITERES: dict[str, dict] = {
            "relance": "Si cet argent réussissait parfaitement sa mission, à quoi aurait-il servi ?"},
     "A4": {"nom": "Part de l'épargne totale", "multiple": False,
            "valeurs": ["faible_moins_25", "moyenne_25_60", "forte_plus_60"], "aide": "",
-           "relance": "Si ce placement perdait la moitié de sa valeur, quelle part de toutes vos économies cela représenterait-il, à peu près ?"},
+           "relance": "Quelle part de votre épargne totale ce placement représente-t-il : moins du quart, de 25 à 60 %, ou plus de 60 % ?"},
     "A5": {"nom": "Fonds d'urgence", "multiple": False,
            "valeurs": ["aucun", "moins_3_mois", "3_6_mois", "plus_6_mois"], "aide": "Mois de dépenses couverts sans toucher à ce placement.",
            "relance": "Si vous perdiez vos revenus demain, combien de temps pourriez-vous payer vos dépenses sans toucher à ce placement ?"},
@@ -49,7 +49,7 @@ CRITERES: dict[str, dict] = {
            "relance": "Combien de personnes dépendent de vos revenus (enfants, conjoint, parents) ?"},
     "A9": {"nom": "Retraits prévus avant l'échéance", "multiple": False,
            "valeurs": ["aucun", "ponctuel", "reguliers"], "aide": "",
-           "relance": "Voyez-vous une dépense pour laquelle vous pourriez puiser dans ce placement avant l'échéance ?"},
+           "relance": "Devrez-vous retirer une partie du capital avant l'échéance, une fois ou régulièrement (en dehors des intérêts et dividendes) ?"},
     "A10": {"nom": "Besoin de revenu régulier", "multiple": False, "valeurs": ["non", "souhaite", "essentiel"],
             "aide": "Le placement doit-il verser un revenu (dividendes, intérêts) ?",
             "relance": "Comptez-vous sur ce placement pour payer certaines dépenses chaque mois ou chaque année ?"},
@@ -160,7 +160,7 @@ def est_deduit(justification: str) -> bool:
 
 NSP = ("Je ne sais pas", None)
 
-# Questionnaire fixe : 6 pages, mêmes questions dans le même ordre pour tout le monde.
+# Banque commune : 6 pages, ordre adaptatif ; toute question déjà résolue est retirée par l'application.
 SECTIONS: list[dict] = [
     {"titre": "Votre projet", "items": [
         {"id": "q_a3", "type": "qcm", "critere": "A3", "texte": "À quoi servira principalement cet argent ?",
@@ -171,7 +171,7 @@ SECTIONS: list[dict] = [
         {"id": "q_a2", "type": "qcm", "critere": "A2", "texte": "Dans combien de temps aurez-vous besoin de la majeure partie de cet argent ?",
          "options": [("Moins de 3 ans", "moins_3_ans"), ("3 à 5 ans", "3_5_ans"), ("5 à 10 ans", "5_10_ans"),
                      ("10 à 15 ans", "10_15_ans"), ("Plus de 15 ans", "plus_15_ans"), NSP]},
-        {"id": "q_a9", "type": "qcm", "critere": "A9", "texte": "Prévoyez-vous de retirer une partie de cet argent avant cette échéance ?",
+        {"id": "q_a9", "type": "qcm", "critere": "A9", "texte": "Prévoyez-vous de retirer une partie du capital avant cette échéance (en dehors des intérêts et dividendes) ?",
          "options": [("Non, je n'y toucherai pas", "aucun"), ("Oui, une fois (achat, projet…)", "ponctuel"),
                      ("Oui, régulièrement", "reguliers"), NSP]},
         {"id": "q_a10", "type": "qcm", "critere": "A10", "texte": "Avez-vous besoin que ce placement vous verse un revenu régulier ?",

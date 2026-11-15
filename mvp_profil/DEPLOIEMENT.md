@@ -22,7 +22,7 @@ Navigateur ──HTTP 8501──▶ EC2 t3.small (Streamlit, rôle IAM alphaforg
 |---|---|---|
 | Instance EC2 | `<ID_INSTANCE>` (t3.small, Amazon Linux 2023) | Fait tourner Streamlit en service systemd (`alphaforge`) |
 | Rôle IAM + profil d'instance | `alphaforge-mvp-ec2` | Droits minimaux : `bedrock:InvokeModel` sur Haiku 5.5 seulement, lecture de `s3://…/app/*`, et Session Manager (SSM) pour la maintenance |
-| Groupe de sécurité | `<ID_GROUPE_SECURITE>` (`alphaforge-mvp-sg`) | Port 8501 ouvert à CloudFront (liste de préfixes) et aux adresses de l'équipe (trois au 15 novembre 2026) ; aucun port SSH. À faire : retirer les adresses de l'équipe pour ne garder que CloudFront |
+| Groupe de sécurité | `<ID_GROUPE_SECURITE>` (`alphaforge-mvp-sg`) | Port 8501 ouvert à CloudFront (liste de préfixes) et aux adresses de l'équipe (quatre au 15 novembre 2026) ; aucun port SSH. À faire : retirer les adresses de l'équipe pour ne garder que CloudFront |
 | Bucket S3 | `alphaforge-mvp-<ID_DU_COMPTE>-us-east-1` | Paquet du site (`app/mvp_profil.zip`), accès public bloqué |
 
 Coût indicatif : t3.small environ 0,02 $ US/h, plus les appels Haiku (quelques cents par questionnaire), facturés au compte de l'événement.

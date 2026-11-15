@@ -12,6 +12,9 @@ import json
 import os
 import sys
 import tempfile
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+from unittest.mock import patch
 
 sys.path.insert(0, os.path.dirname(__file__))
 os.environ["ALPHAFORGE_CACHE"] = tempfile.mkdtemp()
@@ -51,7 +54,7 @@ ETAPES = [
             {"ticker": "SPCX", "valeur": "oui", "preuve": "et le fondateur de SpaceX", "source": "web:fr:Elon Musk", "confiance": 0.9},
             {"ticker": "NVDA", "valeur": "partiel", "preuve": "Nvidia fournit les puces de Tesla", "source": "web:fr:Elon Musk", "confiance": 0.6},
             {"ticker": "AAPL", "valeur": "partiel", "preuve": "Apple collabore avec Elon Musk depuis", "source": "web:en:Apple", "confiance": 0.5},
-            {"ticker": "1211.HK", "valeur": "partiel", "preuve": "constructeur de véhicules électriques", "source": "web:fr:Elon Musk", "confiance": 0.5},
+            {"ticker": "1211.HK", "valeur": "partiel", "preuve": "constructeur de véhicules électriques", "source": "web:fr:Elon Musk", "confiance": 0.9},
         ]})}]},
 ]
 CRITIQUE = {"avis": [{"critere_id": "TSLA", "accord": True, "confiance": 0.9, "objection": "", "valeurs_suggerees": []}],
@@ -73,7 +76,7 @@ client = anthropic.Anthropic(api_key="test", http_client=httpx.Client(transport=
 b = Backend(client, MODELES["anthropic"], "test")
 res = chercheur.etiqueter(b, "entreprises liées à Elon Musk", "exclure")
 
-assert res["mot_cle"] == "kw_dyn_entreprises_liees_a_elon_musk" and not res["depuis_cache"], res["mot_cle"]
+assert res["mot_cle"].startswith("kw_dyn_entreprises_liees_a_elon_musk_") and not res["depuis_cache"], res["mot_cle"]
 assert res["oui"] == ["TSLA"] and res["partiel"] == [], (res["oui"], res["partiel"])
 motifs = {(r["ticker"], r["motif"]) for r in res["rejetes"]}
 assert ("SPCX", "ticker hors univers") in motifs
@@ -84,6 +87,11 @@ assert set(res["fnb_exposes"]) >= {"SPY", "QQQ", "ESGV"} and "XIU.TO" not in res
 assert any(v["url"] == "https://fr.wikipedia.org/wiki/Elon_Musk" for v in res["verdicts"])
 assert any(v["source"] == "fiche:TSLA" for v in res["verdicts"])  # identifiant mal recopié : corrigé vers la source réellement lue
 assert [a["outil"] for a in res["appels_outils"]] == ["chercher_dans_donnees", "recherche_web", "lire_page_web"]
+assert res["etats_actifs"]["TSLA"] == "oui" and res["etats_actifs"]["SPY"] == "partiel"
+assert res["etats_actifs"]["NVDA"] == "inconnu" and "NVDA" in res["inconnus"]
+assert set(res["etats_actifs"]) == set(chercheur.ACTIFS) and not res["non_concernes"]
+assert res["couverture"]["avec_verdict"] == 1  # deux preuves, un seul actif explicitement vérifié
+assert res["couverture"]["inconnus"] == len(chercheur.ACTIFS) - 1 - len(res["fnb_exposes"])
 
 # Ce qui part au modèle : outils stricts, sortie JSON imposée, tableau des 66 actifs, résultats d'outils renvoyés
 premier = [e for e in ENVOIS if "CHERCHEUR" in e["system"]][0]
@@ -107,7 +115,98 @@ c = {"id": "X1", "nom": "Rien de lié à Elon Musk", "effet": "exclure", "dimens
 assert "recherche des actifs concernés en cours" in cd.regle(c)
 cd.appliquer_etiquetage(c, res)
 assert c["etiquetage"] == "fait" and c["actifs"] == ["TSLA"] and c["colonne"] == res["mot_cle"]
-assert c["regle"].startswith("Exclure : kw_dyn_entreprises_liees_a_elon_musk = oui (TSLA) ; FNB qui en détiennent : QQQ (3,4 %)"), c["regle"]
+assert c["regle"].startswith(f"Exclure : {res['mot_cle']} = oui (TSLA) ; FNB qui en détiennent : QQQ (3,4 %)"), c["regle"]
 print(f"Chercheur OK : 3 outils, TSLA retenu sur preuve vérifiée, 4 verdicts écartés, "
       f"{len(res['fnb_exposes'])} FNB exposés ({', '.join(res['fnb_exposes'])}), cache réutilisé")
 print("Règle :", c["regle"])
+
+
+def recherche_simulee(concept, verdicts, avis, texte, cache):
+    """Les outils du faux chercheur ont lu cette source ; aucun appel réseau ni modèle réel."""
+    def boucle(backend, concept, effet, rech):
+        rech.journal["test:source"] = texte
+        return chercheur.Etiquetage(definition=concept, verdicts=verdicts)
+
+    critique = chercheur.Critique(avis=avis, question_relance="")
+    with patch.object(chercheur, "CACHE", cache), patch.object(chercheur, "_boucle", side_effect=boucle), \
+            patch.object(chercheur, "_ask", return_value=critique):
+        return chercheur.etiqueter(b, concept)
+
+
+def verdict(ticker, valeur, preuve, confiance=0.95):
+    return {"ticker": ticker, "valeur": valeur, "preuve": preuve, "source": "test:source", "confiance": confiance}
+
+
+def accord(ticker, confiance=0.95):
+    return {"critere_id": ticker, "accord": True, "confiance": confiance, "objection": "", "valeurs_suggerees": []}
+
+
+with tempfile.TemporaryDirectory() as dossier:
+    cache = Path(dossier) / "recherches.json"
+
+    # Une recherche locale n'envoie que quatre extraits : une preuve dans le reste de la fiche n'a pas encore été lue.
+    fiche = "\n".join(["Tesla extrait numéro " + str(i) for i in range(5)] + ["Tesla passage détaillé encore non lu"])
+    with patch.object(chercheur, "_fiche", side_effect=lambda tk: fiche if tk == "TSLA" else "Autre entreprise"):
+        rech = chercheur.Recherche()
+        extraits = rech.chercher_dans_donnees("Tesla")
+        preuve_cachee = chercheur.Verdict(**verdict("TSLA", "oui", "Tesla passage détaillé encore non lu"))
+        assert "encore non lu" not in extraits
+        assert chercheur._preuve_valide(preuve_cachee, rech.journal) == "passage introuvable dans les sources lues"
+        rech.fiche_actif("TSLA")
+        assert not chercheur._preuve_valide(preuve_cachee, rech.journal)
+
+    # Une recherche vide ne prouve rien sur aucun actif, même si elle a parcouru le tableau.
+    vide = recherche_simulee("activité non documentée", [], [], "Aucune information disponible dans ces sources.", cache)
+    assert set(vide["inconnus"]) == set(chercheur.ACTIFS) and not vide["non_concernes"]
+    assert vide["couverture"]["pct_verifie"] == 0 and not vide["oui"] and not vide["partiel"]
+    critere_vide = {"id": "X1", "nom": "Concept non établi", "effet": "exclure", "dimension": cd.A_ETIQUETER,
+                   "colonne": "", "valeurs": [], "actifs": [], "plafond_pct": 0, "concept": "activité non documentée"}
+    cd.appliquer_etiquetage(critere_vide, vide)
+    assert "aucun lien établi" in critere_vide["regle"] and "recherche incomplète" in critere_vide["regle"]
+    assert critere_vide["recherche"]["inconnus"] == vide["inconnus"]
+
+    # Un négatif explicite suit exactement les mêmes contrôles de preuve et d'accord qu'un positif.
+    texte = "Apple ne fabrique ni ne commercialise aucun produit du concept étudié."
+    negatif = recherche_simulee("produit précis", [verdict("AAPL", "non_concerne", texte)], [accord("AAPL")], texte, cache)
+    assert negatif["non_concernes"] == ["AAPL"] and negatif["etats_actifs"]["AAPL"] == "non_concerne"
+    assert not negatif["oui"] and not negatif["partiel"] and len(negatif["inconnus"]) == len(chercheur.ACTIFS) - 1
+    invente = recherche_simulee("produit sans preuve", [verdict("AAPL", "non_concerne", "Cette phrase ne figure pas dans la source")],
+                               [accord("AAPL")], texte, cache)
+    assert not invente["non_concernes"] and invente["etats_actifs"]["AAPL"] == "inconnu"
+
+    # Accord sans confiance suffisante ne suffit pas à produire une exclusion ni un négatif rassurant.
+    faible = recherche_simulee("confiance critique faible", [verdict("AAPL", "non_concerne", texte)],
+                              [accord("AAPL", 0.4)], texte, cache)
+    assert faible["etats_actifs"]["AAPL"] == "inconnu" and not faible["verdicts"]
+    faible_chercheur = recherche_simulee("confiance chercheur faible", [verdict("AAPL", "oui", texte, 0.4)],
+                                        [accord("AAPL")], texte, cache)
+    assert faible_chercheur["etats_actifs"]["AAPL"] == "inconnu" and not faible_chercheur["verdicts"]
+
+    # Des conclusions contradictoires sur le même actif ne sont pas arbitrées silencieusement.
+    contradiction = recherche_simulee("preuves contradictoires", [verdict("AAPL", "oui", texte),
+        verdict("AAPL", "non_concerne", texte)], [accord("AAPL")], texte, cache)
+    assert contradiction["etats_actifs"]["AAPL"] == "inconnu" and len(contradiction["rejetes"]) == 2
+
+    # Même préfixe lisible, concepts complets différents : les nouvelles clés sont distinctes.
+    c1 = "entreprises présentes dans le secteur des armes nucléaires"
+    c2 = "entreprises présentes dans le secteur des armes conventionnelles"
+    assert chercheur.slug(c1) == chercheur.slug(c2)
+    r1 = recherche_simulee(c1, [], [], "Source sans conclusion.", cache)
+    r2 = recherche_simulee(c2, [], [], "Source sans conclusion.", cache)
+    assert r1["mot_cle"] != r2["mot_cle"] and not r2["depuis_cache"]
+
+    # Un cache ancien, périmé ou construit sur d'autres données/consignes ne contourne pas les contrôles.
+    assert not chercheur._cache_valide({"oui": ["AAPL"]}, r1["empreinte"])
+    perime = {**r1, "expire_le": (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()}
+    assert not chercheur._cache_valide(perime, r1["empreinte"])
+    avec_cache = json.loads(cache.read_text(encoding="utf-8"))
+    avec_cache[r1["mot_cle"]] = perime
+    cache.write_text(json.dumps(avec_cache), encoding="utf-8")
+    assert not recherche_simulee(c1, [], [], "Source sans conclusion.", cache)["depuis_cache"]
+    avant = chercheur._empreinte(c1, "exclure", b.model)
+    with patch.dict(chercheur.ACTIFS, {"AAPL": {**chercheur.ACTIFS["AAPL"], "nom": "nom actualisé"}}):
+        assert chercheur._empreinte(c1, "exclure", b.model) != avant
+    with patch.object(chercheur, "SYSTEM_CHERCHEUR", chercheur.SYSTEM_CHERCHEUR + " Nouvelle consigne."):
+        assert chercheur._empreinte(c1, "exclure", b.model) != avant
+
+print("Incertitude OK : actifs inconnus explicites, négatifs prouvés, seuils et contradictions contrôlés, cache versionné sans collision")

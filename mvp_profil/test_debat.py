@@ -10,7 +10,8 @@ import json
 import anthropic
 import httpx2 as httpx  # le SDK anthropic utilise httpx2 (fork de httpx)
 
-from agents import MODELES, Backend, debattre
+from agents import (MODELES, Avis, Backend, Proposition, Resultat, _definitions_questionnaire,
+                    debattre, evaluer, meilleur, precontrole, retenable)
 
 ENVOIS: list[dict] = []
 URLS: list[str] = []
@@ -126,4 +127,70 @@ d = debattre(client(s7), ECH7, ["A12", "A8"])
 assert d.resultats["A12"].valide and d.non_valides == ["A8"], d
 assert "A8" not in json.dumps(ENVOIS[n + 1]["messages"][0]["content"].split("Classification proposée")[1])
 
-print("7 scénarios OK (dont Bedrock) :", len(ENVOIS), "requêtes simulées, format envoyé conforme")
+# 8) Une réponse courte doit être présentée avec sa question et la définition exacte de la valeur.
+ech8 = [("Avez-vous des dettes à taux élevé ?", "Non.")]
+s8 = {"classif": [{"propositions": [prop("A7", ["non"], "Non", 0.95)]}],
+      "critique": [{"avis": [avis("A7", True, 0.94)], "question_relance": ""}]}
+n = len(ENVOIS)
+d = debattre(client(s8), ech8, ["A7"])
+assert d.resultats["A7"].valide and d.resultats["A7"].accord_critique is True
+for body in ENVOIS[n:]:
+    prompt = body["messages"][0]["content"]
+    assert "Avez-vous des dettes à taux élevé ?" in prompt and "Utilisateur : Non." in prompt
+assert "aucune = Je les refuse toutes" in _definitions_questionnaire(["E2"])
+assert "A2" not in _definitions_questionnaire(["E2"])  # pas de dictionnaire complet envoyé à chaque fois
+
+# 9) Le contexte de correction et le sens des options parviennent aux deux agents sans accepter une citation inventée.
+ech9 = [("Quand aurez-vous besoin de cet argent ?", "Dans douze ans."),
+        ("Toujours douze ans ?", "Non, je corrige : dans quatre ans.")]
+s9 = {"classif": [{"propositions": [prop("A2", ["3_5_ans"], "dans quatre ans", 0.94)]}],
+      "critique": [{"avis": [avis("A2", True, 0.92)], "question_relance": ""}]}
+n = len(ENVOIS)
+d = debattre(client(s9), ech9, ["A2"])
+assert d.resultats["A2"].valeurs == ["3_5_ans"] and d.resultats["A2"].valide
+for body in ENVOIS[n:]:
+    assert "dans quatre ans" in body["messages"][0]["content"]
+    assert "3_5_ans = 3 à 5 ans" in body["messages"][0]["content"]
+    assert "correction" in body["system"].lower()
+
+# 10) Un critique en désaccord à confiance élevée ne peut pas être contourné par le maintien « retenu ».
+p10 = Proposition(critere_id="A2", valeurs=["10_15_ans"], citation="Dans douze ans", confiance=0.95,
+                  justification="douze ans")
+a10 = Avis(critere_id="A2", accord=False, confiance=0.95, objection="La réponse est corrigée ensuite",
+           valeurs_suggerees=["3_5_ans"])
+r10 = evaluer("A2", p10, a10, ech9, seuil=0.8)
+assert not r10.valide and r10.accord_critique is False and not retenable(r10)
+assert not retenable(Resultat("A2", ["10_15_ans"], "Dans douze ans", 0.9, False, "Désaccord du critique"))
+
+# Un accord sous le seuil peut rester signalé « retenu » ; une classification non vérifiée ne le peut pas.
+a10.accord, a10.confiance = True, 0.7
+accord_faible = evaluer("A2", p10, a10, ech9[:1], seuil=0.8)
+assert not accord_faible.valide and accord_faible.accord_critique is True and retenable(accord_faible)
+p10.confiance = 0.7
+sans_controle = precontrole("A2", p10, ech9[:1], seuil=0.8)
+assert sans_controle and sans_controle.accord_critique is None and not retenable(sans_controle)
+
+# 11) Une réponse corrigée moins confiante ne ressuscite pas la valeur précédente, même mieux notée.
+ancien = Resultat("A2", ["10_15_ans"], "Dans douze ans", 0.96, True, "ok", True)
+recent = Resultat("A2", ["3_5_ans"], "dans quatre ans", 0.7, False, "Confiance 70 % sous le seuil de 80 %", True)
+assert meilleur(ancien, recent) is recent and retenable(recent)
+conteste = Resultat("A2", ["3_5_ans"], "dans quatre ans", 0.6, False, "Désaccord du critique", False)
+assert meilleur(recent, conteste) is conteste and not retenable(meilleur(recent, conteste))
+assert meilleur(recent, Resultat("A2", [], "", 0.0, False, "Information absente")) is recent
+
+# 12) Retraits de capital et besoin de revenus sont deux informations distinctes, même dans une même réponse.
+ech12 = [("Prévoyez-vous des retraits et avez-vous besoin d'un revenu ?",
+          "Aucun retrait de capital, mais les dividendes paient mes dépenses essentielles.")]
+s12 = {"classif": [{"propositions": [prop("A9", ["aucun"], "Aucun retrait de capital", 0.94),
+                                       prop("A10", ["essentiel"], "les dividendes paient mes dépenses essentielles", 0.93)]}],
+       "critique": [{"avis": [avis("A9", True, 0.93), avis("A10", True, 0.92)], "question_relance": ""}]}
+n = len(ENVOIS)
+d = debattre(client(s12), ech12, ["A9", "A10"])
+assert not d.non_valides and d.resultats["A9"].valeurs == ["aucun"] and d.resultats["A10"].valeurs == ["essentiel"]
+for body in ENVOIS[n:]:
+    assert "question composée ne renseigne pas tous les champs par défaut" in body["system"]
+    assert "A9=aucun retrait ne prouve pas A10=non" in body["system"]
+    assert "citation qui l'étaye" in body["system"] or "mots récents qui étayent" in body["system"]
+
+print("12 scénarios OK (dont Bedrock) :", len(ENVOIS), "requêtes simulées, contexte et contrôles conformes")
+print("Les réponses du modèle sont simulées : ces tests ne mesurent pas sa compréhension réelle.")

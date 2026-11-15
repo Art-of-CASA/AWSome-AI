@@ -1,6 +1,6 @@
 """Critères DYNAMIQUES : propres à chaque personne, créés à partir d'une dernière question ouverte.
 
-Les 37 critères fixes (criteres.py) couvrent les cas prévus. Mais chaque personne a ses particularités :
+Les 42 critères fixes (criteres.py) couvrent les cas prévus. Mais chaque personne a ses particularités :
 « je travaille chez Shopify et j'ai déjà beaucoup d'actions de mon employeur », « je déménage en Europe dans
 5 ans », « je ne veux rien qui touche à Elon Musk », « finance islamique : pas d'intérêts »… À la toute fin
 du parcours, une question ouverte demande à la personne ce qu'elle aimerait encore préciser, et l'IA en tire
@@ -15,8 +15,8 @@ PAS du texte libre : c'est une règle (effet, dimension, valeurs) exprimée avec
 Le code vérifie tout (dimension connue, valeurs existantes, citation exacte, accord du critique) et calcule
 les actifs concernés. Ce qui ne peut pas s'exprimer avec ce vocabulaire n'est pas perdu : il devient une
 « note » (contexte pour le conseiller, citée mot pour mot, non utilisée pour filtrer).
-Décision : validé si le critique est d'accord et si les deux confiances >= seuil ; « retenu » (confiance plus
-basse, signalée) si la confiance atteint le plancher de 50 % ; sinon le critère n'est pas créé.
+Décision : validé si le critique est d'accord et si les deux confiances >= seuil. Une préférence avec accord
+peut être retenue au-dessus du plancher ; un désaccord ou un plafond non chiffré appelle une confirmation.
 
 Quand l'idée vise des actifs mais qu'aucune valeur existante ne la traduit (« rien qui touche à Elon Musk »), le
 critère est créé « à étiqueter » avec un CONCEPT : l'agent chercheur (chercheur.py) parcourt nos données et
@@ -54,7 +54,7 @@ class CritereIA(BaseModel):
     effet: Literal["exclure", "privilegier", "plafonner", "note"]
     dimension: str           # une des dimensions du vocabulaire, ou « aucune » pour une note
     valeurs: list[str]       # valeurs existantes de cette dimension (vide pour une note)
-    plafond_pct: int         # pour « plafonner » : part maximale du portefeuille en %, sinon 0
+    plafond_pct: int | None  # None = limite souhaitée, pourcentage encore à préciser
     concept: str             # idée qui vise des actifs sans valeur existante pour la traduire (« Elon Musk ») ; sinon vide
     confiance: float
     justification: str
@@ -85,8 +85,10 @@ Ta tâche : transformer sa réponse en CRITÈRES NOUVEAUX, propres à cette pers
 Pour chaque idée distincte de sa réponse, crée un critère :
 - effet : exclure (il refuse), privilegier (il préfère, sans exclure le reste), plafonner (il accepte mais en quantité limitée,
   plafond_pct = part maximale en %), note (contexte utile qui ne s'exprime pas avec le vocabulaire des actifs).
-  plafonner seulement si l'utilisateur donne LUI-MÊME un chiffre pour CETTE idée, présent dans la citation ; ne reprends
-  jamais un chiffre dit à propos d'autre chose. Sans chiffre, choisis exclure ou privilegier.
+  Si l'utilisateur veut limiter sans donner de chiffre (« limiter les banques », « pas trop de technologie »), garde
+  effet plafonner et plafond_pct null : on lui demandera le pourcentage. Ne transforme JAMAIS une limitation en exclusion.
+  Un chiffre doit être donné LUI-MÊME pour CETTE idée, avec son unité de pourcentage dans la citation ; ne reprends
+  jamais un chiffre dit à propos d'autre chose. Un refus explicite seul autorise exclure.
 - dimension et valeurs : choisis la dimension la plus PRÉCISE du vocabulaire des actifs et recopie EXACTEMENT des valeurs
   existantes. Un thème précis passe avant un secteur large (les banques -> theme banque, pas secteur Financials qui inclut
   les assureurs). Exemples : son employeur figure dans l'univers -> dimension titre, valeur son ticker ; il déménage en
@@ -114,7 +116,23 @@ def decouvrir(backend: Backend, question: str, reponse: str) -> Decouverte:
 A_ETIQUETER = "a_etiqueter"  # dimension d'attente : le chercheur crée le mot-clé (chercheur.py)
 
 
-def _nettoyer(c: CritereIA) -> tuple[str, str, list[str], int]:
+def plafond_etaye(citation: str, plafond: int | None) -> bool:
+    """Le pourcentage doit être explicite, pas un nombre emprunté à une durée ou une autre proposition."""
+    if type(plafond) is not int or not 0 <= plafond <= 100:
+        return False
+    # Une citation couvrant plusieurs propositions ne rattache pas sûrement le chiffre à la cible.
+    # Le découvreur doit fournir un passage centré ; sinon l'utilisateur précisera la règle.
+    autre_proposition = r"(?:%|pour\s+cent).*\b(?:et|puis)\s+(?:je|nous|on|mon|ma|mes|les|le|la)\b"
+    if ";" in citation or re.search(autre_proposition, citation, re.IGNORECASE) or len(re.findall(r"%|\bpour\s+cent\b", citation)) != 1:
+        return False
+    nombres = {0: "zéro|zero", 1: "un", 2: "deux", 3: "trois", 4: "quatre", 5: "cinq", 10: "dix",
+               15: "quinze", 20: "vingt", 25: "vingt[- ]cinq", 30: "trente", 40: "quarante", 50: "cinquante",
+               60: "soixante", 75: "soixante[- ]quinze", 80: "quatre[- ]vingts?", 100: "cent"}
+    nombre = str(plafond) + ("|" + nombres[plafond] if plafond in nombres else "")
+    return bool(re.search(rf"(?<![\w.,])(?:{nombre})\s*(?:%|pour\s+cent)(?!\w)", citation.lower()))
+
+
+def _nettoyer(c: CritereIA) -> tuple[str, str, list[str], int | None]:
     """Contrôle déterministe : dimension connue et valeurs existantes. Sinon : à étiqueter par le chercheur si
     l'idée vise des actifs (concept rempli), ou note."""
     dim, effet = c.dimension.strip(), c.effet
@@ -126,10 +144,9 @@ def _nettoyer(c: CritereIA) -> tuple[str, str, list[str], int]:
         if effet == "note" or not c.concept.strip():
             return "note", "aucune", [], 0
         dim = A_ETIQUETER
-    plafond = max(0, min(100, c.plafond_pct)) if effet == "plafonner" else 0
-    if effet == "plafonner" and (plafond == 0 or not re.search(rf"(?<!\d){plafond}(?!\d)", c.citation)):
-        # Plafond de 0 %, ou chiffre absent de la citation (emprunté à une autre phrase) : exclusion, plus prudente
-        effet, plafond = "exclure", 0
+    plafond = c.plafond_pct if effet == "plafonner" and plafond_etaye(c.citation, c.plafond_pct) else None
+    if effet != "plafonner":
+        plafond = 0
     return effet, dim, vals, plafond
 
 
@@ -144,14 +161,18 @@ def regle(c: dict) -> str:
     """Phrase lisible de la règle, affichée à l'utilisateur et exportée."""
     if c["effet"] == "note":
         return "Note pour le conseiller (aucun filtre automatique)"
-    action = f"Plafonner à {c['plafond_pct']} %" if c["effet"] == "plafonner" else EFFETS[c["effet"]]
+    action = ((f"Plafonner à {c['plafond_pct']} %" if c.get("plafond_pct") is not None else "Limiter (plafond à préciser)")
+              if c["effet"] == "plafonner" else EFFETS[c["effet"]])
     if c["dimension"] == A_ETIQUETER:
         etat = {"echec": "recherche impossible, à revoir"}.get(c.get("etiquetage"), "recherche des actifs concernés en cours")
         return f"{action} : « {c['concept']} » ({etat})"
     if c["dimension"] == "mot_cle_dynamique":
         cible = f"{c['colonne']} = {', '.join(c['valeurs'])}"
         if not c["actifs"]:
-            return f"{action} : {cible} (recherche faite : aucun actif de l'univers concerné)"
+            inconnus = c.get("recherche", {}).get("inconnus")
+            if inconnus is None or inconnus:
+                return f"{action} : {cible} (aucun lien établi ; recherche incomplète, aucun filtre d'absence)"
+            return f"{action} : {cible} (absence de lien vérifiée sur l'univers étudié)"
     else:
         cible = f"{c['dimension']} = {', '.join(c['valeurs'])}"
     n = len(c["actifs"])
@@ -170,7 +191,37 @@ def appliquer_etiquetage(c: dict, res: dict) -> dict:
     c.update(dimension="mot_cle_dynamique", colonne=res["mot_cle"], valeurs=vals, actifs=actifs,
              fnb_exposes=res["fnb_exposes"] if c["effet"] in ("exclure", "plafonner") else {},
              etiquetage="fait", preuves=res["verdicts"], definition_mot_cle=res["definition"],
-             recherche={k: res[k] for k in ("cree_le", "duree_s", "depuis_cache", "appels_outils", "rejetes") if k in res})
+             recherche={k: res[k] for k in ("cree_le", "duree_s", "depuis_cache", "appels_outils", "rejetes",
+                                            "inconnus", "non_concernes", "couverture", "etats_actifs") if k in res})
+    c["regle"] = regle(c)
+    c["applicable"] = est_applicable(c)
+    return c
+
+
+def est_applicable(c: dict) -> bool:
+    """L'intention confirmée ne remplace pas la vérification de la cible ou du pourcentage."""
+    return bool(c.get("statut") in ("validé", "retenu") and c["effet"] != "note"
+                and c["dimension"] not in (A_ETIQUETER, "aucune")
+                and (c["effet"] != "plafonner" or c.get("plafond_pct") is not None)
+                and (c["dimension"] != "mot_cle_dynamique" or c.get("actifs")))
+
+
+def a_confirmer(c: dict) -> bool:
+    return c.get("statut") == "à préciser"
+
+
+def confirmer(c: dict, plafond_pct: int | None = None) -> dict:
+    """Confirmation explicite dans l'interface ; l'idée originale et sa citation restent dans la trace."""
+    if c["effet"] == "plafonner":
+        if type(plafond_pct) is not int or not 0 <= plafond_pct <= 100:
+            raise ValueError("Choisissez un pourcentage entier entre 0 et 100.")
+        c["plafond_pct"] = plafond_pct
+    c.setdefault("confirmations", []).append({"action": "confirmation utilisateur", "effet": c["effet"],
+                                               "plafond_pct": c.get("plafond_pct"),
+                                               "dimension": c["dimension"], "valeurs": list(c["valeurs"])})
+    c.update(statut="validé", confiance=1.0,
+             motif="Règle confirmée explicitement par l'utilisateur", source="confirmation utilisateur")
+    c["applicable"] = est_applicable(c)
     c["regle"] = regle(c)
     return c
 
@@ -209,14 +260,20 @@ def creer(backend: Backend, question: str, reponse: str, seuil: float, deja: int
     for cid, c in proposes.items():
         a = avis.get(cid)
         conf = min(c["confiance_classificateur"], max(0.0, min(1.0, a.confiance)) if a else 0.0)
-        if a and a.accord and conf >= seuil:
+        incomplet = c["effet"] == "plafonner" and c["plafond_pct"] is None
+        if a and a.accord and conf >= seuil and not incomplet:
             statut, motif = "validé", c["justification"]
-        elif conf >= SEUIL_PLANCHER:
+        elif a and a.accord and conf >= SEUIL_PLANCHER and c["effet"] in ("privilegier", "note"):
             statut = "retenu"
-            motif = (f"Confiance {conf:.0%} sous le seuil de {seuil:.0%}" if not a or a.accord
-                     else f"Réserve du critique : {a.objection}")
+            motif = f"Confiance {conf:.0%} sous le seuil de {seuil:.0%}"
+        elif conf >= SEUIL_PLANCHER or (incomplet and c["confiance_classificateur"] >= SEUIL_PLANCHER):
+            statut = "à préciser"
+            motif = ("Pourcentage maximal à préciser ; aucune exclusion déduite" if incomplet
+                     else f"Interprétation à confirmer : {a.objection if a else 'contrôle incomplet'}")
         else:
             continue  # trop incertain : on ne crée pas de règle sur une devinette
-        out.append({**c, "confiance": round(conf, 2), "statut": statut, "motif": motif, "regle": regle(c),
-                    "source": "question ouverte (IA)"})
+        final = {**c, "confiance": round(conf, 2), "statut": statut, "motif": motif, "regle": regle(c),
+                 "source": "question ouverte (IA)"}
+        final["applicable"] = est_applicable(final)
+        out.append(final)
     return out

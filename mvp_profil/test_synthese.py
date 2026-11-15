@@ -55,3 +55,74 @@ x = synthetiser({})
 assert x["niveau"] == 1 and x["budget_perte_pct"] == 5 and len(x["reglages_prudents_appliques"]) >= 8
 assert set(HYP["reglages_prudents"]) <= set(CRITERES)
 print("Synthèse OK : Robert < Mateo < Amira, sensibilité dans le bon sens, réglages prudents signalés")
+
+# Une explication désigne des réponses et des effets réellement calculés, jamais
+# un réglage par défaut présenté comme une déclaration de l'utilisateur.
+p = copy.deepcopy(personas["robert"]["profil"])
+p["A9"], p["A10"] = entree(["aucun"], "QCM"), entree(["non"], "QCM")
+for d in synthetiser(p)["reglages_prudents_appliques"]:
+    p[d["critere"]] = entree([d["valeur"]], "QCM")
+avant = copy.deepcopy(p)
+x = synthetiser(p)
+assert p == avant, "L'analyse de sensibilité ne doit pas modifier le profil"
+horizon = next(d for d in x["reponses_decisives"] if d["critere"] == "A2")
+assert "budget de perte" in horizon["effets"] and horizon["source"] == p["A2"]["source"]
+assert horizon["variation_budget_max_points"] > 0
+assert not synthetiser({})["reponses_decisives"]
+r = x["robustesse"]
+assert r["variations_testees"] > 0
+assert r["budget_min_pct"] <= x["budget_perte_pct"] <= r["budget_max_pct"]
+assert r["etat"] == "sensible" and any(c["critere"] == "A2" for c in r["variations_sensibles"])
+assert "intervalle de confiance" in r["limites"]
+incomplet = copy.deepcopy(p)
+del incomplet["B7"]
+assert "B7" in synthetiser(incomplet)["robustesse"]["criteres_a_confirmer"]
+assert synthetiser(incomplet)["synthese_provisoire"]
+
+# Une limite observée ne disparaît jamais dans les variations du déclaré.
+p = copy.deepcopy(personas["amira"]["profil"])
+p["B1"]["declare"] = "50_plus"
+p["B2"] = entree(["10"], "replay", perte=14.9)
+x = synthetiser(p)
+assert x["robustesse"]["budget_max_pct"] <= 14.9
+assert all(c["critere"] not in ("B2", "H1") for c in x["robustesse"]["variations_sensibles"])
+assert any(d["critere"] == "B2" for d in x["reponses_decisives"])
+
+# Des retraits/revenus essentiels rendent le montant disponible à préciser.
+# Aucun plafond financier arbitraire n'est inventé pour combler l'information.
+p = copy.deepcopy(personas["amira"]["profil"])
+p["A9"], p["A10"] = entree(["reguliers"], "QCM"), entree(["essentiel"], "QCM")
+x = synthetiser(p)
+assert x["budget_perte_pct"] == 45
+assert x["synthese_provisoire"] and x["besoins_liquidite"]["a_preciser"]
+assert "montant des retraits" in x["besoins_liquidite"]["informations_manquantes"]
+assert any("budget calculé reste provisoire" in a for a in x["alertes"])
+assert x["robustesse"]["etat"] == "a_completer"
+assert synthetiser({})["robustesse"]["etat"] == "a_completer"
+
+# Une contrainte d'exclusion est expliquée sans prétendre modifier le budget.
+p["E5"] = entree(["tabac"], "QCM", citation="Tabac")
+tabac = next(d for d in synthetiser(p)["reponses_decisives"] if d["critere"] == "E5")
+assert tabac["effets"] == ["contrainte pour la comparaison future"]
+assert tabac["variation_budget_max_points"] == 0
+print("Explication et robustesse OK : réponses décisives sourcées, variations locales, replay préservé, liquidités à préciser")
+
+# Les raisons expliquent la réponse actuelle et la règle chiffrée réelle, avec
+# des libellés lisibles. Elles séparent une borne active d'une contrainte future.
+for nom, plafond in (("robert", 2), ("amira", 5)):
+    exp = next(d for d in s[nom]["reponses_decisives"] if d["critere"] == "A2")
+    assert f"capacité plafonnée au niveau {plafond} sur 5" in exp["raison"], exp
+    assert "composante limitante" in exp["raison"], exp
+    assert "plus_15_ans" not in exp["raison"] and "3_5_ans" not in exp["raison"]
+    fourchette = next(d for d in s[nom]["reponses_decisives"] if d["critere"] == "B6")
+    assert "Selon la table de l'équipe" in fourchette["raison"]
+    print(f"{nom} : {exp['raison']}")
+p = copy.deepcopy(personas["amira"]["profil"])
+p["A7"] = entree(["oui"], "QCM")
+dettes = next(d for d in synthetiser(p)["reponses_decisives"] if d["critere"] == "A7")
+assert "niveau 1 sur 5" in dettes["raison"]
+p["E2"] = entree(["aucune"], "QCM")  # « aucune controverse » est le filtre le plus strict
+e2 = next(d for d in synthetiser(p)["reponses_decisives"] if d["critere"] == "E2")
+assert "Je les refuse toutes" in e2["raison"]
+assert e2["effets"] == ["contrainte pour la comparaison future"]
+print("Raisons concrètes OK : horizon/plafond, capacité limitante, mesure observée et exclusions strictes")

@@ -1,5 +1,5 @@
 {
- "_note": "Jeu de validation du classement des réponses libres. « attendu » : valeurs que l'outil doit VALIDER pour chaque critère ; une liste vide signifie que rien ne doit être validé (réponse vague, hors sujet, ou qui parle de quelqu'un d'autre). Étiquettes posées à la main le 15 novembre 2026, à relire par l'équipe. Utilisé par mvp_profil/evaluer_classement.py.",
+ "_note": "Jeu de validation du classement des réponses libres. « attendu » : valeurs que l'outil doit reconnaître pour chaque critère ; une liste vide signifie qu'aucune valeur ne doit devenir utilisable (réponse vague, ambiguë, hors sujet ou qui parle de quelqu'un d'autre). Étiquettes manuelles à relire par l'équipe. Les réponses validées et retenables sont mesurées séparément. Les cas peuvent fournir des échanges multi-tours. Les dépendances financières sont explicites dans les exemples positifs ; le seul remboursement d'un prêt d'études ne suffit pas. Utilisé par mvp_profil/evaluer_classement.py.",
  "phrases": [
   {
    "id": "P01",
@@ -19,7 +19,7 @@
    "id": "P02",
    "categorie": "persona",
    "question": "Décrivez votre situation en quelques phrases : vos revenus sont-ils stables, dans quel secteur travaillez-vous, avez-vous des personnes à charge ou des dettes à taux élevé ?",
-   "reponse": "Je suis ingénieure logicielle, célibataire, sans enfant, avec un salaire régulier et aucune dette de carte de crédit.",
+   "reponse": "Je suis ingénieure logicielle, célibataire, sans personne à charge, avec un salaire régulier et aucune dette de carte de crédit.",
    "attendu": {
     "A12": [
      "technologie"
@@ -65,7 +65,7 @@
    "id": "P05",
    "categorie": "persona",
    "question": "Décrivez votre situation en quelques phrases : vos revenus sont-ils stables, dans quel secteur travaillez-vous, avez-vous des personnes à charge ou des dettes à taux élevé ?",
-   "reponse": "Je suis gestionnaire des opérations dans une usine, en couple, et nous avons deux enfants à la maison.",
+   "reponse": "Je suis gestionnaire des opérations dans une usine, en couple, et nos deux enfants sont financièrement à notre charge.",
    "attendu": {
     "A12": [
      "industrie"
@@ -104,7 +104,7 @@
    "id": "P08",
    "categorie": "persona",
    "question": "Décrivez votre situation en quelques phrases : vos revenus sont-ils stables, dans quel secteur travaillez-vous, avez-vous des personnes à charge ou des dettes à taux élevé ?",
-   "reponse": "Je suis médecin, marié, mes enfants sont adultes et autonomes, je n'ai aucune dette.",
+   "reponse": "Je suis médecin, marié, mes enfants sont adultes et autonomes, personne ne dépend de mes revenus et je n'ai aucune dette.",
    "attendu": {
     "A12": [
      "sante"
@@ -205,7 +205,7 @@
    "id": "P15",
    "categorie": "claire",
    "question": "Décrivez votre situation en quelques phrases : vos revenus sont-ils stables, dans quel secteur travaillez-vous, avez-vous des personnes à charge ou des dettes à taux élevé ?",
-   "reponse": "Je suis travailleur autonome, mes revenus changent beaucoup d'un mois à l'autre, et j'ai trois enfants.",
+   "reponse": "Je suis travailleur autonome, mes revenus changent beaucoup d'un mois à l'autre, et mes trois enfants sont à ma charge.",
    "attendu": {
     "A6": [
      "variables"
@@ -365,13 +365,11 @@
   },
   {
    "id": "P28",
-   "categorie": "deduction",
+   "categorie": "deduction_non_etablie",
    "question": "Décrivez votre situation en quelques phrases : vos revenus sont-ils stables, dans quel secteur travaillez-vous, avez-vous des personnes à charge ou des dettes à taux élevé ?",
    "reponse": "En ce moment je rembourse le crédit pour les études de mon fils.",
    "attendu": {
-    "A8": [
-     "1_2"
-    ]
+    "A8": []
    }
   },
   {
@@ -538,6 +536,64 @@
    "attendu": {
     "A2": []
    }
+  },
+  {
+   "id": "P44",
+   "categorie": "reponse_courte",
+   "question": "Avez-vous des dettes à taux élevé, par exemple un solde de carte de crédit ?",
+   "reponse": "Non.",
+   "attendu": {"A7": ["non"]}
+  },
+  {
+   "id": "P45",
+   "categorie": "question_composee",
+   "question": "Vos revenus sont-ils stables ou variables, et avez-vous des dettes à taux élevé ?",
+   "reponse": "Oui.",
+   "attendu": {"A6": [], "A7": []}
+  },
+  {
+   "id": "P46",
+   "categorie": "correction",
+   "echanges": [
+    ["Quand aurez-vous besoin de la majeure partie de cet argent ?", "Dans douze ans."],
+    ["Toujours douze ans ?", "Je corrige : j'en aurai besoin dans quatre ans."]
+   ],
+   "attendu": {"A2": ["3_5_ans"]}
+  },
+  {
+   "id": "P47",
+   "categorie": "negation",
+   "question": "Quels types de placements accepteriez-vous ?",
+   "reponse": "Pas de crypto, mais les actions et les obligations me conviennent.",
+   "attendu": {"D1": ["actions", "obligations"], "D2": ["0"]}
+  },
+  {
+   "id": "P48",
+   "categorie": "revenus_et_retraits",
+   "question": "Prévoyez-vous de retirer du capital et avez-vous besoin des revenus du placement ?",
+   "reponse": "Aucun retrait de capital, mais les dividendes paient mes dépenses essentielles.",
+   "attendu": {"A9": ["aucun"], "A10": ["essentiel"]}
+  },
+  {
+   "id": "P49",
+   "categorie": "deduction_non_etablie",
+   "question": "Combien de personnes dépendent financièrement de vos revenus ?",
+   "reponse": "J'ai des enfants.",
+   "attendu": {"A8": []}
+  },
+  {
+   "id": "P50",
+   "categorie": "fourchette_ambigue",
+   "question": "Quand aurez-vous besoin de la majeure partie de cet argent ?",
+   "reponse": "Je ne sais pas encore, entre huit et douze ans.",
+   "attendu": {"A2": []}
+  },
+  {
+   "id": "P51",
+   "categorie": "limiter_sans_exclure",
+   "question": "Comment souhaitez-vous traiter les entreprises impliquées dans les énergies fossiles ?",
+   "reponse": "Je veux les limiter, mais certainement pas toutes les exclure.",
+   "attendu": {"E1": ["limiter"]}
   }
  ]
 }
