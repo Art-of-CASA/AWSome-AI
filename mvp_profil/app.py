@@ -1257,7 +1257,7 @@ with col_profil, st.container(key="profile_rail"):
                 reperes.append((nom, ", ".join(libelle_valeur(cid, x) for x in S.profil[cid]["valeurs"])))
         etablis = sum(connu(S.profil, cid) for cid in CRITERES)
         interface.apercu_profil(reperes, etablis, len(CRITERES))
-        df = pd.DataFrame([{"id": c, "critère": CRITERES[c]["nom"], "valeurs": ", ".join(v["valeurs"]) or "—",
+        df = pd.DataFrame([{"critère": CRITERES[c]["nom"], "valeurs": ", ".join(v["valeurs"]) or "—",
                             "nature": nature(v["source"]), "source": v["source"], "confiance": v["confiance"],
                             "statut": v["statut"]}
                            for c, v in S.profil.items()])
