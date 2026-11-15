@@ -1,6 +1,6 @@
 {
  "source": "data_extended/asset_criteria.csv",
- "nb_actifs": 66,
+ "nb_actifs": 111,
  "noms": {
   "RY.TO": "Royal Bank of Canada",
   "TD.TO": "Toronto-Dominion Bank",
@@ -67,13 +67,61 @@
   "VEA": "Vanguard FTSE Developed Markets ETF",
   "VWO": "Vanguard FTSE Emerging Markets ETF",
   "XEQT.TO": "iShares Core Equity ETF Portfolio",
-  "BNDW": "Vanguard Total World Bond ETF"
+  "BNDW": "Vanguard Total World Bond ETF",
+  "PM": "Philip Morris International",
+  "LMT": "Lockheed Martin",
+  "BA": "Boeing",
+  "META": "Meta Platforms",
+  "UNH": "UnitedHealth Group",
+  "KO": "Coca-Cola",
+  "COST": "Costco Wholesale",
+  "NEE": "NextEra Energy",
+  "PLTR": "Palantir Technologies",
+  "O": "Realty Income",
+  "LVS": "Las Vegas Sands",
+  "CCO.TO": "Cameco",
+  "BEP-UN.TO": "Brookfield Renewable Partners",
+  "BCE.TO": "BCE",
+  "BATS.L": "British American Tobacco",
+  "DGE.L": "Diageo",
+  "GLEN.L": "Glencore",
+  "RHM.DE": "Rheinmetall",
+  "VWS.CO": "Vestas Wind Systems",
+  "IBE.MC": "Iberdrola",
+  "ENEL.MI": "Enel",
+  "D05.SI": "DBS Group Holdings",
+  "9984.T": "SoftBank Group",
+  "000660.KS": "SK Hynix",
+  "7974.T": "Nintendo",
+  "VALE3.SA": "Vale",
+  "PETR4.SA": "Petrobras (actions privilégiées)",
+  "WALMEX.MX": "Walmart de México y Centroamérica",
+  "2222.SR": "Saudi Aramco",
+  "ICLN": "iShares Global Clean Energy ETF",
+  "ITA": "iShares U.S. Aerospace & Defense ETF",
+  "VNQ": "Vanguard Real Estate ETF",
+  "SMH": "VanEck Semiconductor ETF",
+  "VDY.TO": "Vanguard FTSE Canadian High Dividend Yield Index ETF",
+  "TIP": "iShares TIPS Bond ETF",
+  "PSA.TO": "Purpose High Interest Savings Fund",
+  "CASH.TO": "Global X High Interest Savings ETF",
+  "BIL": "SPDR Bloomberg 1-3 Month T-Bill ETF",
+  "XSB.TO": "iShares Core Canadian Short Term Bond Index ETF",
+  "XSH.TO": "iShares Core Canadian Short Term Corporate Bond Index ETF",
+  "CLF.TO": "iShares 1-5 Year Laddered Government Bond Index ETF",
+  "XGB.TO": "iShares Core Canadian Government Bond Index ETF",
+  "SHY": "iShares 1-3 Year Treasury Bond ETF",
+  "ZLB.TO": "BMO Low Volatility Canadian Equity ETF",
+  "USMV": "iShares MSCI USA Min Vol Factor ETF"
  },
  "dimensions": {
   "titre": {
    "colonne": "ticker",
    "description": "un titre précis de l'univers (ticker), par exemple l'employeur de la personne ou une entreprise qu'elle refuse",
    "valeurs": {
+    "000660.KS": [
+     "000660.KS"
+    ],
     "005930.KS": [
      "005930.KS"
     ],
@@ -83,6 +131,9 @@
     "1211.HK": [
      "1211.HK"
     ],
+    "2222.SR": [
+     "2222.SR"
+    ],
     "2330.TW": [
      "2330.TW"
     ],
@@ -91,6 +142,12 @@
     ],
     "7203.T": [
      "7203.T"
+    ],
+    "7974.T": [
+     "7974.T"
+    ],
+    "9984.T": [
+     "9984.T"
     ],
     "9988.HK": [
      "9988.HK"
@@ -116,11 +173,35 @@
     "AZN.L": [
      "AZN.L"
     ],
+    "BA": [
+     "BA"
+    ],
+    "BATS.L": [
+     "BATS.L"
+    ],
+    "BCE.TO": [
+     "BCE.TO"
+    ],
+    "BEP-UN.TO": [
+     "BEP-UN.TO"
+    ],
+    "BIL": [
+     "BIL"
+    ],
     "BNDW": [
      "BNDW"
     ],
     "BTC-USD": [
      "BTC-USD"
+    ],
+    "CASH.TO": [
+     "CASH.TO"
+    ],
+    "CCO.TO": [
+     "CCO.TO"
+    ],
+    "CLF.TO": [
+     "CLF.TO"
     ],
     "CNQ.TO": [
      "CNQ.TO"
@@ -131,11 +212,23 @@
     "COMI.CA": [
      "COMI.CA"
     ],
+    "COST": [
+     "COST"
+    ],
     "CSU.TO": [
      "CSU.TO"
     ],
+    "D05.SI": [
+     "D05.SI"
+    ],
+    "DGE.L": [
+     "DGE.L"
+    ],
     "ENB.TO": [
      "ENB.TO"
+    ],
+    "ENEL.MI": [
+     "ENEL.MI"
     ],
     "ESGV": [
      "ESGV"
@@ -155,6 +248,9 @@
     "GLD": [
      "GLD"
     ],
+    "GLEN.L": [
+     "GLEN.L"
+    ],
     "GOOGL": [
      "GOOGL"
     ],
@@ -164,8 +260,17 @@
     "HSBA.L": [
      "HSBA.L"
     ],
+    "IBE.MC": [
+     "IBE.MC"
+    ],
+    "ICLN": [
+     "ICLN"
+    ],
     "INFY.NS": [
      "INFY.NS"
+    ],
+    "ITA": [
+     "ITA"
     ],
     "JNJ": [
      "JNJ"
@@ -173,8 +278,20 @@
     "JPM": [
      "JPM"
     ],
+    "KO": [
+     "KO"
+    ],
+    "LMT": [
+     "LMT"
+    ],
+    "LVS": [
+     "LVS"
+    ],
     "MC.PA": [
      "MC.PA"
+    ],
+    "META": [
+     "META"
     ],
     "MFC.TO": [
      "MFC.TO"
@@ -184,6 +301,9 @@
     ],
     "MTN.JO": [
      "MTN.JO"
+    ],
+    "NEE": [
+     "NEE"
     ],
     "NESN.SW": [
      "NESN.SW"
@@ -197,14 +317,32 @@
     "NVDA": [
      "NVDA"
     ],
+    "O": [
+     "O"
+    ],
+    "PETR4.SA": [
+     "PETR4.SA"
+    ],
     "PG": [
      "PG"
+    ],
+    "PLTR": [
+     "PLTR"
+    ],
+    "PM": [
+     "PM"
+    ],
+    "PSA.TO": [
+     "PSA.TO"
     ],
     "QQQ": [
      "QQQ"
     ],
     "RELIANCE.NS": [
      "RELIANCE.NS"
+    ],
+    "RHM.DE": [
+     "RHM.DE"
     ],
     "RY.TO": [
      "RY.TO"
@@ -224,8 +362,14 @@
     "SHP.JO": [
      "SHP.JO"
     ],
+    "SHY": [
+     "SHY"
+    ],
     "SIE.DE": [
      "SIE.DE"
+    ],
+    "SMH": [
+     "SMH"
     ],
     "SOL.JO": [
      "SOL.JO"
@@ -236,6 +380,9 @@
     "TD.TO": [
      "TD.TO"
     ],
+    "TIP": [
+     "TIP"
+    ],
     "TLT": [
      "TLT"
     ],
@@ -245,8 +392,23 @@
     "TTE.PA": [
      "TTE.PA"
     ],
+    "UNH": [
+     "UNH"
+    ],
+    "USMV": [
+     "USMV"
+    ],
+    "VALE3.SA": [
+     "VALE3.SA"
+    ],
+    "VDY.TO": [
+     "VDY.TO"
+    ],
     "VEA": [
      "VEA"
+    ],
+    "VNQ": [
+     "VNQ"
     ],
     "VOD.JO": [
      "VOD.JO"
@@ -257,17 +419,35 @@
     "VWO": [
      "VWO"
     ],
+    "VWS.CO": [
+     "VWS.CO"
+    ],
+    "WALMEX.MX": [
+     "WALMEX.MX"
+    ],
     "XBB.TO": [
      "XBB.TO"
     ],
     "XEQT.TO": [
      "XEQT.TO"
     ],
+    "XGB.TO": [
+     "XGB.TO"
+    ],
     "XIU.TO": [
      "XIU.TO"
     ],
     "XOM": [
      "XOM"
+    ],
+    "XSB.TO": [
+     "XSB.TO"
+    ],
+    "XSH.TO": [
+     "XSH.TO"
+    ],
+    "ZLB.TO": [
+     "ZLB.TO"
     ],
     "ZST.TO": [
      "ZST.TO"
@@ -332,14 +512,52 @@
      "SOL.JO",
      "SHP.JO",
      "APN.JO",
-     "COMI.CA"
+     "COMI.CA",
+     "PM",
+     "LMT",
+     "BA",
+     "META",
+     "UNH",
+     "KO",
+     "COST",
+     "NEE",
+     "PLTR",
+     "O",
+     "LVS",
+     "CCO.TO",
+     "BEP-UN.TO",
+     "BCE.TO",
+     "BATS.L",
+     "DGE.L",
+     "GLEN.L",
+     "RHM.DE",
+     "VWS.CO",
+     "IBE.MC",
+     "ENEL.MI",
+     "D05.SI",
+     "9984.T",
+     "000660.KS",
+     "7974.T",
+     "VALE3.SA",
+     "PETR4.SA",
+     "WALMEX.MX",
+     "2222.SR"
     ],
     "etf_bond": [
      "XBB.TO",
      "ZST.TO",
      "AGG",
      "TLT",
-     "BNDW"
+     "BNDW",
+     "TIP",
+     "PSA.TO",
+     "CASH.TO",
+     "BIL",
+     "XSB.TO",
+     "XSH.TO",
+     "CLF.TO",
+     "XGB.TO",
+     "SHY"
     ],
     "etf_commodity": [
      "GLD"
@@ -352,7 +570,14 @@
      "VT",
      "VEA",
      "VWO",
-     "XEQT.TO"
+     "XEQT.TO",
+     "ICLN",
+     "ITA",
+     "VNQ",
+     "SMH",
+     "VDY.TO",
+     "ZLB.TO",
+     "USMV"
     ]
    }
   },
@@ -401,7 +626,41 @@
      "ZST.TO",
      "AGG",
      "TLT",
-     "GLD"
+     "GLD",
+     "PM",
+     "LMT",
+     "BA",
+     "META",
+     "UNH",
+     "KO",
+     "COST",
+     "NEE",
+     "PLTR",
+     "O",
+     "LVS",
+     "CCO.TO",
+     "BEP-UN.TO",
+     "BCE.TO",
+     "ITA",
+     "VNQ",
+     "SMH",
+     "VDY.TO",
+     "TIP",
+     "PSA.TO",
+     "CASH.TO",
+     "BIL",
+     "XSB.TO",
+     "XSH.TO",
+     "CLF.TO",
+     "XGB.TO",
+     "SHY",
+     "ZLB.TO",
+     "USMV"
+    ],
+    "Amérique latine": [
+     "VALE3.SA",
+     "PETR4.SA",
+     "WALMEX.MX"
     ],
     "Asie": [
      "2330.TW",
@@ -413,7 +672,11 @@
      "1211.HK",
      "RELIANCE.NS",
      "HDFCBANK.NS",
-     "INFY.NS"
+     "INFY.NS",
+     "D05.SI",
+     "9984.T",
+     "000660.KS",
+     "7974.T"
     ],
     "Crypto": [
      "BTC-USD",
@@ -429,14 +692,25 @@
      "TTE.PA",
      "SHEL.L",
      "AZN.L",
-     "HSBA.L"
+     "HSBA.L",
+     "BATS.L",
+     "DGE.L",
+     "GLEN.L",
+     "RHM.DE",
+     "VWS.CO",
+     "IBE.MC",
+     "ENEL.MI"
     ],
     "Monde": [
      "VT",
      "VEA",
      "VWO",
      "XEQT.TO",
-     "BNDW"
+     "BNDW",
+     "ICLN"
+    ],
+    "Moyen-Orient": [
+     "2222.SR"
     ]
    }
   },
@@ -457,9 +731,17 @@
     ],
     "Allemagne": [
      "SAP.DE",
-     "SIE.DE"
+     "SIE.DE",
+     "RHM.DE"
     ],
-    "Amérique du Nord": [
+    "Arabie saoudite": [
+     "2222.SR"
+    ],
+    "Brésil": [
+     "VALE3.SA",
+     "PETR4.SA"
+    ],
+    "Canada": [
      "RY.TO",
      "TD.TO",
      "MFC.TO",
@@ -470,28 +752,23 @@
      "ATD.TO",
      "SHOP.TO",
      "CSU.TO",
-     "AAPL",
-     "MSFT",
-     "NVDA",
-     "GOOGL",
-     "AMZN",
-     "TSLA",
-     "JPM",
-     "JNJ",
-     "PG",
-     "XOM",
-     "XIU.TO",
-     "SPY",
-     "QQQ",
-     "ESGV",
-     "XBB.TO",
-     "ZST.TO",
-     "AGG",
-     "TLT",
-     "GLD"
+     "CCO.TO",
+     "BEP-UN.TO",
+     "BCE.TO"
     ],
     "Canada (fonds)": [
-     "XEQT.TO"
+     "XIU.TO",
+     "XBB.TO",
+     "ZST.TO",
+     "XEQT.TO",
+     "VDY.TO",
+     "PSA.TO",
+     "CASH.TO",
+     "XSB.TO",
+     "XSH.TO",
+     "CLF.TO",
+     "XGB.TO",
+     "ZLB.TO"
     ],
     "Chine": [
      "0700.HK",
@@ -499,14 +776,19 @@
      "1211.HK"
     ],
     "Corée du Sud": [
-     "005930.KS"
+     "005930.KS",
+     "000660.KS"
     ],
     "Crypto": [
      "BTC-USD",
      "ETH-USD"
     ],
     "Danemark": [
-     "NOVO-B.CO"
+     "NOVO-B.CO",
+     "VWS.CO"
+    ],
+    "Espagne": [
+     "IBE.MC"
     ],
     "France": [
      "MC.PA",
@@ -517,9 +799,17 @@
      "HDFCBANK.NS",
      "INFY.NS"
     ],
+    "Italie": [
+     "ENEL.MI"
+    ],
     "Japon": [
      "7203.T",
-     "6758.T"
+     "6758.T",
+     "9984.T",
+     "7974.T"
+    ],
+    "Mexique": [
+     "WALMEX.MX"
     ],
     "Pays-Bas": [
      "ASML.AS"
@@ -527,7 +817,13 @@
     "Royaume-Uni": [
      "SHEL.L",
      "AZN.L",
-     "HSBA.L"
+     "HSBA.L",
+     "BATS.L",
+     "DGE.L",
+     "GLEN.L"
+    ],
+    "Singapour": [
+     "D05.SI"
     ],
     "Suisse": [
      "NESN.SW"
@@ -538,11 +834,48 @@
     "Égypte": [
      "COMI.CA"
     ],
+    "États-Unis": [
+     "AAPL",
+     "MSFT",
+     "NVDA",
+     "GOOGL",
+     "AMZN",
+     "TSLA",
+     "JPM",
+     "JNJ",
+     "PG",
+     "XOM",
+     "PM",
+     "LMT",
+     "BA",
+     "META",
+     "UNH",
+     "KO",
+     "COST",
+     "NEE",
+     "PLTR",
+     "O",
+     "LVS"
+    ],
     "États-Unis (fonds)": [
+     "SPY",
+     "QQQ",
+     "ESGV",
+     "AGG",
+     "TLT",
+     "GLD",
      "VT",
      "VEA",
      "VWO",
-     "BNDW"
+     "BNDW",
+     "ICLN",
+     "ITA",
+     "VNQ",
+     "SMH",
+     "TIP",
+     "BIL",
+     "SHY",
+     "USMV"
     ]
    }
   },
@@ -550,6 +883,10 @@
    "colonne": "currency",
    "description": "devise de cotation",
    "valeurs": {
+    "BRL": [
+     "VALE3.SA",
+     "PETR4.SA"
+    ],
     "CAD": [
      "RY.TO",
      "TD.TO",
@@ -564,13 +901,25 @@
      "XIU.TO",
      "XBB.TO",
      "ZST.TO",
-     "XEQT.TO"
+     "XEQT.TO",
+     "CCO.TO",
+     "BEP-UN.TO",
+     "BCE.TO",
+     "VDY.TO",
+     "PSA.TO",
+     "CASH.TO",
+     "XSB.TO",
+     "XSH.TO",
+     "CLF.TO",
+     "XGB.TO",
+     "ZLB.TO"
     ],
     "CHF": [
      "NESN.SW"
     ],
     "DKK": [
-     "NOVO-B.CO"
+     "NOVO-B.CO",
+     "VWS.CO"
     ],
     "EGP": [
      "COMI.CA"
@@ -580,12 +929,18 @@
      "MC.PA",
      "SAP.DE",
      "SIE.DE",
-     "TTE.PA"
+     "TTE.PA",
+     "RHM.DE",
+     "IBE.MC",
+     "ENEL.MI"
     ],
     "GBP": [
      "SHEL.L",
      "AZN.L",
-     "HSBA.L"
+     "HSBA.L",
+     "BATS.L",
+     "DGE.L",
+     "GLEN.L"
     ],
     "HKD": [
      "0700.HK",
@@ -599,10 +954,22 @@
     ],
     "JPY": [
      "7203.T",
-     "6758.T"
+     "6758.T",
+     "9984.T",
+     "7974.T"
     ],
     "KRW": [
-     "005930.KS"
+     "005930.KS",
+     "000660.KS"
+    ],
+    "MXN": [
+     "WALMEX.MX"
+    ],
+    "SAR": [
+     "2222.SR"
+    ],
+    "SGD": [
+     "D05.SI"
     ],
     "TWD": [
      "2330.TW"
@@ -629,7 +996,26 @@
      "VT",
      "VEA",
      "VWO",
-     "BNDW"
+     "BNDW",
+     "PM",
+     "LMT",
+     "BA",
+     "META",
+     "UNH",
+     "KO",
+     "COST",
+     "NEE",
+     "PLTR",
+     "O",
+     "LVS",
+     "ICLN",
+     "ITA",
+     "VNQ",
+     "SMH",
+     "TIP",
+     "BIL",
+     "SHY",
+     "USMV"
     ],
     "ZAR": [
      "NPN.JO",
@@ -651,23 +1037,53 @@
     "Bonds (Canada aggregate)": [
      "XBB.TO"
     ],
+    "Bonds (Canada court terme)": [
+     "XSB.TO"
+    ],
+    "Bonds (Canada gouvernements 1 à 5 ans échelonnés)": [
+     "CLF.TO"
+    ],
+    "Bonds (Canada gouvernements)": [
+     "XGB.TO"
+    ],
+    "Bonds (Canada sociétés court terme)": [
+     "XSH.TO"
+    ],
     "Bonds (Canada ultra short-term)": [
      "ZST.TO"
+    ],
+    "Bonds (U.S. Trésor 1 à 3 ans)": [
+     "SHY"
     ],
     "Bonds (U.S. aggregate)": [
      "AGG"
     ],
+    "Bonds (U.S. bons du Trésor 1 à 3 mois)": [
+     "BIL"
+    ],
     "Bonds (U.S. long Treasury)": [
      "TLT"
+    ],
+    "Bonds (U.S., indexées sur l'inflation)": [
+     "TIP"
     ],
     "Bonds (monde, couvert en USD)": [
      "BNDW"
     ],
+    "Broad market (Canada faible volatilité)": [
+     "ZLB.TO"
+    ],
     "Broad market (Canada)": [
      "XIU.TO"
     ],
+    "Broad market (Canada, dividendes élevés)": [
+     "VDY.TO"
+    ],
     "Broad market (U.S. growth/tech-heavy)": [
      "QQQ"
+    ],
+    "Broad market (U.S. volatilité minimale)": [
+     "USMV"
     ],
     "Broad market (U.S.)": [
      "SPY"
@@ -691,7 +1107,11 @@
      "GOOGL",
      "0700.HK",
      "MTN.JO",
-     "VOD.JO"
+     "VOD.JO",
+     "META",
+     "BCE.TO",
+     "9984.T",
+     "7974.T"
     ],
     "Consumer Discretionary": [
      "AMZN",
@@ -701,13 +1121,20 @@
      "6758.T",
      "9988.HK",
      "1211.HK",
-     "NPN.JO"
+     "NPN.JO",
+     "LVS"
     ],
     "Consumer Staples": [
      "ATD.TO",
      "PG",
      "NESN.SW",
-     "SHP.JO"
+     "SHP.JO",
+     "PM",
+     "KO",
+     "COST",
+     "BATS.L",
+     "DGE.L",
+     "WALMEX.MX"
     ],
     "Crypto asset": [
      "BTC-USD",
@@ -719,7 +1146,10 @@
      "XOM",
      "TTE.PA",
      "SHEL.L",
-     "RELIANCE.NS"
+     "RELIANCE.NS",
+     "CCO.TO",
+     "PETR4.SA",
+     "2222.SR"
     ],
     "Financials": [
      "RY.TO",
@@ -730,7 +1160,8 @@
      "HDFCBANK.NS",
      "FSR.JO",
      "SBK.JO",
-     "COMI.CA"
+     "COMI.CA",
+     "D05.SI"
     ],
     "Gold": [
      "GLD"
@@ -739,11 +1170,16 @@
      "JNJ",
      "NOVO-B.CO",
      "AZN.L",
-     "APN.JO"
+     "APN.JO",
+     "UNH"
     ],
     "Industrials": [
      "CNR.TO",
-     "SIE.DE"
+     "SIE.DE",
+     "LMT",
+     "BA",
+     "RHM.DE",
+     "VWS.CO"
     ],
     "Information Technology": [
      "SHOP.TO",
@@ -755,14 +1191,41 @@
      "SAP.DE",
      "2330.TW",
      "005930.KS",
-     "INFY.NS"
+     "INFY.NS",
+     "PLTR",
+     "000660.KS"
+    ],
+    "Liquidités (comptes d'épargne à intérêt élevé)": [
+     "PSA.TO",
+     "CASH.TO"
     ],
     "Materials": [
      "GFI.JO",
-     "SOL.JO"
+     "SOL.JO",
+     "GLEN.L",
+     "VALE3.SA"
+    ],
+    "Real Estate": [
+     "O"
+    ],
+    "Sectoriel (aérospatiale et défense É.-U.)": [
+     "ITA"
+    ],
+    "Sectoriel (immobilier coté É.-U.)": [
+     "VNQ"
+    ],
+    "Sectoriel (semi-conducteurs)": [
+     "SMH"
+    ],
+    "Thématique (énergie propre mondiale)": [
+     "ICLN"
     ],
     "Utilities": [
-     "FTS.TO"
+     "FTS.TO",
+     "NEE",
+     "BEP-UN.TO",
+     "IBE.MC",
+     "ENEL.MI"
     ]
    }
   },
@@ -770,11 +1233,26 @@
    "colonne": "themes",
    "description": "thème d'activité précis (plusieurs par actif)",
    "valeurs": {
+    "aerospatiale": [
+     "LMT",
+     "BA",
+     "ITA"
+    ],
+    "alcool": [
+     "DGE.L"
+    ],
     "alimentation": [
      "NESN.SW"
     ],
+    "armes": [
+     "LMT",
+     "BA",
+     "RHM.DE",
+     "ITA"
+    ],
     "assurance": [
-     "MFC.TO"
+     "MFC.TO",
+     "UNH"
     ],
     "automatisation": [
      "SIE.DE"
@@ -790,13 +1268,21 @@
      "HDFCBANK.NS",
      "FSR.JO",
      "SBK.JO",
-     "COMI.CA"
+     "COMI.CA",
+     "D05.SI",
+     "VDY.TO"
     ],
     "batteries": [
      "1211.HK"
     ],
+    "boissons": [
+     "KO"
+    ],
     "carburants_synthetiques": [
      "SOL.JO"
+    ],
+    "charbon": [
+     "GLEN.L"
     ],
     "chemin_de_fer": [
      "CNR.TO"
@@ -805,7 +1291,9 @@
      "SOL.JO"
     ],
     "commerce": [
-     "RELIANCE.NS"
+     "RELIANCE.NS",
+     "COST",
+     "WALMEX.MX"
     ],
     "commerce_en_ligne": [
      "SHOP.TO",
@@ -833,13 +1321,30 @@
      "005930.KS",
      "6758.T"
     ],
+    "energie_nucleaire": [
+     "CCO.TO"
+    ],
+    "energies_renouvelables": [
+     "NEE",
+     "BEP-UN.TO",
+     "VWS.CO",
+     "IBE.MC",
+     "ENEL.MI",
+     "ICLN"
+    ],
+    "eolien": [
+     "VWS.CO"
+    ],
     "esg": [
-     "ESGV"
+     "ESGV",
+     "ICLN"
     ],
     "gaz": [
      "XOM",
      "TTE.PA",
-     "SHEL.L"
+     "SHEL.L",
+     "PETR4.SA",
+     "2222.SR"
     ],
     "generiques": [
      "APN.JO"
@@ -849,7 +1354,11 @@
      "SHEL.L"
     ],
     "holding": [
-     "NPN.JO"
+     "NPN.JO",
+     "9984.T"
+    ],
+    "hotellerie": [
+     "LVS"
     ],
     "hybride": [
      "7203.T"
@@ -864,7 +1373,16 @@
      "SAP.DE",
      "2330.TW",
      "0700.HK",
-     "9988.HK"
+     "9988.HK",
+     "META",
+     "PLTR",
+     "9984.T",
+     "000660.KS",
+     "SMH"
+    ],
+    "immobilier": [
+     "O",
+     "VNQ"
     ],
     "infonuagique": [
      "MSFT",
@@ -876,26 +1394,34 @@
      "ENB.TO",
      "CNR.TO",
      "FTS.TO",
-     "SIE.DE"
+     "SIE.DE",
+     "BEP-UN.TO"
     ],
     "internet": [
      "NPN.JO"
     ],
+    "jeux_argent": [
+     "LVS"
+    ],
     "jeux_video": [
      "6758.T",
-     "0700.HK"
+     "0700.HK",
+     "7974.T"
     ],
     "logiciel": [
      "SHOP.TO",
      "CSU.TO",
      "MSFT",
-     "SAP.DE"
+     "SAP.DE",
+     "PLTR"
     ],
     "luxe": [
      "MC.PA"
     ],
     "mines": [
-     "GFI.JO"
+     "GFI.JO",
+     "GLEN.L",
+     "VALE3.SA"
     ],
     "obesite": [
      "NOVO-B.CO"
@@ -915,7 +1441,10 @@
      "CNQ.TO",
      "XOM",
      "TTE.PA",
-     "SHEL.L"
+     "SHEL.L",
+     "PETR4.SA",
+     "2222.SR",
+     "VDY.TO"
     ],
     "pharmacie": [
      "JNJ",
@@ -930,13 +1459,15 @@
      "PG"
     ],
     "publicite_numerique": [
-     "GOOGL"
+     "GOOGL",
+     "META"
     ],
     "raffinage": [
      "RELIANCE.NS"
     ],
     "reseaux_sociaux": [
-     "0700.HK"
+     "0700.HK",
+     "META"
     ],
     "sables_bitumineux": [
      "CNQ.TO"
@@ -945,16 +1476,26 @@
      "NVDA",
      "ASML.AS",
      "2330.TW",
-     "005930.KS"
+     "005930.KS",
+     "000660.KS",
+     "SMH"
     ],
     "services_informatiques": [
      "INFY.NS"
     ],
     "services_publics": [
-     "FTS.TO"
+     "FTS.TO",
+     "NEE",
+     "IBE.MC",
+     "ENEL.MI"
     ],
     "supermarches": [
-     "SHP.JO"
+     "SHP.JO",
+     "WALMEX.MX"
+    ],
+    "tabac": [
+     "PM",
+     "BATS.L"
     ],
     "technologie_large": [
      "QQQ"
@@ -962,7 +1503,12 @@
     "telecoms": [
      "RELIANCE.NS",
      "MTN.JO",
-     "VOD.JO"
+     "VOD.JO",
+     "BCE.TO",
+     "9984.T"
+    ],
+    "uranium": [
+     "CCO.TO"
     ],
     "vehicule_electrique": [
      "TSLA",
@@ -975,7 +1521,14 @@
    "description": "activité controversée détectée (mot-clé kw_exclusions)",
    "valeurs": {
     "alcool": [
-     "MC.PA"
+     "MC.PA",
+     "DGE.L"
+    ],
+    "armes": [
+     "LMT",
+     "BA",
+     "RHM.DE",
+     "ITA"
     ],
     "atteinte_droits_autochtones": [
      "ENB.TO"
@@ -994,8 +1547,6 @@
      "TSLA",
      "JPM",
      "PG",
-     "XIU.TO",
-     "SPY",
      "QQQ",
      "ESGV",
      "XBB.TO",
@@ -1027,16 +1578,43 @@
      "GFI.JO",
      "SHP.JO",
      "COMI.CA",
-     "VT",
-     "VEA",
-     "VWO",
-     "XEQT.TO",
-     "BNDW"
+     "BNDW",
+     "META",
+     "UNH",
+     "KO",
+     "COST",
+     "O",
+     "BEP-UN.TO",
+     "BCE.TO",
+     "VWS.CO",
+     "D05.SI",
+     "9984.T",
+     "000660.KS",
+     "7974.T",
+     "VALE3.SA",
+     "WALMEX.MX",
+     "ICLN",
+     "VNQ",
+     "SMH",
+     "TIP",
+     "PSA.TO",
+     "CASH.TO",
+     "BIL",
+     "XSB.TO",
+     "XSH.TO",
+     "CLF.TO",
+     "XGB.TO",
+     "SHY"
     ],
     "contrats_de_defense": [
      "MSFT",
      "GOOGL",
-     "AMZN"
+     "AMZN",
+     "LMT",
+     "BA",
+     "PLTR",
+     "RHM.DE",
+     "ITA"
     ],
     "energie_fossile": [
      "ENB.TO",
@@ -1045,7 +1623,34 @@
      "TTE.PA",
      "SHEL.L",
      "RELIANCE.NS",
-     "SOL.JO"
+     "SOL.JO",
+     "GLEN.L",
+     "PETR4.SA",
+     "2222.SR"
+    ],
+    "energie_fossile_via_fonds": [
+     "XIU.TO",
+     "SPY",
+     "VT",
+     "VEA",
+     "VWO",
+     "XEQT.TO",
+     "VDY.TO",
+     "ZLB.TO",
+     "USMV"
+    ],
+    "energie_nucleaire": [
+     "NEE",
+     "CCO.TO",
+     "IBE.MC",
+     "ENEL.MI"
+    ],
+    "jeux_argent": [
+     "LVS"
+    ],
+    "tabac": [
+     "PM",
+     "BATS.L"
     ],
     "tests_sur_animaux": [
      "JNJ",
@@ -1074,6 +1679,9 @@
     "marche_emergent": [
      "2330.TW",
      "005930.KS",
+     "0700.HK",
+     "9988.HK",
+     "1211.HK",
      "RELIANCE.NS",
      "HDFCBANK.NS",
      "INFY.NS",
@@ -1085,7 +1693,18 @@
      "GFI.JO",
      "SOL.JO",
      "SHP.JO",
-     "APN.JO"
+     "APN.JO",
+     "COMI.CA",
+     "VWO",
+     "000660.KS",
+     "VALE3.SA",
+     "PETR4.SA",
+     "WALMEX.MX",
+     "2222.SR"
+    ],
+    "marche_emergent_partiel": [
+     "VT",
+     "XEQT.TO"
     ],
     "pays_developpe": [
      "RY.TO",
@@ -1129,9 +1748,50 @@
      "HSBA.L",
      "7203.T",
      "6758.T",
+     "VT",
      "VEA",
      "XEQT.TO",
-     "BNDW"
+     "BNDW",
+     "PM",
+     "LMT",
+     "BA",
+     "META",
+     "UNH",
+     "KO",
+     "COST",
+     "NEE",
+     "PLTR",
+     "O",
+     "LVS",
+     "CCO.TO",
+     "BEP-UN.TO",
+     "BCE.TO",
+     "BATS.L",
+     "DGE.L",
+     "GLEN.L",
+     "RHM.DE",
+     "VWS.CO",
+     "IBE.MC",
+     "ENEL.MI",
+     "D05.SI",
+     "9984.T",
+     "7974.T",
+     "ICLN",
+     "ITA",
+     "VNQ",
+     "SMH",
+     "VDY.TO",
+     "TIP",
+     "PSA.TO",
+     "CASH.TO",
+     "BIL",
+     "XSB.TO",
+     "XSH.TO",
+     "CLF.TO",
+     "XGB.TO",
+     "SHY",
+     "ZLB.TO",
+     "USMV"
     ],
     "sans_pays": [
      "BTC-USD",
@@ -1173,7 +1833,22 @@
      "SOL.JO",
      "SHP.JO",
      "APN.JO",
-     "COMI.CA"
+     "COMI.CA",
+     "BATS.L",
+     "DGE.L",
+     "GLEN.L",
+     "RHM.DE",
+     "VWS.CO",
+     "IBE.MC",
+     "ENEL.MI",
+     "D05.SI",
+     "9984.T",
+     "000660.KS",
+     "7974.T",
+     "VALE3.SA",
+     "PETR4.SA",
+     "WALMEX.MX",
+     "2222.SR"
     ],
     "cad": [
      "RY.TO",
@@ -1188,10 +1863,27 @@
      "CSU.TO",
      "XIU.TO",
      "XBB.TO",
-     "ZST.TO"
+     "ZST.TO",
+     "CCO.TO",
+     "BEP-UN.TO",
+     "BCE.TO",
+     "VDY.TO",
+     "PSA.TO",
+     "CASH.TO",
+     "XSB.TO",
+     "XSH.TO",
+     "CLF.TO",
+     "XGB.TO",
+     "ZLB.TO"
     ],
     "cad_actifs_etrangers_non_couverts": [
      "XEQT.TO"
+    ],
+    "multidevise_non_couvert": [
+     "VT",
+     "VEA",
+     "VWO",
+     "ICLN"
     ],
     "sans_devise_souveraine": [
      "BTC-USD",
@@ -1214,9 +1906,24 @@
      "AGG",
      "TLT",
      "GLD",
-     "VT",
-     "VEA",
-     "VWO"
+     "PM",
+     "LMT",
+     "BA",
+     "META",
+     "UNH",
+     "KO",
+     "COST",
+     "NEE",
+     "PLTR",
+     "O",
+     "LVS",
+     "ITA",
+     "VNQ",
+     "SMH",
+     "TIP",
+     "BIL",
+     "SHY",
+     "USMV"
     ],
     "usd_couvert": [
      "BNDW"
@@ -1274,12 +1981,41 @@
      "MTN.JO",
      "VOD.JO",
      "GFI.JO",
-     "SHP.JO"
+     "SHP.JO",
+     "PM",
+     "LMT",
+     "BA",
+     "META",
+     "UNH",
+     "KO",
+     "COST",
+     "NEE",
+     "PLTR",
+     "O",
+     "LVS",
+     "CCO.TO",
+     "BCE.TO",
+     "BATS.L",
+     "DGE.L",
+     "GLEN.L",
+     "RHM.DE",
+     "VWS.CO",
+     "IBE.MC",
+     "ENEL.MI",
+     "D05.SI",
+     "9984.T",
+     "000660.KS",
+     "7974.T",
+     "VALE3.SA",
+     "PETR4.SA",
+     "WALMEX.MX",
+     "2222.SR"
     ],
     "moyenne": [
      "SOL.JO",
      "APN.JO",
-     "COMI.CA"
+     "COMI.CA",
+     "BEP-UN.TO"
     ],
     "non_applicable": [
      "XIU.TO",
@@ -1297,7 +2033,23 @@
      "VEA",
      "VWO",
      "XEQT.TO",
-     "BNDW"
+     "BNDW",
+     "ICLN",
+     "ITA",
+     "VNQ",
+     "SMH",
+     "VDY.TO",
+     "TIP",
+     "PSA.TO",
+     "CASH.TO",
+     "BIL",
+     "XSB.TO",
+     "XSH.TO",
+     "CLF.TO",
+     "XGB.TO",
+     "SHY",
+     "ZLB.TO",
+     "USMV"
     ]
    }
   },
@@ -1312,7 +2064,9 @@
      "GLD",
      "BTC-USD",
      "ETH-USD",
-     "SOL.JO"
+     "SOL.JO",
+     "BA",
+     "PLTR"
     ],
     "distribuant": [
      "RY.TO",
@@ -1368,14 +2122,57 @@
      "VT",
      "VEA",
      "VWO",
-     "XEQT.TO"
+     "XEQT.TO",
+     "PM",
+     "LMT",
+     "META",
+     "UNH",
+     "KO",
+     "COST",
+     "NEE",
+     "LVS",
+     "CCO.TO",
+     "BEP-UN.TO",
+     "BCE.TO",
+     "BATS.L",
+     "DGE.L",
+     "GLEN.L",
+     "RHM.DE",
+     "VWS.CO",
+     "IBE.MC",
+     "ENEL.MI",
+     "D05.SI",
+     "9984.T",
+     "000660.KS",
+     "7974.T",
+     "VALE3.SA",
+     "PETR4.SA",
+     "WALMEX.MX",
+     "2222.SR",
+     "ICLN",
+     "ITA",
+     "VNQ",
+     "SMH",
+     "TIP",
+     "ZLB.TO",
+     "USMV"
     ],
     "distribution_mensuelle": [
      "XBB.TO",
      "ZST.TO",
      "AGG",
      "TLT",
-     "BNDW"
+     "BNDW",
+     "O",
+     "VDY.TO",
+     "PSA.TO",
+     "CASH.TO",
+     "BIL",
+     "XSB.TO",
+     "XSH.TO",
+     "CLF.TO",
+     "XGB.TO",
+     "SHY"
     ]
    }
   },
@@ -1395,6 +2192,7 @@
      "AAPL",
      "MSFT",
      "NVDA",
+     "GOOGL",
      "AMZN",
      "TSLA",
      "JPM",
@@ -1410,6 +2208,7 @@
      "005930.KS",
      "7203.T",
      "6758.T",
+     "0700.HK",
      "9988.HK",
      "1211.HK",
      "RELIANCE.NS",
@@ -1420,22 +2219,49 @@
      "SBK.JO",
      "GFI.JO",
      "SOL.JO",
-     "COMI.CA"
+     "COMI.CA",
+     "LMT",
+     "BA",
+     "META",
+     "PLTR",
+     "O",
+     "LVS",
+     "CCO.TO",
+     "GLEN.L",
+     "RHM.DE",
+     "VWS.CO",
+     "D05.SI",
+     "000660.KS",
+     "7974.T",
+     "VALE3.SA",
+     "PETR4.SA",
+     "2222.SR"
     ],
     "defensif": [
      "FTS.TO",
      "ATD.TO",
-     "GOOGL",
      "JNJ",
      "PG",
      "NESN.SW",
      "NOVO-B.CO",
      "AZN.L",
-     "0700.HK",
      "MTN.JO",
      "VOD.JO",
      "SHP.JO",
-     "APN.JO"
+     "APN.JO",
+     "PM",
+     "UNH",
+     "KO",
+     "COST",
+     "NEE",
+     "BEP-UN.TO",
+     "BCE.TO",
+     "BATS.L",
+     "DGE.L",
+     "IBE.MC",
+     "ENEL.MI",
+     "9984.T",
+     "WALMEX.MX"
     ],
     "marche_large": [
      "XIU.TO",
@@ -1445,14 +2271,30 @@
      "VT",
      "VEA",
      "VWO",
-     "XEQT.TO"
+     "XEQT.TO",
+     "ICLN",
+     "ITA",
+     "VNQ",
+     "SMH",
+     "VDY.TO",
+     "ZLB.TO",
+     "USMV"
     ],
     "obligataire": [
      "XBB.TO",
      "ZST.TO",
      "AGG",
      "TLT",
-     "BNDW"
+     "BNDW",
+     "TIP",
+     "PSA.TO",
+     "CASH.TO",
+     "BIL",
+     "XSB.TO",
+     "XSH.TO",
+     "CLF.TO",
+     "XGB.TO",
+     "SHY"
     ],
     "refuge": [
      "GLD"
@@ -1487,12 +2329,33 @@
      "TLT",
      "VT",
      "VEA",
-     "VWO"
+     "VWO",
+     "ICLN",
+     "ITA",
+     "VNQ",
+     "SMH",
+     "VDY.TO",
+     "TIP",
+     "PSA.TO",
+     "CASH.TO",
+     "BIL",
+     "XSB.TO",
+     "XSH.TO",
+     "CLF.TO",
+     "XGB.TO",
+     "SHY",
+     "ZLB.TO",
+     "USMV"
     ],
     "forte_ponderation_10_premiers": [
      "XIU.TO",
      "QQQ",
-     "ESGV"
+     "ESGV",
+     "ICLN",
+     "ITA",
+     "VNQ",
+     "SMH",
+     "VDY.TO"
     ],
     "titre_individuel": [
      "RY.TO",
@@ -1544,7 +2407,36 @@
      "SOL.JO",
      "SHP.JO",
      "APN.JO",
-     "COMI.CA"
+     "COMI.CA",
+     "PM",
+     "LMT",
+     "BA",
+     "META",
+     "UNH",
+     "KO",
+     "COST",
+     "NEE",
+     "PLTR",
+     "O",
+     "LVS",
+     "CCO.TO",
+     "BEP-UN.TO",
+     "BCE.TO",
+     "BATS.L",
+     "DGE.L",
+     "GLEN.L",
+     "RHM.DE",
+     "VWS.CO",
+     "IBE.MC",
+     "ENEL.MI",
+     "D05.SI",
+     "9984.T",
+     "000660.KS",
+     "7974.T",
+     "VALE3.SA",
+     "PETR4.SA",
+     "WALMEX.MX",
+     "2222.SR"
     ]
    }
   },
@@ -1552,6 +2444,11 @@
    "colonne": "kw_attention",
    "description": "attention médiatique (mot-clé kw_attention)",
    "valeurs": {
+    "emballement_recent": [
+     "NVDA",
+     "RHM.DE",
+     "9984.T"
+    ],
     "non_applicable": [
      "XIU.TO",
      "SPY",
@@ -1564,7 +2461,17 @@
      "VT",
      "VEA",
      "VWO",
-     "BNDW"
+     "BNDW",
+     "ICLN",
+     "ITA",
+     "VNQ",
+     "VDY.TO",
+     "TIP",
+     "PSA.TO",
+     "CASH.TO",
+     "CLF.TO",
+     "ZLB.TO",
+     "USMV"
     ],
     "peu_mediatise": [
      "RY.TO",
@@ -1583,11 +2490,9 @@
      "ETH-USD",
      "ASML.AS",
      "NOVO-B.CO",
-     "SIE.DE",
      "TTE.PA",
      "SHEL.L",
      "AZN.L",
-     "005930.KS",
      "1211.HK",
      "NPN.JO",
      "FSR.JO",
@@ -1598,7 +2503,28 @@
      "SOL.JO",
      "SHP.JO",
      "APN.JO",
-     "COMI.CA"
+     "COMI.CA",
+     "PM",
+     "UNH",
+     "NEE",
+     "O",
+     "LVS",
+     "CCO.TO",
+     "BEP-UN.TO",
+     "BCE.TO",
+     "BATS.L",
+     "DGE.L",
+     "GLEN.L",
+     "RHM.DE",
+     "VWS.CO",
+     "IBE.MC",
+     "ENEL.MI",
+     "D05.SI",
+     "9984.T",
+     "000660.KS",
+     "VALE3.SA",
+     "PETR4.SA",
+     "WALMEX.MX"
     ],
     "pic_de_volume_anormal": [
      "NVDA",
@@ -1611,7 +2537,21 @@
      "INFY.NS",
      "APN.JO",
      "COMI.CA",
-     "XEQT.TO"
+     "XEQT.TO",
+     "BA",
+     "META",
+     "CCO.TO",
+     "RHM.DE",
+     "VWS.CO",
+     "IBE.MC",
+     "VALE3.SA",
+     "PETR4.SA",
+     "SMH",
+     "BIL",
+     "XSB.TO",
+     "XSH.TO",
+     "XGB.TO",
+     "SHY"
     ],
     "tres_mediatise": [
      "AAPL",
@@ -1619,23 +2559,37 @@
      "GOOGL",
      "TSLA",
      "BTC-USD",
-     "MC.PA",
      "NESN.SW",
      "2330.TW",
-     "6758.T",
      "RELIANCE.NS",
-     "INFY.NS"
+     "INFY.NS",
+     "LMT",
+     "BA",
+     "KO",
+     "COST",
+     "PLTR",
+     "7974.T",
+     "2222.SR"
     ],
     "tres_suivi": [
      "MSFT",
      "AMZN",
      "JPM",
+     "MC.PA",
      "SAP.DE",
+     "SIE.DE",
      "HSBA.L",
+     "005930.KS",
      "7203.T",
+     "6758.T",
      "0700.HK",
      "9988.HK",
-     "HDFCBANK.NS"
+     "HDFCBANK.NS",
+     "META"
+    ],
+    "variation_recente_extreme": [
+     "RHM.DE",
+     "9984.T"
     ]
    }
   },
@@ -1645,7 +2599,10 @@
    "valeurs": {
     "distributions_canadiennes": [
      "XIU.TO",
-     "XEQT.TO"
+     "XEQT.TO",
+     "BEP-UN.TO",
+     "VDY.TO",
+     "ZLB.TO"
     ],
     "dividendes_canadiens_admissibles": [
      "RY.TO",
@@ -1656,7 +2613,9 @@
      "CNR.TO",
      "FTS.TO",
      "ATD.TO",
-     "CSU.TO"
+     "CSU.TO",
+     "CCO.TO",
+     "BCE.TO"
     ],
     "dividendes_etrangers": [
      "AAPL",
@@ -1701,7 +2660,36 @@
      "COMI.CA",
      "VT",
      "VEA",
-     "VWO"
+     "VWO",
+     "PM",
+     "LMT",
+     "META",
+     "UNH",
+     "KO",
+     "COST",
+     "NEE",
+     "O",
+     "LVS",
+     "BATS.L",
+     "DGE.L",
+     "GLEN.L",
+     "RHM.DE",
+     "VWS.CO",
+     "IBE.MC",
+     "ENEL.MI",
+     "D05.SI",
+     "9984.T",
+     "000660.KS",
+     "7974.T",
+     "VALE3.SA",
+     "PETR4.SA",
+     "WALMEX.MX",
+     "2222.SR",
+     "ICLN",
+     "ITA",
+     "VNQ",
+     "SMH",
+     "USMV"
     ],
     "gains_en_capital_seulement": [
      "SHOP.TO",
@@ -1710,14 +2698,25 @@
      "GLD",
      "BTC-USD",
      "ETH-USD",
-     "SOL.JO"
+     "SOL.JO",
+     "BA",
+     "PLTR"
     ],
     "revenu_interets": [
      "XBB.TO",
      "ZST.TO",
      "AGG",
      "TLT",
-     "BNDW"
+     "BNDW",
+     "TIP",
+     "PSA.TO",
+     "CASH.TO",
+     "BIL",
+     "XSB.TO",
+     "XSH.TO",
+     "CLF.TO",
+     "XGB.TO",
+     "SHY"
     ]
    }
   },
@@ -1726,21 +2725,51 @@
    "description": "rôle de l'actif dans un portefeuille",
    "valeurs": {
     "coeur": [
+     "XIU.TO",
+     "SPY",
+     "QQQ",
+     "ESGV",
+     "VT",
+     "VEA",
+     "VWO",
+     "XEQT.TO",
+     "VDY.TO",
+     "ZLB.TO",
+     "USMV"
+    ],
+    "couverture": [
+     "GLD"
+    ],
+    "liquidites": [
+     "ZST.TO",
+     "PSA.TO",
+     "CASH.TO"
+    ],
+    "obligations_amortisseur": [
+     "XBB.TO",
+     "AGG",
+     "BNDW",
+     "TIP",
+     "BIL",
+     "XSB.TO",
+     "XSH.TO",
+     "CLF.TO",
+     "XGB.TO",
+     "SHY"
+    ],
+    "obligations_longues": [
+     "TLT"
+    ],
+    "satellite": [
      "ATD.TO",
      "AAPL",
      "GOOGL",
      "AMZN",
      "JPM",
      "XOM",
-     "XIU.TO",
-     "SPY",
-     "QQQ",
-     "ESGV",
      "SAP.DE",
      "SIE.DE",
-     "TTE.PA",
      "AZN.L",
-     "HSBA.L",
      "005930.KS",
      "7203.T",
      "6758.T",
@@ -1748,43 +2777,60 @@
      "RELIANCE.NS",
      "SHP.JO",
      "COMI.CA",
-     "VT",
-     "VEA",
-     "VWO",
-     "XEQT.TO"
+     "LMT",
+     "BA",
+     "COST",
+     "NEE",
+     "GLEN.L",
+     "PETR4.SA",
+     "ICLN",
+     "ITA",
+     "VNQ",
+     "SMH"
     ],
-    "couverture": [
-     "GLD"
-    ],
-    "croissance": [
+    "satellite_croissance": [
      "CSU.TO",
      "MSFT",
      "ASML.AS",
      "2330.TW",
      "1211.HK",
-     "HDFCBANK.NS"
+     "HDFCBANK.NS",
+     "7974.T"
     ],
-    "defensif": [
+    "satellite_defensif": [
      "RY.TO",
      "TD.TO",
      "CNR.TO",
      "JNJ",
-     "PG"
+     "PG",
+     "KO",
+     "BCE.TO",
+     "IBE.MC"
     ],
-    "revenu": [
+    "satellite_revenu": [
      "MFC.TO",
      "ENB.TO",
      "CNQ.TO",
      "FTS.TO",
      "MC.PA",
      "NESN.SW",
-     "NOVO-B.CO",
+     "TTE.PA",
      "SHEL.L",
+     "HSBA.L",
      "INFY.NS",
      "FSR.JO",
      "SBK.JO",
      "VOD.JO",
-     "GFI.JO"
+     "PM",
+     "O",
+     "LVS",
+     "BEP-UN.TO",
+     "BATS.L",
+     "ENEL.MI",
+     "D05.SI",
+     "VALE3.SA",
+     "WALMEX.MX",
+     "2222.SR"
     ],
     "speculatif": [
      "SHOP.TO",
@@ -1792,18 +2838,22 @@
      "TSLA",
      "BTC-USD",
      "ETH-USD",
+     "NOVO-B.CO",
      "9988.HK",
      "NPN.JO",
      "MTN.JO",
+     "GFI.JO",
      "SOL.JO",
-     "APN.JO"
-    ],
-    "stabilisateur": [
-     "XBB.TO",
-     "ZST.TO",
-     "AGG",
-     "TLT",
-     "BNDW"
+     "APN.JO",
+     "META",
+     "UNH",
+     "PLTR",
+     "CCO.TO",
+     "DGE.L",
+     "RHM.DE",
+     "VWS.CO",
+     "9984.T",
+     "000660.KS"
     ]
    }
   }

@@ -34,3 +34,48 @@ VEA,part énergie 5.1%,Part du secteur énergie publiée par Yahoo Finance (fund
 VWO,part énergie 4.1%,Part du secteur énergie publiée par Yahoo Finance (fund data),,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
 XEQT.TO,part énergie 7.5%,Part du secteur énergie publiée par Yahoo Finance (fund data),,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
 BNDW,non applicable,Fonds obligataire ou d'or : pas de répartition sectorielle en actions,,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+PM,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+LMT,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+BA,aucune,Activité principale hors énergies fossiles,,,1,élevée,Sécurité des produits (737 MAX),partielle
+META,aucune,Activité principale hors énergies fossiles,,,1,moyenne,Protection des données (transferts vers les États-Unis),partielle
+UNH,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+KO,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+COST,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+NEE,partielle,Services publics : production d'électricité au gaz naturel (Florida Power & Light) et renouvelables,,,0,aucune trouvée,,partielle
+PLTR,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+O,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+LVS,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+CCO.TO,aucune,Activité principale hors énergies fossiles,True,2026-11-13,0,aucune trouvée,,partielle
+BEP-UN.TO,aucune,Activité principale hors énergies fossiles,False,2026-11-13,0,aucune trouvée,,partielle
+BCE.TO,aucune,Activité principale hors énergies fossiles,False,2026-11-13,0,aucune trouvée,,partielle
+BATS.L,aucune,Activité principale hors énergies fossiles,,,1,élevée,Violation de sanctions (Corée du Nord),partielle
+DGE.L,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+GLEN.L,directe,"Extraction de charbon thermique et négoce de pétrole, aux côtés des métaux",,,1,élevée,Corruption et manipulation de marché,partielle
+RHM.DE,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+VWS.CO,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+IBE.MC,partielle,"Services publics : surtout renouvelables et réseaux, avec des centrales à gaz à cycle combiné",,,0,aucune trouvée,,partielle
+ENEL.MI,partielle,"Services publics : renouvelables et réseaux, avec des centrales au gaz et au charbon en cours de fermeture",,,0,aucune trouvée,,partielle
+D05.SI,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+9984.T,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+000660.KS,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+7974.T,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+VALE3.SA,aucune,Activité principale hors énergies fossiles,,,1,moyenne,Rupture du barrage de Brumadinho (information des investisseurs),partielle
+PETR4.SA,directe,"Exploration, production et raffinage de pétrole et de gaz",,,1,moyenne,"Corruption (FCPA, opération Lava Jato)",partielle
+WALMEX.MX,aucune,Activité principale hors énergies fossiles,,,0,aucune trouvée,,partielle
+2222.SR,directe,"Exploration, production et raffinage de pétrole et de gaz (premier producteur mondial)",,,0,aucune trouvée,,partielle
+ICLN,part énergie 0.0%,Part du secteur énergie publiée par Yahoo Finance (fund data),,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+ITA,part énergie 0.0%,Part du secteur énergie publiée par Yahoo Finance (fund data),,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+VNQ,part énergie 0.1%,Part du secteur énergie publiée par Yahoo Finance (fund data),,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+SMH,part énergie 0.0%,Part du secteur énergie publiée par Yahoo Finance (fund data),,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+VDY.TO,part énergie 28.3%,Part du secteur énergie publiée par Yahoo Finance (fund data),,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+TIP,non applicable,Fonds obligataire ou d'or : pas de répartition sectorielle en actions,,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+PSA.TO,non applicable,Fonds obligataire ou d'or : pas de répartition sectorielle en actions,,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+CASH.TO,non applicable,Fonds obligataire ou d'or : pas de répartition sectorielle en actions,,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+BIL,non applicable,Fonds obligataire ou d'or : pas de répartition sectorielle en actions,,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+XSB.TO,non applicable,Fonds obligataire ou d'or : pas de répartition sectorielle en actions,,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+XSH.TO,non applicable,Fonds obligataire ou d'or : pas de répartition sectorielle en actions,,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+CLF.TO,non applicable,Fonds obligataire ou d'or : pas de répartition sectorielle en actions,,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+XGB.TO,non applicable,Fonds obligataire ou d'or : pas de répartition sectorielle en actions,,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+SHY,non applicable,Fonds obligataire ou d'or : pas de répartition sectorielle en actions,,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+ZLB.TO,part énergie 1.8%,Part du secteur énergie publiée par Yahoo Finance (fund data),,,0,aucune trouvée,,fonds : méthodologie de l'émetteur
+USMV,part énergie 4.3%,Part du secteur énergie publiée par Yahoo Finance (fund data),,,0,aucune trouvée,,fonds : méthodologie de l'émetteur

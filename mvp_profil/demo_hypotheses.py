@@ -34,7 +34,7 @@ seuil = st.sidebar.slider("Seuil de sûreté", .5, .95, .8, .05)
 synthese, hypotheses = st.tabs(["Synthèse", "Hypothèses du profil"])
 with synthese:
     st.success("Profil terminé. Merci !")
-    st.write("Cette démo présente le nouvel onglet avec 37 critères fixes et un critère personnalisé.")
+    st.write(f"Cette démo présente le nouvel onglet avec {len(CRITERES)} critères fixes et un critère personnalisé.")
     st.caption("Dans l’application, le contenu actuel de la synthèse et le tableau existant sont conservés.")
 with hypotheses:
     afficher_hypotheses(st.session_state.demo_profil, st.session_state.demo_dynamiques, seuil)

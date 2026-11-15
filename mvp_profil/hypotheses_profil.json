@@ -1,0 +1,112 @@
+{
+ "_note": "HYPOTHÈSES de l'équipe pour la synthèse du profil (mvp_profil/synthese.py). Aucune n'est une norme publiée : elles sont déclarées, modifiables ici, et doivent faire l'objet d'un test de sensibilité.",
+ "niveaux": {
+  "1": "Très prudent",
+  "2": "Prudent",
+  "3": "Équilibré",
+  "4": "Croissance",
+  "5": "Dynamique"
+ },
+ "plafond_capacite_par_horizon": {
+  "moins_3_ans": 1,
+  "3_5_ans": 2,
+  "5_10_ans": 3,
+  "10_15_ans": 4,
+  "plus_15_ans": 5
+ },
+ "_plafond_capacite": "Plus l'argent est requis tôt, moins une perte a le temps d'être récupérée.",
+ "crans_en_moins": {
+  "A4": [
+   "forte_plus_60"
+  ],
+  "A5": [
+   "aucun",
+   "moins_3_mois"
+  ],
+  "A6": [
+   "incertains"
+  ],
+  "A8": [
+   "3_plus"
+  ]
+ },
+ "cran_en_plus_si": {
+  "A4": [
+   "faible_moins_25"
+  ],
+  "A5": [
+   "plus_6_mois"
+  ]
+ },
+ "plafond_sans_fonds_urgence": 2,
+ "plafond_dettes_taux_eleve": 1,
+ "niveau_par_fourchette": {
+  "prudent": 2,
+  "equilibre": 3,
+  "dynamique": 5
+ },
+ "decote_experience": [
+  "jamais",
+  "oui_vendu"
+ ],
+ "stress_max_par_niveau_pct": {
+  "1": 8,
+  "2": 15,
+  "3": 22,
+  "4": 32,
+  "5": 45
+ },
+ "_stress_max": "Perte de stress maximale du PORTEFEUILLE. Ordre de grandeur : part d'actions du niveau × 45 % (baisse d'un portefeuille mondial d'actions lors d'une crise majeure). À calibrer ; à comparer au pire de la perte historique et d'un scénario de stress.",
+ "part_actions_indicative_pct": {
+  "1": [
+   0,
+   10
+  ],
+  "2": [
+   20,
+   40
+  ],
+  "3": [
+   40,
+   60
+  ],
+  "4": [
+   60,
+   85
+  ],
+  "5": [
+   85,
+   100
+  ]
+ },
+ "volatilite_max_par_B5_pct": {
+  "faible_moins_8": 8,
+  "moderee_8_15": 15,
+  "elevee_15_25": 25,
+  "tres_elevee_plus_25": null
+ },
+ "_volatilite_max": "B5 se compare à la volatilité du PORTEFEUILLE, pas à celle de chaque actif (59 actifs sur 66 dépassent 15 %).",
+ "duree_sous_eau_max_jours_par_B7": {
+  "rapide_moins_1_an": 365,
+  "moyenne_1_2_ans": 730,
+  "longue_plus_2_ans": null
+ },
+ "reglages_prudents": {
+  "A2": "moins_3_ans",
+  "A4": "forte_plus_60",
+  "A5": "moins_3_mois",
+  "A6": "incertains",
+  "A8": "3_plus",
+  "B1": "5",
+  "B3": "jamais",
+  "B5": "faible_moins_8",
+  "B7": "rapide_moins_1_an",
+  "C1": "debutant",
+  "D2": "0",
+  "D9": "5",
+  "D12": "sans_speculatif",
+  "G3": "canada_usa"
+ },
+ "_reglages_prudents": "Valeur appliquée quand un critère reste inconnu ou incertain. Chaque application est signalée à l'utilisateur. A7 (dettes) inconnu : non bloquant, signalé « à vérifier ».",
+ "rupture_max_si_vendre_tout_a_20_pct": 20
+}

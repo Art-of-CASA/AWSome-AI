@@ -238,6 +238,10 @@ if __name__ == "__main__":
     o, h, s = fetch_etfs()
     o.to_csv(OUT / "etf_overview.csv", index=False)
     h.to_csv(OUT / "etf_top_holdings.csv", index=False)
+    # Yahoo renvoie une répartition factice (100 % « technology ») pour certains fonds obligataires (BNDW) :
+    # une répartition concentrée à 100 % sur un seul secteur n'est pas une répartition d'actions, on l'écarte.
+    if len(s):
+        s = s[s.groupby("etf").weight.transform("max") < 0.999]
     s.to_csv(OUT / "etf_sector_weights.csv", index=False)
     fetch_news().to_csv(OUT / "news_recent.csv", index=False)
     fetch_wiki().to_csv(OUT / "attention_wikipedia.csv", index=False)

@@ -1,0 +1,233 @@
+{
+ "nom": "Amira",
+ "description": "26 ans, ingénieure logicielle. Profil de risque élevé, horizon de 15 ans ou plus (énoncé, p. 5).",
+ "source": "Énoncé officiel Datathon 2026, AlphaForge AI (PDF)",
+ "avertissement": "Profil FICTIF. Les valeurs « énoncé » reprennent le texte officiel ; les valeurs « hypothèse de test » complètent ce que l'énoncé ne dit pas et sont choisies par l'équipe.",
+ "profil": {
+  "A1": {
+   "valeurs": [
+    "debut_carriere"
+   ],
+   "source": "énoncé",
+   "citation": "26 ans · Ingénieure logicielle",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "A2": {
+   "valeurs": [
+    "plus_15_ans"
+   ],
+   "source": "énoncé",
+   "citation": "15 ans ou plus",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "A3": {
+   "valeurs": [
+    "croissance"
+   ],
+   "source": "énoncé",
+   "citation": "Faire croître son capital à long terme",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "A8": {
+   "valeurs": [
+    "0"
+   ],
+   "source": "énoncé",
+   "citation": "Célibataire, sans enfant",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "A12": {
+   "valeurs": [
+    "technologie"
+   ],
+   "source": "énoncé",
+   "citation": "Ingénieure logicielle",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "C1": {
+   "valeurs": [
+    "intermediaire"
+   ],
+   "source": "énoncé",
+   "citation": "Expérience en investissement : intermédiaire",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "D5": {
+   "valeurs": [
+    "ia",
+    "crypto"
+   ],
+   "source": "énoncé",
+   "citation": "Très intéressée par l'intelligence artificielle et les technologies émergentes ; intéressée par les cryptoactifs",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "D7": {
+   "valeurs": [
+    "croissance"
+   ],
+   "source": "énoncé",
+   "citation": "Ouverte aux entreprises en forte croissance",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "B5": {
+   "valeurs": [
+    "tres_elevee_plus_25"
+   ],
+   "source": "énoncé",
+   "citation": "Ouverte […] à une volatilité importante ; profil de risque élevé",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "D1": {
+   "valeurs": [
+    "actions",
+    "fnb_actions",
+    "obligations",
+    "or",
+    "crypto"
+   ],
+   "source": "énoncé",
+   "citation": "Intéressée par les cryptoactifs ; souhaite maintenir une certaine diversification",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "B1": {
+   "valeurs": [
+    "50_plus"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "« Risque élevé » traduit en point de rupture ; non chiffré dans l'énoncé"
+  },
+  "B3": {
+   "valeurs": [
+    "oui_garde"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Expérience intermédiaire"
+  },
+  "A4": {
+   "valeurs": [
+    "moyenne_25_60"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Non précisé"
+  },
+  "A5": {
+   "valeurs": [
+    "3_6_mois"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Non précisé"
+  },
+  "A6": {
+   "valeurs": [
+    "stables"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Salariée"
+  },
+  "A7": {
+   "valeurs": [
+    "non"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Non précisé"
+  },
+  "D2": {
+   "valeurs": [
+    "10"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Intérêt pour les cryptoactifs, sans montant dans l'énoncé"
+  },
+  "D12": {
+   "valeurs": [
+    "plafonne_10"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Non précisé"
+  },
+  "D9": {
+   "valeurs": [
+    "10"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "« Éviter de miser exclusivement sur les technologies »"
+  },
+  "D11": {
+   "valeurs": [
+    "mixte"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Non précisé"
+  },
+  "B6": {
+   "valeurs": [
+    "dynamique"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Comportement supposé cohérent avec le déclaré"
+  },
+  "G3": {
+   "valeurs": [
+    "canada_usa"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Défaut prudent"
+  }
+ }
+}

@@ -32,11 +32,16 @@ def _v(profil, cid):
 
 
 def portefeuille_replay(profil) -> str:
-    """Portefeuille proche du profil DÉCLARÉ : on teste sa propre tolérance, pas celle d'un autre."""
-    b5, a2, d5 = _v(profil, "B5"), _v(profil, "A2"), _v(profil, "D5")
-    if b5 and b5[0] == "tres_elevee_plus_25" or ("ia" in d5 or "semi-conducteurs" in d5) and b5 != ["faible_moins_8"]:
+    """Portefeuille proche du profil DÉCLARÉ : on teste sa propre tolérance, pas celle d'un autre.
+
+    Seuls le risque et l'horizon déclarés comptent. Un thème d'intérêt (IA…) ne suffit pas à montrer un
+    portefeuille 100 % technologique à une personne prudente ou à l'horizon court.
+    """
+    b5, a2 = _v(profil, "B5"), _v(profil, "A2")
+    court = bool(a2 and a2[0] in ("moins_3_ans", "3_5_ans"))
+    if b5 and b5[0] == "tres_elevee_plus_25" and not court:
         return "technologie"
-    if b5 and b5[0] == "elevee_15_25" and not (a2 and a2[0] in ("moins_3_ans", "3_5_ans")):
+    if b5 and b5[0] in ("elevee_15_25", "tres_elevee_plus_25") and not court:
         return "actions"
     return "equilibre"
 
@@ -64,12 +69,13 @@ def replay(S) -> bool:
     if "rp" not in S:
         cle = portefeuille_replay(S.profil)
         S.rp = {"cle": cle, "arret": 0, "investi": 10000.0, "cash": 0.0, "apports": 10000.0, "dernier_mois": 0,
-                "decisions": [], "premiere_reduction": None, "fini": False}
+                "decisions": [], "premiere_reduction": None, "vente_totale": None, "fini": False}
     rp, sc = S.rp, SCEN["replay"][S.rp["cle"]]
     valeurs = sc["valeurs"]
     st.subheader("Mise en situation 1 sur 3 : un marché qui baisse")
-    st.caption(f"Votre portefeuille : {sc['nom'].lower()}, choisi d'après vos réponses. C'est une période réelle "
-               "des dernières années ; la date est masquée. Mêmes arrêts pour tout le monde.")
+    st.caption(f"**Fait** · Votre portefeuille fictif : {sc['nom'].lower()}, choisi d'après vos réponses. Les valeurs sont "
+               "celles d'une période réelle des dernières années (prix en dollars canadiens) ; la date est masquée. "
+               "Mêmes arrêts pour tout le monde.")
     if not rp["fini"]:
         a = sc["arrets"][rp["arret"]]
         m = a["mois_index"]
@@ -91,8 +97,11 @@ def replay(S) -> bool:
             elif choix.startswith("Renforcer"):
                 rp["investi"] += 2000; rp["apports"] += 2000
             rp["decisions"].append({"mois": m, "variation_marche": round(variation, 4), "decision": choix})
-            if rp["premiere_reduction"] is None and (choix.startswith("Réduire") or choix.startswith("Tout vendre")):
+            # « Tout vendre » fixe le point de rupture observé ; « Réduire » n'est qu'un signal.
+            if rp["premiere_reduction"] is None and choix.startswith("Réduire"):
                 rp["premiere_reduction"] = {"perte": -variation, "decision": choix, "mois": m}
+            if rp["vente_totale"] is None and choix.startswith("Tout vendre"):
+                rp["vente_totale"] = {"perte": -variation, "decision": choix, "mois": m}
             rp["arret"] += 1
             rp["fini"] = rp["arret"] >= len(sc["arrets"]) or rp["investi"] == 0
             st.rerun()
@@ -104,16 +113,21 @@ def replay(S) -> bool:
                 f"ensemble). Le creux a été atteint à {_fmt(sc['creux'])}. Trois ans après le départ, sans rien faire, "
                 f"le portefeuille valait **{_fmt(sc['fin'])}**. Avec vos décisions : **{_fmt(final)}** "
                 f"pour {_fmt(rp['apports'])} investis.")
-    st.caption("Ce résultat décrit le passé ; il ne prédit pas l'avenir. En simulation, on est souvent plus "
+    st.caption("**Fait** · Ce résultat décrit le passé ; il ne prédit pas l'avenir. En simulation, on est souvent plus "
                "courageux qu'avec son propre argent : l'outil retiendra le plus prudent entre ce que vous avez déclaré et fait.")
     if st.button("Continuer", type="primary", key="replay_suite"):
-        pr = rp["premiere_reduction"]
-        if pr:
-            val = valeur_curseur({"classes": CLASSES_RUPTURE}, pr["perte"] * 100)
-            S.profil["B2"] = entree([val], "replay", citation=f"{pr['decision']} au mois {pr['mois']} (marché {-pr['perte']:+.1%})")
+        vt, pr = rp["vente_totale"], rp["premiere_reduction"]
+        pire = 1 - min(a["valeur"] for a in sc["arrets"]) / 10000   # plus forte baisse montrée à un arrêt
+        reduction = round(pr["perte"] * 100, 1) if pr else None      # signal : a réduit de moitié à cette baisse
+        if vt and vt["perte"] > 0:
+            val = valeur_curseur({"classes": CLASSES_RUPTURE}, vt["perte"] * 100)
+            S.profil["B2"] = entree([val], "replay", citation=f"{vt['decision']} au mois {vt['mois']} (marché {-vt['perte']:+.1%})",
+                                    perte=round(vt["perte"] * 100, 1), reduction=reduction, baisse_max_montree=round(pire * 100, 1))
         else:
-            pire = 1 - min(a["valeur"] for a in sc["arrets"]) / 10000
-            S.profil["B2"] = entree(["non_atteint"], "replay", citation=f"a tout gardé malgré une baisse de {pire:.0%}")
+            cit = (f"a réduit de moitié à {-pr['perte']:+.1%}, sans jamais tout vendre" if pr
+                   else "a tout gardé") + f" ; baisse maximale montrée : {pire:.0%}"
+            S.profil["B2"] = entree(["non_atteint"], "replay", citation=cit, reduction=reduction,
+                                    baisse_max_montree=round(pire * 100, 1))
         S.replay_trace = {"portefeuille": rp["cle"], "decisions": rp["decisions"], "final": round(final),
                           "apports": rp["apports"], "sans_rien_faire": sc["fin"]}
         return True
@@ -132,8 +146,12 @@ def fourchettes(S) -> bool:
                        "Bonne année (1 sur 20)": _fmt(bo)})
         labels[f"N° {i} : entre {_fmt(mv)} et {_fmt(bo)}, typiquement {_fmt(ty)}"] = cle
     st.dataframe(pd.DataFrame(lignes), hide_index=True, width="stretch")
-    st.caption("Fourchettes simulées : variations réelles 2021-2026 (10 000 années rééchantillonnées), centrées sur les "
-               "rendements attendus de la Norme d'hypothèses de projection 2026 (FP Canada et IPF). Ce ne sont pas des promesses.")
+    st.caption("**Scénario fictif** · Fourchettes simulées : variations réelles 2021-2026 (10 000 années rééchantillonnées). "
+               "**Hypothèse** · Elles sont centrées sur les rendements attendus de la Norme d'hypothèses de projection 2026 "
+               "(FP Canada et IPF), avant frais. Ce ne sont pas des promesses.")
+    st.caption("**Limite** · Cinq ans de données ne contiennent qu'une seule crise : ces fourchettes sous-estiment les très "
+               "mauvaises années. En 2022, le portefeuille équilibré a perdu environ 15 % en neuf mois, soit plus que sa "
+               "« mauvaise année » affichée ici.")
     with st.form("fourchettes"):
         choix = st.radio("Votre choix", list(labels), index=None)
         ok = st.form_submit_button("Choisir", type="primary")
@@ -149,17 +167,19 @@ def fourchettes(S) -> bool:
 # ---------- 3. Effet de mode ----------
 def effet_de_mode(S) -> bool:
     st.subheader("Mise en situation 3 sur 3 : quatre titres")
-    st.write("Vous avez **1 000 $** à placer dans **un seul** de ces titres (noms masqués). Lequel choisissez-vous ?")
+    st.write("Vous avez **1 000 $** fictifs à placer dans **un seul** de ces titres (noms masqués). Lequel choisissez-vous ?")
+    st.caption("**Fait** · Chiffres mesurés du 12 novembre 2021 au 12 novembre 2026, en dollars canadiens. Ils décrivent "
+               "le passé et ne prédisent rien.")
     cols = st.columns(2)
     for i, c in enumerate(SCEN["mode"]):
         with cols[i % 2].container(border=True):
             st.markdown(f"**Titre {c['lettre']}** · {c['secteur']}")
-            if c["mediatise"]:
-                st.markdown("📣 **On en parle partout**" + (" : pic d'attention ce mois-ci" if c["pic_recent"] else ""))
-            else:
-                st.markdown("Entreprise établie, peu médiatisée")
+            # Mêmes faits, dans le même ordre, pour les quatre titres : aucune étiquette ne dit quel choix est
+            # « raisonnable » (sinon la personne répond ce qu'elle croit attendu, pas ce qu'elle ferait).
+            vues = c.get("vues_par_jour")  # faits mesurés sur 2021-2026, en dollars canadiens
             st.caption(f"3 derniers mois : {c['rendement_3m']:+.0%} · variation annuelle typique : {c['volatilite']:.0%} · "
-                       f"pire baisse en 5 ans : {c['perte_max']:.0%} · dividende : {c['dividende']:.1%}")
+                       f"pire baisse en 5 ans : {c['perte_max']:.0%} · dividende : {c['dividende']:.1%}"
+                       + (f" · consultations de sa page Wikipédia : {vues:,.0f} par jour".replace(",", " ") if vues else ""))
     options = [f"Titre {c['lettre']}" for c in SCEN["mode"]] + ["Aucun, je préférerais un fonds diversifié"]
     with st.form("mode"):
         choix = st.radio("Votre choix", options, index=None)

@@ -24,14 +24,18 @@ def niveau_quiz(item: dict, reponses: list[int | None]) -> tuple[str, int]:
 
 
 def entree(valeurs: list[str], source: str, citation: str = "", confiance: float = 1.0,
-           statut: str = "validé", motif: str = "") -> dict:
+           statut: str = "validé", motif: str = "", **extra) -> dict:
+    """extra : mesures chiffrées gardées avec la valeur (perte observée au replay, valeur déclarée d'origine…)."""
     return {"valeurs": valeurs, "source": source, "citation": citation, "confiance": round(confiance, 2),
-            "statut": statut, "motif": motif}
+            "statut": statut, "motif": motif, **extra}
 
 
 # ---------- Règles de cohérence ----------
 # Chaque règle repère deux réponses qui se contredisent et propose une question de clarification (QCM).
 # Une option applique un « correctif » : {critère: nouvelles valeurs}.
+# RÈGLE : un correctif n'écrit jamais une valeur que la personne n'a pas choisie. Soit le texte de l'option énonce
+# la valeur (« vers −20 % », « moins de 3 ans », « 5 % au plus »), soit le correctif vaut None : le critère est
+# alors REDEMANDÉ (question de précision), au lieu d'être deviné.
 
 def _v(profil: dict, cid: str) -> list[str]:
     e = profil.get(cid)
@@ -53,16 +57,16 @@ def incoherences(profil: dict) -> list[dict]:
                         "texte": f"Vous avez dit que vous rachèteriez après une baisse de 20 %, mais aussi que vous vendriez dès −{b1[0]} %. "
                                  "Qu'est-ce qui vous ressemble le plus ?",
                         "options": [(f"Je vendrais dès −{b1[0]} %", {"B1R": ["vendre_tout"]}),
-                                    ("Je profiterais de la baisse pour racheter", {"B1": ["30"]})]})
+                                    ("Je profiterais de la baisse pour racheter", {"B1": None})]})
     a3, a2 = _v(profil, "A3"), _v(profil, "A2")
     if a3 == ["coussin_securite"] and a2 and a2[0] in ("10_15_ans", "plus_15_ans"):
         out.append({"id": "R2", "criteres": ["A3", "A2"],
                     "texte": "Un coussin de sécurité sert d'habitude à faire face à un imprévu rapidement, mais vous prévoyez "
                              "de garder cet argent plus de 10 ans. Pour vous, il s'agit plutôt :",
-                    "options": [("D'une réserve pour les imprévus, disponible rapidement", {"A2": ["moins_3_ans"]}),
+                    "options": [("D'une réserve pour les imprévus, dont je pourrais avoir besoin d'ici moins de 3 ans", {"A2": ["moins_3_ans"]}),
                                 ("D'une épargne de long terme à faire fructifier", {"A3": ["croissance"]})]})
     d1, d2 = _v(profil, "D1"), _v(profil, "D2")
-    if "D1" in profil and "crypto" not in d1 and d2 and d2[0] != "0":
+    if d1 and "crypto" not in d1 and d2 and d2[0] != "0":
         out.append({"id": "R3", "criteres": ["D1", "D2"],
                     "texte": f"Vous n'avez pas coché les cryptoactifs parmi les placements acceptés, mais vous accepteriez "
                              f"d'en détenir jusqu'à {d2[0]} %. Qu'en est-il ?",
@@ -82,13 +86,6 @@ def incoherences(profil: dict) -> list[dict]:
                              "cryptoactifs, qui en font partie. Que préférez-vous ?",
                     "options": [("Pas de cryptoactifs", {"D2": ["0"]}),
                                 ("Une petite part spéculative, limitée à 5 %", {"D12": ["plafonne_5"], "D2": ["5"]})]})
-    b5 = _v(profil, "B5")
-    if b5 == ["faible_moins_8"] and b1 and b1[0] in ("40", "50_plus"):
-        out.append({"id": "R6", "criteres": ["B5", "B1"],
-                    "texte": "Vous préférez des placements qui varient peu (moins de 8 % par an), mais vous ne vendriez qu'après "
-                             "une baisse de 40 % ou plus. Qu'est-ce qui vous ressemble le plus ?",
-                    "options": [("Je supporte mal les variations : je vendrais bien avant −40 %", {"B1": ["10"]}),
-                                ("Les variations ne m'inquiètent pas tant que je ne vends pas", {"B5": ["moderee_8_15"]})]})
     e5 = _v(profil, "E5")
     commun = sorted(set(e5) & set(d5) - {"aucun", "aucune"})
     if commun:
@@ -96,22 +93,36 @@ def incoherences(profil: dict) -> list[dict]:
                     "texte": f"Vous excluez {', '.join(commun)}, mais vous l'avez aussi cité parmi vos thèmes d'intérêt. Que préférez-vous ?",
                     "options": [("L'exclure", {"D5": [t for t in d5 if t not in commun] or ["aucun"]}),
                                 ("Ne pas l'exclure", {"E5": [t for t in e5 if t not in commun] or ["aucune"]})]})
-    b6, d8, d8o = _v(profil, "B6"), _v(profil, "D8"), _v(profil, "D8O")
-    if b6 and b5 and ((b6[0] == "prudent" and b5[0] in ("elevee_15_25", "tres_elevee_plus_25"))
-                      or (b6[0] == "dynamique" and b5[0] == "faible_moins_8")):
+    return out
+
+
+def signaux_coherence(profil: dict) -> list[dict]:
+    """Constats explicatifs sans question, correction ou inférence comportementale.
+
+    Une limite de volatilité et un seuil de vente ne mesurent pas la même chose.
+    Accepter du risque n'oblige pas à le rechercher. Enfin, choisir un titre
+    médiatisé n'isole pas la cause du choix. Ces observations ne constituent donc
+    pas des contradictions démontrées ; elles ne déclenchent aucune relance.
+    Les identifiants historiques restent stables pour la traçabilité.
+    """
+    out = []
+    b1, b5, b6 = _v(profil, "B1"), _v(profil, "B5"), _v(profil, "B6")
+    if b5 == ["faible_moins_8"] and b1 and b1[0] in ("40", "50_plus"):
+        out.append({"id": "R6", "criteres": ["B5", "B1"],
+                    "texte": "Préférer de faibles variations annuelles et conserver un placement malgré une forte baisse "
+                             "décrivent deux aspects différents du risque. Ces deux réponses sont conservées."})
+    if b6 == ["prudent"] and b5 and b5[0] in ("elevee_15_25", "tres_elevee_plus_25"):
         out.append({"id": "R8", "criteres": ["B5", "B6"],
-                    "texte": "Dans les fourchettes, vous avez choisi un portefeuille "
-                             + ("prudent, alors que vous acceptiez de fortes variations." if b6[0] == "prudent"
-                                else "dynamique, alors que vous préfériez des variations faibles.")
-                             + " Qu'est-ce qui vous ressemble le plus ?",
-                    "options": [("Des variations faibles à modérées", {"B5": ["moderee_8_15"] if b6[0] == "prudent" else ["faible_moins_8"], "B6": ["prudent"]}),
-                                ("Des variations plus fortes, pour un meilleur rendement espéré", {"B5": ["elevee_15_25"], "B6": ["dynamique"]})]})
-    if d8 == ["non"] and d8o == ["oui"]:
+                    "texte": "Vous avez choisi une fourchette prudente tout en acceptant des variations plus fortes. "
+                             "Le risque maximal accepté n'est pas un minimum à rechercher ; ces réponses sont compatibles."})
+    elif b6 == ["dynamique"] and b5 == ["faible_moins_8"]:
+        out.append({"id": "R8", "criteres": ["B5", "B6"],
+                    "texte": "Le choix d'une fourchette dynamique ne mesure pas directement la volatilité acceptée. "
+                             "Les deux réponses sont conservées et leurs limites devront être vérifiées séparément."})
+    if _v(profil, "D8") == ["non"] and _v(profil, "D8O") == ["oui"]:
         out.append({"id": "R9", "criteres": ["D8", "D8O"],
-                    "texte": "Vous aviez dit ne pas être tenté par les titres dont tout le monde parle, mais dans la mise en "
-                             "situation vous avez choisi un titre très médiatisé, aux variations fortes. Qu'en pensez-vous ?",
-                    "options": [("J'ai été tenté : je préfère que l'outil limite ce type de titre", {"D8": ["parfois"], "D12": ["plafonne_5"]}),
-                                ("C'était un choix réfléchi, je l'assume", {"D8": ["oui"]})]})
+                    "texte": "Le titre choisi est médiatisé. Ce choix peut aussi refléter son secteur ou ses caractéristiques ; "
+                             "il ne démontre pas une attirance pour sa popularité. Vos préférences et plafonds restent conservés."})
     return out
 
 
@@ -147,30 +158,71 @@ def connu(profil: dict, cid: str) -> bool:
     return profil.get(cid, {}).get("statut") in UTILISABLES
 
 
-ORDRE_RUPTURE = ["5", "10", "20", "30", "40", "50_plus"]
+ORDRE_RUPTURE = ["5", "10", "20", "30", "40", "50_plus", "jamais"]
+POURCENT_RUPTURE = {"5": 5, "10": 10, "20": 20, "30": 30, "40": 40, "50_plus": 50}
+
+
+def _ecart(i: int) -> str:
+    return "aucun" if i == 0 else "grand" if i >= 2 else "faible"
 
 
 def recouper_rupture(profil: dict) -> str | None:
     """Compare le point de rupture déclaré (B1) et observé au replay (B2) ; retient le plus prudent.
 
-    Renvoie un message pour l'utilisateur, ou None. Écart d'au moins 2 classes = « grand » (profil incertain sur ce point).
+    - B2 n'est fixé que par « Tout vendre ». Une réduction partielle est un signal (champ « reduction » de B2),
+      pas un point de rupture : la question B1 porte sur la baisse à laquelle on vendrait « à coup sûr ».
+    - La valeur DÉCLARÉE est conservée dans B1["declare"] : elle n'est jamais perdue.
+    - « non_atteint » ne confirme le déclaré que jusqu'à la baisse réellement montrée : au-delà, H1 = non_teste.
+    - Peut être rappelée à tout moment (après un correctif de cohérence) : B1 ne dépasse jamais B2.
+    Renvoie un message pour l'utilisateur, ou None.
     """
     b1, b2 = _v(profil, "B1"), _v(profil, "B2")
     if not b1 or not b2:
         return None
-    if b2[0] == "non_atteint" or ORDRE_RUPTURE.index(b2[0]) >= ORDRE_RUPTURE.index(b1[0]):
-        ecart = "aucun" if b2[0] == "non_atteint" or b2[0] == b1[0] else "faible"
-        profil["H1"] = entree([ecart], "comparaison", citation=f"déclaré {b1[0]} %, observé {b2[0]}")
+    e2 = profil["B2"]
+    if b2[0] == "non_atteint":
+        if b1[0] == "jamais":
+            profil["H1"] = entree(["non_teste"], "comparaison",
+                                  citation="déclaré : ne jamais vendre ; seuil non atteint dans le replay",
+                                  motif="Un replay limité ne peut pas confirmer l'absence de tout seuil de vente.")
+            return None
+        montree = e2.get("baisse_max_montree")  # en %, None si inconnue
+        teste = montree is None or POURCENT_RUPTURE[b1[0]] <= montree
+        profil["H1"] = entree(["aucun" if teste else "non_teste"], "comparaison",
+                              citation=f"déclaré {b1[0]} %, non atteint" + (f" (baisse montrée : {montree:.0f} %)" if montree else ""),
+                              motif="" if teste else f"Le replay n'a montré qu'une baisse de {montree:.0f} % : la tolérance "
+                                                     f"déclarée (−{POURCENT_RUPTURE[b1[0]]} %) n'a pas été mise à l'épreuve.")
         return None
-    ecart = ORDRE_RUPTURE.index(b1[0]) - ORDRE_RUPTURE.index(b2[0])
-    profil["H1"] = entree(["grand" if ecart >= 2 else "faible"], "comparaison", citation=f"déclaré {b1[0]} %, observé {b2[0]} %")
-    profil["B1"] = entree([b2[0]], "replay (plus prudent que le déclaré)", citation=profil["B2"]["citation"],
-                          motif=f"Déclaré : vendre vers −{b1[0]} % ; observé : réduction vers −{b2[0]} %")
-    return (f"Vous aviez indiqué vendre vers −{b1[0].replace('_plus', '')} %, mais dans la simulation vous avez réduit "
-            f"vers −{b2[0]} %. L'outil retient le plus prudent : −{b2[0]} %.")
+    # On compare toujours à la valeur DÉCLARÉE (gardée dans B1["declare"] quand B1 a déjà été ramené à l'observé) :
+    # la fonction peut ainsi être rappelée sans effacer l'écart constaté.
+    declare = profil["B1"].get("declare", b1[0])
+    declaration = "ne jamais vendre" if declare == "jamais" else f"vendre vers −{declare.replace('_plus', '')} %"
+    i1, i2 = ORDRE_RUPTURE.index(declare), ORDRE_RUPTURE.index(b2[0])
+    profil["H1"] = entree([_ecart(abs(i1 - i2))], "comparaison", citation=f"déclaré : {declaration}, observé {b2[0]} %")
+    if i2 >= i1 or b1[0] == b2[0]:  # le déclaré est déjà le plus prudent, ou B1 a déjà été ramené à l'observé
+        return None
+    perte = e2.get("perte")  # perte réelle au moment de la vente, en %
+    observe = f"−{perte:.1f} %".replace(".", ",") if perte is not None else f"−{b2[0]} %"
+    profil["B1"] = entree([b2[0]], "replay (plus prudent que le déclaré)", citation=e2["citation"],
+                          motif=f"Déclaré : {declaration} ; observé : tout vendu à {observe}", declare=declare)
+    return (f"Vous aviez indiqué {declaration}, mais dans la simulation vous avez tout vendu "
+            f"à {observe}. L'outil retient le plus prudent : la classe « −{b2[0]} % ».")
 
 
-def appliquer_correctif(profil: dict, correctif: dict, texte_option: str) -> None:
+def appliquer_correctif(profil: dict, correctif: dict, texte_option: str) -> list[str]:
+    """Applique le choix fait à une question de cohérence. Renvoie les critères À REDEMANDER (correctif None).
+
+    Après tout correctif, la règle « le plus prudent l'emporte » est réappliquée : une déclaration ne peut pas
+    remonter le point de rupture au-dessus de ce qui a été observé au replay.
+    """
+    a_redemander = []
     for cid, vals in correctif.items():
+        if vals is None:
+            profil[cid] = entree([], "cohérence", citation=texte_option, confiance=0.0, statut="à préciser",
+                                 motif="Réponses contradictoires : valeur à redemander plutôt qu'à deviner")
+            a_redemander.append(cid)
+            continue
         valides = [v for v in vals if v in CRITERES[cid]["valeurs"]]
         profil[cid] = entree(valides, "cohérence", citation=texte_option)
+    recouper_rupture(profil)
+    return a_redemander

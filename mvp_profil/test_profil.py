@@ -4,7 +4,7 @@ Lancer : python mvp_profil/test_profil.py
 from __future__ import annotations
 
 from criteres import CRITERES, SECTIONS
-from profil import appliquer_correctif, entree, incoherences, niveau_quiz, valeur_curseur
+from profil import appliquer_correctif, entree, incoherences, niveau_quiz, valeur_curseur, signaux_coherence
 
 items = {it["id"]: it for s in SECTIONS for it in s["items"]}
 
@@ -51,10 +51,11 @@ print(f"Logique déterministe OK : {len(items)} questions fixes, {n_crit} critè
 
 # Nouvelles règles (critères ajoutés)
 assert [c["id"] for c in incoherences(P(D12=["sans_speculatif"], D2=["10"]))] == ["R5"]
-assert [c["id"] for c in incoherences(P(B5=["faible_moins_8"], B1=["40"]))] == ["R6"]
+assert incoherences(P(B5=["faible_moins_8"], B1=["40"])) == []
+assert [c["id"] for c in signaux_coherence(P(B5=["faible_moins_8"], B1=["40"]))] == ["R6"]
 assert [c["id"] for c in incoherences(P(E5=["alcool", "tabac"], D5=["alcool", "ia"]))] == ["R7"]
 assert incoherences(P(E5=["aucune"], D5=["aucun"])) == []
-print("Règles R5, R6, R7 OK")
+print("Règles R5/R7 et signal R6 sans relance : OK")
 
 # Déductions certaines : ce qui se déduit d'une réponse n'est plus demandé
 from profil import connu, deduire  # noqa: E402
@@ -75,8 +76,12 @@ assert p["B1"]["valeurs"] == ["10"] and p["H1"]["valeurs"] == ["grand"] and "−
 p = P(B1=["20"], B2=["10"]); recouper_rupture(p); assert p["B1"]["valeurs"] == ["10"] and p["H1"]["valeurs"] == ["faible"]
 p = P(B1=["20"], B2=["non_atteint"]); assert recouper_rupture(p) is None and p["B1"]["valeurs"] == ["20"]
 p = P(B1=["10"], B2=["30"]); recouper_rupture(p); assert p["B1"]["valeurs"] == ["10"]  # déclaré déjà plus prudent
-assert [c["id"] for c in incoherences(P(B5=["elevee_15_25"], B6=["prudent"]))] == ["R8"]
-assert [c["id"] for c in incoherences(P(D8=["non"], D8O=["oui"]))] == ["R9"]
+assert incoherences(P(B5=["elevee_15_25"], B6=["prudent"])) == []
+assert incoherences(P(B5=["faible_moins_8"], B6=["dynamique"])) == []
+assert incoherences(P(D8=["non"], D8O=["oui"])) == []
+assert [c["id"] for c in signaux_coherence(P(B5=["elevee_15_25"], B6=["prudent"]))] == ["R8"]
+assert [c["id"] for c in signaux_coherence(P(B5=["faible_moins_8"], B6=["dynamique"]))] == ["R8"]
+assert [c["id"] for c in signaux_coherence(P(D8=["non"], D8O=["oui"]))] == ["R9"]
 
 # Scénarios précalculés : le compromis risque/rendement est cohérent, 2 titres médiatisés sur 4
 import json, pathlib
@@ -91,3 +96,56 @@ for r in sc["replay"].values():
     assert r["valeurs"][0] == 10000 and r["mois"][0] == "départ"
     assert all(abs(r["valeurs"][a["mois_index"]] - a["valeur"]) < 1 for a in r["arrets"])
 print("Replay : série et arrêts alignés")
+
+
+# ---------- Le plus prudent l'emporte TOUJOURS, et aucune valeur n'est inventée ----------
+from profil import appliquer_correctif as _corr  # noqa: E402
+
+# 1. Vendu à −5 % au replay, puis la règle R1b : « je rachèterais » ne remonte plus le point de rupture à 30.
+p = P(B1=["40"], B1R=["acheter_plus"])
+p["B2"] = entree(["5"], "replay", citation="Tout vendre au mois 3", perte=5.4, baisse_max_montree=15.0)
+recouper_rupture(p)
+assert p["B1"]["valeurs"] == ["5"] and p["B1"]["declare"] == "40" and p["H1"]["valeurs"] == ["grand"]
+r1b = [c for c in incoherences(p) if c["id"] == "R1b"][0]
+a_redemander = _corr(p, r1b["options"][1][1], r1b["options"][1][0])
+assert a_redemander == ["B1"] and p["B1"]["statut"] == "à préciser" and p["B1"]["valeurs"] == []  # redemandé, pas deviné
+p["B1"] = entree(["30"], "réponse libre (IA)", citation="vers trente pour cent")              # la personne répond 30
+recouper_rupture(p)
+assert p["B1"]["valeurs"] == ["5"] and p["B1"]["declare"] == "30", p["B1"]                         # l'observé l'emporte
+recouper_rupture(p)                                                                               # rappel sans effet
+assert p["B1"]["valeurs"] == ["5"] and p["H1"]["valeurs"] == ["grand"]
+
+# 2. Aucun correctif n'écrit une valeur que l'option choisie n'énonce pas.
+for prof in (P(B1R=["acheter_plus"], B1=["5"]), P(B5=["faible_moins_8"], B1=["40"])):
+    for c in incoherences(prof):
+        for texte, correctif in c["options"]:
+            for cid, vals in correctif.items():
+                assert vals is None or cid != "B1" or any(ch.isdigit() for ch in texte), (c["id"], texte)
+
+# 3. « non atteint » ne confirme le déclaré que jusqu'à la baisse montrée.
+p = P(B1=["40"]); p["B2"] = entree(["non_atteint"], "replay", baisse_max_montree=15.0, reduction=None)
+recouper_rupture(p); assert p["H1"]["valeurs"] == ["non_teste"] and p["B1"]["valeurs"] == ["40"]
+p = P(B1=["10"]); p["B2"] = entree(["non_atteint"], "replay", baisse_max_montree=15.0, reduction=None)
+recouper_rupture(p); assert p["H1"]["valeurs"] == ["aucun"]
+
+# 4. R3 ne se déclenche pas quand D1 n'est pas connu ; les signaux ne modifient aucune réponse.
+p = P(D2=["5"]); p["D1"] = entree([], "à préciser", statut="à préciser", confiance=0.0)
+assert "R3" not in [c["id"] for c in incoherences(p)]
+from copy import deepcopy
+p = P(B5=["faible_moins_8"], B1=["40"], B6=["dynamique"], D8=["non"], D8O=["oui"], D12=["sans_speculatif"])
+avant = deepcopy(p)
+signaux = signaux_coherence(p)
+assert {s["id"] for s in signaux} == {"R6", "R8", "R9"}
+assert all(set(s) == {"id", "texte", "criteres"} and "?" not in s["texte"] for s in signaux)
+assert p == avant and p["D8"]["valeurs"] == ["non"] and p["D12"]["valeurs"] == ["sans_speculatif"]
+assert incoherences(p) == []
+assert signaux_coherence({}) == []
+p["D8O"]["statut"] = "incertain"
+assert "R9" not in [s["id"] for s in signaux_coherence(p)]
+
+# 5. Le portefeuille du replay suit le risque et l'horizon déclarés, pas le thème d'intérêt.
+import simulations as _sim  # noqa: E402
+assert _sim.portefeuille_replay(P(B5=["moderee_8_15"], A2=["3_5_ans"], D5=["ia"])) == "equilibre"
+assert _sim.portefeuille_replay(P(B5=["tres_elevee_plus_25"], A2=["plus_15_ans"])) == "technologie"
+assert _sim.portefeuille_replay(P(B5=["tres_elevee_plus_25"], A2=["3_5_ans"])) == "equilibre"
+print("Prudence garantie OK : replay et vraies contradictions préservés ; R6/R8/R9 sans relance ni mutation")

@@ -56,7 +56,7 @@ dec = {"criteres": [
     crit("Pas de réseaux sociaux", "Et rien qui touche à Elon Musk", "exclure", "aucune", [], 0.85,
          concept="entreprises liées à Elon Musk"),                                                      # -> chercheur
 ]}
-# Plafond emprunté à une autre phrase (le 10 % des banques appliqué à Shopify) : devient une exclusion
+# Plafond emprunté à une autre phrase : reste une limite non chiffrée, jamais une exclusion.
 dec["criteres"][0] = crit("Pas d'actions de son employeur (Shopify)", "j'ai déjà plein d'actions de mon employeur",
                           "plafonner", "titre", ["shop.to"], 0.95, 10)
 cri = {"avis": [avis("X1", True, 0.95), avis("X2", False, 0.6, "Préférence possible, pas certaine"),
@@ -66,11 +66,12 @@ par_nom = {c["nom"]: c for c in out}
 assert [c["id"] for c in out] == ["X1", "X2", "X3", "X4", "X5"], [c["id"] for c in out]  # le golf (citation inventée) est écarté
 
 x1 = par_nom["Pas d'actions de son employeur (Shopify)"]
-assert x1["valeurs"] == ["SHOP.TO"] and x1["actifs"] == ["SHOP.TO"] and x1["statut"] == "validé", x1
-assert x1["effet"] == "exclure" and x1["plafond_pct"] == 0, x1  # « 10 » absent de sa citation
+assert x1["valeurs"] == ["SHOP.TO"] and x1["actifs"] == ["SHOP.TO"] and x1["statut"] == "à préciser", x1
+assert x1["effet"] == "plafonner" and x1["plafond_pct"] is None and not x1["applicable"], x1
+assert "plafond à préciser" in x1["regle"]
 x2 = par_nom["Préférence pour l'euro"]
-assert x2["statut"] == "retenu" and x2["confiance"] == 0.6 and "Réserve du critique" in x2["motif"], x2
-assert set(x2["actifs"]) == {"ASML.AS", "MC.PA", "SAP.DE", "SIE.DE", "TTE.PA"}, x2["actifs"]
+assert x2["statut"] == "à préciser" and x2["confiance"] == 0.6 and not x2["applicable"], x2
+assert set(x2["actifs"]) == {"ASML.AS", "ENEL.MI", "IBE.MC", "MC.PA", "RHM.DE", "SAP.DE", "SIE.DE", "TTE.PA"}, x2["actifs"]  # 8 titres en euros depuis l'ajout du 15 novembre 2026
 x3 = par_nom["Banques plafonnées à 10 %"]
 assert x3["effet"] == "plafonner" and x3["plafond_pct"] == 10 and "RY.TO" in x3["actifs"] and x3["regle"].startswith("Plafonner à 10 %")
 x4 = par_nom["Rien lié à Elon Musk"]
@@ -101,7 +102,8 @@ assert seuil_essai(0.8, 0) == 0.8 and seuil_essai(0.8, 1) == 0.65 and seuil_essa
 a = Resultat("A2", ["10_15_ans"], "x", 0.7, False, "Confiance 70 % sous le seuil de 80 %")
 b = Resultat("A2", [], "", 0.0, False, "Information absente")
 c = Resultat("A2", ["5_10_ans"], "y", 0.6, False, "Désaccord du critique")
-assert meilleur(meilleur(a, b), c) is a and meilleur(None, b) is None
+assert meilleur(meilleur(a, b), c) is c and meilleur(None, b) is None
+assert not retenable(c)
 assert retenable(a) and not retenable(Resultat("A2", ["x"], "z", 0.45, False, "peu sûr"))
 assert not retenable(Resultat("A2", ["x"], "z", 0.5, False, "Citation introuvable dans la réponse de l'utilisateur"))
 # Citation tolérante : ponctuation ajoutée par la transcription ou par le modèle
@@ -110,3 +112,30 @@ assert _citation_presente("pour ma retraite", ech) and _citation_presente("dans 
 assert _citation_presente("C'est pour ma retraite…dans, genre", ech) and not _citation_presente("dans dix ans", ech)
 assert not _citation_presente("an", ech)  # un morceau de mot ne compte pas
 print("Relances OK : seuil 80 % puis 65 %, meilleure réponse retenue (plancher 50 %), citations tolérantes")
+
+# Limite qualitative ou nombre sans unité : à préciser. Un vrai 0 % reste un plafond.
+for citation, nombre in [("Limiter les banques", None), ("banques dans 10 ans", 10),
+                         ("banques à 150 %", 150), ("banques à 10,5 %", 5),
+                         ("Je garde 10 % en crypto et je veux limiter les banques", 10)]:
+    c_limite = cd.CritereIA(**crit("Banques", citation, "plafonner", "theme", ["banque"], 0.9, nombre))
+    effet, _, _, pct = cd._nettoyer(c_limite)
+    assert effet == "plafonner" and pct is None, (citation, pct)
+for citation, nombre in [("banques à 0 %", 0), ("banques dix pour cent", 10), ("banques à 10 % maximum", 10),
+                         ("Les banques, 10 % et pas plus", 10)]:
+    assert cd.plafond_etaye(citation, nombre), citation
+cd.confirmer(x1, 7)
+assert x1["effet"] == "plafonner" and x1["plafond_pct"] == 7 and x1["applicable"]
+assert x1["statut"] == "validé" and x1["confirmations"][-1]["plafond_pct"] == 7
+for invalide in (None, -1, 101, True, 10.5):
+    try:
+        cd.confirmer(dict(x1), invalide)
+        raise AssertionError(f"Plafond invalide accepté : {invalide}")
+    except ValueError:
+        pass
+vide = dict(x5)
+cd.appliquer_etiquetage(vide, {"oui": [], "partiel": [], "mot_cle": "kw_dyn_test", "fnb_exposes": {},
+                             "verdicts": [], "definition": "test", "inconnus": ["TSLA"],
+                             "non_concernes": [], "couverture": {"total": 66, "avec_verdict": 0}})
+assert "aucun lien établi" in vide["regle"] and "aucun actif de l'univers concerné" not in vide["regle"]
+assert vide["recherche"]["inconnus"] == ["TSLA"]
+print("Limites à préciser, confirmation explicite et absence de preuve distincte d'un résultat négatif : OK")

@@ -1,0 +1,238 @@
+{
+ "nom": "Robert",
+ "description": "59 ans, professionnel de la santé. Profil de risque faible à modéré, horizon de 3 à 5 ans (énoncé, p. 7).",
+ "source": "Énoncé officiel Datathon 2026, AlphaForge AI (PDF)",
+ "avertissement": "Profil FICTIF. Les valeurs « énoncé » reprennent le texte officiel ; les valeurs « hypothèse de test » complètent ce que l'énoncé ne dit pas et sont choisies par l'équipe.",
+ "profil": {
+  "A1": {
+   "valeurs": [
+    "pre_retraite"
+   ],
+   "source": "énoncé",
+   "citation": "59 ans ; il envisage la retraite dans les prochaines années",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "A2": {
+   "valeurs": [
+    "3_5_ans"
+   ],
+   "source": "énoncé",
+   "citation": "3 à 5 ans",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "A3": {
+   "valeurs": [
+    "retraite"
+   ],
+   "source": "énoncé",
+   "citation": "Préserver son capital tout en maintenant un potentiel de croissance ; envisage la retraite",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "A8": {
+   "valeurs": [
+    "0"
+   ],
+   "source": "énoncé",
+   "citation": "Marié, père d'enfants adultes",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "A12": {
+   "valeurs": [
+    "sante"
+   ],
+   "source": "énoncé",
+   "citation": "Professionnel de la santé",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "C1": {
+   "valeurs": [
+    "avance"
+   ],
+   "source": "énoncé",
+   "citation": "Expérience en investissement : avancée",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "D7": {
+   "valeurs": [
+    "etablie"
+   ],
+   "source": "énoncé",
+   "citation": "Préfère les entreprises établies ; stabilité et qualité des entreprises",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "D2": {
+   "valeurs": [
+    "0"
+   ],
+   "source": "énoncé",
+   "citation": "Peu intéressé par les cryptoactifs",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "D8": {
+   "valeurs": [
+    "parfois"
+   ],
+   "source": "énoncé",
+   "citation": "Peut être tenté par une entreprise très médiatisée, même si elle est plus risquée",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "B4": {
+   "valeurs": [
+    "quotidienne"
+   ],
+   "source": "énoncé",
+   "citation": "Suit activement les marchés",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "B5": {
+   "valeurs": [
+    "moderee_8_15"
+   ],
+   "source": "énoncé",
+   "citation": "Profil de risque : faible à modéré",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": ""
+  },
+  "B1": {
+   "valeurs": [
+    "20"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "« Risque faible à modéré » traduit en point de rupture ; non chiffré dans l'énoncé"
+  },
+  "B3": {
+   "valeurs": [
+    "oui_garde"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Expérience avancée"
+  },
+  "A4": {
+   "valeurs": [
+    "moyenne_25_60"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Non précisé dans l'énoncé"
+  },
+  "A5": {
+   "valeurs": [
+    "plus_6_mois"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Non précisé"
+  },
+  "A6": {
+   "valeurs": [
+    "stables"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Non précisé"
+  },
+  "A7": {
+   "valeurs": [
+    "non"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Non précisé"
+  },
+  "D12": {
+   "valeurs": [
+    "plafonne_5"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Tentation ponctuelle admise, bornée"
+  },
+  "D8O": {
+   "valeurs": [
+    "oui"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Comportement décrit par l'énoncé (« peut être tenté »)"
+  },
+  "D9": {
+   "valeurs": [
+    "5"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Défaut prudent"
+  },
+  "D11": {
+   "valeurs": [
+    "mixte"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Non précisé"
+  },
+  "B6": {
+   "valeurs": [
+    "prudent"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Comportement supposé cohérent avec le déclaré"
+  },
+  "G3": {
+   "valeurs": [
+    "canada_usa"
+   ],
+   "source": "hypothèse de test",
+   "citation": "",
+   "confiance": 1.0,
+   "statut": "validé",
+   "motif": "Défaut prudent"
+  }
+ }
+}

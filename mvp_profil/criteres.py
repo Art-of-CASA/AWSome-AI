@@ -1,8 +1,8 @@
-"""Critères du profil et questionnaire FIXE (identique pour tous les utilisateurs).
+"""Critères fermés du profil et banque commune de questions, ordonnés par pilotage.py.
 
 Les identifiants (A2, B1…) sont ceux de config/criteres_appariement.csv : chaque valeur pourra être
 comparée au critère correspondant des actifs (data_extended/asset_criteria.csv).
-Les valeurs possibles forment une liste FERMÉE : c'est ce qui rend le profil reproductible.
+Les valeurs possibles forment une liste FERMÉE ; la fiabilité du classement libre est mesurée séparément.
 
 Types de questions :
   qcm        une réponse ; chaque option donne directement la valeur (pas d'IA)
@@ -22,8 +22,13 @@ SECTEURS_EMPLOI = ["technologie", "sante", "finance", "energie", "industrie", "c
 
 # id -> définition. « relance » : question de précision posée en fin de parcours si le critère reste incertain.
 CRITERES: dict[str, dict] = {
+    "A1": {"nom": "Étape de vie", "multiple": False,
+           "valeurs": ["etudes", "debut_carriere", "milieu_carriere", "pre_retraite", "retraite"],
+           "aide": "pre_retraite = retraite prévue dans les 10 prochaines années environ.",
+           "relance": "Où en êtes-vous dans votre vie professionnelle : aux études, en début ou en milieu de carrière, proche de la retraite, ou à la retraite ?"},
     "A2": {"nom": "Horizon de placement", "multiple": False,
-           "valeurs": ["moins_3_ans", "3_5_ans", "5_10_ans", "10_15_ans", "plus_15_ans"], "aide": "",
+           "valeurs": ["moins_3_ans", "3_5_ans", "5_10_ans", "10_15_ans", "plus_15_ans"],
+           "aide": "Bornes sans chevauchement : moins de 3 ; de 3 inclus à 5 exclu ; de 5 inclus à 10 exclu ; de 10 à 15 inclus ; strictement plus de 15 ans. Quinze ans est une réponse complète.",
            "relance": "Pensez au moment où vous aurez besoin de la majeure partie de cet argent : est-ce plutôt dans 2 ans, 5 ans, 10 ans ou davantage ? Dites-le avec vos mots."},
     "A3": {"nom": "Objectif principal", "multiple": False,
            "valeurs": ["coussin_securite", "projet_date", "retraite", "revenu", "croissance", "transmission"],
@@ -31,10 +36,10 @@ CRITERES: dict[str, dict] = {
            "relance": "Si cet argent réussissait parfaitement sa mission, à quoi aurait-il servi ?"},
     "A4": {"nom": "Part de l'épargne totale", "multiple": False,
            "valeurs": ["faible_moins_25", "moyenne_25_60", "forte_plus_60"], "aide": "",
-           "relance": "Si ce placement perdait la moitié de sa valeur, quelle part de toutes vos économies cela représenterait-il, à peu près ?"},
+           "relance": "Quelle part de votre épargne totale ce placement représente-t-il : moins du quart, de 25 à 60 %, ou plus de 60 % ?"},
     "A5": {"nom": "Fonds d'urgence", "multiple": False,
            "valeurs": ["aucun", "moins_3_mois", "3_6_mois", "plus_6_mois"], "aide": "Mois de dépenses couverts sans toucher à ce placement.",
-           "relance": "Si vous perdiez vos revenus demain, combien de temps pourriez-vous payer vos dépenses sans toucher à ce placement ?"},
+           "relance": "En dehors de ce placement et sans emprunter, combien de mois de dépenses essentielles votre argent disponible pourrait-il couvrir ?"},
     "A6": {"nom": "Stabilité des revenus", "multiple": False,
            "valeurs": ["stables", "variables", "incertains", "retraite"], "aide": "",
            "relance": "Vos revenus sont-ils à peu près les mêmes chaque mois, ou varient-ils beaucoup ?"},
@@ -45,7 +50,7 @@ CRITERES: dict[str, dict] = {
            "relance": "Combien de personnes dépendent de vos revenus (enfants, conjoint, parents) ?"},
     "A9": {"nom": "Retraits prévus avant l'échéance", "multiple": False,
            "valeurs": ["aucun", "ponctuel", "reguliers"], "aide": "",
-           "relance": "Voyez-vous une dépense pour laquelle vous pourriez puiser dans ce placement avant l'échéance ?"},
+           "relance": "Devrez-vous retirer une partie du capital avant l'échéance, une fois ou régulièrement (en dehors des intérêts et dividendes) ?"},
     "A10": {"nom": "Besoin de revenu régulier", "multiple": False, "valeurs": ["non", "souhaite", "essentiel"],
             "aide": "Le placement doit-il verser un revenu (dividendes, intérêts) ?",
             "relance": "Comptez-vous sur ce placement pour payer certaines dépenses chaque mois ou chaque année ?"},
@@ -73,7 +78,7 @@ CRITERES: dict[str, dict] = {
            "valeurs": ["prudent", "equilibre", "dynamique"], "aide": "", "relance": ""},
     "D8O": {"nom": "Attrait observé pour un titre médiatisé (test)", "multiple": False, "valeurs": ["non", "oui"],
             "aide": "", "relance": ""},
-    "H1": {"nom": "Écart entre déclaré et observé (rupture)", "multiple": False, "valeurs": ["aucun", "faible", "grand"],
+    "H1": {"nom": "Écart entre déclaré et observé (rupture)", "multiple": False, "valeurs": ["aucun", "faible", "grand", "non_teste"],
            "aide": "", "relance": ""},
     "B3": {"nom": "Expérience d'une forte baisse", "multiple": False,
            "valeurs": ["jamais", "oui_garde", "oui_vendu", "oui_renforce"], "aide": "",
@@ -92,6 +97,11 @@ CRITERES: dict[str, dict] = {
     "D2": {"nom": "Part maximale en cryptoactifs", "multiple": False, "valeurs": ["0", "5", "10", "20"],
            "aide": "En pour cent du portefeuille. 0 si la personne refuse les cryptos.",
            "relance": "Sur 100 $ investis, combien seriez-vous prêt à mettre au maximum en cryptoactifs ?"},
+    "D9": {"nom": "Poids maximal par titre", "multiple": False, "valeurs": ["5", "10", "20"],
+           "aide": "En pour cent du portefeuille, pour une action individuelle (pas pour un fonds diversifié).",
+           "relance": "Sur 100 $ investis, combien accepteriez-vous de mettre au maximum dans une seule entreprise ?"},
+    "D11": {"nom": "Fonds indiciels ou titres individuels", "multiple": False, "valeurs": ["fnb", "titres", "mixte"],
+            "aide": "", "relance": "Préférez-vous des fonds diversifiés, choisir vous-même des entreprises, ou un mélange des deux ?"},
     "D12": {"nom": "Tolérance aux placements spéculatifs", "multiple": False,
             "valeurs": ["sans_speculatif", "plafonne_5", "plafonne_10", "accepte"],
             "aide": "Spéculatif = cryptoactif, ou volatilité >= 45 %, ou perte maximale >= 60 %.",
@@ -130,6 +140,12 @@ CRITERES: dict[str, dict] = {
            "valeurs": ["exclure_chine", "exclure_emergents", "exclure_devise_instable", "aucune"],
            "aide": "Comparé au mot-clé kw_risque_pays des actifs.",
            "relance": "Y a-t-il des pays ou des types de marchés où vous ne voulez pas investir ?"},
+    "G1": {"nom": "Montant à placer", "multiple": False,
+           "valeurs": ["moins_5000", "5000_25000", "25000_100000", "plus_100000"],
+           "aide": "Montant fictif de la simulation, en dollars canadiens.", "relance": ""},
+    "G3": {"nom": "Accès aux bourses étrangères", "multiple": False,
+           "valeurs": ["canada_usa", "international", "je_ne_sais_pas"],
+           "aide": "canada_usa = le courtier ne donne accès qu'aux bourses canadiennes et américaines.", "relance": ""},
     "G2": {"nom": "Type de compte", "multiple": False, "valeurs": ["celi", "reer", "non_enregistre", "ne_sait_pas"],
            "aide": "", "relance": ""},
 }
@@ -145,7 +161,7 @@ def est_deduit(justification: str) -> bool:
 
 NSP = ("Je ne sais pas", None)
 
-# Questionnaire fixe : 6 pages, mêmes questions dans le même ordre pour tout le monde.
+# Banque commune : 6 pages, ordre adaptatif ; toute question déjà résolue est retirée par l'application.
 SECTIONS: list[dict] = [
     {"titre": "Votre projet", "items": [
         {"id": "q_a3", "type": "qcm", "critere": "A3", "texte": "À quoi servira principalement cet argent ?",
@@ -154,15 +170,19 @@ SECTIONS: list[dict] = [
                      ("Préparer ma retraite", "retraite"), ("Me verser un revenu", "revenu"),
                      ("Faire croître mon capital", "croissance"), ("Transmettre un patrimoine", "transmission"), NSP]},
         {"id": "q_a2", "type": "qcm", "critere": "A2", "texte": "Dans combien de temps aurez-vous besoin de la majeure partie de cet argent ?",
-         "options": [("Moins de 3 ans", "moins_3_ans"), ("3 à 5 ans", "3_5_ans"), ("5 à 10 ans", "5_10_ans"),
+         "options": [("Moins de 3 ans", "moins_3_ans"), ("3 à moins de 5 ans", "3_5_ans"), ("5 à moins de 10 ans", "5_10_ans"),
                      ("10 à 15 ans", "10_15_ans"), ("Plus de 15 ans", "plus_15_ans"), NSP]},
-        {"id": "q_a9", "type": "qcm", "critere": "A9", "texte": "Prévoyez-vous de retirer une partie de cet argent avant cette échéance ?",
+        {"id": "q_a9", "type": "qcm", "critere": "A9", "texte": "Prévoyez-vous de retirer une partie du capital avant cette échéance (en dehors des intérêts et dividendes) ?",
          "options": [("Non, je n'y toucherai pas", "aucun"), ("Oui, une fois (achat, projet…)", "ponctuel"),
                      ("Oui, régulièrement", "reguliers"), NSP]},
         {"id": "q_a10", "type": "qcm", "critere": "A10", "texte": "Avez-vous besoin que ce placement vous verse un revenu régulier ?",
          "options": [("Non", "non"), ("Ce serait un plus", "souhaite"), ("Oui, j'en ai besoin pour vivre", "essentiel"), NSP]},
     ]},
     {"titre": "Votre situation", "items": [
+        {"id": "q_a1", "type": "qcm", "critere": "A1", "texte": "Où en êtes-vous dans votre vie professionnelle ?",
+         "options": [("Aux études", "etudes"), ("En début de carrière", "debut_carriere"),
+                     ("En milieu de carrière", "milieu_carriere"), ("À moins de 10 ans de la retraite", "pre_retraite"),
+                     ("À la retraite", "retraite"), NSP]},
         {"id": "q_a4", "type": "qcm", "critere": "A4", "texte": "Quelle part de votre épargne totale ce placement représente-t-il ?",
          "options": [("Moins du quart", "faible_moins_25"), ("Entre le quart et environ 60 %", "moyenne_25_60"),
                      ("Plus de 60 %", "forte_plus_60"), NSP]},
@@ -224,6 +244,12 @@ SECTIONS: list[dict] = [
          "texte": "Placements spéculatifs (cryptoactifs, titres qui peuvent perdre plus de la moitié de leur valeur) :",
          "options": [("Je n'en veux pas", "sans_speculatif"), ("Au plus 5 % du portefeuille", "plafonne_5"),
                      ("Au plus 10 % du portefeuille", "plafonne_10"), ("Je les accepte sans limite particulière", "accepte"), NSP]},
+        {"id": "q_d11", "type": "qcm", "critere": "D11", "texte": "Vous préférez investir dans :",
+         "options": [("Des fonds diversifiés (FNB)", "fnb"), ("Des entreprises que je choisis", "titres"),
+                     ("Un mélange des deux", "mixte"), NSP]},
+        {"id": "q_d9", "type": "qcm", "critere": "D9",
+         "texte": "Quelle part maximale de votre portefeuille dans une seule entreprise ?",
+         "options": [("5 % au plus", "5"), ("10 % au plus", "10"), ("20 % au plus", "20"), NSP]},
         {"id": "q_d4", "type": "qcm", "critere": "D4",
          "texte": "Les placements en devises étrangères varient aussi avec le taux de change. Vous préférez :",
          "options": [("Rester en dollars canadiens", "cad_seulement"), ("Limiter la part en devises étrangères", "limite"),
@@ -259,6 +285,13 @@ SECTIONS: list[dict] = [
         {"id": "q_f2", "type": "qcm_multi", "critere": "F2", "texte": "Excluez-vous certains pays ou marchés ?",
          "options": [("Aucune exclusion", "aucune"), ("Chine", "exclure_chine"), ("Pays émergents", "exclure_emergents"),
                      ("Pays à devise instable", "exclure_devise_instable")]},
+        {"id": "q_g1", "type": "curseur", "critere": "G1", "texte": "Quel montant fictif voulez-vous placer dans cette simulation ?",
+         "min": 1000, "max": 200000, "pas": 1000, "defaut": 10000, "unite": "$",
+         "classes": [(4999, "moins_5000"), (24999, "5000_25000"), (99999, "25000_100000"), (10**9, "plus_100000")],
+         "case_nsp": "Je ne sais pas"},
+        {"id": "q_g3", "type": "qcm", "critere": "G3", "texte": "Votre courtier donne-t-il accès aux bourses hors du Canada et des États-Unis ?",
+         "options": [("Non, Canada et États-Unis seulement", "canada_usa"), ("Oui, aux bourses internationales", "international"),
+                     ("Je ne sais pas", "je_ne_sais_pas")]},
         {"id": "q_g2", "type": "qcm", "critere": "G2", "texte": "Dans quel type de compte investirez-vous ?",
          "options": [("CELI", "celi"), ("REER", "reer"), ("Compte non enregistré", "non_enregistre"),
                      ("Je ne sais pas encore", "ne_sait_pas")]},

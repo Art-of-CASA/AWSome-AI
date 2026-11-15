@@ -1,4 +1,4 @@
-"""Calcule, pour chacun des 66 actifs, les critères qui se comparent au profil de l'investisseur.
+"""Calcule, pour chacun des actifs (111 depuis le 15 novembre 2026), les critères qui se comparent au profil de l'investisseur.
 
 Entrées : jeu de départ, data_extra/, data_extended/, config/seuils_criteres.json
 Sortie  : data_extended/asset_criteria.csv  (une ligne par actif, une colonne par critère)
@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 STARTER = ROOT / "Datathon2026" / "alphaforge_starter"
 EXTRA, EXT = ROOT / "data_extra", ROOT / "data_extended"
 CFG = json.loads((ROOT / "config" / "seuils_criteres.json").read_text(encoding="utf-8"))
+PROFIL = json.loads((ROOT / "mvp_profil" / "hypotheses_profil.json").read_text(encoding="utf-8"))
 ASOF = pd.Timestamp("2026-11-12")
 
 # --- Critères écrits à la main (hypothèses de l'équipe, à justifier) -------------------------
@@ -39,10 +40,38 @@ THEMES = {
     "VOD.JO": "telecoms;paiement_mobile", "RY.TO": "banque", "TD.TO": "banque", "JPM": "banque", "HSBA.L": "banque",
     "HDFCBANK.NS": "banque", "FSR.JO": "banque", "SBK.JO": "banque", "COMI.CA": "banque", "MFC.TO": "assurance",
     "BTC-USD": "crypto", "ETH-USD": "crypto;contrats_intelligents", "QQQ": "technologie_large", "ESGV": "esg",
+    # Actifs ajoutés le 15 novembre 2026
+    "PM": "tabac", "BATS.L": "tabac", "DGE.L": "alcool", "LVS": "jeux_argent;hotellerie",
+    "LMT": "armes;aerospatiale", "RHM.DE": "armes", "BA": "aerospatiale;armes", "ITA": "armes;aerospatiale",
+    "PLTR": "ia;logiciel", "META": "reseaux_sociaux;publicite_numerique;ia", "000660.KS": "ia;semi-conducteurs",
+    "SMH": "semi-conducteurs;ia", "9984.T": "ia;holding;telecoms", "7974.T": "jeux_video", "BCE.TO": "telecoms",
+    "UNH": "assurance", "KO": "boissons", "COST": "commerce", "WALMEX.MX": "supermarches;commerce",
+    "O": "immobilier", "VNQ": "immobilier", "D05.SI": "banque", "VDY.TO": "banque;petrole",
+    "NEE": "services_publics;energies_renouvelables", "IBE.MC": "services_publics;energies_renouvelables",
+    "ENEL.MI": "services_publics;energies_renouvelables", "BEP-UN.TO": "energies_renouvelables;infrastructures",
+    "VWS.CO": "energies_renouvelables;eolien", "ICLN": "energies_renouvelables;esg", "CCO.TO": "uranium;energie_nucleaire",
+    "GLEN.L": "mines;charbon", "VALE3.SA": "mines", "PETR4.SA": "petrole;gaz", "2222.SR": "petrole;gaz",
 }
 # Complexité pour un investisseur non spécialiste : 1 simple, 2 intermédiaire, 3 complexe.
-COMPLEXITY_3 = {"BTC-USD", "ETH-USD", "NPN.JO", "COMI.CA"}  # crypto, holding à étages, devise instable
-COMPLEXITY_2_CLASSES = {"etf_bond", "etf_commodity"}
+# 1 : FNB d'actions larges, FNB obligataires courts ou agrégés, actions d'entreprises au modèle d'affaires lisible.
+# 2 : or (aucun flux de trésorerie), obligations longues (risque de taux marqué).
+# 3 : cryptoactifs, holding à étages, devise instable.
+# Être coté à l'étranger est une question d'ACCÈS (critère G3, colonne access_canada), pas de complexité.
+COMPLEXITY_3 = {"BTC-USD", "ETH-USD", "NPN.JO", "COMI.CA", "9984.T"}  # crypto, holding à étages (Naspers, SoftBank), devise instable
+# TIP : capital indexé sur l'inflation, mécanisme moins lisible qu'une obligation ordinaire ; BEP-UN.TO : parts d'une
+# société en commandite (fiscalité propre).
+COMPLEXITY_2 = {"GLD", "TLT", "TIP", "BEP-UN.TO"}
+# FNB d'un seul secteur ou d'un seul thème : ce n'est pas un « cœur » de portefeuille, quelle que soit sa taille.
+FNB_SECTORIELS = {"ICLN", "ITA", "VNQ", "SMH"}
+# Cotation américaine (ADR ou action cotée à New York) : le titre s'achète chez un courtier canadien ordinaire.
+# Liste écrite à la main, à vérifier auprès du courtier ; vide = non vérifié (pas « aucune »).
+ADR_US = {"ASML.AS": "ASML", "SAP.DE": "SAP", "NOVO-B.CO": "NVO", "AZN.L": "AZN", "SHEL.L": "SHEL", "TTE.PA": "TTE",
+          "HSBA.L": "HSBC", "6758.T": "SONY", "7203.T": "TM", "9988.HK": "BABA", "2330.TW": "TSM", "INFY.NS": "INFY",
+          "HDFCBANK.NS": "HDB", "GFI.JO": "GFI", "SOL.JO": "SSL",
+          # Ajouts du 15 novembre 2026 (les autres titres ajoutés ne se négocient aux États-Unis que hors cote : non retenus)
+          "BATS.L": "BTI", "DGE.L": "DEO", "VALE3.SA": "VALE", "PETR4.SA": "PBR.A"}
+# Pays réel des actifs du jeu de départ (qui n'a pas de colonne « pays »), d'après la place de cotation.
+PAYS_PAR_MARCHE = {"TSX": "Canada"}
 # Accès pour un particulier canadien (à vérifier selon le courtier).
 ACCESS = {
     "TSX": "directe", "NASDAQ": "directe", "NYSE": "directe", "NYSE Arca": "directe", "Cboe BZX": "directe",
@@ -53,6 +82,10 @@ ACCESS = {
     "Hong Kong Exchange": "courtier_international", "Johannesburg Stock Exchange": "courtier_international",
     "Taiwan Stock Exchange": "via_adr_ou_fnb", "Korea Exchange": "via_adr_ou_fnb",
     "National Stock Exchange of India": "via_adr_ou_fnb", "Egyptian Exchange": "via_fnb_seulement",
+    # Marchés ajoutés le 15 novembre 2026
+    "Bolsa de Madrid": "courtier_international", "Borsa Italiana": "courtier_international",
+    "Singapore Exchange": "courtier_international", "B3 (São Paulo)": "via_adr_ou_fnb",
+    "Bolsa Mexicana de Valores": "via_adr_ou_fnb", "Saudi Exchange (Tadawul)": "via_fnb_seulement",
 }
 # Secteur d'emploi de l'investisseur -> secteurs GICS qui doublent son exposition (capital humain).
 # Utilisé côté profil ; listé ici pour mémoire.
@@ -104,7 +137,18 @@ def per_asset(u, p, ca, fx, macro, wiki):
         d = ca[(ca.ticker == tk) & (ca.action == "dividend")].set_index("ex_date").value
         ttm = d[d.index > ASOF - pd.Timedelta(days=365)].sum()
         yearly = d.groupby(d.index.year).sum().reindex(range(2022, 2026), fill_value=0.0)
-        cut = bool(((yearly.pct_change() < -CFG["baisse_dividende_annuelle_significative"]) & (yearly.shift() > 0)).any())
+        # Baisse réelle du dividende : le total annuel baisse de plus du seuil par rapport à l'année précédente ET
+        # par rapport à l'année d'avant (sinon ce n'est qu'un retour à la normale après un dividende spécial :
+        # HSBC 2024). Quand l'année d'avant manque, on exige que le versement médian baisse aussi (TotalEnergies 2022).
+        med = d.groupby(d.index.year).median().reindex(range(2022, 2026))
+        seuil_div = 1 - CFG["baisse_dividende_annuelle_significative"]
+        cut = False
+        for an in range(2023, 2026):
+            if yearly[an - 1] > 0 and yearly[an] < seuil_div * yearly[an - 1]:
+                if an - 2 >= 2022:
+                    cut = cut or bool(yearly[an] < seuil_div * yearly[an - 2])
+                else:
+                    cut = cut or bool(pd.isna(med[an]) or med[an] < seuil_div * med[an - 1])
         years_paid = int((yearly > 0).sum())
         # Sensibilité aux taux : bêta des rendements hebdomadaires en CAD sur la variation du taux US 10 ans
         w = pd.concat({"r": cad.resample("W-FRI").last().pct_change(fill_method=None), "dy": y10_w}, axis=1).dropna()
@@ -112,6 +156,11 @@ def per_asset(u, p, ca, fx, macro, wiki):
         # Attention médiatique : jours de pic (z-score > seuil sur fenêtre glissante)
         wv = wiki[wiki.ticker == tk].set_index("date").views.sort_index()
         median_views = wv.median() if len(wv) else np.nan
+        # Emballement RÉCENT, mesuré par rapport à l'actif lui-même : audience des 30 derniers jours ÷ médiane sur un an.
+        # (media_hype compare les actifs entre eux : il mesure la notoriété, pas l'emballement.)
+        wv_an = wv[wv.index > ASOF - pd.Timedelta(days=365)]
+        wv_30 = wv[wv.index > ASOF - pd.Timedelta(days=30)]
+        attention_ratio = wv_30.mean() / wv_an.median() if len(wv_an) > 100 and len(wv_30) > 5 and wv_an.median() > 0 else np.nan
         if len(wv) > 200:
             win = CFG["attention_fenetre_jours"]
             z = (wv - wv.rolling(win).median()) / wv.rolling(win).std()
@@ -139,7 +188,8 @@ def per_asset(u, p, ca, fx, macro, wiki):
                          dividend_yield_ttm=ttm / g.close.iloc[-1] if ttm > 0 else 0.0,
                          dividend_years_paid_2022_2025=years_paid, dividend_cut_2022_2025=cut,
                          rate_sensitivity_pct_per_pt=rate_beta, attention_median_daily_views=median_views,
-                         attention_spikes_per_year=spikes_per_year, attention_spike_last_30d=recent_spike))
+                         attention_spikes_per_year=spikes_per_year, attention_spike_last_30d=recent_spike,
+                         attention_ratio_30j_sur_1an=attention_ratio))
     return pd.DataFrame(rows)
 
 
@@ -147,10 +197,13 @@ def fundamentals_summary(rat):
     rat = rat.copy()
     rat["available_from"] = pd.to_datetime(rat.available_from)
     rat = rat[rat.available_from <= ASOF]  # seulement ce qui était publié à la date d'analyse
+    # Année rentable = résultat net positif. On lit son signe dans le ROE (résultat net ÷ capitaux propres) :
+    # la marge nette est trompeuse quand le revenu publié est négatif (Manuvie sous IFRS 17). À défaut, marge nette.
+    rat["resultat_positif"] = np.where(rat.roe.notna(), rat.roe > 0, np.where(rat.net_margin.notna(), rat.net_margin > 0, np.nan))
     g = rat.sort_values("fiscal_year_end").groupby("ticker")
     out = pd.DataFrame({
         "fiscal_years": g.size(),
-        "profitable_years_share": g.net_margin.apply(lambda s: (s.dropna() > 0).mean() if s.notna().any() else np.nan),
+        "profitable_years_share": g.resultat_positif.apply(lambda s: s.dropna().astype(float).mean() if s.notna().any() else np.nan),
         "revenue_growth_avg": g.revenue_growth.apply(lambda s: s.dropna().mean() if s.notna().any() else np.nan),
         "debt_to_equity_last": g.debt_to_equity.last(),
         "interest_coverage_last": g.interest_coverage.last(),
@@ -164,30 +217,51 @@ def fundamentals_summary(rat):
 
 def classify(df):
     c = CFG
+    # Baisse non récupérée : « en cours » si le creux est récent, « jamais récupérée » sinon (TLT depuis 2023).
+    age_creux = (ASOF - pd.to_datetime(df.drawdown_trough)).dt.days
+    df["recovery_status"] = np.where(df.underwater_days.notna(), "recupere",
+                                     np.where(age_creux <= c["baisse_en_cours_creux_max_jours"], "baisse_en_cours", "jamais_recupere"))
     df["horizon_min_years"] = df.risk_class.astype(str).map(c["horizon_min_ans_par_classe"]).astype(int)
-    df.loc[df.recovery_days.isna(), "horizon_min_years"] += c["horizon_min_plus_si_non_recupere"]
+    # Seule une baisse ancienne jamais récupérée allonge l'horizon : une baisse en cours à la fin des données
+    # ne dit rien de la durée de récupération (elle est signalée, sans pénalité).
+    df.loc[df.recovery_status == "jamais_recupere", "horizon_min_years"] += c["horizon_min_plus_si_non_recupere"]
+    # stress_loss : identique à max_drawdown sur cette fenêtre (gardé pour compatibilité). Le stress utile au moteur
+    # se calcule sur le PORTEFEUILLE, pas actif par actif.
     df["stress_loss"] = np.minimum(df.max_drawdown, df.return_2022.fillna(0).clip(upper=0))
     liq = c["liquidite_cad_par_jour"]
     df["liquidity_level"] = np.select([df.avg_daily_value_cad_12m >= liq["elevee"], df.avg_daily_value_cad_12m >= liq["moyenne"]],
                                       ["elevee", "moyenne"], "faible")
     df.loc[df.asset_class == "crypto", "liquidity_level"] = "elevee"
+    # FNB indiciel : sa liquidité est celle de ses titres sous-jacents (création et rachat de parts), pas son
+    # volume en bourse. Hypothèse : élevée pour les FNB indiciels de grands émetteurs de l'univers.
+    df.loc[df.asset_class.str.startswith("etf"), "liquidity_level"] = "elevee"
     df["high_unit_price"] = df.unit_price_cad > c["prix_unitaire_eleve_cad"]
     df["fx_risk"] = np.where(df.currency == "CAD", "aucun",
                              np.where(df.fx_vol_contribution.abs() >= c["change_contribution_notable"], "notable", "present"))
     df["rate_sensitivity"] = np.select(
         [df.rate_sensitivity_pct_per_pt <= -c["sensibilite_taux_notable_pct_par_point"],
          df.rate_sensitivity_pct_per_pt >= c["sensibilite_taux_notable_pct_par_point"]], ["baisse_si_taux_montent", "hausse_si_taux_montent"], "faible")
-    df["income_asset"] = (df.dividend_yield_ttm >= c["revenu_rendement_dividende_min"]) & ~df.dividend_cut_2022_2025
     df["speculative"] = (df.asset_class == "crypto") | (df.vol_cad >= c["speculatif_volatilite_min"]) | \
                         (df.max_drawdown <= -c["speculatif_perte_max_min"])
-    df["established"] = (df.asset_class == "equity") & (df.profitable_years_share == 1) & \
-                        (df.dividend_years_paid_2022_2025 == 4) & ~df.speculative
+    # Un FNB n'a pas de politique de dividende : la « baisse du dividende » ne s'applique qu'aux actions.
+    df.loc[df.asset_class != "equity", "dividend_cut_2022_2025"] = False
+    # Un actif spéculatif n'est jamais un actif « de revenu », quel que soit son rendement (Novo Nordisk, Gold Fields).
+    df["income_asset"] = (df.dividend_yield_ttm >= c["revenu_rendement_dividende_min"]) & ~df.dividend_cut_2022_2025 & ~df.speculative
+    # « Établie » : rentable la plupart des exercices publiés et non spéculative. Sans condition de dividende
+    # (Alphabet et Amazon sont établies sans avoir versé de dividende chaque année).
+    df["established"] = (df.asset_class == "equity") & (df.profitable_years_share >= c["etablie_part_annees_rentables_min"]) & ~df.speculative
     # Croissance nominale non comparable dans une devise à forte inflation (ex. livre égyptienne).
     df.loc[df.currency.isin(c["devises_forte_inflation"]), "revenue_growth_avg"] = np.nan
+    df.loc[df.revenue_growth_avg.abs() > 5, "revenue_growth_avg"] = np.nan  # revenu publié négatif (assureur) : taux absurde
     df["growth"] = df.revenue_growth_avg >= c["croissance_revenus_forte"]
     df["defensive"] = ((df.vol_cad <= c["defensif_volatilite_max"]) & (df.beta_vt_weekly <= c["defensif_beta_max"])) | (df.risk_class <= 4)
-    df["diversifier_vs_world"] = df.corr_vt_weekly <= c["diversifiant_correlation_vt_max"]
+    # Diversifiant : peu corrélé au marché mondial ET n'a pas fait pire que lui pendant le choc de 2022 ET non spéculatif.
+    # La corrélation seule qualifiait de « diversifiants » Bitcoin (−63 % en 2022) ou Sasol (−89 % de perte maximale).
+    vt_2022 = df.loc[df.ticker == "VT", "return_2022"].iloc[0]
+    df["diversifier_vs_world"] = (df.corr_vt_weekly <= c["diversifiant_correlation_vt_max"]) & ~df.speculative & \
+                                 (df.return_2022.fillna(-1) >= vt_2022)
     # Médiatisation relative à l'univers : forte audience ET pics fréquents (quantiles, pas de seuil absolu).
+    # ATTENTION : c'est une mesure de NOTORIÉTÉ. L'emballement récent est dans hype_recent.
     lvl = df.attention_median_daily_views.quantile(c["attention_niveau_fort_quantile"])
     pk = df.attention_spikes_per_year.quantile(c["attention_pics_quantile"])
     df["media_hype"] = np.select(
@@ -195,15 +269,30 @@ def classify(df):
          (df.attention_median_daily_views >= lvl) & (df.attention_spikes_per_year >= pk),
          df.attention_median_daily_views >= lvl],
         ["non_applicable", "tres_mediatise", "tres_suivi"], "normale")
+    df["hype_recent"] = (df.attention_ratio_30j_sur_1an >= c["emballement_ratio_audience_min"]) | \
+                        (df.return_3m.abs() >= c["emballement_rendement_3m_min"])
     df["themes"] = df.ticker.map(THEMES).fillna("")
-    df["complexity"] = np.where(df.ticker.isin(COMPLEXITY_3), 3,
-                                np.where(df.asset_class.isin(COMPLEXITY_2_CLASSES) | ~df.region.isin(["Amérique du Nord", "Monde"]), 2, 1))
-    df.loc[df.asset_class == "crypto", "complexity"] = 3
+    df["complexity"] = np.where(df.ticker.isin(COMPLEXITY_3) | (df.asset_class == "crypto"), 3,
+                                np.where(df.ticker.isin(COMPLEXITY_2) | (df.asset_class == "etf_commodity"), 2, 1))
     df["access_canada"] = df.market.map(ACCESS).fillna("a_verifier")
+    df["adr_us"] = df.ticker.map(ADR_US).fillna("")
     df["foreign_dividend_withholding"] = np.where((df.currency == "CAD") | (df.dividend_yield_ttm == 0), "non", "oui_a_verifier")
-    df["role"] = np.select([df.asset_class.isin(["etf_bond"]), df.ticker.isin(["GLD"]), df.income_asset, df.defensive,
-                            df.speculative, df.growth], ["stabilisateur", "couverture", "revenu", "defensif", "speculatif", "croissance"],
-                           "coeur")
+    # Énergies fossiles : une catégorie (comparable à E1) et, pour un FNB d'actions, la part du secteur énergie.
+    fi = df.fossil_involvement.fillna("")
+    df["fossil_part_energie_fnb"] = pd.to_numeric(fi.str.extract(r"part énergie ([0-9.]+)%")[0], errors="coerce") / 100
+    df["fossil_categorie"] = np.where(fi.str.startswith("part énergie"), "fonds_part_energie",
+                                      np.where(fi == "non applicable", "non_applicable", fi.str.replace(" ", "_")))
+    # Ether fonctionne en preuve d'enjeu depuis septembre 2022 : plus de minage, donc pas d'implication indirecte.
+    df.loc[df.ticker == "ETH-USD", "fossil_categorie"] = "aucune"
+    # Rôle dans un portefeuille. Ordre : le spéculatif est testé AVANT le revenu.
+    obl = df.asset_class == "etf_bond"
+    df["role"] = np.select(
+        [obl & (df.vol_cad <= c["role_liquidites_volatilite_max"]),
+         obl & (df.vol_cad <= c["role_obligations_amortisseur_volatilite_max"]),
+         obl, df.ticker.isin(["GLD"]), df.ticker.isin(FNB_SECTORIELS), df.asset_class == "etf_equity",
+         df.speculative, df.income_asset, df.defensive, df.growth],
+        ["liquidites", "obligations_amortisseur", "obligations_longues", "couverture", "satellite", "coeur",
+         "speculatif", "satellite_revenu", "satellite_defensif", "satellite_croissance"], "satellite")
     return df
 
 
@@ -215,12 +304,26 @@ EXCLUSIONS = {
     "JNJ": ["tests_sur_animaux"], "AZN.L": ["tests_sur_animaux"], "NOVO-B.CO": ["tests_sur_animaux"],
     "APN.JO": ["tests_sur_animaux"],                       # pharmacie : essais précliniques exigés par la réglementation
     "ENB.TO": ["atteinte_droits_autochtones"],             # ligne 5, Bad River (décision confirmée en appel, 2026)
+    # Actifs ajoutés le 15 novembre 2026, pour contraster les profils selon leurs valeurs
+    "PM": ["tabac"], "BATS.L": ["tabac"],                  # cigarettes et produits du tabac : activité principale
+    "DGE.L": ["alcool"],                                   # spiritueux et bière : activité principale
+    "LVS": ["jeux_argent"],                                # casinos (Macao, Singapour) : activité principale
+    "LMT": ["armes", "contrats_de_defense"],               # avions de combat, missiles : premier fournisseur du Pentagone
+    "RHM.DE": ["armes", "contrats_de_defense"],            # munitions, blindés
+    "BA": ["armes", "contrats_de_defense"],                # division Défense : avions de combat, missiles
+    "ITA": ["armes", "contrats_de_defense"],               # fonds entièrement investi en aérospatiale et défense
+    "PLTR": ["contrats_de_defense"],                       # logiciels pour la défense et le renseignement
+    "CCO.TO": ["energie_nucleaire"],                       # extraction d'uranium, combustible nucléaire
+    "NEE": ["energie_nucleaire"], "IBE.MC": ["energie_nucleaire"], "ENEL.MI": ["energie_nucleaire"],  # exploitent des centrales nucléaires (une part minoritaire de leur production)
 }
-SECTEURS_DEFENSIFS = {"Consumer Staples", "Utilities", "Health Care", "Communication Services"}
-SECTEURS_CYCLIQUES = {"Consumer Discretionary", "Materials", "Industrials", "Energy", "Financials", "Information Technology"}
+SECTEURS_DEFENSIFS = {"Consumer Staples", "Utilities", "Health Care"}
+SECTEURS_CYCLIQUES = {"Consumer Discretionary", "Materials", "Industrials", "Energy", "Financials", "Information Technology",
+                      "Real Estate"}
 
 
 def _tranche(x, bornes, noms, defaut="non_disponible"):
+    if len(bornes) != len(noms):
+        raise ValueError("Chaque borne doit posséder exactement un libellé.")
     if pd.isna(x):
         return defaut
     for b, n in zip(bornes, noms):
@@ -229,16 +332,68 @@ def _tranche(x, bornes, noms, defaut="non_disponible"):
     return noms[-1]
 
 
+def classe_volatilite(vol_pct: float) -> str:
+    """Conventions B5 : moins de 8 ; de 8 à 15 inclus ; plus de 15 à 25 inclus ; plus de 25.
+
+    Les limites sont celles déjà déclarées par la synthèse du profil, pas un
+    second barème indépendant dans les données d'actifs.
+    """
+    bornes = PROFIL["volatilite_max_par_B5_pct"]
+    if pd.isna(vol_pct):
+        return "non_disponible"
+    if vol_pct < bornes["faible_moins_8"]:
+        return "faible_moins_8"
+    for mot in ("moderee_8_15", "elevee_15_25"):
+        if vol_pct <= bornes[mot]:
+            return mot
+    return "tres_elevee_plus_25"
+
+
+def classe_recuperation(jours: float, statut: str) -> str:
+    """B7 utilise des plafonds inclusifs de 365/730 jours ; absence de retour = état distinct."""
+    if pd.isna(jours):
+        return statut
+    for mot, limite in PROFIL["duree_sous_eau_max_jours_par_B7"].items():
+        if limite is None or jours <= limite:
+            return mot
+    raise ValueError("La grille B7 doit contenir une durée sans plafond.")
+
+
+def classe_frais(ratio: float) -> str:
+    """Bornes de frais versionnées, exprimées en ratios annuels, sans seuil caché."""
+    if pd.isna(ratio):
+        return "non_applicable"
+    bornes = CFG["frais_fnb_bornes"]
+    if len(bornes) != 3 or not 0 < bornes[0] < bornes[1] < bornes[2]:
+        raise ValueError("Trois bornes de frais positives et strictement croissantes sont requises.")
+    def code(x):
+        pct = x * 100
+        return str(int(pct)) if float(pct).is_integer() else f"{pct:.2f}".replace(".", "_")
+    b0, b1, b2 = map(code, bornes)
+    noms = [f"ultra_reduits_moins_{b0}", f"faibles_{b0}_{b1}", f"moderes_{b1}_{b2}", f"eleves_a_partir_de_{b2}"]
+    return _tranche(ratio, [*bornes, float("inf")], noms)
+
+
+def sensibilite_macro(r) -> str:
+    tags = []
+    if r.rate_sensitivity == "baisse_si_taux_montent":
+        tags.append("sensible_aux_taux")
+    if r.sector == "Energy" or "petrole" in r.themes or r.fossil_involvement == "directe":
+        tags.append("sensible_au_petrole")
+    if r.fx_risk == "notable":
+        tags.append("sensible_aux_devises")
+    return ";".join(tags) or "aucune_sensibilite_marquee"
+
+
 def mots_cles(df, caps: pd.Series, top10: pd.Series, n_top: pd.Series) -> pd.DataFrame:
     """Colonnes kw_* : chaque valeur est un mot-clé du tableau de l'équipe, calculé à partir de nos données."""
     eq = df.asset_class == "equity"
     pct = lambda s: -s * 100  # noqa: E731  (perte en % positif)
     df["kw_perte_max_historique"] = [_tranche(pct(x), [10, 20, 30, 40, 1e9], ["moins_10", "10_20", "20_30", "30_40", "plus_40"])
                                      for x in df.max_drawdown]
-    df["kw_volatilite"] = [_tranche(v * 100, [8, 15, 25, 1e9], ["faible_moins_8", "moderee_8_15", "elevee_15_25", "tres_elevee_plus_25"])
-                           for v in df.vol_cad]
-    df["kw_recuperation"] = [("non_recupere" if pd.isna(d) else _tranche(d, [365, 730, 1e9], ["rapide_moins_1_an", "moyenne_1_2_ans", "longue_plus_2_ans"]))
-                             for d in df.recovery_days]
+    df["kw_volatilite"] = [classe_volatilite(v * 100) for v in df.vol_cad]
+    # Durée SOUS L'EAU (du sommet au retour au sommet), comparable à B7. Non récupéré : statut explicite.
+    df["kw_recuperation"] = [classe_recuperation(d, st) for d, st in zip(df.underwater_days, df.recovery_status)]
     df["kw_choc_2022"] = [("hausse" if r > 0 else _tranche(-r * 100, [10, 25, 1e9], ["baisse_limitee_moins_10", "baisse_moderee_10_25", "baisse_forte_plus_25"]))
                           if pd.notna(r) else "non_disponible" for r in df.return_2022]
     df["kw_beta"] = [_tranche(b, [0.7, 1.2, 1e9], ["faible_moins_0_7", "neutre_0_7_1_2", "eleve_plus_1_2"]) for b in df.beta_vt_weekly]
@@ -255,7 +410,12 @@ def mots_cles(df, caps: pd.Series, top10: pd.Series, n_top: pd.Series) -> pd.Dat
         tags = ["dividende_reduit_ou_suspendu" if r.dividend_cut_2022_2025 else
                 "croissance_du_dividende" if r.dividend_growth_2022_2025 > 0.10 else "dividende_stable"]
         if pd.notna(r.dividends_to_fcf_last) and r.industrial_ratios_meaningful is True:
-            tags.append("ratio_distribution_soutenable" if 0 < r.dividends_to_fcf_last <= 0.75 else "ratio_distribution_eleve")
+            # Le ratio dividendes ÷ flux libres ne veut rien dire quand les flux libres sont négatifs ou absorbés par
+            # l'investissement réglementé (services publics, pipelines) ou par une filiale de financement (Toyota).
+            if r.dividends_to_fcf_last <= 0 or r.sector in ("Utilities", "Real Estate") or "pipelines" in r.themes or r.ticker == "7203.T":
+                tags.append("ratio_distribution_non_comparable")
+            else:
+                tags.append("ratio_distribution_soutenable" if r.dividends_to_fcf_last <= 0.75 else "ratio_distribution_eleve")
         return ";".join(tags)
     df["kw_dividende_durabilite"] = df.apply(durabilite, axis=1)
     df["kw_distribution"] = ["capitalisant" if n == 0 else "distribution_mensuelle" if n >= 10 else "distribuant"
@@ -281,21 +441,16 @@ def mots_cles(df, caps: pd.Series, top10: pd.Series, n_top: pd.Series) -> pd.Dat
     df["kw_croissance_resultats"] = [("non_applicable" if not e else "non_comparable" if pd.isna(g) else
                                       "forte_plus_15" if g >= 0.15 else "moderee" if g >= 0.03 else "stable" if g >= -0.03 else "en_declin")
                                      for g, e in zip(df.revenue_growth_avg, eq)]
-    df["kw_cycle"] = ["defensif" if s in SECTEURS_DEFENSIFS else "cyclique" if s in SECTEURS_CYCLIQUES
+    # Communication Services : défensif pour les télécoms seulement (Alphabet et Tencent sont cycliques).
+    df["kw_cycle"] = ["defensif" if (s in SECTEURS_DEFENSIFS or (s == "Communication Services" and "telecoms" in th.split(";")))
+                      else "cyclique" if (s in SECTEURS_CYCLIQUES or s == "Communication Services")
                       else "refuge" if t == "GLD" else "obligataire" if a == "etf_bond" else "speculatif" if a == "crypto" else "marche_large"
-                      for s, t, a in zip(df.sector, df.ticker, df.asset_class)]
-    def macro(r):
-        t = []
-        if r.rate_sensitivity == "baisse_si_taux_montent": t.append("sensible_aux_taux")
-        if r.sector == "Energy" or "petrole" in r.themes or r.fossil_involvement == "directe": t.append("sensible_au_petrole")
-        if r.fx_risk == "notable" or (r.currency != "CAD" and abs(r.fx_vol_contribution) >= 0.02): t.append("sensible_aux_devises")
-        return ";".join(t) or "aucune_sensibilite_marquee"
-    df["kw_sensibilite_macro"] = df.apply(macro, axis=1)
+                      for s, t, a, th in zip(df.sector, df.ticker, df.asset_class, df.themes)]
+    df["kw_sensibilite_macro"] = df.apply(sensibilite_macro, axis=1)
     df["kw_protection_inflation"] = ["or" if ("or" in th.split(";")) else "matieres_premieres_energie" if s == "Energy"
                                      else "a_resiste_en_2022" if (pd.notna(r) and r > 0) else "sans_protection_demontree"
                                      for th, s, r in zip(df.themes, df.sector, df.return_2022)]
-    df["kw_frais"] = [(_tranche(f * 100, [0.15, 0.5, 1, 1e9], ["ultra_reduits_moins_0_15", "faibles_0_15_0_50", "moderes_0_50_1", "eleves_plus_1"])
-                       if pd.notna(f) else "non_applicable") for f in df.etf_expense_ratio]
+    df["kw_frais"] = [classe_frais(f) for f in df.etf_expense_ratio]
     # Un FNB dont moins de 6 lignes pèsent plus de 80 % détient d'autres fonds (XEQT, BNDW) : la règle des
     # 10 premières positions ne s'applique pas. (Pour AGG, Yahoo ne renvoie qu'une ligne de liquidités : non concerné.)
     df["kw_concentration"] = ["titre_individuel" if a == "equity" else "actif_unique" if a in ("crypto", "etf_commodity")
@@ -305,29 +460,47 @@ def mots_cles(df, caps: pd.Series, top10: pd.Series, n_top: pd.Series) -> pd.Dat
     def attention(r):
         t = {"tres_mediatise": ["tres_mediatise"], "tres_suivi": ["tres_suivi"], "normale": ["peu_mediatise"]}.get(r.media_hype, [])
         if pd.notna(r.return_3m) and abs(r.return_3m) > 0.30: t.append("variation_recente_extreme")
+        if r.hype_recent is True or r.hype_recent == True: t.append("emballement_recent")  # noqa: E712
         if pd.notna(r.volume_spike_ratio) and r.volume_spike_ratio > 3: t.append("pic_de_volume_anormal")
         return ";".join(t) or "non_applicable"
     df["kw_attention"] = df.apply(attention, axis=1)
     df["kw_efficience"] = [_tranche(s, [0.3, 0.8, 1e9], ["ratio_faible", "ratio_moyen", "ratio_eleve"]) for s in df.sharpe]
-    df["kw_risque_pays"] = ["exposition_chine" if c == "Chine" else "exposition_chine_partielle" if t in ("VWO", "VT")
-                            else "devise_instable" if c == "Égypte" else "marche_emergent" if c in ("Inde", "Afrique du Sud", "Taïwan", "Corée du Sud")
+    # Plusieurs étiquettes par actif (séparées par « ; »). Pays émergents selon la classification MSCI (la Corée du
+    # Sud et Taïwan y sont émergents ; FTSE classe la Corée parmi les développés, d'où Samsung dans VEA).
+    FONDS = {"VWO": "marche_emergent;exposition_chine_partielle",
+             "VT": "pays_developpe;marche_emergent_partiel;exposition_chine_partielle",
+             "XEQT.TO": "pays_developpe;marche_emergent_partiel"}
+    df["kw_risque_pays"] = [FONDS[t] if t in FONDS else "exposition_chine;marche_emergent" if c == "Chine"
+                            else "devise_instable;marche_emergent" if c == "Égypte"
+                            else "marche_emergent" if c in ("Inde", "Afrique du Sud", "Taïwan", "Corée du Sud", "Brésil", "Mexique", "Arabie saoudite")
                             else "pays_developpe" if a != "crypto" else "sans_pays"
                             for c, t, a in zip(df.country, df.ticker, df.asset_class)]
     df["kw_devise"] = [("sans_devise_souveraine" if a == "crypto" else "cad_actifs_etrangers_non_couverts" if t == "XEQT.TO"
-                        else "usd_couvert" if t == "BNDW" else "cad" if c == "CAD" else "usd" if c == "USD" else "autre_devise")
+                        else "usd_couvert" if t == "BNDW" else "multidevise_non_couvert" if t in ("VT", "VEA", "VWO", "ICLN")
+                        else "cad" if c == "CAD" else "usd" if c == "USD" else "autre_devise")
                        for a, t, c in zip(df.asset_class, df.ticker, df.currency)]
     df["kw_fiscalite"] = [("revenu_interets" if a == "etf_bond" else "gains_en_capital_seulement" if y == 0
+                           else "distributions_canadiennes" if t == "BEP-UN.TO"  # société en commandite : pas des dividendes admissibles
                            else "dividendes_canadiens_admissibles" if (m == "TSX" and a == "equity") else
                            "distributions_canadiennes" if c == "CAD" else "dividendes_etrangers")
-                          for a, y, m, c in zip(df.asset_class, df.dividend_yield_ttm, df.market, df.currency)]
-    df["kw_exclusions"] = [";".join((["energie_fossile"] if f == "directe" else []) + EXCLUSIONS.get(t, [])) or "aucune_connue"
-                           for t, f in zip(df.ticker, df.fossil_involvement)]
+                          for a, y, m, c, t in zip(df.asset_class, df.dividend_yield_ttm, df.market, df.currency, df.ticker)]
+    # « aucune_connue » ne veut pas dire « aucune » : liste d'implications connues, non exhaustive. Pour un FNB
+    # d'actions, on signale l'exposition fossile par sa part du secteur énergie (les positions complètes manquent).
+    seuil_fnb = CFG["fossile_via_fonds_part_energie_min"]
+    df["kw_exclusions"] = [";".join((["energie_fossile"] if f == "directe" else [])
+                                    + (["energie_fossile_via_fonds"] if pd.notna(pe) and pe >= seuil_fnb else [])
+                                    + EXCLUSIONS.get(t, [])) or "aucune_connue"
+                           for t, f, pe in zip(df.ticker, df.fossil_categorie, df.fossil_part_energie_fnb)]
     return df
 
 
 if __name__ == "__main__":
     u, p, ca, fx, met, rat, esg, wiki, etf, macro = load()
     base = met.merge(u[["ticker", "market", "country"]], on="ticker", how="left")
+    # Jeu de départ : pas de colonne pays. On la déduit de la place de cotation (Canada ou États-Unis).
+    depart = base.country.isna()
+    base.loc[depart & (base.asset_class == "equity"), "country"] = base.market.map(PAYS_PAR_MARCHE).fillna("États-Unis")
+    base.loc[depart & base.asset_class.str.startswith("etf"), "country"] = base.market.map(PAYS_PAR_MARCHE).fillna("États-Unis") + " (fonds)"
     base["country"] = base.country.fillna(base.region)
     df = base.merge(per_asset(u, p, ca, fx, macro, wiki), on="ticker") \
              .merge(fundamentals_summary(rat), on="ticker", how="left") \

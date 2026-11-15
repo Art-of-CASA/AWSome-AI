@@ -1,24 +1,51 @@
 {
-  "_note": "Tous les seuils sont des HYPOTHÈSES de l'équipe, à déclarer dans la documentation. Modifier ici puis relancer scripts/build_asset_criteria.py.",
-  "classe_risque_bornes_volatilite": [0.005, 0.02, 0.05, 0.10, 0.15, 0.25],
-  "horizon_min_ans_par_classe": {"1": 1, "2": 1, "3": 2, "4": 3, "5": 5, "6": 7, "7": 10},
+  "_note": "Tous les seuils sont des HYPOTHÈSES de l'équipe. Après modification : compute_metrics.py, puis build_asset_criteria.py et les générateurs des fichiers du MVP. Les bornes de frais reprennent les valeurs effectivement utilisées auparavant ; l'ancienne clé frais_fnb_eleves=0.004, inutilisée, a été retirée.",
+  "classe_risque_bornes_volatilite": [
+    0.005,
+    0.02,
+    0.05,
+    0.1,
+    0.15,
+    0.25
+  ],
+  "horizon_min_ans_par_classe": {
+    "1": 1,
+    "2": 1,
+    "3": 2,
+    "4": 3,
+    "5": 5,
+    "6": 7,
+    "7": 10
+  },
   "horizon_min_plus_si_non_recupere": 2,
-  "liquidite_cad_par_jour": {"elevee": 50000000, "moyenne": 5000000},
+  "liquidite_cad_par_jour": {
+    "elevee": 50000000,
+    "moyenne": 5000000
+  },
   "prix_unitaire_eleve_cad": 500,
   "revenu_rendement_dividende_min": 0.03,
-  "baisse_dividende_annuelle_significative": 0.20,
+  "baisse_dividende_annuelle_significative": 0.2,
   "croissance_revenus_forte": 0.15,
   "speculatif_volatilite_min": 0.45,
-  "speculatif_perte_max_min": 0.60,
-  "defensif_volatilite_max": 0.20,
+  "speculatif_perte_max_min": 0.6,
+  "defensif_volatilite_max": 0.2,
   "defensif_beta_max": 0.6,
-  "diversifiant_correlation_vt_max": 0.30,
+  "diversifiant_correlation_vt_max": 0.3,
   "change_contribution_notable": 0.03,
   "sensibilite_taux_notable_pct_par_point": 3.0,
   "attention_pic_zscore": 3.0,
   "attention_fenetre_jours": 60,
   "attention_niveau_fort_quantile": 0.67,
   "attention_pics_quantile": 0.75,
-  "devises_forte_inflation": ["EGP"],
-  "frais_fnb_eleves": 0.0040
+  "devises_forte_inflation": [
+    "EGP"
+  ],
+  "frais_fnb_bornes": [0.0015, 0.005, 0.01],
+  "baisse_en_cours_creux_max_jours": 365,
+  "role_liquidites_volatilite_max": 0.02,
+  "role_obligations_amortisseur_volatilite_max": 0.08,
+  "etablie_part_annees_rentables_min": 0.75,
+  "fossile_via_fonds_part_energie_min": 0.01,
+  "emballement_ratio_audience_min": 1.5,
+  "emballement_rendement_3m_min": 0.3
 }

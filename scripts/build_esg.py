@@ -135,6 +135,39 @@ CONTROVERSIES = [
                  "conteste. Pas de sanction immédiate.",
          status="Désignation administrative contestée", severity="moyenne",
          source="https://www.morganlewis.com/pubs/2025/01/dods-expanding-list-of-chinese-military-companies"),
+    # --- Actifs ajoutés le 15 novembre 2026 (Amériques, Europe, Asie, Moyen-Orient), recherche du même jour ---
+    dict(ticker="GLEN.L", event_date="2022-05-24", pillar="G", topic="Corruption et manipulation de marché",
+         summary="Glencore plaide coupable aux États-Unis de complot de corruption d'agents publics étrangers (2007-2018) "
+                 "et de manipulation des prix du mazout ; plus de 1,1 G$ US, résolutions coordonnées avec le Royaume-Uni et le Brésil.",
+         status="Culpabilité reconnue", severity="élevée",
+         source="https://www.ogj.com/general-interest/government/article/14277264/glencore-admits-to-oil-market-manipulation-bribery-schemes-agrees-to-pay-11-billion"),
+    dict(ticker="BATS.L", event_date="2023-04-25", pillar="G", topic="Violation de sanctions (Corée du Nord)",
+         summary="British American Tobacco accepte de payer plus de 629 M$ US (accord de poursuite différée) pour des ventes "
+                 "en Corée du Nord de 2007 à 2017 ; sa filiale de Singapour plaide coupable de complot de fraude bancaire.",
+         status="Culpabilité reconnue (filiale) ; accord de poursuite différée", severity="élevée",
+         source="https://www.npr.org/2023/04/25/1172059284/british-american-tobacco-north-korea-sanctions"),
+    dict(ticker="BA", event_date="2025-11", pillar="S/G", topic="Sécurité des produits (737 MAX)",
+         summary="Un tribunal approuve l'accord révisé avec le département de la Justice sur la certification du 737 MAX "
+                 "(346 morts dans deux écrasements) : Boeing évite le procès et paie plus de 1 G$ US, dont une amende pénale "
+                 "de 487,2 M$ US ; en juillet 2024, Boeing avait accepté de plaider coupable de complot de fraude.",
+         status="Sanction acceptée (accord approuvé, sans procès)", severity="élevée",
+         source="https://www.americanmachinist.com/news/news/55328682/court-accepts-doj-deal-in-737-max-case-boeing"),
+    dict(ticker="META", event_date="2023-05", pillar="S/G", topic="Protection des données (transferts vers les États-Unis)",
+         summary="L'autorité irlandaise de protection des données inflige 1,2 G€, amende record du RGPD, pour le transfert "
+                 "de données d'utilisateurs européens de Facebook vers les États-Unis, et ordonne d'y mettre fin. Meta conteste.",
+         status="Sanction administrative contestée", severity="moyenne",
+         source="https://www.research-live.com/article/news/meta-fined-12bn-by-irish-data-protection-commission/id/5112633"),
+    dict(ticker="VALE3.SA", event_date="2023-03-28", pillar="E/S/G", topic="Rupture du barrage de Brumadinho (information des investisseurs)",
+         summary="Vale accepte de payer 55,9 M$ US à la SEC, qui lui reprochait des déclarations trompeuses sur la sécurité "
+                 "de ses barrages avant la rupture de Brumadinho (janvier 2019) ; sans admission ni contestation.",
+         status="Règlement sans admission", severity="moyenne",
+         source="https://www.sec.gov/news/press-release/2023-63"),
+    dict(ticker="PETR4.SA", event_date="2018-09-27", pillar="G", topic="Corruption (FCPA, opération Lava Jato)",
+         summary="Petrobras conclut un accord de non-poursuite avec le département de la Justice et paie une pénalité de "
+                 "853,2 M$ US (dont 80 % versés au Brésil) pour des pots-de-vin facilités par d'anciens dirigeants ; "
+                 "règlement parallèle avec la SEC.",
+         status="Règlement (accord de non-poursuite)", severity="moyenne",
+         source="https://www.justice.gov/opa/pr/petr-leo-brasileiro-sa-petrobras-agrees-pay-more-850-million-fcpa-violations"),
 ]
 
 # Implication dans les énergies fossiles selon l'activité principale (règle documentée).
@@ -147,16 +180,34 @@ FOSSIL = {
     "SHEL.L": ("directe", "Exploration, production et raffinage de pétrole et de gaz, GNL"),
     "RELIANCE.NS": ("directe", "Raffinage et pétrochimie (première activité par les revenus), télécoms et commerce"),
     "SOL.JO": ("directe", "Carburants et produits chimiques à partir de charbon et de gaz (Secunda)"),
+    # Actifs ajoutés le 15 novembre 2026
+    "PETR4.SA": ("directe", "Exploration, production et raffinage de pétrole et de gaz"),
+    "2222.SR": ("directe", "Exploration, production et raffinage de pétrole et de gaz (premier producteur mondial)"),
+    "GLEN.L": ("directe", "Extraction de charbon thermique et négoce de pétrole, aux côtés des métaux"),
+    "NEE": ("partielle", "Services publics : production d'électricité au gaz naturel (Florida Power & Light) et renouvelables"),
+    "IBE.MC": ("partielle", "Services publics : surtout renouvelables et réseaux, avec des centrales à gaz à cycle combiné"),
+    "ENEL.MI": ("partielle", "Services publics : renouvelables et réseaux, avec des centrales au gaz et au charbon en cours de fermeture"),
 }
 
 
+AJOUTS_2026_11_15 = {"GLEN.L", "BATS.L", "BA", "META", "VALE3.SA", "PETR4.SA"}
+
+
 def xen_holdings() -> pd.DataFrame:
-    r = requests.get(XEN_URL, headers=UA, timeout=60)
-    r.raise_for_status()
-    text = r.content.decode("utf-8-sig")
-    as_of = text.splitlines()[0].split(",", 1)[1].strip().strip('"')
-    as_of = pd.to_datetime(as_of).date()
-    (RAW / f"xen_holdings_{as_of}.csv").write_text(text, encoding="utf-8")
+    try:
+        r = requests.get(XEN_URL, headers=UA, timeout=60)
+        r.raise_for_status()
+        text = r.content.decode("utf-8-sig")
+        as_of = text.splitlines()[0].split(",", 1)[1].strip().strip('"')
+        as_of = pd.to_datetime(as_of).date()
+        (RAW / f"xen_holdings_{as_of}.csv").write_text(text, encoding="utf-8")
+    except Exception as e:  # noqa: BLE001  (site indisponible, ou fichier sans date certains jours)
+        dernier = max(RAW.glob("xen_holdings_*.csv"), default=None)
+        if dernier is None:
+            raise
+        print(f"  BlackRock : fichier du jour inutilisable ({e}) ; reprise de {dernier.name}")
+        text = dernier.read_text(encoding="utf-8")
+        as_of = pd.to_datetime(dernier.stem.split("_")[-1]).date()
     lines = text.splitlines()
     start = next(i for i, l in enumerate(lines) if l.startswith("Ticker,"))
     df = pd.read_csv(io.StringIO("\n".join(lines[start:])))
@@ -169,7 +220,7 @@ def main(universe_path: Path, out: Path) -> None:
     universe = pd.read_csv(universe_path)
     contro = pd.DataFrame(CONTROVERSIES)
     contro = contro[contro.ticker.isin(universe.ticker)].copy()
-    contro["researched_on"] = date(2026, 11, 14)
+    contro["researched_on"] = [date(2026, 11, 15) if t in AJOUTS_2026_11_15 else date(2026, 11, 14) for t in contro.ticker]
     contro.to_csv(out / "esg_controversies.csv", index=False)
 
     has_tsx = ((universe.market == "TSX") & (universe.asset_class == "equity")).any()
@@ -185,7 +236,7 @@ def main(universe_path: Path, out: Path) -> None:
     rows = []
     for _, a in universe.iterrows():
         tk = a.ticker
-        base = tk.replace(".TO", "")
+        base = tk.replace(".TO", "").replace("-", ".")  # BEP-UN.TO chez Yahoo, BEP.UN chez BlackRock
         fossil, fossil_note = FOSSIL.get(tk, ("aucune", "Activité principale hors énergies fossiles"))
         if a.asset_class.startswith("etf"):
             w = energy_w.get(tk)

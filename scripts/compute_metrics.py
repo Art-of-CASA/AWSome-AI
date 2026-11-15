@@ -12,12 +12,15 @@ Méthode (toutes les valeurs sont descriptives : le passé ne prédit pas l'aven
   - Corrélation et bêta : rendements HEBDOMADAIRES (vendredi) en CAD contre VT (monde) et SPY,
     pour neutraliser le décalage horaire entre l'Asie, l'Europe et l'Amérique.
   - Classe de risque 1 à 7 : bandes de volatilité de type SRRI (hypothèse à valider).
-  - Temps de récupération : jours civils entre le creux de la pire baisse et le retour au sommet
-    précédent ; vide si le sommet n'est pas encore retrouvé.
+  - Durée sous l'eau (underwater_days) : jours civils entre le SOMMET qui précède la pire baisse et le
+    retour à ce sommet. C'est ce que demande la question B7 (« combien de temps pour retrouver sa valeur »).
+    Vide si le sommet n'est pas encore retrouvé ; underwater_days_so_far donne alors la durée écoulée.
+  - recovery_days (du CREUX au retour) est gardé pour information : il sous-estime l'attente réelle.
 """
 from __future__ import annotations
 
 from pathlib import Path
+import json
 
 import numpy as np
 import pandas as pd
@@ -25,7 +28,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 STARTER = ROOT / "Datathon2026" / "alphaforge_starter"
 EXT = ROOT / "data_extended"
-SRRI = [0.005, 0.02, 0.05, 0.10, 0.15, 0.25]  # bornes supérieures des classes 1 à 6
+CFG = json.loads((ROOT / "config" / "seuils_criteres.json").read_text(encoding="utf-8"))
 
 
 def load():
@@ -52,7 +55,22 @@ def to_cad(p: pd.DataFrame, fx: pd.DataFrame) -> pd.DataFrame:
 
 
 def risk_class(vol: float) -> int:
-    return 1 + sum(vol > b for b in SRRI)
+    # Cette échelle d'actif reste distincte des classes de tolérance B5 du profil.
+    return 1 + sum(vol > b for b in CFG["classe_risque_bornes_volatilite"])
+
+
+def rendement_annee(prix: pd.Series, annee: int) -> float | None:
+    """Rendement entre la dernière clôture de l'année précédente et la fin de l'année visée.
+
+    Sans clôture antérieure, l'année n'est pas comparable : ne pas substituer sa
+    première clôture, qui supprimerait le rendement du premier jour de cotation.
+    """
+    prix = prix.dropna().sort_index()
+    courant = prix[prix.index.year == annee]
+    precedent = prix[prix.index.year == annee - 1]
+    if courant.empty or precedent.empty:
+        return None
+    return float(courant.iloc[-1] / precedent.iloc[-1] - 1)
 
 
 def metrics(cad: pd.DataFrame) -> pd.DataFrame:
@@ -68,7 +86,6 @@ def metrics(cad: pd.DataFrame) -> pd.DataFrame:
         trough = dd.idxmin()
         peak_before = s[:trough].idxmax()
         rec = s[trough:][s[trough:] >= s[peak_before]]
-        y22 = s[s.index.year == 2022]
         w = pd.concat({"asset": weekly[tk], "VT": weekly["VT"], "SPY": weekly["SPY"]}, axis=1).dropna()
         w = w.rename(columns={"asset": tk}) if tk not in ("VT", "SPY") else w.assign(**{tk: w["asset"]})
         vol = r.std() * np.sqrt(ppy)
@@ -76,10 +93,12 @@ def metrics(cad: pd.DataFrame) -> pd.DataFrame:
             ticker=tk, first_date=s.index[0].date(), last_date=s.index[-1].date(), observations=len(s),
             cagr_cad=(s.iloc[-1] / s.iloc[0]) ** (1 / years) - 1,
             vol_cad=vol, risk_class=risk_class(vol),
-            max_drawdown=dd.min(), drawdown_trough=trough.date(),
+            max_drawdown=dd.min(), drawdown_peak=peak_before.date(), drawdown_trough=trough.date(),
             recovery_days=(rec.index[0] - trough).days if len(rec) else None,
+            underwater_days=(rec.index[0] - peak_before).days if len(rec) else None,
+            underwater_days_so_far=None if len(rec) else (s.index[-1] - peak_before).days,
             current_drawdown=dd.iloc[-1],
-            return_2022=y22.iloc[-1] / y22.iloc[0] - 1 if len(y22) > 1 else None,
+            return_2022=rendement_annee(s, 2022),
             var95_daily=np.percentile(r, 5),
             worst_month=s.resample("ME").last().pct_change().min(),
             corr_vt_weekly=w[tk].corr(w["VT"]), beta_vt_weekly=w[tk].cov(w["VT"]) / w["VT"].var(),

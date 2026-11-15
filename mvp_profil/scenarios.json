@@ -1,5 +1,5 @@
 {
- "genere_le": "2026-11-14",
+ "genere_le": "2026-11-15",
  "source": "jeu de départ + univers étendu, en CAD",
  "replay": {
   "equilibre": {
@@ -410,6 +410,7 @@
    "perte_max": -0.6346,
    "dividende": 0.0031,
    "pic_recent": true,
+   "vues_par_jour": 5061,
    "lettre": "A"
   },
   {
@@ -422,6 +423,7 @@
    "perte_max": -0.2401,
    "dividende": 0.0303,
    "pic_recent": false,
+   "vues_par_jour": 68,
    "lettre": "B"
   },
   {
@@ -434,6 +436,7 @@
    "perte_max": -0.7088,
    "dividende": 0.0,
    "pic_recent": true,
+   "vues_par_jour": 7146,
    "lettre": "C"
   },
   {
@@ -446,6 +449,7 @@
    "perte_max": -0.2121,
    "dividende": 0.0235,
    "pic_recent": true,
+   "vues_par_jour": 638,
    "lettre": "D"
   }
  ]

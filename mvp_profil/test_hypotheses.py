@@ -24,13 +24,22 @@ def test_tous_criteres_et_tri_global():
 
 
 def test_demo_n_affiche_pas_de_correction():
+    from criteres import CRITERES
     from pathlib import Path
     from streamlit.testing.v1 import AppTest
     app = AppTest.from_file(str(Path(__file__).with_name("demo_hypotheses.py"))).run()
     assert not app.exception
-    assert len(app.expander) == 38
+    assert len(app.expander) == len(CRITERES) + 1
     assert "Stabilité des revenus" in app.expander[0].label
     assert all("%" not in e.label.rsplit(" · ", 1)[-1] for e in app.expander)
     assert not app.checkbox
     assert not app.selectbox
     assert not app.button
+
+
+if __name__ == "__main__":
+    test_statut_prime_sur_confiance()
+    test_seuils_et_recherche()
+    test_tous_criteres_et_tri_global()
+    test_demo_n_affiche_pas_de_correction()
+    print("Hypothèses du profil : statuts, tri et démonstration OK")

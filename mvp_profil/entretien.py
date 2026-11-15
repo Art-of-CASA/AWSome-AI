@@ -1,11 +1,12 @@
 """Entretien conversationnel (oral ou écrit) : l'IA pose les questions de contexte et coche les critères au fil de l'eau.
 
-Pour que la conversation soit fluide, l'utilisateur n'attend qu'UN appel court par tour : la RÉPLIQUE
-(reprise brève + question suivante, ou répétition si on le lui demande). Le reste se fait EN ARRIÈRE-PLAN
-pendant qu'il répond : le CLASSIFICATEUR range ses paroles dans les critères (liste fermée, citation exacte,
-confiance), puis le CRITIQUE vérifie ; un critère n'est coché ✅ qu'après son accord (seuil 80 %).
+Le choix de la question appartient au code. La fonction historique replique() reste disponible pour une
+reformulation vocale utile ; elle n'est pas nécessaire à la lecture d'une question déterministe.
+En arrière-plan, le CLASSIFICATEUR range les paroles dans les critères (liste fermée, citation exacte,
+confiance), puis le CRITIQUE vérifie. Leur désaccord dispose de deux tours internes pour être résolu sans
+faire répéter l'utilisateur ; une clarification exige un manque ou une ambiguïté explicitement identifié.
 Un sujet abordé mais pas assez clair est reformulé UNE seule fois (seuil abaissé à 65 %) ; ensuite on retient
-la meilleure réponse obtenue (plancher 50 %) au lieu de redemander. Un sujet jamais abordé reste à couvrir.
+une réponse vérifiée avec accord (plancher 50 %) ; un désaccord reste incertain. Un sujet jamais abordé reste à couvrir.
 
 Voix (services AWS) :
   - Amazon Transcribe en streaming (fr-CA) : la parole de l'utilisateur devient du texte.
@@ -22,15 +23,19 @@ import wave
 from pydantic import BaseModel
 
 from agents import (REGION, AgentError, Backend, Classification, Proposition, _ask, classifier, critiquer,
-                    evaluer, precontrole)
+                    evaluer, precontrole, debattre)
 from criteres import CRITERES, describe
 
+MAX_AUDIO_S = 30
+MAX_WAV_OCTETS = MAX_AUDIO_S * 48_000 * 2 * 2 + 4096
+DELAI_TRANSCRIPTION_S = 40
+
 # Critères de contexte couverts par la conversation (les autres restent en QCM, quiz et mises en situation).
-CRITERES_CONVERSATION = ["A3", "A2", "A9", "A10", "A4", "A5", "A6", "A12", "A8", "A7", "B3", "C2", "D3", "D5", "D6"]
+CRITERES_CONVERSATION = ["A3", "A2", "A9", "A10", "A1", "A4", "A5", "A6", "A12", "A8", "A7", "B3", "C2", "D3", "D5", "D6"]
 MAX_TOURS = 10
 OUVERTURE = ("Bonjour ! Je vais vous poser quelques questions pour mieux vous connaître ; répondez librement, "
-             "comme dans une conversation. Pour commencer : à quoi servira l'argent que vous voulez placer, "
-             "et dans combien de temps pensez-vous en avoir besoin ?")
+             "comme dans une conversation. Parlons de cette somme précise : à quoi servira l'argent que vous voulez placer, "
+             "et dans combien d'années devrez-vous en récupérer la majeure partie ?")
 
 
 class Replique(BaseModel):
@@ -41,7 +46,14 @@ class Replique(BaseModel):
 SYSTEM_REPLIQUE = """Tu es la voix d'un court entretien oral, en français, pour établir le profil d'un investisseur (simulation éducative, aucun conseil financier).
 Ta réplique sera lue à voix haute : une ou deux phrases courtes, naturelles, sans liste ni jargon ni symbole.
 - Reprends en quelques mots ce que l'utilisateur vient de dire, puis pose UNE seule question simple sur un ou deux sujets
-  encore à couvrir (les plus importants d'abord : objectif, horizon, retraits, épargne, situation).
+  encore à couvrir. L'ordre fourni est calculé par le code : respecte cette priorité, sauf si la conversation y a déjà répondu.
+- Ordre : projet/horizon, retraits du capital et revenu nécessaire, réserve et dettes, capacité/risque, contraintes, préférences.
+  Groupe seulement deux sujets naturellement liés (objectif + horizon, expérience + produits, thèmes + refus).
+  Pose séparément réserve de sécurité et part de l'épargne : leurs dénominateurs diffèrent. Pose séparément retrait de
+  capital et besoin de revenu : l'absence de retrait ne dit rien sur les dividendes/intérêts nécessaires pour vivre.
+- Pour une information numérique, donne le référent : part du placement ENTIER dans l'épargne, mois de dépenses couverts
+  SANS toucher au placement. Une réponse courte et précise est préférable à plusieurs questions ambiguës.
+- Un simple oui/non à deux sujets ne les résout pas automatiquement. Précise uniquement le sujet resté sans réponse.
 - Ne redemande jamais ce que l'utilisateur a déjà dit dans la conversation, même si le sujet figure encore dans la liste.
 - S'il y a des sujets « à reformuler » : l'utilisateur en a parlé, mais pas assez clairement. Commence par eux, UNE fois,
   avec une formulation différente de la précédente et un exemple concret (montant, durée, choix entre deux options).
@@ -59,8 +71,8 @@ def replique(backend: Backend, echanges: list[tuple[str, str]], restants: list[s
     """pistes : {critère: (valeurs, citation)} déjà entrevues pour les sujets à reformuler -> l'IA demande confirmation."""
     """Appel court et rapide : uniquement ce que l'IA va dire. Le classement se fait à part, en arrière-plan."""
     conv = "\n".join(f"IA : {q}\nUtilisateur : {r}" for q, r in echanges)
-    sujets = "\n".join(f"- {CRITERES[c]['nom']}" for c in restants) or "(aucun)"
-    prompt = f"Sujets encore à couvrir :\n{sujets}\n\nConversation :\n{conv}"
+    sujets = "\n".join(f"{i + 1}. {CRITERES[c]['nom']} — {CRITERES[c]['relance']}" for i, c in enumerate(restants)) or "(aucun)"
+    prompt = f"Sujets encore à couvrir, par ordre d'utilité (formulations de référence, à adapter naturellement) :\n{sujets}\n\nConversation :\n{conv}"
     if a_reformuler:
         prompt = ("Sujets à reformuler (abordés, mais pas assez clairement) :\n"
                   + "\n".join(f"- {CRITERES[c]['nom']}" + (f" (piste : {', '.join(pistes[c][0])}, d'après « {pistes[c][1]} »)"
@@ -76,11 +88,8 @@ def analyser(backend: Backend, echanges, a_couvrir: list[str], seuil: float | di
     """
     if not a_couvrir and not facultatifs:
         return {}
-    classif = classifier(backend, echanges, a_couvrir, facultatifs=facultatifs)
-    voulus = set(a_couvrir) | set(facultatifs)
-    res = verifier(backend, echanges, [p for p in classif.propositions if p.critere_id in voulus and
-                                       (p.critere_id in a_couvrir or p.valeurs)], seuil)
-    return {c: r for c, r in res.items() if c in a_couvrir or r.valide}
+    return debattre(backend, echanges, a_couvrir, seuil=seuil, max_tours=2,
+                    facultatifs=facultatifs).resultats
 
 
 def verifier(backend: Backend, echanges, propositions: list[Proposition], seuil: float | dict) -> dict:
@@ -103,6 +112,11 @@ def verifier(backend: Backend, echanges, propositions: list[Proposition], seuil:
 
 # ---------- Précisions et question ouverte à la voix ----------
 _REPETER = re.compile(r"\b(r[ée]p[ée]t|pardon|redi[rst]|reformul|pas compris|pas entendu|pas saisi)\w*")
+
+
+def demande_correction(texte: str) -> bool:
+    """Déclenche une relecture, jamais une modification automatique du profil."""
+    return bool(re.search(r"\b(en fait|je me corrige|correction|je voulais dire|finalement|rectifi\w*)\b", texte.lower()))
 
 
 def demande_repetition(texte: str) -> bool:
@@ -133,16 +147,34 @@ def choisir_option(backend: Backend, question: str, options: list[str], reponse:
 def synthese_vocale(texte: str) -> bytes:
     """Amazon Polly, voix neuronale Gabrielle (français canadien). Renvoie un MP3."""
     import boto3
-    r = boto3.client("polly", region_name=REGION).synthesize_speech(
-        Text=texte, VoiceId="Gabrielle", Engine="neural", LanguageCode="fr-CA", OutputFormat="mp3")
-    return r["AudioStream"].read()
+    from botocore.config import Config
+    try:
+        client = boto3.client("polly", region_name=REGION,
+                              config=Config(connect_timeout=5, read_timeout=15,
+                                            retries={"total_max_attempts": 1, "mode": "standard"}))
+        r = client.synthesize_speech(Text=texte, VoiceId="Gabrielle", Engine="neural",
+                                     LanguageCode="fr-CA", OutputFormat="mp3")
+        with r["AudioStream"] as audio:
+            return audio.read()
+    except Exception as exc:
+        raise AgentError("La lecture vocale est indisponible. Vous pouvez la réessayer.") from exc
 
 
 def pcm_depuis_wav(donnees: bytes) -> tuple[bytes, int]:
-    with wave.open(io.BytesIO(donnees)) as w:
-        if w.getsampwidth() != 2:
-            raise AgentError("Format audio inattendu (16 bits attendus).")
-        pcm, taux, canaux = w.readframes(w.getnframes()), w.getframerate(), w.getnchannels()
+    if not donnees or len(donnees) > MAX_WAV_OCTETS:
+        raise AgentError("Enregistrement vide ou trop volumineux (30 secondes maximum).")
+    try:
+        with wave.open(io.BytesIO(donnees)) as w:
+            taux, canaux = w.getframerate(), w.getnchannels()
+            if w.getsampwidth() != 2 or canaux not in (1, 2) or taux not in (8000, 16000, 22050, 24000, 32000, 44100, 48000):
+                raise AgentError("Format audio inattendu (WAV PCM 16 bits, mono ou stéréo attendu).")
+            if w.getnframes() > taux * MAX_AUDIO_S:
+                raise AgentError("Réponse trop longue (30 secondes maximum).")
+            pcm = w.readframes(w.getnframes())
+            if len(pcm) != w.getnframes() * canaux * 2:
+                raise AgentError("Enregistrement incomplet. Veuillez réessayer.")
+    except (wave.Error, EOFError, OSError, ValueError) as exc:
+        raise AgentError("Enregistrement audio invalide. Veuillez réessayer.") from exc
     if canaux == 2:  # stéréo -> mono (on garde le canal gauche)
         pcm = b"".join(pcm[i:i + 2] for i in range(0, len(pcm), 4))
     return pcm, taux
@@ -179,8 +211,14 @@ async def _transcrire(pcm: bytes, taux: int, langue: str) -> str:
 
 def transcrire(donnees_wav: bytes, langue: str = "fr-CA") -> str:
     """Amazon Transcribe en streaming : WAV 16 bits -> texte."""
-    pcm, taux = pcm_depuis_wav(donnees_wav)
     try:
-        return asyncio.run(_transcrire(pcm, taux, langue))
+        pcm, taux = pcm_depuis_wav(donnees_wav)
+        async def bornee():
+            return await asyncio.wait_for(_transcrire(pcm, taux, langue), timeout=DELAI_TRANSCRIPTION_S)
+        return asyncio.run(bornee())
+    except AgentError:
+        raise
+    except TimeoutError as exc:
+        raise AgentError("La transcription a dépassé son délai. Vous pouvez réessayer.") from exc
     except Exception as e:  # noqa: BLE001
         raise AgentError(f"Transcription impossible : {e}") from e
