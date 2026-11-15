@@ -223,6 +223,18 @@ next(b for b in at.button if b.label in ("Continuer", "Terminer le questionnaire
 run(at)
 assert "B1" not in at.session_state.profil and at.warning
 
+# Le choix de main survit au nouveau questionnaire sans valeur implicite.
+from criteres import SECTIONS
+b1_item = next(it for sec in SECTIONS for it in sec["items"] if it.get("critere") == "B1")
+at.session_state.sections = [{"titre": "Tolérance", "items": [b1_item]}]
+at.session_state.section = 0
+run(at)
+next(s for s in at.selectbox if "vendriez-vous" in s.label).select(b1_item["case_jamais"])
+next(b for b in at.button if b.label == "Terminer le questionnaire").click()
+run(at)
+assert at.session_state.profil["B1"]["valeurs"] == ["jamais"]
+assert at.session_state.profil["B1"]["citation"] == b1_item["case_jamais"]
+
 # La capacité est bornée, la place est libérée au succès comme à l'échec.
 liberer = Event()
 with ExecuteurBorne(max_workers=1, max_attente=0) as executor:

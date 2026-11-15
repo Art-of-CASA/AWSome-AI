@@ -56,6 +56,24 @@ assert x["niveau"] == 1 and x["budget_perte_pct"] == 5 and len(x["reglages_prude
 assert set(HYP["reglages_prudents"]) <= set(CRITERES)
 print("Synthèse OK : Robert < Mateo < Amira, sensibilité dans le bon sens, réglages prudents signalés")
 
+# L'option de main « jamais vendre » reste utilisable avec la nouvelle synthèse.
+from profil import recouper_rupture
+p = copy.deepcopy(personas["amira"]["profil"])
+p["B1"] = entree(["jamais"], "QCM")
+p["B2"] = entree(["non_atteint"], "replay", baisse_max_montree=30)
+recouper_rupture(p)
+assert p["H1"]["valeurs"] == ["non_teste"]
+x = synthetiser(p)
+assert x["composantes_pct"]["tolérance déclarée"] <= 50
+assert x["tolerance_declaree"]["facteurs"][0]["valeur"] == "jamais"
+assert "plafonné" in x["tolerance_declaree"]["facteurs"][0]["effet"]
+p["B2"] = entree(["20"], "replay", perte=18)
+assert "ne jamais vendre" in recouper_rupture(p)
+assert p["B1"]["valeurs"] == ["20"] and p["B1"]["declare"] == "jamais"
+assert synthetiser(p)["budget_perte_pct"] <= 18
+recouper_rupture(p)
+assert p["B1"]["declare"] == "jamais"
+
 # Une explication désigne des réponses et des effets réellement calculés, jamais
 # un réglage par défaut présenté comme une déclaration de l'utilisateur.
 p = copy.deepcopy(personas["robert"]["profil"])

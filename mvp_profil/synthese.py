@@ -74,7 +74,12 @@ def calculer_base(profil: dict, hyp: dict = HYP) -> dict:
     ordre = list(POURCENT_RUPTURE)
     rupture = v("B1")
     declare = (profil.get("B1") or {}).get("declare", rupture)  # ce que la personne avait dit avant le replay
-    f_d = [{"critere": "B1", "valeur": declare, "effet": f"−{POURCENT_RUPTURE[declare]} %"}]
+    # « Jamais » ne donne pas une tolérance infinie : plafonner à la plus haute classe modélisée.
+    effet = ("pas de seuil de vente déclaré ; calcul plafonné à 50 %" if declare == "jamais"
+             else f"−{POURCENT_RUPTURE[declare]} %")
+    f_d = [{"critere": "B1", "valeur": declare, "effet": effet}]
+    if declare == "jamais":
+        declare = "50_plus"
     if v("B3") in hyp["decote_experience"]:
         declare = ordre[max(0, ordre.index(declare) - 1)]
         f_d.append({"critere": "B3", "valeur": v("B3"), "effet": "une classe de moins (tolérance jamais mise à l'épreuve, ou vente passée)"})
@@ -220,6 +225,8 @@ def libelle_valeur(cid: str, valeur: str) -> str:
     }
     if cid in ("B1", "B2") and valeur in POURCENT_RUPTURE:
         return f"{POURCENT_RUPTURE[valeur]:g} %" + (" ou davantage" if valeur == "50_plus" else "")
+    if cid == "B1" and valeur == "jamais":
+        return "ne jamais vendre à cause d'une baisse"
     return libelles.get(cid, {}).get(valeur, valeur.replace("_", " "))
 
 
@@ -252,7 +259,8 @@ def _raison_calculee(cid: str, valeur: str, profil: dict, base: dict, hyp: dict)
                 + _role_composante("capacité", base))
     if cid in ("B1", "B1R", "B3"):
         if cid == "B1":
-            debut = f"Point de vente déclaré : {libelle} de baisse"
+            debut = (f"Choix déclaré : {libelle}" if valeur == "jamais"
+                     else f"Point de vente déclaré : {libelle} de baisse")
             if "declare" in profil[cid]:
                 debut += " (déclaration conservée avant le replay)"
         else:

@@ -158,7 +158,7 @@ def connu(profil: dict, cid: str) -> bool:
     return profil.get(cid, {}).get("statut") in UTILISABLES
 
 
-ORDRE_RUPTURE = ["5", "10", "20", "30", "40", "50_plus"]
+ORDRE_RUPTURE = ["5", "10", "20", "30", "40", "50_plus", "jamais"]
 POURCENT_RUPTURE = {"5": 5, "10": 10, "20": 20, "30": 30, "40": 40, "50_plus": 50}
 
 
@@ -181,6 +181,11 @@ def recouper_rupture(profil: dict) -> str | None:
         return None
     e2 = profil["B2"]
     if b2[0] == "non_atteint":
+        if b1[0] == "jamais":
+            profil["H1"] = entree(["non_teste"], "comparaison",
+                                  citation="déclaré : ne jamais vendre ; seuil non atteint dans le replay",
+                                  motif="Un replay limité ne peut pas confirmer l'absence de tout seuil de vente.")
+            return None
         montree = e2.get("baisse_max_montree")  # en %, None si inconnue
         teste = montree is None or POURCENT_RUPTURE[b1[0]] <= montree
         profil["H1"] = entree(["aucun" if teste else "non_teste"], "comparaison",
@@ -191,15 +196,16 @@ def recouper_rupture(profil: dict) -> str | None:
     # On compare toujours à la valeur DÉCLARÉE (gardée dans B1["declare"] quand B1 a déjà été ramené à l'observé) :
     # la fonction peut ainsi être rappelée sans effacer l'écart constaté.
     declare = profil["B1"].get("declare", b1[0])
+    declaration = "ne jamais vendre" if declare == "jamais" else f"vendre vers −{declare.replace('_plus', '')} %"
     i1, i2 = ORDRE_RUPTURE.index(declare), ORDRE_RUPTURE.index(b2[0])
-    profil["H1"] = entree([_ecart(abs(i1 - i2))], "comparaison", citation=f"déclaré {declare} %, observé {b2[0]} %")
+    profil["H1"] = entree([_ecart(abs(i1 - i2))], "comparaison", citation=f"déclaré : {declaration}, observé {b2[0]} %")
     if i2 >= i1 or b1[0] == b2[0]:  # le déclaré est déjà le plus prudent, ou B1 a déjà été ramené à l'observé
         return None
     perte = e2.get("perte")  # perte réelle au moment de la vente, en %
     observe = f"−{perte:.1f} %".replace(".", ",") if perte is not None else f"−{b2[0]} %"
     profil["B1"] = entree([b2[0]], "replay (plus prudent que le déclaré)", citation=e2["citation"],
-                          motif=f"Déclaré : vendre vers −{declare} % ; observé : tout vendu à {observe}", declare=declare)
-    return (f"Vous aviez indiqué vendre vers −{declare.replace('_plus', '')} %, mais dans la simulation vous avez tout vendu "
+                          motif=f"Déclaré : {declaration} ; observé : tout vendu à {observe}", declare=declare)
+    return (f"Vous aviez indiqué {declaration}, mais dans la simulation vous avez tout vendu "
             f"à {observe}. L'outil retient le plus prudent : la classe « −{b2[0]} % ».")
 
 

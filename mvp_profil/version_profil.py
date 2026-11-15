@@ -6,7 +6,7 @@ from pathlib import Path
 
 FICHIERS = (
     "app.py", "agents.py", "criteres.py", "profil.py", "entretien.py", "simulations.py",
-    "synthese.py", "pilotage.py", "moteur_conversation.py", "questions_conversation.py",
+    "synthese.py", "hypotheses.py", "pilotage.py", "moteur_conversation.py", "questions_conversation.py",
     "reponses_directes.py", "criteres_dynamiques.py", "chercheur.py", "voix_composant.py",
     "version_profil.py", "taches.py", "composant_voix/index.html", "requirements.txt", "hypotheses_profil.json",
     "scenarios.json", "vocabulaire_actifs.json", "donnees_chercheur.json",

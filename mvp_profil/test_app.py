@@ -279,6 +279,7 @@ at.run()
 [b for b in at.button if b.label == "Charger Robert"][0].click(); at.run()
 assert not at.exception, at.exception
 assert at.session_state.phase == "termine" and at.session_state.persona["nom"] == "Robert"
+assert [tab.label for tab in at.tabs] == ["Synthèse", "Hypothèses du profil"]
 assert any(m.label == "Budget de perte du portefeuille" and m.value == "15 %" for m in at.metric), [(m.label, m.value) for m in at.metric]
 assert any("Simulation éducative" in i.value for i in at.info)
 print("Mode démonstration OK : Robert chargé, budget de perte 15 %, bandeau de simulation affiché")

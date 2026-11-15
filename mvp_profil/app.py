@@ -59,6 +59,7 @@ from questions_conversation import enregistrer_question
 from reponses_directes import analyser_reponses
 from version_profil import version_courante
 from taches import ExecuteurBorne, expiree, suivre_tache
+from hypotheses import afficher_hypotheses
 
 LOG = logging.getLogger(__name__)
 
@@ -544,7 +545,7 @@ def page_questionnaire():
                                                placeholder="Choisissez une ou plusieurs réponses")
             elif it["type"] == "curseur":
                 if it["critere"] == "B1":
-                    choix = st.selectbox(it["texte"], list(range(it["min"], it["max"] + 1, it["pas"])) + [it["case_nsp"]],
+                    choix = st.selectbox(it["texte"], list(range(it["min"], it["max"] + 1, it["pas"])) + [it["case_jamais"], it["case_nsp"]],
                                          index=None, placeholder="Choisissez une baisse ou « Je ne sais pas »", key=k,
                                          format_func=lambda x: f"{x} %" if isinstance(x, int) else x)
                     if choix is None:
@@ -589,6 +590,8 @@ def page_questionnaire():
         elif it["type"] == "curseur":
             if r is None:
                 a_preciser([it["critere"]])
+            elif r == it.get("case_jamais"):
+                ecrire_profil(it["critere"], entree([it["valeur_jamais"]], "choix explicite", citation=r))
             else:
                 source = "hypothèse de simulation" if it["critere"] == "G1" else "choix numérique"
                 ecrire_profil(it["critere"], entree([valeur_curseur(it, r)], source, citation=f"{r} {it['unite']}", nombre=r))
@@ -1100,6 +1103,15 @@ def afficher_synthese():
         st.caption(rb["limites"])
 
 def page_termine():
+    integrer_recherches()
+    synthese, hypotheses = st.tabs(["Synthèse", "Hypothèses du profil"])
+    with synthese:
+        synthese_existante()
+    with hypotheses:
+        afficher_hypotheses(S.profil, S.dynamiques, seuil)
+
+
+def synthese_existante():
     st.success("Profil terminé. Merci !")
     retours_situations()
     n = len(S.profil)
@@ -1110,7 +1122,6 @@ def page_termine():
              + (f" et {len(incertains)} incertains ({', '.join(incertains)}) : l'outil appliquera le réglage le plus prudent."
                 if incertains else "."))
     afficher_synthese()
-    integrer_recherches()
     if S.dynamiques:
         st.markdown(f"**{len(S.dynamiques)} critère(s) propre(s) à vous**, tirés de votre dernière réponse :")
         suivi_recherches()
