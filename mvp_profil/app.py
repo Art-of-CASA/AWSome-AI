@@ -275,13 +275,12 @@ def charger_persona(nom: str):
 
 def page_personas():
     st.divider()
-    st.markdown("**Démonstration : quatre profils fictifs**")
-    st.caption("Amira, Mateo et Robert proviennent de l'énoncé ; test simule un questionnaire complet. "
-               "Les valeurs tirées de l'énoncé, les hypothèses de test et les réponses simulées "
-               "sont distinguées dans la colonne « source ».")
-    for col, nom in zip(st.columns(4), ("amira", "mateo", "robert", "test")):
-        label = nom if nom == "test" else nom.capitalize()
-        if col.button(f"Charger {label}", width="stretch", key=f"persona_{nom}"):
+    st.markdown("**Démonstration : les trois profils fictifs de l'énoncé**")
+    st.caption("Amira, Mateo et Robert ont chacun un questionnaire complet simulé, cohérent avec leur persona. "
+               "L'onglet « Hypothèses du profil » présente leurs réponses et distingue, dans les motifs, "
+               "les éléments de l'énoncé des compléments fictifs.")
+    for col, nom in zip(st.columns(3), ("amira", "mateo", "robert")):
+        if col.button(f"Charger {nom.capitalize()}", width="stretch", key=f"persona_{nom}"):
             charger_persona(nom)
 
 
@@ -1049,6 +1048,7 @@ def afficher_synthese():
     """Résumé chiffré du profil (synthese.py) : tout est calculé par le code, à partir d'hypothèses déclarées."""
     if S.get("persona"):
         st.info(f"Profil fictif de démonstration : **{S.persona['nom']}**. {S.persona['description']}")
+        st.caption(S.persona["avertissement"])
     s = synthetiser(S.profil)
     st.subheader("Synthèse du profil")
     c1, c2, c3 = st.columns(3)

@@ -10,7 +10,7 @@ FICHIERS = (
     "reponses_directes.py", "criteres_dynamiques.py", "chercheur.py", "voix_composant.py",
     "version_profil.py", "taches.py", "composant_voix/index.html", "requirements.txt", "hypotheses_profil.json",
     "scenarios.json", "vocabulaire_actifs.json", "donnees_chercheur.json",
-    "personas/amira.json", "personas/mateo.json", "personas/robert.json", "personas/test.json",
+    "personas/amira.json", "personas/mateo.json", "personas/robert.json",
 )
 
 
