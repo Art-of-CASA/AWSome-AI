@@ -1,6 +1,6 @@
-c""Écrans des propositions (Streamlit), dans la charte de mvp_pro"il/design.css. Aucune décision ici.
+"""Écrans des propositions (Streamlit), dans la charte de mvp_profil/design.css. Aucune décision ici.
 
-Quatrième étape du parcours : mini-porte"euille, recherche et fiche d'actif, comparaison, demande d'un titre,
+Quatrième étape du parcours : mini-portefeuille, recherche et fiche d'actif, comparaison, demande d'un titre,
 « Et si… ? », « Pourquoi ? ». Tout vient de recommandation/analyse.py ; le profil de la session est LU, jamais modifié.
 """
 from __future__ import annotations
