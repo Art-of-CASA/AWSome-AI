@@ -10,7 +10,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 RACINE = Path(__file__).resolve().parents[1]
 SOURCE = RACINE / "mvp_profil"
 sys.path.insert(0, str(SOURCE))
-from version_profil import FICHIERS, version_depuis_empreintes
+from version_profil import FICHIERS, contenu_normalise, version_depuis_empreintes
 
 
 def verifier_archive(sortie: Path) -> dict:
@@ -35,7 +35,8 @@ def verifier_archive(sortie: Path) -> dict:
 
 def construire(sortie: Path, source: Path = SOURCE) -> dict:
     # Les octets sont lus une seule fois : le zip et son manifeste décrivent le même contenu.
-    contenus = {nom: (source / nom).read_bytes() for nom in FICHIERS}
+    # Fins de ligne normalisées (LF) : un paquet construit sous Windows ou sous Linux porte la même version.
+    contenus = {nom: contenu_normalise((source / nom).read_bytes()) for nom in FICHIERS}
     fichiers = {nom: hashlib.sha256(contenu).hexdigest() for nom, contenu in contenus.items()}
     manifest = {"version": version_depuis_empreintes(fichiers), "fichiers": fichiers}
     sortie.parent.mkdir(parents=True, exist_ok=True)

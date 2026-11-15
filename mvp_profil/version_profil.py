@@ -14,9 +14,15 @@ FICHIERS = (
 )
 
 
+def contenu_normalise(octets: bytes) -> bytes:
+    """Fins de ligne ramenées à LF : tous les fichiers de production sont du texte. Sans cela, le même code
+    extrait sous Windows (CRLF) et sous Linux (LF, CI et serveur) aurait deux versions différentes."""
+    return octets.replace(b"\r\n", b"\n")
+
+
 def empreintes(racine: Path | None = None) -> dict[str, str]:
     racine = racine or Path(__file__).resolve().parent
-    return {nom: hashlib.sha256((racine / nom).read_bytes()).hexdigest() for nom in FICHIERS}
+    return {nom: hashlib.sha256(contenu_normalise((racine / nom).read_bytes())).hexdigest() for nom in FICHIERS}
 
 
 def version_depuis_empreintes(fichiers: dict[str, str]) -> str:
