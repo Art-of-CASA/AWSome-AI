@@ -53,6 +53,66 @@ assert "sensible_aux_devises" not in actifs.sensibilite_macro(ligne)
 ligne.fx_risk = "notable"
 assert "sensible_aux_devises" in actifs.sensibilite_macro(ligne)
 
+# Le signe du résultat net ne se déduit ni du ROE ni de la marge : capitaux propres
+# négatifs, revenus négatifs, bénéfice nul et données manquantes restent distincts.
+ratios, annuels = [], []
+def exercice(ticker, annee, net, equity, roe, dette=.2, publication=None):
+    date = f"{annee}-12-31"
+    dispo = publication or f"{annee + 1}-03-31"
+    ratios.append(dict(ticker=ticker, fiscal_year_end=date, available_from=dispo,
+                       roe=roe, debt_to_equity=dette, net_margin=-.1,
+                       revenue_growth=.02, interest_coverage=2., fcf_margin=.01,
+                       dividends_to_fcf=.3, industrial_ratios_meaningful=True))
+    for champ, valeur in (("Net Income", net), ("Stockholders Equity", equity)):
+        if valeur is not None:
+            annuels.append(dict(ticker=ticker, fiscal_year_end=date, available_from=dispo,
+                                field=champ, value=valeur))
+
+exercice("PERTE_EQUITY_NEG", 2025, -10., -100., .1, -.2)
+exercice("PROFIT_EQUITY_NEG", 2025, 10., -100., -.1, -.2)
+exercice("EQUITY_NUL", 2025, 10., 0., float("inf"), float("inf"))
+exercice("REVENU_NEG", 2025, 10., 100., .1)
+exercice("NET_INCONNU", 2025, None, 100., .2)
+exercice("EQUITY_INCONNU", 2025, 10., None, .2)
+exercice("ZERO", 2025, 0., 100., 0., 0.)
+exercice("DERNIER_INVALIDE", 2024, 20., 100., .2)
+exercice("DERNIER_INVALIDE", 2025, -10., -100., .1, -.2)
+exercice("NON_PUBLIE", 2024, 10., 100., .1)
+exercice("NON_PUBLIE", 2026, -10., -100., .1, -.2, publication="2027-03-31")
+fond = actifs.fundamentals_summary(pd.DataFrame(ratios), pd.DataFrame(annuels)).set_index("ticker")
+assert fond.loc["PERTE_EQUITY_NEG", "profitable_years_share"] == 0.
+assert fond.loc["PROFIT_EQUITY_NEG", "profitable_years_share"] == 1.
+assert fond.loc["REVENU_NEG", "profitable_years_share"] == 1.
+assert fond.loc["ZERO", "profitable_years_share"] == 0.
+assert fond.loc["ZERO", "roe_last"] == fond.loc["ZERO", "debt_to_equity_last"] == 0.
+assert pd.isna(fond.loc["NET_INCONNU", "profitable_years_share"])
+assert fond.loc["EQUITY_INCONNU", "profitable_years_share"] == 1.
+for ticker in ("PERTE_EQUITY_NEG", "PROFIT_EQUITY_NEG", "EQUITY_NUL", "EQUITY_INCONNU", "DERNIER_INVALIDE"):
+    assert pd.isna(fond.loc[ticker, "roe_last"])
+    assert pd.isna(fond.loc[ticker, "debt_to_equity_last"])
+assert fond.loc["NON_PUBLIE", "profitable_years_share"] == 1.
+assert fond.loc["NON_PUBLIE", "roe_last"] == .1
+assert fond.loc["NON_PUBLIE", "fiscal_years"] == 1
+
+for dette in (-.2, float("inf"), float("nan")):
+    ligne_fin = SimpleNamespace(asset_class="equity", industrial_ratios_meaningful=True,
+                                debt_to_equity_last=dette, roe_last=float("nan"),
+                                fcf_margin_last=0., interest_coverage_last=0., profitable_years_share=0.)
+    assert "faible_endettement" not in actifs.sante_financiere(ligne_fin)
+    assert "rentabilite_elevee_roe" not in actifs.sante_financiere(ligne_fin)
+    assert "pertes_recurrentes" in actifs.sante_financiere(ligne_fin)
+
+# Une cotation en CAD ne couvre pas les actifs étrangers ; une couverture USD ne
+# couvre pas le change USD/CAD. Une vraie couverture CAD ne crée pas de risque.
+xeqt = actifs.classe_devise("XEQT.TO", "etf_equity", "CAD")
+assert xeqt == "cad_actifs_etrangers_non_couverts"
+assert actifs.risque_change(xeqt, 0.) == "present"
+assert actifs.risque_change(actifs.classe_devise("BNDW", "etf_bond", "USD"), 0.) == "present"
+assert actifs.risque_change("cad", .1) == "aucun"
+assert actifs.risque_change("cad_couvert", .1) == "aucun"
+assert actifs.risque_change("autre_devise", float("nan")) == "present"
+assert actifs.risque_change("usd", actifs.CFG["change_contribution_notable"]) == "notable"
+
 # Aucun préfixe ambigu : GOOG est relié par émetteur, pas par prix ou titre équivalent.
 table = json.loads((RACINE / "config" / "correspondances_positions_fnb.json").read_text(encoding="utf-8"))
 univers = {"GOOGL": {}, "VOD.JO": {}, "RY.TO": {}}
@@ -94,4 +154,4 @@ for options in ([], ["-O"]):
                        capture_output=True, text=True, check=False)
     assert r.returncode != 0 and "valeur hors liste" in r.stderr
 
-print("Données/configuration OK : rendement annuel complet, seuils actifs, frontières, émetteurs explicites, paquet et corpus vérifiés même sous -O")
+print("Données/configuration OK : rendement annuel, bénéfices bruts, ratios interprétables, change des sous-jacents, seuils, frontières, émetteurs, paquet et corpus vérifiés")

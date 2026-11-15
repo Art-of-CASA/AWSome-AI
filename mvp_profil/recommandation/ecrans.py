@@ -177,7 +177,7 @@ def afficher_reponse(rep: dict):
     if not technique():
         return
     f, g = rep["fidelite"], rep["gouvernance"]
-    st.caption(f"Rédigé par : {rep['source']}" + (f" — {rep['motif_secours']}" if rep.get("motif_secours") else "")
+    st.caption(f"Réponse produite par : {rep['source']}" + (f" — {rep['motif_secours']}" if rep.get("motif_secours") else "")
                + f" · {f['nombres_verifies']} chiffre(s) retrouvé(s) dans les sorties d'outils"
                + ("" if f["fidele"] else f" ; sans origine : {', '.join(f['sans_origine'])}")
                + f" · formulations : {'conformes' if g['conforme'] else 'non conformes'}")
@@ -379,7 +379,7 @@ def page_conversation(a: Analyse):
                     if st.button(f"Ajouter {alt_['nom']}", key=f"reco_alt_{i}_{alt_['ticker']}", help=f"{alt_['lien']} · au plus {pct(alt_['poids_max_pct'], 0)}"):
                         _envoyer(f"Ajoutez {alt_['ticker']}")
                 if technique() and m.get("appels") is not None:
-                    st.caption(f"Rédigé par : {m['source']} · chiffres vérifiés : {m['fidelite']['nombres_verifies']}"
+                    st.caption(f"Réponse produite par : {m['source']} · chiffres vérifiés : {m['fidelite']['nombres_verifies']}"
                                + ("" if m["fidelite"]["fidele"] else f" · sans origine : {', '.join(m['fidelite']['sans_origine'])}"))
                     with st.expander(f"Outils appelés ({len(m['appels'])})"):
                         for ap in m["appels"]:
@@ -426,7 +426,7 @@ def page_conversation(a: Analyse):
             st.caption(f"Perte de stress {pct(pf['perte_stress_pct'])} pour un budget de {pct(pf['budget_perte_pct'], 0)} · {ETATS[pf['etat_tension']]}")
             liste_positions(pf, compact=True)
         puces_ajustements(etat, a)
-    st.caption("Le conseiller comprend votre demande et rédige ; les règles du profil décident de ce qui entre dans le portefeuille. "
+    st.caption("Le conseiller comprend votre demande et choisit les explications ; les règles du profil décident de ce qui entre dans le portefeuille. "
                "Une réponse de votre profil n'est mise à jour qu'avec votre accord.")
 
 
@@ -665,8 +665,8 @@ def afficher(retour=None):
         montant = g.number_input("Montant fictif ($ CA)", min_value=500, max_value=5_000_000, step=500, value=int(a.montant),
                                  help="Sert à exprimer la perte en dollars. Aucun argent réel.")
         # Clés de widgets : la nouvelle valeur est connue dès le début du rendu suivant, donc par les écrans au-dessus.
-        m.toggle("Explications rédigées par le modèle", key="reco_avec_modele",
-                 help="Coupé : les textes viennent de gabarits. Verdicts et chiffres sont identiques.")
+        m.toggle("Assistant IA pour les explications", key="reco_avec_modele",
+                 help="L'assistant choisit les outils et les points à expliquer. Les verdicts et chiffres viennent toujours des calculs.")
         d.toggle("Détails techniques", key="reco_technique",
                  help="Pour vérifier : outils appelés par les agents, contrôle de chaque texte, journal des actions.")
         if int(montant) != int(a.montant):

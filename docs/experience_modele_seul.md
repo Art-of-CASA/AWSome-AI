@@ -2,6 +2,8 @@
 
 Produit par `python scripts/experience_modele_seul.py`. Simulation éducative ; aucun conseil financier.
 
+**Instantané antérieur aux correctifs de l'audit multi-agents.** Les comparaisons chiffrées ci-dessous décrivent les versions des données et du moteur utilisées lors de l'expérience ; elles n'ont pas été rejouées sur le modèle réel après correction. Les résultats actuels du moteur sont dans `docs/resultats_personas.md`.
+
 **Question.** Faut-il confier la construction du portefeuille à des agents de A à Z, ou garder des règles écrites ?
 
 **Protocole.** Claude Sonnet 5.5 sur Amazon Bedrock, le 15 novembre 2026. Pour chaque persona : le profil en clair, la synthèse calculée (budget de perte, part d'actions indicative) et l'univers complet (111 actifs, 16 colonnes). Consigne : 5 à 12 positions, poids totalisant 100, toutes les contraintes respectées. Trois essais par persona, sans outil. Les neuf réponses sont jugées par les contrôles du moteur (`portefeuille.controles`), les mêmes que pour nos propres portefeuilles.

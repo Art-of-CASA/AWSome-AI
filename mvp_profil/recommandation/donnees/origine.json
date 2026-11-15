@@ -1,6 +1,6 @@
 {
  "sources": {
-  "data_extended/asset_criteria.csv": "9a81a89f1256dda1e34aa7e7733b09438897d233a4635cf1cc04bc2829fd46da",
+  "data_extended/asset_criteria.csv": "95ab38a27059130764101cef935752382cbad2d5d30d3b2a7db4c5149784899b",
   "config/correspondances.json": "240354fa5e2e2402a035e7bf731ba8e3a4b40b121a8bae849538fc215d431076",
   "config/hypotheses_recommandation.json": "93276f0c6082e16022d8b7bb975c2d286515c2940c067ef67d3f0381da10f3aa",
   "config/regles_appariement.json": "f7a9e57c37d406d9475f64a8858444d4c0847db3f6c2a88570616ade13b49b6e",

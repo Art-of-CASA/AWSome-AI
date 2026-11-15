@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import re
 
-from .chargement import correspondances, etiquettes, hypotheses, nombre, vrai
+from .chargement import correspondances, etiquettes, hypotheses, nombre, positions_fnb, vrai
 
 import synthese  # noqa: E402  (mvp_profil, lecture seule)
 from criteres import CRITERES  # noqa: E402
@@ -115,7 +115,8 @@ def construire(profil: dict, dynamiques: list[dict] | None = None, hyp: dict | N
         for v in connu(cid):
             regle = table.get(v, {})
             if "colonne" in regle or "toutes" in regle:
-                exclure(cid, f"Refus déclaré : {_libelle(cid, v)}", regle, valeur=v)
+                exclure(cid, f"Refus déclaré : {_libelle(cid, v)}", regle, valeur=v,
+                        sous_jacents=cid == "E5")
             elif "aucun_actif" in regle:
                 sans_effet.append({"critere": cid, "valeur": v, "raison": regle["aucun_actif"]})
 
@@ -135,9 +136,11 @@ def construire(profil: dict, dynamiques: list[dict] | None = None, hyp: dict | N
     # ---------- E2 : controverses ----------
     e2 = connu("E2")
     if e2 == ["aucune"]:
-        exclure("E2", "Toute controverse connue est refusée", {"colonne": "max_severity", "valeurs": list(SEVERITES)})
+        exclure("E2", "Toute controverse connue est refusée", {"colonne": "max_severity", "valeurs": list(SEVERITES)},
+                sous_jacents=True)
     elif e2 == ["pas_de_grave"]:
-        exclure("E2", "Controverse de sévérité élevée refusée", {"colonne": "max_severity", "valeurs": ["élevée"]})
+        exclure("E2", "Controverse de sévérité élevée refusée", {"colonne": "max_severity", "valeurs": ["élevée"]},
+                sous_jacents=True)
         signaux.append({"critere": "E2", "effet": "PLAFOND", "esg": True,
                         "condition": {"colonne": "max_severity", "valeurs": ["moyenne"]},
                         "texte": "Controverse de sévérité moyenne : signalée avec sa source"})
@@ -272,13 +275,43 @@ def accessible_canada_usa(actif: dict) -> bool:
     return actif.get(regle["colonne"]) in regle["valeurs"] or bool(str(actif.get("adr_us") or "").strip())
 
 
-def exclusion_s_applique(actif: dict, ex: dict) -> bool:
+def exclusion_directe(actif: dict, ex: dict) -> bool:
     if ex["mode"] == "liste":
         return actif["ticker"] in ex.get("actifs", [])
     if ex["mode"] == "acces_canada_usa":
         return not accessible_canada_usa(actif)
     touche = concerne(actif, ex["condition"])
     return (not touche) if ex["mode"] == "hors" else touche
+
+
+def positions_exclues(actif: dict, ex: dict, uni) -> dict[str, float]:
+    """Sous-jacents connus contraires à une exclusion ESG ; jamais les restrictions d'accès ou de classe.
+
+    Seules les positions effectivement rattachées à l'univers sont évaluées. Le reste du fonds demeure
+    inconnu : une absence de position exclue connue ne constitue pas un certificat ESG du fonds entier.
+    """
+    if not ex.get("sous_jacents") or not str(actif.get("asset_class", "")).startswith("etf"):
+        return {}
+    return {t: p for t, p in positions_fnb().get(actif["ticker"], {}).items()
+            if p > 0 and t in uni and exclusion_directe(uni[t], ex)}
+
+
+def exclusion_s_applique(actif: dict, ex: dict, uni=None) -> bool:
+    return exclusion_directe(actif, ex) or bool(uni is not None and positions_exclues(actif, ex, uni))
+
+
+def expose_change(actif: dict) -> bool:
+    """Une cotation CAD ne suffit pas : un fonds étranger non couvert reste exposé au change.
+
+    Sans ventilation complète, le poids entier d'un fonds exposé compte dans le plafond : borne prudente,
+    pas une mesure de la fraction exacte de ses sous-jacents en devises.
+    """
+    devise = actif.get("kw_devise")
+    if devise in ("cad", "cad_couvert"):
+        return False
+    if devise == "cad_actifs_etrangers_non_couverts":
+        return True
+    return actif.get("fx_risk") not in ("aucun", "", None)
 
 
 def colonnes_exclusion(ex: dict) -> list[str]:

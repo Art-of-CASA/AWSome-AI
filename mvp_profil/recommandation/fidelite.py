@@ -1,16 +1,45 @@
-"""Vérificateur de fidélité (code, pas un agent) : chaque chiffre du texte final doit exister dans une sortie d'outil.
+"""Contrat fermé de restitution et contrôle de provenance numérique (code, pas un agent).
 
-Un texte qui contient un nombre sans origine est REJETÉ : il n'atteint pas l'écran. Le vérificateur ne juge pas
-le sens de la phrase ; il garantit seulement qu'aucun chiffre n'a été inventé ou recalculé par le modèle.
+Le modèle sélectionne des identifiants de fragments rédigés par le code ; il ne fournit aucune prose financière
+affichable. Le contrôle numérique reste un diagnostic de provenance, pas une vérification du sens des phrases.
 """
 from __future__ import annotations
 
+import json
 import re
 
 _NOMBRE = re.compile(r"(?<![\w.,:/\-])[-−]?\d+(?:[   ]\d{3})*(?:[.,]\d+)?")
 _DATE = re.compile(r"\d{4}-\d{2}-\d{2}(?:T[\d:.+\-Z]+)?")
 _ID_CRITERE = re.compile(r"\b(?:[A-H]\d{1,2}[A-Z]?|X\d+)\b")
 TOUJOURS_ADMIS = {100.0}  # « sur 100 », « 100 % »
+
+
+def selection_restitution(texte: str, details: list[dict]) -> dict:
+    """N'accepte que {"details": [identifiants connus]}, sans champ libre ni identifiant répété.
+
+    Les verdicts et avertissements obligatoires ne figurent pas dans cette sélection : le code les impose
+    même si le modèle ne choisit aucun détail. Aucun essai de compréhension sémantique d'une prose libre.
+    """
+    def sans_doublons(paires):
+        objet = {}
+        for cle, valeur in paires:
+            if cle in objet:
+                raise ValueError("Champ JSON répété.")
+            objet[cle] = valeur
+        return objet
+
+    try:
+        obj = json.loads(texte, object_pairs_hook=sans_doublons)
+    except (ValueError, TypeError):
+        return {"valide": False, "details": [], "motif": "La restitution doit être un objet JSON, sans prose libre."}
+    if not isinstance(obj, dict) or set(obj) != {"details"}:
+        return {"valide": False, "details": [], "motif": "Seul le champ « details » est autorisé."}
+    ids = obj["details"]
+    connus = {d["id"] for d in details}
+    if (not isinstance(ids, list) or len(ids) > 6 or any(not isinstance(i, str) for i in ids)
+            or len(ids) != len(set(ids)) or any(i not in connus for i in ids)):
+        return {"valide": False, "details": [], "motif": "Choisir au plus six identifiants distincts du catalogue courant."}
+    return {"valide": True, "details": ids, "motif": None}
 
 
 def _nettoyer(texte: str, tickers=()) -> str:
@@ -52,6 +81,9 @@ def nombres_admis(*sorties) -> set[float]:
                 admis.add(float(m.group(0)))
         elif isinstance(x, dict):
             for k, v in x.items():
+                if k in ("lignes", "positions") and isinstance(v, list):
+                    # Le texte du code annonce le nombre de positions de la sortie compacte.
+                    admis.add(float(len(v)))
                 parcourir(k)
                 parcourir(v)
         elif isinstance(x, (list, tuple, set)):

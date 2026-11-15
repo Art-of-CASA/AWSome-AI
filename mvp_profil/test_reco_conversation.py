@@ -79,6 +79,86 @@ r = K.proposer_mise_a_jour(ctx, "D9", "10")
 verifier(r["decision"] == "a_confirmer" and not ctx.etat["maj"], "une réponse déclarée se revoit, après confirmation seulement")
 
 
+# ---------- L'intention précède l'action : négations, information, ponctuation ----------
+def contexte_neuf(persona="amira"):
+    return K.Contexte(ch.charger_persona(persona)["profil"], [], K.etat_initial())
+
+
+def decisions(ctx):
+    return copy.deepcopy({k: ctx.etat[k] for k in ("ajouts", "maj", "en_attente")})
+
+
+for phrase in ("Je ne veux pas de Nvidia", "Je ne veux pas de Nvidia.", "N'ajoutez pas NVDA !",
+               "Pas de Nvidia", "Sans Nvidia", "Je ne souhaite jamais investir dans NVDA", "Je refuse Nvidia", "Je veux éviter Nvidia"):
+    ctx = contexte_neuf()
+    avant_decisions = decisions(ctx)
+    m = K.tour(ctx, phrase)
+    verifier(decisions(ctx) == avant_decisions, f"la négation « {phrase} » ne modifie rien")
+    verifier(not any(a["outil"] == "ajouter_au_portefeuille" for a in m["appels"]), f"« {phrase} » n'appelle pas un ajout")
+
+ctx = contexte_neuf()
+K.tour(ctx, "ajoute Nvidia")
+avant_decisions = decisions(ctx)
+K.tour(ctx, "Ne retirez pas Nvidia")
+verifier(decisions(ctx) == avant_decisions, "la négation d'un retrait conserve aussi les positions")
+
+for phrase in ("Est-ce que Nvidia est risqué ?", "Expliquez-moi Nvidia.", "Pourquoi ajouter NVDA ?",
+               "Je voudrais savoir si Nvidia convient à mon profil.", "Quel est le risque de Nvidia ?", "Nvidia ?",
+               "Que vaut Nvidia", "Je travaille chez Nvidia", "Et si Nvidia baissait ?"):
+    ctx = contexte_neuf()
+    avant_decisions = decisions(ctx)
+    m = K.tour(ctx, phrase)
+    verifier(decisions(ctx) == avant_decisions, f"la question « {phrase} » est en lecture seule")
+    verifier(m["appels"] and all(a["outil"] == "consulter_actif" for a in m["appels"]), f"« {phrase} » consulte la fiche")
+    verifier("NVIDIA" in m["texte"] and m["fidelite"]["fidele"], f"« {phrase} » reçoit l'explication calculée")
+
+ctx = contexte_neuf()
+m = K.tour(ctx, "Pourquoi Gamestop ?")
+verifier(not ctx.etat["ajouts"] and m["appels"][0]["sortie"]["verdict"] == "absent", "information sur un actif inconnu : aucune donnée inventée")
+
+for phrase in ("Je veux Nvidia.", "Nvidia.", "Ajoute NVDA !", "Peux-tu ajouter Nvidia ?", "Et du Nvidia ?", "5 % de Nvidia"):
+    ctx = contexte_neuf()
+    K.tour(ctx, phrase)
+    verifier(ctx.etat["ajouts"] == {"NVDA": 5.0}, f"demande explicite ou elliptique conservée : « {phrase} »")
+ctx = contexte_neuf()
+K.tour(ctx, "ajoute RY.TO.")
+verifier("RY.TO" in ctx.etat["ajouts"], "les points internes d'un ticker canadien sont conservés")
+for phrase in ("0 % de Nvidia", "ajoute Nvidia pour 0 %", "0,0 % de NVDA"):
+    ctx = contexte_neuf()
+    actions = K.interpreter(phrase, ctx)
+    verifier(actions[0][1]["part_pct"] == 0, f"« {phrase} » conserve la part explicite nulle")
+    m = K.tour(ctx, phrase)
+    verifier(not ctx.etat["ajouts"] and m["appels"][0]["sortie"]["decision"] == "impossible",
+             f"« {phrase} » est refusé sans devenir la part par défaut")
+
+
+# ---------- Une confirmation concerne la réponse entière, sans ignorer les réserves ----------
+for phrase in ("Oui, mais seulement pour 3 %", "Oui ?", "Peut-être", "Je ne sais pas", "Oui, mais je ne suis pas sûr"):
+    ctx = contexte_neuf("robert")
+    K.proposer_mise_a_jour(ctx, "D9", "20")
+    avant_decisions = decisions(ctx)
+    m = K.tour(ctx, phrase)
+    verifier(decisions(ctx) == avant_decisions, f"réponse ambiguë : « {phrase} » conserve la proposition sans l'appliquer")
+    verifier(m["appels"][0]["outil"] == "preciser_confirmation", f"« {phrase} » demande un accord explicite")
+for phrase in ("Oui, mais pas maintenant, ne modifiez rien.", "Oui, mais finalement non", "Non merci."):
+    ctx = contexte_neuf("robert")
+    K.proposer_mise_a_jour(ctx, "D9", "20")
+    K.tour(ctx, phrase)
+    verifier(not ctx.etat["maj"] and not ctx.etat["ajouts"] and ctx.etat["en_attente"] is None,
+             f"le refus « {phrase} » annule la proposition et ne modifie pas le profil")
+for phrase in ("Oui, merci !", "Je confirme.", "D'accord", "Oui, allez-y."):
+    ctx = contexte_neuf("robert")
+    K.proposer_mise_a_jour(ctx, "D9", "20")
+    K.tour(ctx, phrase)
+    verifier(ctx.etat["maj"]["D9"]["valeurs"] == ["20"] and ctx.etat["en_attente"] is None,
+             f"accord entier « {phrase} » appliqué")
+ctx = contexte_neuf("robert")
+K.proposer_mise_a_jour(ctx, "D9", "20")
+avant_decisions = decisions(ctx)
+K.tour(ctx, "Pourquoi Nvidia est-il risqué ?")
+verifier(decisions(ctx) == avant_decisions, "consulter une fiche conserve la proposition en attente")
+
+
 # ---------- Avec un modèle : il choisit l'outil, le code décide ; il ne peut rien forcer ----------
 class FauxModele:
     modele = "simulé"
@@ -111,9 +191,32 @@ verifier(not etat["maj"], "« confirmer » sans proposition en attente ne change
 m = K.tour(K.Contexte(profil, [], etat), "passe mon profil en dynamique",
            FauxModele([("proposer_mise_a_jour_du_profil", {"critere": "B6", "valeur": "dynamique"}), "Ce point se mesure, il ne se déclare pas."]))
 verifier(not etat["maj"] and etat["en_attente"] is None, "le modèle ne peut pas relever une réponse mesurée")
+ctx = contexte_neuf("robert")
+K.proposer_mise_a_jour(ctx, "D9", "20")
+avant_decisions = decisions(ctx)
+K.tour(ctx, "Je ne suis pas sûr", FauxModele([
+    ("confirmer", {"mots_de_la_personne": "oui"}), "La proposition reste en attente."]))
+verifier(decisions(ctx) == avant_decisions, "une citation inventée par le modèle ne remplace pas le consentement reçu")
+for phrase in ("Je ne veux pas de Nvidia", "Pourquoi ajouter Nvidia ?"):
+    ctx = contexte_neuf()
+    K.tour(ctx, phrase, FauxModele([
+        ("ajouter_au_portefeuille", {"actif": "NVDA"}), "NVIDIA est ajouté."]))
+    verifier(not ctx.etat["ajouts"], f"le modèle ne peut pas ajouter malgré l'intention reçue : « {phrase} »")
+for entree in ({"actif": "NVDA", "part_pct": 0}, {"actif": "NVDA"}, {"actif": "NVDA", "part_pct": 5}):
+    ctx = contexte_neuf()
+    m = K.tour(ctx, "ajoute Nvidia pour 0 %", FauxModele([
+        ("ajouter_au_portefeuille", entree), "NVIDIA est ajouté."]))
+    verifier(not ctx.etat["ajouts"] and m["appels"][0]["sortie"]["decision"] == "impossible",
+             "le modèle ne peut pas omettre ou remplacer la part nulle pour appliquer un ajout")
+ctx = contexte_neuf("robert")
+K.proposer_mise_a_jour(ctx, "D9", "20")
+K.tour(ctx, "Oui, merci.", FauxModele([
+    ("confirmer", {"mots_de_la_personne": "citation inventée"}), "Le profil est mis à jour."]))
+verifier(ctx.etat["maj"]["D9"]["citation"] == "Oui, merci.", "la preuve d'accord est la phrase réellement reçue")
 specs = {s["toolSpec"]["name"] for s in K.specifications()}
 verifier("confirmer" in specs and all(s["toolSpec"]["inputSchema"]["json"]["type"] == "object" for s in K.specifications()), "outils de la conversation")
 verifier(K.humaniser("Refus déclaré : tabac (kw_exclusions = tabac) [actif:PM:kw_exclusions]") == "Refus déclaré : tabac", "une raison s'affiche sans détail technique")
 
 print("Conversation OK : part réduite proposée puis appliquée, exclusions tenues, alternatives compatibles, mise à jour du profil "
-      "seulement après accord, réponses mesurées protégées, textes fidèles, modèle sans pouvoir de décision")
+      "seulement après accord entier, négations et questions sans ajout, ponctuation des titres, réponses mesurées protégées, "
+      "textes fidèles, modèle sans pouvoir de décision")

@@ -10,7 +10,7 @@ FICHIERS = (
     "reponses_directes.py", "criteres_dynamiques.py", "chercheur.py", "voix_composant.py",
     "version_profil.py", "taches.py", "interface.py", "design.css", "composant_voix/index.html",
     "replay_composant.py", "replay_moteur.py", "replay_quotidien.json",
-    "composant_replay/index.html", "composant_replay/replay.js", "requirements.txt", "hypotheses_profil.json",
+    "composant_replay/index.html", "composant_replay/replay.js", "requirements.txt", "constraints.txt", "hypotheses_profil.json",
     "scenarios.json", "vocabulaire_actifs.json", "donnees_chercheur.json",
     "personas/amira.json", "personas/mateo.json", "personas/robert.json",
     # Propositions (étape 4) : moteur, agents, écrans et données préparées par scripts/build_donnees_recommandation.py

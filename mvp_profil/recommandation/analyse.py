@@ -422,21 +422,21 @@ class Analyse:
                 p2 = copy.deepcopy(self.profil)
                 p2["A2"] = {**p2.get("A2", {}), "valeurs": [echelle[j]], "statut": "validé", "source": "sensibilité"}
                 ajouter("horizon", f"Horizon : {C._libelle('A2', echelle[j])} au lieu de {C._libelle('A2', actuel)}",
-                        Analyse(p2, self.dynamiques, self.montant, self.hyp, self.uni, self.nom, self.periode))
+                        Analyse(p2, self.dynamiques, self.montant, self.hyp, self.uni, self.nom, self.periode, ajouts=self.ajouts))
         for delta in (-5, 5):
             h = copy.deepcopy(self.hyp)
             h["bandes_score"] = {k: v + delta for k, v in h["bandes_score"].items()}
             h["portefeuille"]["seuil_entree_paliers"] = [v + delta for v in h["portefeuille"]["seuil_entree_paliers"]]
             ajouter("seuils", f"Seuils du score à {h['bandes_score']['compatible']} / {h['bandes_score']['a_examiner']} "
                     f"et entrée dans le portefeuille à {h['portefeuille']['seuil_entree_paliers'][0]}",
-                    Analyse(self.profil, self.dynamiques, self.montant, h, self.uni, self.nom, self.periode))
+                    Analyse(self.profil, self.dynamiques, self.montant, h, self.uni, self.nom, self.periode, ajouts=self.ajouts))
         for cible in (0.7, 0.9):
             h = copy.deepcopy(self.hyp)
             h["tension"]["coherent_max"] = cible
             ajouter("seuils", f"Zone « cohérent » jusqu'à {cible:.1f} × le budget de perte (au lieu de {self.hyp['tension']['coherent_max']:.1f})",
-                    Analyse(self.profil, self.dynamiques, self.montant, h, self.uni, self.nom, self.periode))
+                    Analyse(self.profil, self.dynamiques, self.montant, h, self.uni, self.nom, self.periode, ajouts=self.ajouts))
         ajouter("periode", "Mesures du portefeuille sans l'année 2022 (les critères des actifs restent calculés sur toute la période)",
-                Analyse(self.profil, self.dynamiques, self.montant, self.hyp, self.uni, self.nom, {"sans_annee": 2022}))
+                Analyse(self.profil, self.dynamiques, self.montant, self.hyp, self.uni, self.nom, {"sans_annee": 2022}, ajouts=self.ajouts))
         base = self.portefeuille
         return {"reference": {"decompte": A.decompte(self.resultats),
                               "portefeuille": None if "erreur" in base else {

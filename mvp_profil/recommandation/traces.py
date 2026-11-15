@@ -57,6 +57,8 @@ class Journal:
                             f.write(charge + "\n")
                     except OSError:
                         self.persister = False
+                else:
+                    self.persister = False
         return ev
 
     def stockage(self) -> str:

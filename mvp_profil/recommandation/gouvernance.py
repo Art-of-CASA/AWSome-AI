@@ -1,8 +1,9 @@
-"""Contrôles de gouvernance, visibles et exécutés par le code (les Guardrails Bedrock les doublent côté modèle).
+"""Contrôles de gouvernance, visibles et exécutés par le code (Guardrail Bedrock facultatif).
 
 - Simulation uniquement : aucune fonction d'exécution d'ordre n'existe dans ce dépôt.
 - Aucun conseil financier personnalisé, aucune prédiction de rendement à partir du passé.
 - Données manquantes visibles ; faits, hypothèses et scénarios fictifs distingués.
+- Les expressions régulières sont un filet partiel ; elles ne comprennent pas toute formulation possible.
 """
 from __future__ import annotations
 
@@ -11,13 +12,14 @@ import re
 from .analyse import MENTION
 
 INTERDITS = [
-    (r"\bje (?:vous|te) (?:conseille|recommande)\b", "conseil personnalisé"),
+    (r"\bje (?:(?:vous|te) )?(?:conseille|recommande)\b", "conseil personnalisé"),
     (r"\b(?:vous devriez|tu devrais|il faut|vous devez) (?:acheter|vendre|investir)\b", "conseil personnalisé"),
-    (r"\b(?:achetez|vendez|n'hésitez pas à acheter)\b", "incitation à agir"),
+    (r"\b(?:achetez|vendez|investissez|placez (?:vos|votre)|n['’]hésitez pas à (?:acheter|investir))\b", "incitation à agir"),
     (r"\b(?:garanti|garantie|sans risque|sûr de gagner|ne peut pas perdre)\b", "promesse"),
     (r"\b(?:va|vont|devrait|devraient) (?:monter|grimper|doubler|rebondir|surperformer|rapporter)\b", "prédiction de rendement"),
     (r"\b(?:rapportera|rapporteront|montera|monteront|grimpera|doublera|doubleront|gagnera|gagnerez|progressera|rebondira|surperformera)\b",
      "prédiction de rendement"),
+    (r"\b(?:prendra|prendront|gagnera|gagneront) (?:de la valeur|en valeur)\b", "prédiction de rendement"),
     (r"\brendement (?:attendu|futur|prévu) de \d", "prédiction de rendement"),
     (r"\b100 ?% explicable\b", "formulation trompeuse (dire « traçable »)"),
 ]
@@ -26,7 +28,7 @@ NATURES = {"fait": "Fait : donnée publique datée", "hypothese": "Hypothèse : 
 
 
 def controler_texte(texte: str) -> dict:
-    """Refuse un texte qui conseille, promet ou prédit. Insensible à la casse."""
+    """Signale les formulations connues de conseil, promesse et prédiction ; couverture non exhaustive."""
     trouves = [{"motif": nature, "extrait": m.group(0)} for motif, nature in INTERDITS
                for m in re.finditer(motif, texte, flags=re.IGNORECASE)]
     return {"conforme": not trouves, "infractions": trouves}

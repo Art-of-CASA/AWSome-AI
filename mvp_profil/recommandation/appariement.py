@@ -73,16 +73,28 @@ def evaluer_actif(ticker: str, ctr: dict, uni: Univers, registre: Registre | Non
 
     # ---------- 1. DURE : exclusions ----------
     for ex in ctr["exclusions"]:
-        if C.exclusion_s_applique(a, ex):
+        if C.exclusion_s_applique(a, ex, uni):
             cols = C.colonnes_exclusion(ex)
-            detail = ", ".join(f"{c} = {a.get(c) or 'vide'}" for c in cols if c != "ticker")
+            indirectes = C.positions_exclues(a, ex, uni)
+            directe = C.exclusion_directe(a, ex)
+            detail = ", ".join(f"{c} = {a.get(c) or 'vide'}" for c in cols if c != "ticker") if directe else ""
             raison = ex["libelle"] + (f" ({detail})" if detail else "")
+            if indirectes:
+                raison += ". Sous-jacents exclus connus : " + ", ".join(
+                    f"{t} ({pct(p * 100)} du fonds)" for t, p in sorted(indirectes.items()))
             if ex.get("citation"):
                 raison += f" — « {ex['citation']} »"
             if "réglage prudent" in ex.get("origine", ""):
                 raison += " — réglage prudent appliqué faute de réponse, à confirmer"
-            ligne(ex["critere"], ex["libelle"], "DURE", "exclu", raison, cols,
+            ligne(ex["critere"], ex["libelle"], "DURE", "exclu", raison, cols if directe else ["ticker"],
                   [ex["critere"]] if ex["critere"] in etats else [])
+            if indirectes:
+                lignes[-1]["preuves"].extend(reg.actif(uni[t], c) for t in indirectes for c in cols)
+                lignes[-1]["preuves"].append(reg.calcul(
+                    f"positions_exclues:{ticker}:{ex['critere']}", indirectes,
+                    "Positions connues du fonds dans recommandation/donnees/fnb.json ; poids dans le fonds, "
+                    "pas couverture complète. Sources : etf_top_holdings.csv et correspondances_positions_fnb.json.",
+                    a.get("last_date")))
     exclu = [l for l in lignes if l["etat"] == "exclu"]
     if exclu:
         return {**base, "verdict": "exclu", "libelle_verdict": LIBELLES_VERDICT["exclu"], "score": None,
@@ -160,7 +172,7 @@ def evaluer_actif(ticker: str, ctr: dict, uni: Univers, registre: Registre | Non
                       ["speculative", "kw_attention", "hype_recent"], ["D8", "D8O"], pond["PLAFOND"], notes["a_surveiller"],
                       hyps=["niveau_max_avertissement_mode"])
         elif mode == "change":
-            if a.get("fx_risk") not in ("aucun", "", None):
+            if C.expose_change(a):
                 ligne("D4", "Exposition au change", "PLAFOND", "a_surveiller", s["texte"] + f" (kw_devise = {a.get('kw_devise')}).",
                       ["fx_risk", "kw_devise"], ["D4"], pond["PLAFOND"], notes["a_surveiller"])
         elif mode == "hors_liquidites":
@@ -232,6 +244,19 @@ def evaluer_actif(ticker: str, ctr: dict, uni: Univers, registre: Registre | Non
     # ---------- 5. INFORMATION : affichée, sans effet sur le score ----------
     def info(critere, libelle, raison, colonnes, profil_ids=()):
         ligne(critere, libelle, "INFORMATION", "information", raison, colonnes, profil_ids, borne=False)
+
+    if str(a.get("asset_class", "")).startswith("etf") and any(ex.get("sous_jacents") for ex in ctr["exclusions"]):
+        from .chargement import positions_fnb
+        positions = positions_fnb().get(ticker, {})
+        couverture_positions = min(1.0, sum(p for t, p in positions.items() if t in uni and p > 0))
+        info("E2", "Couverture des exclusions dans les fonds",
+             f"Sous-jacents connus : {pct(couverture_positions * 100)} du fonds. Les exclusions ESG portent sur "
+             "ces positions et la fiche du fonds ; la part restante est inconnue, sans garantie d'absence d'exposition exclue.",
+             ["ticker"])
+        lignes[-1]["preuves"].append(reg.calcul(
+            f"couverture_positions:{ticker}", round(couverture_positions * 100, 1),
+            "Somme des positions rattachées à l'univers dans recommandation/donnees/fnb.json, en pourcentage du fonds.",
+            a.get("last_date")))
 
     classe_risque = nombre(a.get("risk_class"))
     if ctr["consultation_quotidienne"] and classe_risque is not None and classe_risque >= 6:

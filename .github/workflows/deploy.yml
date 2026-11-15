@@ -42,6 +42,7 @@ jobs:
           cache-dependency-path: |
             requirements.txt
             mvp_profil/requirements.txt
+            mvp_profil/constraints.txt
 
       - name: Set up Node.js (voice component test)
         uses: actions/setup-node@v4

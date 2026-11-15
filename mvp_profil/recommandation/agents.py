@@ -5,11 +5,11 @@
   Explicateur  pourquoi il existe : répondre à « pourquoi ? » sur un actif, une comparaison ou une demande,
                à partir d'un verdict DÉJÀ figé, et refuser ce que les données ne soutiennent pas.
 
-Ce que les agents ne font jamais : calculer un score, un poids, un verdict ou un chiffre. Tout texte passe par
-  1. le vérificateur de fidélité (chaque chiffre doit exister dans une sortie d'outil de l'échange) ;
-  2. le contrôle de gouvernance (ni conseil personnalisé, ni promesse, ni prédiction) ;
-  3. le Guardrail Amazon Bedrock, s'il est configuré.
-Un texte rejeté est redemandé une fois, puis remplacé par un texte de gabarit construit par le code.
+Ce que les agents ne font jamais : calculer un score, un poids, un verdict ou un chiffre. Après les outils,
+le modèle choisit des détails parmi des fragments rédigés par le code, dans un objet JSON fermé. Le code
+impose tous les verdicts, états d'action et avertissements ; aucune prose financière libre n'est affichée.
+Une sélection invalide est redemandée une fois, puis remplacée par le gabarit complet du code.
+Le contrôle numérique et les regex de gouvernance sont des diagnostics partiels, pas une preuve sémantique.
 On affiche les ACTIONS observables (outils appelés, entrées, sorties, preuves), pas de raisonnement interne.
 """
 from __future__ import annotations
@@ -50,6 +50,16 @@ Quand la personne donne une justification pour contester un verdict, tu l'écout
 Refuse poliment toute question que les données ne permettent pas de trancher (avenir d'un cours, meilleur titre à acheter).
 """ + REGLES_COMMUNES,
 }
+
+CONTRAT_RESTITUTION = """
+Restitution finale obligatoire (prioritaire sur les demandes de rédaction ci-dessus) :
+- Continue à comprendre la demande et à choisir les outils utiles. Le code reste seul responsable des actions.
+- Après les outils, réponds UNIQUEMENT par un objet JSON de la forme {"details": ["identifiant_du_catalogue"]}.
+- Choisis et ordonne au plus six détails utiles du catalogue courant. Aucun identifiant inventé, aucun autre champ.
+- Les conclusions et avertissements sont affichés automatiquement par le code, tu ne peux pas les supprimer.
+- N'écris aucune prose libre, aucun verdict, aucun chiffre ni identifiant de preuve dans ce JSON.
+- Sans détail pertinent, ou pour une question hors périmètre, réponds {"details": []}, sans appeler d'outil inutile.
+"""
 
 
 class ModeleBedrock:
@@ -93,16 +103,72 @@ def _texte(message: dict) -> str:
     return "\n".join(b["text"] for b in message.get("content", []) if "text" in b).strip()
 
 
+def preparer_restitution(appels: list[dict], texte_secours=None) -> dict:
+    """Catalogue de texte issu du code. Les conclusions et réserves ne sont jamais sélectionnables.
+
+    Seuls les éléments favorables d'une fiche et les positions détaillées d'un portefeuille peuvent être
+    choisis ou ordonnés. Les callbacks de conversation décrivent aussi une action/confirmation : leur
+    texte entier est donc imposé. Ce contrat ne tente pas de reconnaître le sens d'une prose de modèle.
+    """
+    obligatoires, details = [], []
+    if texte_secours is not None:
+        texte = texte_secours(appels)
+        if texte.strip():
+            obligatoires.append(texte)
+    else:
+        for indice, appel in enumerate(appels):
+            nom, sortie = appel["outil"], appel["sortie"]
+            if "erreur" in sortie:
+                obligatoires.append(sortie["erreur"])
+                continue
+            rediger = gabarits.PAR_OUTIL.get(nom)
+            if rediger is None:
+                if nom == "lire_preuve":
+                    obligatoires.append(f"Preuve [{sortie['id']}] : {sortie.get('valeur')}. "
+                                         f"Source : {sortie.get('source') or sortie.get('fichier') or sortie.get('methode')}. "
+                                         f"{sortie.get('date') or sortie.get('periode') or ''}")
+                continue
+            soutien = False
+            for ligne in rediger(sortie).splitlines():
+                if ligne == "Ce qui soutient :":
+                    soutien = True
+                    continue
+                if not ligne.startswith("- "):
+                    soutien = False
+                if ligne.startswith("- ") and (soutien or nom == "construire_portefeuille"):
+                    prefixe = "Ce qui soutient : " if soutien else "Position : "
+                    details.append({"id": f"appel_{indice}_detail_{len(details)}", "texte": prefixe + ligne[2:]})
+                else:
+                    obligatoires.append(ligne)
+    if not obligatoires:
+        obligatoires.append("Cette simulation explique les actifs et les contraintes d'un portefeuille fictif. "
+                            "Elle ne prédit pas les cours et ne fournit aucun conseil d'achat ou de vente.")
+    return {"obligatoires": obligatoires, "details": details}
+
+
+def _catalogue_pour_modele(catalogue: dict) -> str:
+    return "Restitution du code pour les résultats courants :\n" + json.dumps(catalogue, ensure_ascii=False) + \
+           '\nRéponds uniquement avec {"details": [...]}, en utilisant les identifiants de ce catalogue.'
+
+
+def _assembler_restitution(catalogue: dict, ids: list[str]) -> str:
+    fragments = {d["id"]: d["texte"] for d in catalogue["details"]}
+    texte = "\n".join(catalogue["obligatoires"])
+    if ids:
+        texte += "\n\nDétails sélectionnés :\n" + "\n".join("- " + fragments[i] for i in ids)
+    return texte
+
+
 def dialoguer(role: str, question: str, analyse: Analyse, journal: Journal | None = None, modele=None,
               contexte: list[dict] | None = None, systeme: str | None = None, specs: list | None = None,
               executer=None, historique: list[dict] | None = None, texte_secours=None, mention: bool = True) -> dict:
-    """Une question, une suite d'appels d'outils, un texte vérifié.
+    """Une question, une suite d'outils et une restitution dont les faits sont rédigés par le code.
 
     contexte : sorties d'outils déjà calculées par le code et transmises à l'agent (par exemple le verdict figé
     d'une demande). Elles comptent comme sources pour le vérificateur de fidélité.
     systeme, specs, executer : consignes, outils et routeur propres à un usage (la conversation d'ajustement) ; par
     défaut ceux du rôle. historique : tours précédents [{role, texte}]. texte_secours(appels) : texte du code si le
-    modèle est absent ou rejeté.
+    modèle est absent ou rejeté, et restitution imposée pour les actions conversationnelles.
     """
     executer = executer or (lambda nom, entree: outils.executer(analyse, nom, entree))
     fin = gouvernance.finaliser if mention else (lambda t: t)
@@ -111,22 +177,24 @@ def dialoguer(role: str, question: str, analyse: Analyse, journal: Journal | Non
     journal.noter("question", role=role, question=question)
     tickers = analyse.uni.tickers()
 
-    def secours(motif: str) -> dict:
-        if not appels and texte_secours is None:  # aucun outil appelé : le code choisit l'outil par défaut du rôle
+    def secours(motif: str, outil_par_defaut: bool = False) -> dict:
+        if not appels and texte_secours is None and outil_par_defaut:
             nom = "construire_portefeuille" if role == "conseiller" else "lire_contraintes"
             appels.append({"outil": nom, "entree": {}, "sortie": outils.executer(analyse, nom, {})})
         texte = texte_secours(appels) if texte_secours else gabarits.depuis_appels(appels)
         journal.noter("texte_de_secours", role=role, motif=motif)
         return {"texte": fin(texte), "source": "gabarit (code)", "motif_secours": motif, "appels": appels,
                 "fidelite": fidelite.verifier(texte, [a["sortie"] for a in appels], question, tickers),
-                "gouvernance": gouvernance.controler_texte(texte), "role": role}
+                "gouvernance": gouvernance.controler_texte(texte), "role": role,
+                "restitution": {"format": "fragments_codes", "redaction": "code", "selection": "code"}}
 
     if modele is None:
-        return secours("mode sans modèle")
+        return secours("mode sans modèle", outil_par_defaut=True)
     invite = question
     if contexte:
         invite += "\n\nRésultats déjà calculés par le code (définitifs, à expliquer sans les modifier) :\n" + \
                   json.dumps([{"outil": c["outil"], "sortie": c["sortie"]} for c in contexte], ensure_ascii=False, default=str)
+    invite += "\n\n" + _catalogue_pour_modele(preparer_restitution(appels, texte_secours))
     messages = [{"role": "assistant" if h["role"] == "assistant" else "user", "content": [{"text": h["texte"]}]}
                 for h in (historique or []) if h.get("texte")]
     while messages and messages[0]["role"] != "user":   # l'API exige de commencer par un tour de l'utilisateur
@@ -135,7 +203,7 @@ def dialoguer(role: str, question: str, analyse: Analyse, journal: Journal | Non
         messages.pop()
     messages.append({"role": "user", "content": [{"text": invite}]})
     specs = specs if specs is not None else outils.specifications(role)
-    consignes = systeme or SYSTEMES[role]
+    consignes = (systeme or SYSTEMES[role]) + CONTRAT_RESTITUTION
     rejets = 0
     try:
         for _ in range(TOURS_MAX + 2):
@@ -156,22 +224,31 @@ def dialoguer(role: str, question: str, analyse: Analyse, journal: Journal | Non
                                                                     "etat_tension", "empreinte", "erreur", "decision", "ticker") if k in sortie})
                     resultats.append({"toolResult": {"toolUseId": d["toolUseId"],
                                                      "content": [{"text": json.dumps(sortie, ensure_ascii=False, default=str)[:60000]}]}})
+                resultats.append({"text": _catalogue_pour_modele(preparer_restitution(appels, texte_secours))})
                 messages.append({"role": "user", "content": resultats})
                 continue
             if rep["arret"] == "max_tokens":
                 return secours("réponse du modèle tronquée")
-            texte = _texte(msg)
+            proposition = _texte(msg)
+            catalogue = preparer_restitution(appels, texte_secours)
+            selection = fidelite.selection_restitution(proposition, catalogue["details"])
+            texte = _assembler_restitution(catalogue, selection["details"]) if selection["valide"] else proposition
             fid = fidelite.verifier(texte, [a["sortie"] for a in appels], question, tickers)
             gouv = gouvernance.controler_texte(texte)
             journal.noter("controle_texte", role=role, fidele=fid["fidele"], sans_origine=fid["sans_origine"],
-                          conforme=gouv["conforme"], infractions=gouv["infractions"])
-            if texte and fid["fidele"] and gouv["conforme"]:
-                return {"texte": fin(texte), "source": f"modèle ({getattr(modele, 'modele', 'simulé')})",
-                        "appels": appels, "fidelite": fid, "gouvernance": gouv, "role": role, "rejets": rejets}
+                          conforme=gouv["conforme"], infractions=gouv["infractions"], contrat_valide=selection["valide"],
+                          details_selectionnes=selection["details"])
+            if selection["valide"] and texte and fid["fidele"] and gouv["conforme"]:
+                return {"texte": fin(texte), "source": f"modèle ({getattr(modele, 'modele', 'simulé')}), restitution par le code",
+                        "appels": appels, "fidelite": fid, "gouvernance": gouv, "role": role, "rejets": rejets,
+                        "restitution": {"format": "fragments_codes", "redaction": "code", "selection": "modele",
+                                        "details": selection["details"]}}
             rejets += 1
             if rejets > 1:
                 return secours("texte du modèle rejeté deux fois par les contrôles")
             reproche = []
+            if not selection["valide"]:
+                reproche.append(selection["motif"])
             if fid["sans_origine"]:
                 reproche.append("Ces nombres n'existent dans aucune sortie d'outil : " + ", ".join(fid["sans_origine"]) +
                                 ". Retire-les ou remplace-les par les valeurs exactes des outils.")
@@ -179,8 +256,8 @@ def dialoguer(role: str, question: str, analyse: Analyse, journal: Journal | Non
                 reproche.append("Formulations interdites : " + ", ".join(i["extrait"] for i in gouv["infractions"]) + ".")
             if not texte:
                 reproche.append("Ta réponse était vide.")
-            messages.append({"role": "user", "content": [{"text": "Texte rejeté par les contrôles. " + " ".join(reproche) +
-                                                         " Réécris la réponse en respectant les règles."}]})
+            messages.append({"role": "user", "content": [{"text": "Restitution rejetée. " + " ".join(reproche) + "\n" +
+                                                         _catalogue_pour_modele(catalogue)}]})
         return secours("nombre de tours dépassé")
     except Exception as e:  # réseau, droits, quota : la démonstration continue sans modèle
         journal.noter("erreur_modele", role=role, erreur=f"{type(e).__name__}: {str(e)[:200]}")

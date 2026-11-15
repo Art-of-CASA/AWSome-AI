@@ -73,6 +73,7 @@ def _portefeuille_compact(pf: dict) -> dict:
     if "erreur" in pf:
         return pf
     return {"nature": pf["nature"], "montant_fictif_cad": pf["montant_fictif_cad"],
+            "nb_positions": pf["nb_positions"],
             "lignes": [{k: l[k] for k in ("ticker", "nom", "poche", "role", "poids_pct", "montant_cad", "score", "pourquoi")} for l in pf["lignes"]],
             "part_croissance_pct": pf["part_croissance_pct"], "part_amortisseur_pct": pf["part_amortisseur_pct"],
             "seuil_entree": pf["seuil_entree"], "nb_candidats": pf["nb_candidats"],

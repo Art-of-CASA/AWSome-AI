@@ -91,7 +91,11 @@ def _resume_portefeuille(a: Analyse) -> dict:
 # ---------- Actions : la seule façon de modifier quoi que ce soit ----------
 
 def ajouter(ctx: Contexte, actif: str, part_pct: float | None = None) -> dict:
-    d = ctx.analyse.proposer_ajout(str(actif), float(part_pct) if part_pct else None)
+    part = float(part_pct) if part_pct is not None else None
+    if part is not None and part <= 0:
+        return {"decision": "impossible", "part_demandee_pct": part,
+                "message": "La part demandée doit être strictement positive. Aucun ajout n'est appliqué."}
+    d = ctx.analyse.proposer_ajout(str(actif), part)
     ctx.etat["en_attente"] = None
     if d.get("empreinte"):
         ctx.noter("verdict_fige", ticker=d["ticker"], part_pct=d.get("part_demandee_pct") or d.get("part_pct"), verdict=d["verdict"], empreinte=d["empreinte"])
@@ -181,6 +185,11 @@ def voir_portefeuille(ctx: Contexte) -> dict:
     return _resume_portefeuille(ctx.analyse)
 
 
+def consulter_actif(ctx: Contexte, actif: str) -> dict:
+    """Lire un verdict et ses explications n'ajoute rien et ne clôt pas une proposition en attente."""
+    return ctx.analyse.rechercher(str(actif))
+
+
 ACTIONS = {
     "ajouter_au_portefeuille": (lambda c, e: ajouter(c, e.get("actif", ""), e.get("part_pct")),
         "Demande d'ajouter un actif (ticker ou nom) au portefeuille fictif, pour une part en % si la personne en donne une. Le code "
@@ -191,6 +200,10 @@ ACTIONS = {
         "La personne exprime une envie sans nommer d'actif (« plus de technologie », « de l'or », « des dividendes canadiens ») : "
         "renvoie les actifs de l'univers qui y répondent, avec leur verdict pour ce profil.",
         {"envie": {"type": "string"}}, ["envie"]),
+    "consulter_actif": (lambda c, e: consulter_actif(c, e.get("actif", "")),
+        "Consulte le verdict, les risques et l'explication d'un actif, sans modifier le portefeuille ni le profil. "
+        "À utiliser pour une question d'information ou une demande d'explication.",
+        {"actif": {"type": "string"}}, ["actif"]),
     "retirer_du_portefeuille": (lambda c, e: retirer(c, e.get("actif", "")),
         "Retire un actif que la personne avait fait ajouter.", {"actif": {"type": "string"}}, ["actif"]),
     "proposer_mise_a_jour_du_profil": (lambda c, e: proposer_mise_a_jour(c, e.get("critere", ""), e.get("valeur", "")),
@@ -204,12 +217,18 @@ ACTIONS = {
     "annuler_les_mises_a_jour": (lambda c, e: annuler_mises_a_jour(c),
         "Revient aux réponses d'origine du profil.", {}, []),
     "voir_le_portefeuille": (lambda c, e: voir_portefeuille(c), "État actuel du portefeuille fictif.", {}, []),
+    "sans_modification": (lambda c, e: {"decision": "rien", "message": "Entendu, aucun changement n'est appliqué."},
+        "Accuse réception d'une demande de ne rien changer, sans modifier le profil ni le portefeuille.", {}, []),
+    "preciser_confirmation": (lambda c, e: {"decision": "a_preciser", "message":
+        "La proposition reste en attente. Répondez « oui » pour l'appliquer ou « non » pour l'annuler."},
+        "Une réponse ambiguë ne vaut pas accord : conserve la proposition en attente et demande une réponse explicite.", {}, []),
 }
 
 SYSTEME = """Tu es le CONSEILLER d'AlphaForge, dans une conversation où la personne ajuste son mini-portefeuille FICTIF (simulation éducative).
 Ton rôle : comprendre ce qu'elle veut, appeler l'outil qui convient, puis répondre en deux à quatre phrases simples.
 - Pour toute demande d'ajout, appelle ajouter_au_portefeuille. Sa décision est définitive : tu ne la contestes pas et tu ne l'adoucis pas.
 - Si c'est refusé, présente les alternatives renvoyées par l'outil. Si l'outil indique des réponses du profil à revoir, demande à la personne si elle veut les mettre à jour ; n'appelle confirmer que si elle dit clairement oui.
+- Une question d'information appelle consulter_actif, jamais ajouter_au_portefeuille. Une négation ou une réponse ambiguë n'autorise aucune modification.
 - Tu ne modifies jamais le profil de ta propre initiative, et tu n'encourages pas à relever une limite de risque.
 - Tutoiement interdit : vouvoie. Pas de titre, pas de liste longue, pas de jargon technique, pas d'identifiant de critère.
 """ + agents.REGLES_COMMUNES.replace("- Cite les preuves entre crochets avec leur identifiant exact, par exemple [actif:NVDA:max_drawdown] ou [profil:D12].\n", "") \
@@ -224,7 +243,8 @@ def specifications() -> list[dict]:
 def executer(ctx: Contexte, nom: str, entree: dict | None) -> dict:
     if nom not in ACTIONS:
         return {"erreur": f"Outil inconnu : {nom}"}
-    if nom not in ("confirmer", "refuser"):
+    if nom not in ("confirmer", "refuser", "consulter_actif", "chercher_par_envie", "voir_le_portefeuille",
+                   "sans_modification", "preciser_confirmation"):
         ctx.etat["en_attente"] = None   # une nouvelle demande remplace la proposition restée sans réponse
     try:
         return ACTIONS[nom][0](ctx, entree or {})
@@ -235,21 +255,74 @@ def executer(ctx: Contexte, nom: str, entree: dict | None) -> dict:
 # ---------- Interprète à règles (sans modèle) ----------
 _OUI = re.compile(r"^\s*(oui|ok|okay|d'accord|dac|parfait|vas-y|allez-y|allons-y|je confirme|confirme|ca marche|c'est bon|faites-le|fais-le)\b")
 _NON = re.compile(r"^\s*(non|pas maintenant|laisse|laissez|annule|annulez|finalement non|je prefere pas)\b")
+_REFUS = re.compile(r"\b(?:non|pas maintenant|finalement non|ne (?:modifiez|changez|faites|fais|change|modifie) rien|"
+                    r"n'(?:ajoutez|ajoute|appliquez|applique) pas|annule|annulez|je (?:ne )?(?:veux|souhaite) pas)\b")
+_HESITATION = re.compile(r"\b(?:peut[- ]etre|pas sur|pas certain|hesite|je ne sais pas|je sais pas|a condition|seulement si)\b")
+_NEGATION = re.compile(r"\b(?:ne|pas|jamais|rien|aucune?|sans|non|refus\w*|rejet\w*|evit\w*|exclu\w*)\b|\bn'")
+_OUI_COMPLET = re.compile(
+    r"(?:oui|ok|okay|d'accord|dac|parfait|vas-y|allez-y|allons-y|je confirme|confirme|ca marche|c'est bon|faites-le|fais-le)"
+    r"(?:[\s,;!:.]+(?:merci|s'il vous plait|je confirme|allez-y|vas-y|faites-le|fais-le|c'est bon))*[\s,;!:.]*")
+_QUESTION_INFO = re.compile(
+    r"\b(?:pourquoi|comment|quel(?:le)?s?|combien|risqu[eé]?|risques|volatilite|rendement|avis|"
+    r"explique\w*|renseigne\w*|informe\w*|savoir|comprendre|compare\w*)\b|"
+    r"^(?:est-ce|qu'est-ce|c'est quoi|que pens|penses?[- ]|pensez[- ]|parle[- ]moi|parlez[- ]moi|dis[- ]moi|dites[- ]moi)")
+_INFORMATION_EXPLICITE = re.compile(
+    r"\b(?:pourquoi|comment|quel(?:le)?s?|combien|explique\w*|renseigne\w*|informe\w*|savoir|comprendre|compare\w*)\b|"
+    r"(?:est-ce|qu'est-ce|c'est quoi|que pens|dois-je|devrais-je|faut-il|puis-je|penses?[- ]tu|pensez[- ]vous|parle[- ]moi|parlez[- ]moi|dis[- ]moi|dites[- ]moi)")
+_AJOUT_EXPLICITE = re.compile(r"\b(?:ajout\w*|mets|mettez|mettre|inclu\w*|je veux|je voudrais|j'aimerais|je souhaite|prends|prenez)\b")
+
+
+def _confirmation(texte: str) -> str | None:
+    """Une approbation ne porte que sur une réponse entière, jamais sur son seul premier mot."""
+    q = sans_accents(texte).replace("’", "'").strip()
+    if _HESITATION.search(q):
+        return "ambigu"
+    if _REFUS.search(q) or _NON.search(q):
+        return "non"
+    if _OUI_COMPLET.fullmatch(q):
+        return "oui"
+    if _OUI.search(q):
+        return "ambigu"
+    return None
+
+
+def _question_information(q: str) -> bool:
+    """Une requête grammaticale comme « pouvez-vous ajouter ? » reste une demande d'action explicite."""
+    elliptique = bool(re.match(r"^\s*et\s+(?:(?:du|de la|des|de l'|d')\s*)?", q))
+    return bool(_INFORMATION_EXPLICITE.search(q) or
+                (_QUESTION_INFO.search(q) and not _AJOUT_EXPLICITE.search(q)) or
+                ("?" in q and not elliptique and not _AJOUT_EXPLICITE.search(q)))
+
+
+def _demande_ajout(q: str, ctx: Contexte) -> bool:
+    """Un nom seul ou « et du… » peut demander un ajout ; une simple mention dans une phrase ne le demande pas."""
+    if _AJOUT_EXPLICITE.search(q):
+        return True
+    nom = q.strip(" \t?!.,;:")
+    nom = re.sub(r"^et\s+", "", nom)
+    nom = re.sub(r"^\d+(?:[.,]\d+)?\s*(?:%|pour\s*cent)\s*", "", nom)
+    nom = re.sub(r"^(?:(?:du|de la|des|de)\s+|de l'|d')", "", nom)
+    return ctx.analyse.trouver(nom) is not None
 
 
 def interpreter(texte: str, ctx: Contexte) -> list[tuple[str, dict]]:
     """Comprend les demandes simples sans modèle. Renvoie la liste des actions à exécuter (souvent une seule)."""
     q = sans_accents(texte).replace("’", "'")
     if ctx.etat.get("en_attente"):
-        if _OUI.search(q):
+        confirmation = _confirmation(texte)
+        if confirmation == "oui":
             return [("confirmer", {"mots_de_la_personne": texte})]
-        if _NON.search(q):
+        if confirmation == "non":
             return [("refuser", {})]
-    if re.search(r"\b(reviens|revenir|retablis|retablir|annule\w*)\b.*\b(profil|reponses|criteres|mises a jour)\b", q):
+        if confirmation == "ambigu":
+            return [("preciser_confirmation", {})]
+    negatif = bool(_NEGATION.search(q))
+    if not negatif and re.search(r"\b(reviens|revenir|retablis|retablir|annule\w*)\b.*\b(profil|reponses|criteres|mises a jour)\b", q):
         return [("annuler_les_mises_a_jour", {})]
     part = re.search(r"(\d+(?:[.,]\d+)?)\s*(?:%|pour\s*cent)", q)
     part_pct = float(part.group(1).replace(",", ".")) if part else None
-    mots = re.findall(r"[a-z0-9][a-z0-9.\-&']*", q)
+    # La ponctuation de fin de phrase ne fait pas partie d'un symbole ; les points internes de RY.TO restent.
+    mots = [m.rstrip(".-&'") for m in re.findall(r"[a-z0-9][a-z0-9.\-&']*", q)]
     trouves: list[str] = []
     for n in (3, 2, 1):
         for i in range(len(mots) - n + 1):
@@ -259,10 +332,17 @@ def interpreter(texte: str, ctx: Contexte) -> list[tuple[str, dict]]:
             tk = ctx.analyse.trouver(groupe)
             if tk and tk not in trouves:
                 trouves.append(tk)
+    question_info = _question_information(q)
+    if negatif:
+        return [("consulter_actif", {"actif": t}) for t in trouves[:2]] if question_info and trouves else [("sans_modification", {})]
+    if question_info:
+        return [("consulter_actif", {"actif": t}) for t in trouves[:2]] or [("consulter_actif", {"actif": texte.strip(" ?!.")})]
     if trouves and re.search(r"\b(retire|retirer|enleve|enlever|supprime|supprimer|sors|sortir)\b", q):
         return [("retirer_du_portefeuille", {"actif": trouves[0]})]
     if trouves:
-        return [("ajouter_au_portefeuille", {"actif": t, **({"part_pct": part_pct} if part_pct else {})}) for t in trouves[:2]]
+        if _demande_ajout(q, ctx):
+            return [("ajouter_au_portefeuille", {"actif": t, **({"part_pct": part_pct} if part_pct is not None else {})}) for t in trouves[:2]]
+        return [("consulter_actif", {"actif": t}) for t in trouves[:2]]
     if ctx.analyse.trouver_par_envie(texte).get("envie"):
         return [("chercher_par_envie", {"envie": texte})]
     if re.search(r"\b(portefeuille|ou en est|recapitul|resume)\b", q):
@@ -303,6 +383,8 @@ def rediger(nom: str, d: dict) -> str:
     """Réponse courte, en clair, à partir de la sortie d'une action. Tous les chiffres viennent de cette sortie."""
     if "erreur" in d:
         return d["erreur"]
+    if d.get("decision") in ("rien", "impossible", "a_preciser") and d.get("message"):
+        return d["message"]
     dec = d.get("decision")
     if nom == "ajouter_au_portefeuille":
         if dec == "absent":
@@ -330,6 +412,13 @@ def rediger(nom: str, d: dict) -> str:
         return ((f"{k} actifs compatibles avec votre profil correspondent à cette envie. Les plus proches : " if k > 1 else
                  "Un actif compatible avec votre profil correspond à cette envie : ")
                 + " ; ".join(f"{x['nom']} ({x['ticker']})" for x in compat[:4]) + (". Lequel voulez-vous ajouter ?" if k > 1 else ". Voulez-vous l'ajouter ?"))
+    if nom == "consulter_actif":
+        if d.get("verdict") == "absent":
+            return d["message"]
+        exp = d.get("explication") or {}
+        raisons = exp.get("retient") or exp.get("soutient") or []
+        resume = exp.get("resume") or d.get("message") or d.get("libelle_verdict", "")
+        return f"{d.get('nom') or d['ticker']} : {resume}" + (" " + _suite(raisons[0]) if raisons else "")
     if nom == "retirer_du_portefeuille":
         return d.get("message") or f"{d['ticker']} est retiré ; le portefeuille est recalculé."
     if nom == "proposer_mise_a_jour_du_profil":
@@ -365,11 +454,34 @@ def tour(ctx: Contexte, texte: str, modele=None) -> dict:
     ctx.noter("message", longueur=len(texte))
     appels: list[dict] = []
     source = "code"
+
+    def executer_tour(nom, entree):
+        # L'accord vient de la phrase réellement reçue, jamais d'une citation proposée par le modèle.
+        if nom == "confirmer":
+            accord = _confirmation(texte)
+            if accord == "non":
+                return executer(ctx, "refuser", {})
+            if accord != "oui" and ctx.etat.get("en_attente"):
+                return executer(ctx, "preciser_confirmation", {})
+            entree = {"mots_de_la_personne": texte}
+        q = sans_accents(texte).replace("’", "'")
+        if nom == "ajouter_au_portefeuille":
+            part_dite = re.search(r"(\d+(?:[.,]\d+)?)\s*(?:%|pour\s*cent)", q)
+            if part_dite and float(part_dite.group(1).replace(",", ".")) == 0:
+                return ajouter(ctx, (entree or {}).get("actif", ""), 0)
+        if nom in ("ajouter_au_portefeuille", "retirer_du_portefeuille", "proposer_mise_a_jour_du_profil", "annuler_les_mises_a_jour"):
+            if _NEGATION.search(q) or _question_information(q):
+                if nom == "ajouter_au_portefeuille" and _question_information(q):
+                    fiche = consulter_actif(ctx, (entree or {}).get("actif", ""))
+                    return {"decision": "rien", "message": rediger("consulter_actif", fiche), "fiche": fiche}
+                return executer(ctx, "sans_modification", {})
+        return executer(ctx, nom, entree)
+
     if modele is not None:
         attente = etat.get("en_attente")
         invite = texte + (f"\n\n[Proposition en attente de réponse : {attente['question']}]" if attente else "")
         rep = agents.dialoguer("conseiller", invite, ctx.analyse, ctx.journal, modele, systeme=SYSTEME, specs=specifications(),
-                               executer=lambda nom, e: executer(ctx, nom, e), historique=historique, mention=False,
+                               executer=executer_tour, historique=historique, mention=False,
                                texte_secours=lambda aps: "\n\n".join(rediger(a["outil"], a["sortie"]) for a in aps) or "")
         appels = rep["appels"]
         reponse, source = rep["texte"], rep["source"]

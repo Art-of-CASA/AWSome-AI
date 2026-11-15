@@ -6,7 +6,7 @@
 
 La version est affichée dans la barre latérale et exportée avec les questions et les échanges oraux. `python scripts/preparer_mvp.py` construit un paquet intégral avec un manifeste vérifié, sans accès AWS. Détails : [diagnostic et protocole](../docs/fiabilite_questions.md), [recherche de questionnaires](../docs/recherche_questionnaires.md).
 
-Site Streamlit qui établit un profil à partir d'une conversation, de questions fermées et de mises en situation. Les réponses libres sont classées puis vérifiées par deux agents Claude Haiku 5.5. Les critères sont alignés avec [config/criteres_appariement.csv](../config/criteres_appariement.csv). **Simulation éducative : aucun conseil financier personnalisé, aucune transaction réelle.** Le moteur de suggestions personnalisées reste à développer.
+Site Streamlit qui établit un profil à partir d'une conversation, de questions fermées et de mises en situation. Les réponses libres sont classées puis vérifiées par deux agents Claude Haiku 5.5. Les critères sont alignés avec [config/criteres_appariement.csv](../config/criteres_appariement.csv). **Simulation éducative : aucun conseil financier personnalisé, aucune transaction réelle.** L'étape 4 fournit l'appariement, un mini-portefeuille fictif et des explications. Les [correctifs de l'audit multi-agents](../docs/correctifs_audit_multi_agents_2026-11-15.md) sont locaux, sans nouveau déploiement.
 
 **Version hébergée sur AWS : https://d29e3l5vv5fmjy.cloudfront.net** (HTTPS via CloudFront, accès limité aux IP de l'équipe ; voir [DEPLOIEMENT.md](DEPLOIEMENT.md)). Les appels utilisent Amazon Bedrock, Transcribe et Polly avec le rôle IAM du serveur.
 
@@ -149,9 +149,9 @@ Neuf suites testent le profil, le débat, les contraintes, la recherche, les deu
 
 ## Limites
 
-- Le micro exige HTTPS ou `localhost`. L'utilisateur peut écrire si la voix est indisponible.
+- Le micro exige HTTPS ou `localhost`. Les réponses ouvertes du profil sont orales ; les personas permettent une démonstration sans micro. La conversation des propositions accepte l'écrit.
 - La conversation fonctionne à l'alternat ; la reconnaissance et la détection de parole peuvent être affectées par le bruit ou une transcription imparfaite.
 - Les seuils, coûts relatifs du pilotage et hypothèses de risque demandent encore une validation sur le modèle et avec des utilisateurs. Aucune nouvelle latence réelle n'est revendiquée.
 - Les simulations ne prouvent pas le comportement avec de l'argent réel. L'historique de cinq ans et la couverture partielle des FNB limitent certaines conclusions.
 - A11, C3, D10, E3, F1, G4 et G5 restent hors parcours par choix, selon la colonne `demande` de la grille.
-- Les critères et expositions préparent le futur moteur ; aucune suggestion personnalisée ni allocation n'est produite par cette version.
+- Les propositions utilisent une heuristique et des hypothèses explicites : elles ne constituent pas une allocation optimale ni un conseil financier.

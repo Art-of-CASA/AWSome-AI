@@ -6,6 +6,7 @@ Le portefeuille est rééquilibré chaque jour aux poids cibles (hypothèse de c
 from __future__ import annotations
 
 from . import chargement as ch
+from . import contraintes as C
 from .chargement import hypotheses, nombre, vrai
 
 
@@ -100,7 +101,7 @@ def expositions(poids: dict[str, float], uni) -> dict:
         a = uni[t]
         classes[a["asset_class"]] = classes.get(a["asset_class"], 0.0) + w
         roles[a["role"]] = roles.get(a["role"], 0.0) + w
-        if a.get("fx_risk") not in ("aucun", "", None):
+        if C.expose_change(a):
             hors_cad += w
         if vrai(a.get("speculative")):
             speculatif += w
@@ -118,8 +119,12 @@ def expositions(poids: dict[str, float], uni) -> dict:
     return {"secteurs_pct": arr(secteurs), "titres_pct": arr(titres), "classes_pct": arr(classes), "roles_pct": arr(roles),
             "hors_cad_pct": round(hors_cad * 100, 1), "speculatif_pct": round(speculatif * 100, 1),
             "crypto_pct": round(crypto * 100, 1),
+            "couverture_positions_fnb_pct": {t: round(min(1.0, sum(p for cible, p in positions.get(t, {}).items()
+                                                                          if cible in uni and p > 0)) * 100, 1)
+                                             for t, w in poids.items() if w > 0 and str(uni[t]["asset_class"]).startswith("etf")},
             "limite": "À travers les FNB, seules les principales positions et la répartition sectorielle sont connues : "
-                      "ces expositions sont un minimum connu, pas un inventaire complet."}
+                      "ces expositions sont un minimum connu, pas un inventaire complet. Pour le plafond de change, "
+                      "un fonds exposé non couvert compte pour tout son poids : borne prudente, pas part exacte en devises."}
 
 
 def part_secteur(ticker: str, secteur: str, uni) -> float:

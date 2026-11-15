@@ -59,7 +59,7 @@ def _groupes_plafonnes(ctr: dict, uni, tickers: list[str]) -> list[dict]:
         groupes.append({"nom": "Secteurs de l'emploi réunis", "critere": "A12", "plafond": plaf["secteur_emploi"]["pct"] / 100,
                         "membres": {t: f for t, f in membres.items() if f > 0}})
     if plaf["hors_cad_pct"] is not None:
-        membres = {t: 1.0 for t in tickers if uni[t].get("fx_risk") not in ("aucun", "", None)}
+        membres = {t: 1.0 for t in tickers if C.expose_change(uni[t])}
         if membres:
             groupes.append({"nom": "Exposition au change", "critere": "D4", "plafond": plaf["hors_cad_pct"] / 100, "membres": membres})
     return groupes
@@ -117,7 +117,7 @@ def _choisir(resultats: dict, uni, ctr: dict, hyp: dict) -> dict:
         crois = [r for r in cands if r["role"] not in AMORTISSEURS]
         if len(amort) >= 1 and len(amort[: p["nb_amortisseurs"]]) + len(crois) >= p["nb_positions_min"]:
             break
-    cle = lambda r: (-r["score"], uni[r["ticker"]].get("fx_risk") != "aucun", abs(M.nombre(uni[r["ticker"]]["stress_loss"]) or 0), r["ticker"])  # noqa: E731
+    cle = lambda r: (-r["score"], C.expose_change(uni[r["ticker"]]), abs(M.nombre(uni[r["ticker"]]["stress_loss"]) or 0), r["ticker"])  # noqa: E731
     liquides = sorted([r for r in amort if r["role"] == "liquidites"], key=cle)[:1]
     oblig = sorted([r for r in amort if r["role"] == "obligations_amortisseur"], key=cle)
     choisis_amort = (liquides + oblig)[: p["nb_amortisseurs"]] or sorted(amort, key=cle)[: p["nb_amortisseurs"]]
@@ -269,7 +269,8 @@ def controles(poids: dict, ctr: dict, uni, hyp: dict, registre: Registre, st: di
             [registre.hypothese("plafond_secteur_pct")])
     if plaf["hors_cad_pct"] is not None:
         ctl("Part exposée au change", "D4", expo["hors_cad_pct"], plaf["hors_cad_pct"],
-            "respectee" if expo["hors_cad_pct"] <= plaf["hors_cad_pct"] + 0.05 else "en_conflit")
+            "respectee" if expo["hors_cad_pct"] <= plaf["hors_cad_pct"] + 0.05 else "en_conflit",
+            "Les fonds étrangers non couverts, même cotés CAD, comptent pour tout leur poids : borne prudente.")
     for g in ctr["plafonds_groupes"]:
         v = round(sum(w * C.part_dans_groupe(uni[t], g) for t, w in poids.items()) * 100, 1)
         ctl(g["libelle"], g["critere"], v, g["plafond_pct"], "respectee" if v <= g["plafond_pct"] + 0.05 else "en_conflit",
@@ -278,9 +279,14 @@ def controles(poids: dict, ctr: dict, uni, hyp: dict, registre: Registre, st: di
         v = round(sum(w for t, w in poids.items() if t in pl["actifs"]) * 100, 1)
         ctl(f"Part minimale demandée : {pl['libelle']}", pl["critere"], v, pl["minimum_pct"],
             "respectee" if v >= pl["minimum_pct"] - 0.05 else "en_conflit", "Minimum demandé par la personne.")
-    exclus = [t for t in poids if any(C.exclusion_s_applique(uni[t], ex) for ex in ctr["exclusions"])]
-    ctl("Aucun actif exclu dans le portefeuille", "H2", len(exclus), 0, "respectee" if not exclus else "en_conflit",
-        ("Actifs exclus présents : " + ", ".join(exclus)) if exclus else "")
+    exclus = [t for t, w in poids.items() if w > 0 and any(C.exclusion_s_applique(uni[t], ex, uni) for ex in ctr["exclusions"])]
+    couverture_limitee = any(c < 100 for c in expo["couverture_positions_fnb_pct"].values()) and \
+        any(ex.get("sous_jacents") for ex in ctr["exclusions"])
+    ctl("Aucune détention exclue connue, directement ou via les fonds", "H2", len(exclus), 0,
+        "respectee" if not exclus else "en_conflit",
+        ("Actifs ou fonds exposés exclus présents : " + ", ".join(exclus) + ". " if exclus else "") +
+        ("Positions des fonds partiellement connues : aucune garantie sur la part non couverte par les données."
+         if couverture_limitee else "Exclusions vérifiées sur les détentions et sous-jacents connus."))
     return {"lignes": lignes, "ratio_tension": round(ratio, 2), "etat_tension": _etat_tension(ratio, hyp),
             "conflits": [l["contrainte"] for l in lignes if l["etat"] == "en_conflit"],
             "a_confirmer": [l["contrainte"] for l in lignes if l["etat"] == "a_confirmer"],
@@ -350,7 +356,7 @@ def construire(ctr: dict, resultats: dict, uni, montant: float | None = None, hy
         # Les fonds de liquidités compatibles passent avant l'encaisse : ils restent investis, presque sans variation.
         liquides = sorted((r for r in resultats.values() if r["role"] == "liquidites" and r["verdict"] == "compatible"
                            and r["ticker"] not in imposes and r["ticker"] in set(M.ch.prix_cad().columns)),
-                          key=lambda r: (-(r["score"] or 0), uni[r["ticker"]].get("fx_risk") != "aucun", r["ticker"]))[:3]
+                          key=lambda r: (-(r["score"] or 0), C.expose_change(uni[r["ticker"]]), r["ticker"]))[:3]
         for k in range(100 - pas, -1, -pas):
             w = {**{t: x * k / 100 for t, x in libres.items() if x * k / 100 > 1e-6 and uni[t]["role"] != "liquidites"}, **imposes}
             for r in liquides:

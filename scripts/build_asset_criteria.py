@@ -102,12 +102,13 @@ def load():
     fx = pd.read_csv(EXT / "fx_to_cad_daily.csv", parse_dates=["date"])
     met = pd.read_csv(EXT / "asset_metrics_cad.csv")
     rat = pd.concat([pd.read_csv(EXTRA / "fundamentals_ratios.csv"), pd.read_csv(EXT / "fundamentals_ratios.csv")], ignore_index=True)
+    annual = pd.concat([pd.read_csv(EXTRA / "fundamentals_annual.csv"), pd.read_csv(EXT / "fundamentals_annual.csv")], ignore_index=True)
     esg = pd.concat([pd.read_csv(EXTRA / "esg_screens.csv"), pd.read_csv(EXT / "esg_screens.csv")], ignore_index=True)
     wiki = pd.concat([pd.read_csv(EXTRA / "attention_wikipedia.csv"), pd.read_csv(EXT / "attention_wikipedia.csv")], ignore_index=True)
     wiki["date"] = pd.to_datetime(wiki.date)
     etf = pd.concat([pd.read_csv(EXTRA / "etf_overview.csv"), pd.read_csv(EXT / "etf_overview.csv")], ignore_index=True)
     macro = pd.read_csv(STARTER / "macro_rates.csv", parse_dates=["date"])
-    return u, p, ca, fx, met, rat, esg, wiki, etf, macro
+    return u, p, ca, fx, met, rat, annual, esg, wiki, etf, macro
 
 
 def fx_series(fx, ccy):
@@ -193,21 +194,43 @@ def per_asset(u, p, ca, fx, macro, wiki):
     return pd.DataFrame(rows)
 
 
-def fundamentals_summary(rat):
+def fundamentals_summary(rat, annual):
+    """Résultats publiés, sans déduire un bénéfice du signe d'un ratio.
+
+    Un ROE positif peut cacher une perte quand les capitaux propres sont négatifs.
+    Le résultat net sert donc directement à compter les exercices rentables ;
+    ROE et dette/capitaux propres ne sont interprétables qu'avec des capitaux propres positifs.
+    """
     rat = rat.copy()
     rat["available_from"] = pd.to_datetime(rat.available_from)
-    rat = rat[rat.available_from <= ASOF]  # seulement ce qui était publié à la date d'analyse
-    # Année rentable = résultat net positif. On lit son signe dans le ROE (résultat net ÷ capitaux propres) :
-    # la marge nette est trompeuse quand le revenu publié est négatif (Manuvie sous IFRS 17). À défaut, marge nette.
-    rat["resultat_positif"] = np.where(rat.roe.notna(), rat.roe > 0, np.where(rat.net_margin.notna(), rat.net_margin > 0, np.nan))
+    rat["fiscal_year_end"] = pd.to_datetime(rat.fiscal_year_end)
+    rat = rat[rat.available_from <= ASOF].copy()  # seulement ce qui était publié à la date d'analyse
+    rat = rat.replace([np.inf, -np.inf], np.nan)
+    annual = annual.copy()
+    annual["available_from"] = pd.to_datetime(annual.available_from)
+    annual["fiscal_year_end"] = pd.to_datetime(annual.fiscal_year_end)
+    annual = annual[annual.available_from <= ASOF]
+    champs = annual[annual.field.isin(["Net Income", "Stockholders Equity"])].pivot_table(
+        index=["ticker", "fiscal_year_end"], columns="field", values="value", aggfunc="last")
+    champs = champs.reindex(columns=["Net Income", "Stockholders Equity"]).rename(
+        columns={"Net Income": "net_income", "Stockholders Equity": "equity"})
+    rat = rat.merge(champs.reset_index(), on=["ticker", "fiscal_year_end"], how="left", validate="one_to_one")
+    net = pd.to_numeric(rat.net_income, errors="coerce")
+    equity = pd.to_numeric(rat.equity, errors="coerce")
+    rat["resultat_positif"] = np.where(np.isfinite(net), net > 0, np.nan)
+    equity_valide = (equity > 0) & np.isfinite(equity)
+    rat["roe"] = (net / equity.where(equity_valide)).replace([np.inf, -np.inf], np.nan)
+    dette = pd.to_numeric(rat.debt_to_equity, errors="coerce")
+    rat["debt_to_equity"] = dette.where(equity_valide & np.isfinite(dette) & (dette >= 0))
     g = rat.sort_values("fiscal_year_end").groupby("ticker")
     out = pd.DataFrame({
         "fiscal_years": g.size(),
         "profitable_years_share": g.resultat_positif.apply(lambda s: s.dropna().astype(float).mean() if s.notna().any() else np.nan),
         "revenue_growth_avg": g.revenue_growth.apply(lambda s: s.dropna().mean() if s.notna().any() else np.nan),
-        "debt_to_equity_last": g.debt_to_equity.last(),
+        # Ne pas remplacer le dernier exercice non interprétable par un ancien ratio positif.
+        "debt_to_equity_last": g.debt_to_equity.agg(lambda s: s.iloc[-1]),
         "interest_coverage_last": g.interest_coverage.last(),
-        "roe_last": g.roe.last(),
+        "roe_last": g.roe.agg(lambda s: s.iloc[-1]),
         "fcf_margin_last": g.fcf_margin.last(),
         "dividends_to_fcf_last": g.dividends_to_fcf.last(),
         "industrial_ratios_meaningful": g.industrial_ratios_meaningful.last(),
@@ -236,8 +259,8 @@ def classify(df):
     # volume en bourse. Hypothèse : élevée pour les FNB indiciels de grands émetteurs de l'univers.
     df.loc[df.asset_class.str.startswith("etf"), "liquidity_level"] = "elevee"
     df["high_unit_price"] = df.unit_price_cad > c["prix_unitaire_eleve_cad"]
-    df["fx_risk"] = np.where(df.currency == "CAD", "aucun",
-                             np.where(df.fx_vol_contribution.abs() >= c["change_contribution_notable"], "notable", "present"))
+    devises = [classe_devise(t, a, devise) for t, a, devise in zip(df.ticker, df.asset_class, df.currency)]
+    df["fx_risk"] = [risque_change(mot, contribution) for mot, contribution in zip(devises, df.fx_vol_contribution)]
     df["rate_sensitivity"] = np.select(
         [df.rate_sensitivity_pct_per_pt <= -c["sensibilite_taux_notable_pct_par_point"],
          df.rate_sensitivity_pct_per_pt >= c["sensibilite_taux_notable_pct_par_point"]], ["baisse_si_taux_montent", "hausse_si_taux_montent"], "faible")
@@ -374,6 +397,49 @@ def classe_frais(ratio: float) -> str:
     return _tranche(ratio, [*bornes, float("inf")], noms)
 
 
+def classe_devise(ticker: str, asset_class: str, currency: str) -> str:
+    """Exposition connue : cotation CAD et couverture vers CAD sont des notions distinctes.
+
+    BNDW couvre ses actifs vers USD : le change USD/CAD reste présent pour l'investisseur canadien.
+    Aucun poids étranger exact n'est déduit de ces catégories.
+    """
+    if asset_class == "crypto":
+        return "sans_devise_souveraine"
+    if ticker == "XEQT.TO":
+        return "cad_actifs_etrangers_non_couverts"
+    if ticker == "BNDW":
+        return "usd_couvert"
+    if ticker in ("VT", "VEA", "VWO", "ICLN"):
+        return "multidevise_non_couvert"
+    return "cad" if currency == "CAD" else "usd" if currency == "USD" else "autre_devise"
+
+
+def risque_change(mot_devise: str, contribution: float) -> str:
+    """Présence du change ; une faible contribution historique n'en prouve pas l'absence."""
+    if mot_devise in ("cad", "cad_couvert"):
+        return "aucun"
+    return ("notable" if pd.notna(contribution) and abs(contribution) >= CFG["change_contribution_notable"]
+            else "present")
+
+
+def sante_financiere(r) -> str:
+    """Étiquettes financières à partir de ratios interprétables et de bénéfices observés."""
+    if r.asset_class != "equity":
+        return "non_applicable"
+    if r.industrial_ratios_meaningful is not True:
+        return "banque_ou_assureur_ratios_specifiques"
+    t = []
+    if np.isfinite(r.debt_to_equity_last) and 0 <= r.debt_to_equity_last < 0.5:
+        t.append("faible_endettement")
+    if np.isfinite(r.roe_last) and r.roe_last > 0.15:
+        t.append("rentabilite_elevee_roe")
+    if pd.notna(r.fcf_margin_last) and r.fcf_margin_last > 0: t.append("flux_tresorerie_positifs")
+    if pd.notna(r.interest_coverage_last) and r.interest_coverage_last > 8: t.append("couverture_interets_elevee")
+    if r.profitable_years_share == 1: t.append("resultats_stables")
+    if pd.notna(r.profitable_years_share) and r.profitable_years_share < 0.5: t.append("pertes_recurrentes")
+    return ";".join(t) or "aucun_signal_positif"
+
+
 def sensibilite_macro(r) -> str:
     tags = []
     if r.rate_sensitivity == "baisse_si_taux_montent":
@@ -424,20 +490,7 @@ def mots_cles(df, caps: pd.Series, top10: pd.Series, n_top: pd.Series) -> pd.Dat
     df["market_cap_usd"] = cap
     df["kw_capitalisation"] = [(_tranche(c / 1e9, [0.3, 2, 10, 1e12], ["micro", "petite", "moyenne", "grande"]) if e else "non_applicable")
                                for c, e in zip(cap, eq)]
-    def sante(r):
-        if not (r.asset_class == "equity"):
-            return "non_applicable"
-        if r.industrial_ratios_meaningful is not True:
-            return "banque_ou_assureur_ratios_specifiques"
-        t = []
-        if pd.notna(r.debt_to_equity_last) and r.debt_to_equity_last < 0.5: t.append("faible_endettement")
-        if pd.notna(r.roe_last) and r.roe_last > 0.15: t.append("rentabilite_elevee_roe")
-        if pd.notna(r.fcf_margin_last) and r.fcf_margin_last > 0: t.append("flux_tresorerie_positifs")
-        if pd.notna(r.interest_coverage_last) and r.interest_coverage_last > 8: t.append("couverture_interets_elevee")
-        if r.profitable_years_share == 1: t.append("resultats_stables")
-        if pd.notna(r.profitable_years_share) and r.profitable_years_share < 0.5: t.append("pertes_recurrentes")
-        return ";".join(t) or "aucun_signal_positif"
-    df["kw_sante_financiere"] = df.apply(sante, axis=1)
+    df["kw_sante_financiere"] = df.apply(sante_financiere, axis=1)
     df["kw_croissance_resultats"] = [("non_applicable" if not e else "non_comparable" if pd.isna(g) else
                                       "forte_plus_15" if g >= 0.15 else "moderee" if g >= 0.03 else "stable" if g >= -0.03 else "en_declin")
                                      for g, e in zip(df.revenue_growth_avg, eq)]
@@ -475,10 +528,7 @@ def mots_cles(df, caps: pd.Series, top10: pd.Series, n_top: pd.Series) -> pd.Dat
                             else "marche_emergent" if c in ("Inde", "Afrique du Sud", "Taïwan", "Corée du Sud", "Brésil", "Mexique", "Arabie saoudite")
                             else "pays_developpe" if a != "crypto" else "sans_pays"
                             for c, t, a in zip(df.country, df.ticker, df.asset_class)]
-    df["kw_devise"] = [("sans_devise_souveraine" if a == "crypto" else "cad_actifs_etrangers_non_couverts" if t == "XEQT.TO"
-                        else "usd_couvert" if t == "BNDW" else "multidevise_non_couvert" if t in ("VT", "VEA", "VWO", "ICLN")
-                        else "cad" if c == "CAD" else "usd" if c == "USD" else "autre_devise")
-                       for a, t, c in zip(df.asset_class, df.ticker, df.currency)]
+    df["kw_devise"] = [classe_devise(t, a, devise) for t, a, devise in zip(df.ticker, df.asset_class, df.currency)]
     df["kw_fiscalite"] = [("revenu_interets" if a == "etf_bond" else "gains_en_capital_seulement" if y == 0
                            else "distributions_canadiennes" if t == "BEP-UN.TO"  # société en commandite : pas des dividendes admissibles
                            else "dividendes_canadiens_admissibles" if (m == "TSX" and a == "equity") else
@@ -495,7 +545,7 @@ def mots_cles(df, caps: pd.Series, top10: pd.Series, n_top: pd.Series) -> pd.Dat
 
 
 if __name__ == "__main__":
-    u, p, ca, fx, met, rat, esg, wiki, etf, macro = load()
+    u, p, ca, fx, met, rat, annual, esg, wiki, etf, macro = load()
     base = met.merge(u[["ticker", "market", "country"]], on="ticker", how="left")
     # Jeu de départ : pas de colonne pays. On la déduit de la place de cotation (Canada ou États-Unis).
     depart = base.country.isna()
@@ -503,7 +553,7 @@ if __name__ == "__main__":
     base.loc[depart & base.asset_class.str.startswith("etf"), "country"] = base.market.map(PAYS_PAR_MARCHE).fillna("États-Unis") + " (fonds)"
     base["country"] = base.country.fillna(base.region)
     df = base.merge(per_asset(u, p, ca, fx, macro, wiki), on="ticker") \
-             .merge(fundamentals_summary(rat), on="ticker", how="left") \
+             .merge(fundamentals_summary(rat, annual), on="ticker", how="left") \
              .merge(esg[["ticker", "fossil_involvement", "in_jantzi_social_index", "controversies", "max_severity", "controversy_topics"]], on="ticker", how="left") \
              .merge(etf[["ticker", "ops_Annual Report Expense Ratio"]].rename(columns={"ops_Annual Report Expense Ratio": "etf_expense_ratio"}), on="ticker", how="left")
     df = classify(df)

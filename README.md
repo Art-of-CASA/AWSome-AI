@@ -31,7 +31,7 @@ Une fois le profil terminé, la synthèse ouvre « Découvrir mes propositions �
 | Et si… ? | Une réponse essayée autrement, tout recalculé, ce qui change et pourquoi ; test de sensibilité |
 | Comprendre | Ce que le profil écarte, les limites, les hypothèses ; « Détails techniques » pour les outils appelés et le journal |
 
-Le code calcule verdicts, scores et poids. Deux agents à outils (Conseiller, Explicateur, Claude Sonnet 5.5 sur Amazon Bedrock) orchestrent et expliquent ; un vérificateur rejette tout texte dont un chiffre n'existe pas dans une sortie d'outil. Sans accès à Bedrock, tout fonctionne avec des textes de gabarit : verdicts et chiffres identiques.
+Le code calcule verdicts, scores et poids. Deux agents à outils (Conseiller, Explicateur, Claude Sonnet 5.5 sur Amazon Bedrock) comprennent les demandes, choisissent les outils et sélectionnent des explications préparées depuis les résultats. Le code impose les verdicts et avertissements dans le texte affiché ; une prose libre du modèle ne peut pas les remplacer. Sans accès à Bedrock, les gabarits conservent les mêmes verdicts et chiffres. Les [correctifs issus de l'audit multi-agents](docs/correctifs_audit_multi_agents_2026-11-15.md) sont locaux et n'ont pas été déployés.
 
 Après un changement de `data_extended/asset_criteria.csv`, des prix ou de `config/`, régénérer les données lues par le site :
 
@@ -66,7 +66,7 @@ Le cas demande un outil qui aide trois profils fictifs à prendre une décision 
 1. **On pose les questions restantes par ordre d'utilité**, selon leurs prérequis de sécurité et leur impact sur le profil (conversation exclusivement orale, QCM, curseurs, quiz, mises en situation). Le tri ne supprime aucune information nécessaire.
 2. **L'IA classe les réponses dans une liste fermée de mots-clés** par critère (exemple : horizon = `moins_3_ans`, `3_5_ans`, `5_10_ans`, `10_15_ans` ou `plus_15_ans`). Les réponses fermées donnent toujours la même valeur. Pour les réponses libres, `mvp_profil/evaluer_classement.py` compare les valeurs et statuts effectifs sur un jeu de **51 phrases / 88 couples phrase–critère**, avec erreurs des réponses validées et retenables distinguées. **La mesure avec le vrai modèle reste à lancer.**
 3. **Chaque actif est classé sous les mêmes mots-clés**, cette fois par du code, à partir de données datées : volatilité, perte maximale, récupération, exclusions ESG, risque pays, devise, attention médiatique…
-4. **Les règles d'appariement sont préparées** pour comparer les deux côtés et expliquer les exclusions, plafonds et tensions. Leur exécution et la construction d'un résultat personnalisé ne sont pas encore implémentées.
+4. **Les règles d'appariement s'exécutent** pour comparer les deux côtés, expliquer les exclusions, plafonds et tensions, et construire un mini-portefeuille fictif personnalisé à l'étape 4.
 
 Les principes qui en découlent, à respecter partout :
 
@@ -277,6 +277,8 @@ py -m venv .venv
 ```
 
 En local, il faut des identifiants AWS temporaires (variables `AWS_*` ou `~/.aws`), ou une clé Anthropic dans la barre latérale. Les tests sont hors ligne, sans coût : un faux serveur remplace l'API, et le vrai SDK construit les requêtes.
+
+Les deux fichiers de dépendances utilisent `mvp_profil/constraints.txt`, qui fige les versions testées avec Python 3.13. Le paquet inclut ces contraintes ; ne pas remplacer les versions sans relancer les tests.
 
 ```bash
 .venv/Scripts/python scripts/lancer_tests.py --lister

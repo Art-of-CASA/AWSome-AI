@@ -6,7 +6,7 @@ Datathon PolyFinances 2026, défi AlphaForge AI (Banque Nationale, AWS). Version
 
 ## 1. La question traitée
 
-> Quels actifs et quel mini-portefeuille fictif sont cohérents avec ce qu'une personne peut, veut et supporte réellement de perdre, et pourquoi ?
+> Quels actifs et quel mini-portefeuille fictif sont cohérents avec la capacité, les préférences et le comportement observé d'une personne dans nos simulations, et pourquoi ?
 
 L'angle propre au projet est l'écart entre le **déclaré** et le **vécu**. Le profil ne retient pas seulement ce que la personne dit accepter : il mesure aussi ce qu'elle fait dans trois mises en situation (replay de 2022, fourchettes de résultats, effet de mode). En cas d'écart, la valeur la plus prudente l'emporte.
 
@@ -35,7 +35,7 @@ Les résultats sont **traçables** : chaque conclusion renvoie à une donnée da
 
 Le site est une seule application Streamlit : la recommandation est la quatrième étape du parcours, ouverte depuis la synthèse du profil. Tout son code vit dans `mvp_profil/recommandation/`, parce que le paquet déployé ne contient que `mvp_profil/`. Les données qu'elle lit (univers, prix en CAD, positions des FNB, copies de `config/`) sont préparées dans `mvp_profil/recommandation/donnees/` par `python scripts/build_donnees_recommandation.py` ; un test échoue si elles ne suivent plus leurs sources.
 
-Principe tenu partout : **le code décide ; les modèles classent, orchestrent, expliquent et refusent.** Aucun modèle ne produit un verdict, un score, un poids ou un chiffre.
+Principe tenu partout : **le code décide ; les modèles classent, orchestrent et sélectionnent les explications.** Aucun modèle ne produit un verdict, un score, un poids ou un chiffre affiché. Depuis les correctifs de l'audit multi-agents, les phrases financières finales sont assemblées par le code ; le modèle ne peut sélectionner que des détails identifiés dans un catalogue fermé.
 
 ## 3. Méthodes et justification
 
@@ -49,6 +49,10 @@ Le profil est lu tel quel ; rien n'y est écrit. La synthèse existante (`mvp_pr
 | Plafonds | Par titre, crypto, spéculatif, secteur, secteur de l'emploi, change, fonds exposés, complexité, critère personnel « plafonner » | D9, D2, D12, A12, D4, E1, F2, C1, X* |
 | Budget de risque | Budget de perte, volatilité maximale, durée sous l'eau maximale, part de croissance indicative | Synthèse du profil |
 | Préférences pondérées | Thèmes, régions, style, revenu, forme, exigence ESG, diversification, critère personnel « privilégier » | D5, D3, D7, A10, D11, E4, D10, X* |
+
+Les refus E2 (controverses) et E5 (activités) s'appliquent aussi aux sous-jacents connus des FNB. Un fonds détenant une entreprise exclue est écarté avec la preuve de sa position et de son motif d'exclusion. La couverture partielle reste affichée : aucune garantie n'est donnée sur les positions inconnues. Les restrictions de classe ou d'accès aux marchés ne sont pas propagées aux titres des fonds.
+
+La devise de cotation ne mesure pas le change économique : XEQT, coté CAD mais non couvert sur ses actifs étrangers, reste exposé. Sans ventilation complète, tout le poids d'un fonds exposé compte dans le plafond de change ; c'est une borne prudente, pas une estimation de sa fraction exacte en devises.
 
 **États d'un critère.** Le profil utilise les statuts `validé`, `retenu`, `incertain`, `à préciser`, `analyse en cours`. La couche de recommandation les traduit ainsi :
 
@@ -128,7 +132,7 @@ La personne écrit ou dit ce qu'elle aimerait ajouter. Le partage des rôles ne 
 | Décider | Code | Ajout appliqué, part réduite proposée, ou refus |
 | Proposer | Code | Alternatives compatibles : fonds qui détient le titre, même thème, même secteur |
 | Revoir le profil | Code, après accord explicite | Les réponses déclarées à revoir sont nommées ; rien n'est appliqué sans « oui » |
-| Rédiger | Modèle, sous contrôle | Deux à quatre phrases ; un chiffre sans origine ou une prédiction fait basculer sur le texte du code |
+| Expliquer | Code + sélection du modèle | Les verdicts et confirmations sont imposés par le code ; le modèle choisit seulement des détails autorisés, sans prose financière libre |
 
 Trois garde-fous propres à la conversation :
 
@@ -162,13 +166,13 @@ Le moteur relit l'univers à chaque démarrage (`donnees/actifs.csv`, copie de `
 
 Deux agents à modèle seulement pour la recommandation. Le détecteur et le vérificateur sont du code et présentés comme tels.
 
-**Points de contrôle d'un texte de modèle**, dans l'ordre :
+**Points de contrôle de la restitution**, dans l'ordre :
 
-1. **Fidélité.** Tous les nombres du texte sont extraits et comparés aux nombres présents dans les sorties d'outils de l'échange, à la précision où ils sont écrits. Un nombre sans origine fait rejeter le texte.
-2. **Gouvernance.** Formulations de conseil, de promesse ou de prédiction refusées.
+1. **Contrat fermé.** Le modèle renvoie uniquement des identifiants de détails présents dans le catalogue courant. Le code conserve tous les verdicts, limites, avertissements et confirmations, même si aucun détail facultatif n'est sélectionné. Tout champ libre, identifiant inconnu ou doublon invalide la sortie. Les actions conversationnelles sont restituées intégralement par le code.
+2. **Fidélité et gouvernance.** Les nombres affichés sont comparés aux sorties d'outils ; des regex détectent des formulations interdites connues. Ces regex restent un filet partiel, pas un vérificateur sémantique général.
 3. **Guardrail Bedrock**, s'il est activé.
 
-Un texte rejeté est redemandé une fois, puis remplacé par un texte de gabarit écrit par le code à partir des seules sorties d'outils. La mention « simulation » est ajoutée par le code.
+Une sortie rejetée est redemandée une fois, puis le code utilise son gabarit à partir des seules sorties d'outils. La mention « simulation » est ajoutée par le code. La trace distingue rédaction par le code et sélection par le modèle ; aucune prose libre du modèle ne remplace les résultats financiers.
 
 **Explications fidèles aux actions observables.** L'affichage courant est sobre : phrases en clair et sources (donnée, valeur, date, origine). Le réglage « Détails techniques » montre, pour qui veut vérifier, les outils appelés, leurs entrées et sorties, le contrôle de chaque texte et le journal des actions. Le raisonnement interne du modèle n'est ni affiché ni journalisé.
 
@@ -190,7 +194,7 @@ Robert (59 ans, risque faible à modéré, 3 à 5 ans) demande 20 % de NVIDIA da
 |---|---|---|
 | Part demandée de 20 % au-dessus du plafond par titre de 5 % | `profil:D9` | Réponse du profil (simulée pour le persona) |
 | Placements spéculatifs : 20 % pour une limite de 5 % | `profil:D12`, `actif:NVDA:speculative` | Profil ; volatilité de 51,0 % (≥ 45 %) |
-| À 20 %, perte de stress de 6,0 % à 18,8 %, budget de 15 % ; à 5 %, de 6,0 % à 8,6 % | `calcul:demande:perte_stress_apres` | Prix en CAD, 2021-11-15 au 2026-11-12 |
+| À 20 %, perte de stress de 5,3 % à 18,4 %, budget de 15 % ; à 5 %, de 5,3 % à 8,4 % | `calcul:demande:perte_stress_apres` | Prix en CAD, 2021-11-15 au 2026-11-12 |
 | Actif très médiatisé face à un profil de niveau 2 | `actif:NVDA:kw_attention`, `profil:D8` | Pages vues Wikipédia ; réponse du profil |
 | Part maximale compatible : 5 % | `hypothese:tension`, `profil:D9` | Seuils écrits |
 
@@ -212,6 +216,8 @@ Robert (59 ans, risque faible à modéré, 3 à 5 ans) demande 20 % de NVIDIA da
 Chaque colonne d'actif est reliée à son fichier, sa source, sa date et ses conditions dans `config/sources_colonnes.json` ; c'est ce que le registre de preuves affiche.
 
 **Traitements.** Tout est converti en CAD. Corrections documentées dans les `README` de données : sous-unités (pence, cents sud-africains), deux jours à prix cent fois trop petits, faux fractionnements. Aucun remplissage de données manquantes au-delà de cinq jours ouvrables pour aligner les calendriers.
+
+Les exercices rentables sont comptés à partir de `Net Income`, jamais du signe du ROE. Lorsque les capitaux propres sont non positifs ou inconnus, ROE et dette/capitaux propres deviennent non interprétables ; un ancien ratio valide n'est pas repris silencieusement à leur place. Les versions des dépendances testées sont fixées dans `mvp_profil/constraints.txt`.
 
 **Cohérence temporelle.** La recommandation décrit l'univers à la date des données ; elle ne rejoue aucune décision passée, donc n'utilise aucune information « du futur ». Pour une simulation historique, la règle retenue par l'équipe est : publication = fin d'exercice + 90 jours.
 
@@ -244,7 +250,7 @@ python scripts/lancer_tests.py
 
 Le lanceur découvre aussi les cinq suites de recommandation ; l'intégration continue les exécute avant chaque déploiement.
 
-**Vérifié en réel sur Amazon Bedrock le 15 novembre 2026** : Sonnet 5.5 appelle les outils, reçoit leurs résultats et rédige ; il refuse de prédire un cours et de dire d'acheter, sans inventer de chiffre ni d'identifiant de preuve. Avec les outils de la conversation, il choisit le bon sur six messages types (ajout avec part, envie, retrait, confirmation, pression « ignore mes limites », question hors sujet) ; un tour complet prend environ 3 secondes. Le Guardrail bloque un texte de conseil et laisse passer une explication fidèle.
+**Vérifications historiques sur Amazon Bedrock le 15 novembre 2026, antérieures au nouveau contrat de restitution** : les notes précédentes documentent des appels d'outils, six messages types et des essais du Guardrail. Ces résultats et délais ne valident pas le nouveau contrat fermé. Celui-ci est vérifié localement avec des modèles simulés ; il reste à mesurer sur les vrais modèles et le serveur.
 
 **Non vérifié** : le parcours complet avec le modèle réel depuis le serveur déployé (les agents n'ont tourné dans l'application qu'avec un modèle simulé) ; la fiabilité du classement des réponses libres (mesure prête, non lancée) ; l'exactitude des liens de controverses.
 
@@ -293,8 +299,8 @@ Le lanceur découvre aussi les cinq suites de recommandation ; l'intégration co
 - **FNB.** Seules les dix premières positions et la répartition sectorielle sont connues.
 - **Exclusions et controverses.** Saisies à la main, non exhaustives : « aucune trouvée » ne veut pas dire « aucune ».
 - **Régions.** L'Amérique latine et le Moyen-Orient n'existent pas dans le critère D3 du profil.
-- **Vérificateur de fidélité.** Il garantit l'origine des chiffres, pas le sens des phrases.
-- **Guardrail.** Il bloque aussi certains refus de prédiction ; il est donc désactivé par défaut, et le contrôle équivalent du code reste actif.
+- **Vérificateur de fidélité.** Son contrôle numérique ne juge pas le sens des phrases. La restitution financière utilise donc des fragments rédigés par le code et des verdicts obligatoires ; la qualité des règles et données doit encore être validée.
+- **Guardrail.** Il bloque aussi certains refus de prédiction et reste désactivé par défaut. Les regex du code ne lui sont pas équivalentes ; le contrat fermé empêche la substitution d'une prose financière libre.
 - **Modèle des agents.** Les deux agents passent par Amazon Bedrock ; avec une clé Anthropic seule (réglage local du profil), les textes viennent des gabarits.
 - **Résidence des données.** Région `us-east-1` et profil d'inférence américain.
 
