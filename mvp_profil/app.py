@@ -61,6 +61,7 @@ from reponses_directes import analyser_reponses
 from version_profil import version_courante
 from taches import ExecuteurBorne, expiree, suivre_tache
 from hypotheses import afficher_hypotheses
+from recommandation import ecrans as propositions
 
 LOG = logging.getLogger(__name__)
 
@@ -1124,8 +1125,25 @@ def afficher_synthese():
                                        for v in rb["variations_sensibles"]]), hide_index=True, width="stretch")
         st.caption(rb["limites"])
 
+def ouvrir_propositions():
+    S.phase = "recommandation"
+    st.rerun()
+
+
+def revenir_synthese():
+    S.phase = "termine"
+    st.rerun()
+
+
 def page_termine():
     integrer_recherches()
+    # Étape 4 : les propositions (recommandation/) lisent ce profil sans le modifier.
+    with st.container(border=True, key="vers_propositions"):
+        g, d = st.columns([3, 1.2], vertical_alignment="center")
+        g.markdown("**Et maintenant ?** Découvrez un mini-portefeuille fictif, le verdict de chaque actif pour votre profil, "
+                   "et les preuves qui les soutiennent.")
+        if d.button("Découvrir mes propositions", type="primary", width="stretch", key="ouvrir_propositions"):
+            ouvrir_propositions()
     synthese, hypotheses = st.tabs(["Synthèse", "Hypothèses du profil"])
     with synthese:
         synthese_existante()
@@ -1168,11 +1186,17 @@ if S.phase == "conversation" and S.conv and "versions_reponses" not in S.conv:
     S.sections = sections_apres_conversation([cid for cid in CRITERES_CONVERSATION if not connu(S.profil, cid)])
     S.section, S.phase = 0, "questionnaire"
     st.info("Le parcours a été mis à jour. Vos réponses sont conservées ; les informations reconnues ne seront pas redemandées.")
-if not pret and S.phase not in ("accueil", "termine") and not S.get("demo_replay"):
+if not pret and S.phase not in ("accueil", "termine", "recommandation") and not S.get("demo_replay"):
     st.warning("L’accès au modèle est indisponible. Vérifiez « Connexion et réglages » dans la barre latérale.")
 
 if S.en_cours:
     recuperer_analyses(attendre=False)
+
+if S.phase == "recommandation":
+    # Écrans en pleine largeur. Le composant vocal n'est pas monté ici : il est en veille dès la synthèse.
+    propositions.afficher(retour=revenir_synthese)
+    interface.note_simulation()
+    st.stop()
 
 with st.container(key="page_layout"):
     col, col_profil = st.columns([3.2, 1.1], gap="large")

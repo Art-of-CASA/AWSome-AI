@@ -13,6 +13,16 @@ FICHIERS = (
     "composant_replay/index.html", "composant_replay/replay.js", "requirements.txt", "hypotheses_profil.json",
     "scenarios.json", "vocabulaire_actifs.json", "donnees_chercheur.json",
     "personas/amira.json", "personas/mateo.json", "personas/robert.json",
+    # Propositions (étape 4) : moteur, agents, écrans et données préparées par scripts/build_donnees_recommandation.py
+    "recommandation/__init__.py", "recommandation/chargement.py", "recommandation/contraintes.py",
+    "recommandation/appariement.py", "recommandation/mesures.py", "recommandation/portefeuille.py",
+    "recommandation/analyse.py", "recommandation/preuves.py", "recommandation/fidelite.py",
+    "recommandation/gouvernance.py", "recommandation/incoherence.py", "recommandation/traces.py",
+    "recommandation/outils.py", "recommandation/gabarits.py", "recommandation/agents.py", "recommandation/ecrans.py",
+    "recommandation/donnees/actifs.csv", "recommandation/donnees/prix_cad.csv", "recommandation/donnees/fnb.json",
+    "recommandation/donnees/correspondances.json", "recommandation/donnees/hypotheses_recommandation.json",
+    "recommandation/donnees/regles_appariement.json", "recommandation/donnees/sources_colonnes.json",
+    "recommandation/donnees/origine.json",
 )
 
 

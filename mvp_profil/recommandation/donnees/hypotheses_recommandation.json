@@ -1,0 +1,81 @@
+{
+ "_note": "HYPOTHÈSES de l'équipe pour la partie recommandation (dossier recommandation/). Aucune n'est une norme publiée. Chacune est modifiable ici et entre dans le test de sensibilité (recommandation/et_si.py). Simulation éducative : aucun conseil financier.",
+
+ "bandes_score": {"compatible": 70, "a_examiner": 50},
+ "_bandes_score": "70 et plus : compatible. 50 à 69 : à examiner. Moins de 50 : peu adapté. Une exclusion dure donne « exclu », quel que soit le score.",
+
+ "bornes_score": {"en_tension": 49, "a_surveiller": 69},
+ "_bornes_score": "Une préférence ne compense jamais une tension : si un critère de calibrage ou un plafond est en tension, le score est borné à 49 ; s'il est à surveiller, à 69.",
+
+ "ponderation": {"CALIBRAGE": 3, "PLAFOND": 2, "PREFERENCE": 1},
+ "_ponderation": "Poids de base d'un critère dans le score, selon son type. Hypothèse d'équipe : la grille ne contient aucune pondération.",
+
+ "multiplicateurs_personne": {
+  "E4": {"non_requis": 0.0, "prefere": 1.0, "exige": 2.0, "meilleurs_categorie": 1.5},
+  "A10": {"non": 0.0, "souhaite": 1.0, "essentiel": 2.0},
+  "statut_retenu": 0.5
+ },
+ "_multiplicateurs_personne": "Pondération propre à la personne, tirée de ses réponses : exigence ESG (E4) pour les critères ESG, besoin de revenu (A10) pour le critère de revenu. Une réponse « retenue » (confiance réduite) pèse moitié moins.",
+
+ "notes": {"coherent": 1.0, "a_surveiller": 0.5, "en_tension": 0.0, "preference_satisfaite": 1.0, "preference_neutre": 0.5, "preference_contraire": 0.0},
+
+ "couverture_min_pct": 60,
+ "_couverture_min": "Part minimale des critères évalués pour donner un score. En dessous : « données insuffisantes ».",
+
+ "poids_max_plancher_pct": 2,
+ "_poids_max_plancher": "Si le poids maximal compatible d'un actif tombe sous ce plancher, l'actif est en tension pour ce profil.",
+
+ "poids_reference_pct": 20,
+ "_poids_reference": "Un actif dont le poids maximal compatible atteint ce niveau (ou le plafond par titre) est jugé cohérent sur le risque.",
+
+ "tension": {"coherent_max": 0.8, "a_surveiller_max": 1.0},
+ "_tension": "Tension = perte de stress du portefeuille ÷ budget de perte. Seuils repris de la grille (critère B1).",
+
+ "horizon_annees_max": {"moins_3_ans": 3, "3_5_ans": 5, "5_10_ans": 10, "10_15_ans": 15, "plus_15_ans": 99},
+
+ "complexite_max_par_C1": {"debutant": 1, "intermediaire": 3, "avance": 3},
+ "_complexite": "Grille C1 : complexité de l'actif <= score du quiz + 1. Le quiz classe 0 ou 1 bonne réponse en débutant, 2 en intermédiaire, 3 en avancé : sans le score exact, débutant donne 1 (le plus prudent), intermédiaire et avancé donnent 3. Si le score figure dans le profil, il est utilisé.",
+
+ "plafond_secteur_pct": 40,
+ "plafond_secteur_emploi_pct": 25,
+ "_plafonds_secteur": "Exemple chiffré de la grille (A12) : 25 % au lieu de 40 % sur le secteur où la personne travaille.",
+
+ "plafond_par_fonds_pct": 40,
+ "_plafond_par_fonds": "Poids maximal d'un seul fonds diversifié, pour éviter un portefeuille à une ligne.",
+
+ "plafond_hors_cad_pct": {"cad_seulement": 10, "limite": 40, "accepte": null},
+ "plafond_groupe_expose_pct": 10,
+ "_plafond_groupe_expose": "Plafond total des actifs qu'une règle demande de « plafonner » sans donner de chiffre (E1 limiter, fonds exposés au fossile, marchés émergents partiels, FNB qui détiennent un titre exclu).",
+
+ "niveau_max_avertissement_mode": 3,
+ "_avertissement_mode": "Grille D8 : profil de niveau 3 ou moins + actif spéculatif ou très médiatisé = avertissement, sans acquiescer.",
+
+ "portefeuille": {
+  "seuil_entree": 80,
+  "seuil_entree_paliers": [80, 75, 70],
+  "nb_positions_max": 12,
+  "nb_positions_min": 5,
+  "nb_amortisseurs": 3,
+  "max_titres_par_secteur": 2,
+  "max_titres_secteur_emploi": 2,
+  "multiplicateur_coeur": 3.0,
+  "pas_part_croissance_pct": 5,
+  "duree_sous_eau_par_defaut_bloquante": false
+ },
+ "_portefeuille": "Entrée : score >= 80, descente par paliers jusqu'à 70 s'il y a trop peu de candidats. 12 positions au plus, pour la lisibilité. Un FNB de rôle « coeur » pèse 3 fois un titre avant plafonds. Une durée sous l'eau issue d'un réglage par défaut (question non posée) est signalée mais ne bloque pas la construction.",
+
+ "stress": {
+  "choc_taux_points": 2.0,
+  "krach_actions_pct": -45,
+  "krach_obligations_pct": 0,
+  "krach_or_pct": 0,
+  "krach_crypto_pct": -75
+ },
+ "_stress": "Perte de stress = la pire de : perte maximale historique du portefeuille (2021-2026), perte de 2022, choc de taux (+2 points, appliqué aux FNB obligataires par leur sensibilité mesurée). Le krach des actions (-45 %, ordre de grandeur d'une crise majeure) est un SCÉNARIO FICTIF affiché en sensibilité seulement.",
+
+ "montant_fictif_defaut_cad": 10000,
+ "montant_par_G1_cad": {"moins_5000": 2500, "5000_25000": 15000, "25000_100000": 50000, "plus_100000": 150000},
+ "_montant": "Montant fictif pour exprimer la tension en dollars. Si la personne a indiqué une tranche de montant (G1), un montant repère de la tranche est proposé ; sinon 10 000 $. Toujours modifiable à l'écran.",
+
+ "recherche_score_min_suggestion": 0.6
+}

@@ -1,6 +1,6 @@
 # AlphaForge AI : outil de décision d'investissement explicable (Datathon PolyFinances 2026)
 
-Prototype du cas « AlphaForge AI » (Banque Nationale, AWS) : un outil **agentique et explicable** qui établit le profil d'un investisseur par une conversation et prépare sa comparaison à des actifs décrits par des données publiques datées. Le moteur d'appariement et les suggestions personnalisées restent à construire. **Simulation éducative uniquement** : aucun conseil financier personnalisé, aucune transaction réelle.
+Prototype du cas « AlphaForge AI » (Banque Nationale, AWS) : un outil **agentique et explicable** qui établit le profil d'un investisseur par une conversation, le compare à des actifs décrits par des données publiques datées, et en tire un verdict par actif, un mini-portefeuille fictif et des explications traçables. **Simulation éducative uniquement** : aucun conseil financier personnalisé, aucune transaction réelle.
 
 **Refonte de l'interface du 15 novembre 2026, locale.** Le parcours présente les questions dans des cartes avec des explications courtes, une progression visible et un résumé lisible du profil. Le replay de marché défile en continu : aucune décision n'est imposée et l'utilisateur peut intervenir au moment de son choix. La voix conserve son composant unique et les règles de calcul restent déterministes. Voir [les changements de présentation et de replay](docs/refonte_interface_2026-11-15.md). Cette refonte n'a pas été publiée sur AWS.
 
@@ -15,6 +15,38 @@ Ce document explique toute la démarche : le but, les principes, les données, l
 Voir [le diagnostic et les mesures de fiabilité](docs/fiabilite_questions.md) et [la comparaison aux questionnaires existants](docs/recherche_questionnaires.md). Les tests de règles et d'interface ne mesurent pas la fiabilité du vrai modèle ou de Transcribe ; aucun pourcentage d'exactitude réelle n'est annoncé sans observations annotées.
 
 **Historique : une version précédente a été publiée sur le site partagé le 15 novembre 2026.** Les corrections actuelles de la revue sont locales ; leur état est décrit dans [docs/corrections_revue_2026-11-15.md](docs/corrections_revue_2026-11-15.md). La version affichée par le serveur reste à comparer au manifeste installé. Le parcours et ses garanties sont détaillés dans [docs/infrastructure_profil.md](docs/infrastructure_profil.md). Aucun nouveau résultat réel Bedrock ni gain de durée avec des utilisateurs n'a été mesuré pour cette évolution.
+
+---
+
+## En bref : les propositions (étape 4 du site)
+
+Une fois le profil terminé, la synthèse ouvre « Découvrir mes propositions ». Le dossier [mvp_profil/recommandation/](mvp_profil/recommandation/) lit le profil **sans le modifier** et produit, pour CET utilisateur :
+
+| Écran | Ce qu'il montre |
+|---|---|
+| Mini-portefeuille | Portefeuille fictif, perte de stress, tension en % et en dollars, preuve de chaque contrainte |
+| Recherche d'actif | Score 0-100, seuil, pourquoi c'est adapté ou moins adapté ; « absent de l'univers » si l'actif n'y est pas |
+| Comparaison | Deux actifs critère par critère, avec l'écart décisif |
+| Demande d'un titre | Verdict figé avant la lecture de la justification (cas Robert) |
+| Et si… ? | Une réponse modifiée, tout recalculé, ce qui change et pourquoi ; test de sensibilité |
+| Pourquoi ? | Contraintes tirées du profil, hypothèses, contrôles, journal des actions, questions aux agents |
+
+Le code calcule verdicts, scores et poids. Deux agents à outils (Conseiller, Explicateur, Claude Sonnet 5.5 sur Amazon Bedrock) orchestrent et expliquent ; un vérificateur rejette tout texte dont un chiffre n'existe pas dans une sortie d'outil. Sans accès à Bedrock, tout fonctionne avec des textes de gabarit : verdicts et chiffres identiques.
+
+Après un changement de `data_extended/asset_criteria.csv`, des prix ou de `config/`, régénérer les données lues par le site :
+
+```bash
+python scripts/build_donnees_recommandation.py
+```
+
+| Document | Contenu |
+|---|---|
+| [docs/documentation_technique.md](docs/documentation_technique.md) | Méthodes, sources et licences, hypothèses, explicabilité avec un exemple tracé, validations, AWS, limites |
+| [docs/one_pager.md](docs/one_pager.md) | Résumé en une page |
+| [docs/script_video.md](docs/script_video.md) | Script de la vidéo et questions probables du jury |
+| [docs/resultats_personas.md](docs/resultats_personas.md) | Résultats par persona, générés par `python scripts/tableau_personas.py` |
+| [docs/deploiement_recommandation.md](docs/deploiement_recommandation.md) | Déploiement, ressources AWS ajoutées, vérifications, mode de secours |
+| [config/hypotheses_recommandation.json](config/hypotheses_recommandation.json) | Tous les seuils des propositions : des hypothèses écrites et ajustables |
 
 ---
 
@@ -59,7 +91,7 @@ Les principes qui en découlent, à respecter partout :
                                   ─▶ nouveau mot-clé kw_dyn_… (preuves)  ──┤
                               │                                          │
                               ▼                                          ▼
-          APPARIEMENT (à construire) : règles de config/criteres_appariement.csv
+          PROPOSITIONS (mvp_profil/recommandation/) : règles de config/criteres_appariement.csv
           exclusions -> plafonds -> seuils -> préférences -> verdict expliqué
 ```
 
@@ -161,7 +193,7 @@ Les trois critères obtenus :
 - Elon Musk : « exclure TSLA », et QQQ, ESGV et SPY signalés ;
 - réseaux sociaux : le thème existait déjà, donc Tencent est exclu sans recherche, et VWO signalé.
 
-Dans le futur moteur d'appariement, seuls les critères dynamiques **applicables** pourront intervenir, au même rang que les fixes : exclusions, puis plafonds, puis seuils, puis préférences. L'explication devra citer la règle et la phrase de l'utilisateur, sans transformer une contrainte encore à préciser en filtre.
+Dans le moteur d'appariement, seuls les critères dynamiques **applicables** interviennent, au même rang que les fixes : exclusions, puis plafonds, puis seuils, puis préférences. L'explication devra citer la règle et la phrase de l'utilisateur, sans transformer une contrainte encore à préciser en filtre.
 
 ## 6. Le site ([mvp_profil/](mvp_profil/), détail dans [mvp_profil/README.md](mvp_profil/README.md))
 
@@ -263,13 +295,14 @@ Le lanceur découvre toutes les suites `mvp_profil/test_*.py`, `mvp_profil/test_
 - le chercheur à quatre états, sa couverture explicite et son cache versionné ;
 - le mode démonstration : les trois personas de l'énoncé, chargés en un clic ;
 - le profil complet : conversation vocale, questionnaire, mises en situation, cohérence, critères dynamiques ;
-- le déploiement HTTPS sur AWS.
+- le déploiement HTTPS sur AWS ;
+- **les propositions** (étape 4 du site) : moteur d'appariement, mini-portefeuille fictif, recherche, comparaison, demande d'un titre, « Et si… ? », agents Conseiller et Explicateur, vérificateur de fidélité ([mvp_profil/recommandation/](mvp_profil/recommandation/)).
 
 **Prochaines étapes, par ordre de priorité :**
-1. **Moteur d'appariement profil ↔ actifs.** Il applique les règles de `config/criteres_appariement.csv` et les critères dynamiques, dans l'ordre exclusions, plafonds, seuils, préférences, et donne un verdict par actif expliqué critère par critère.
-2. **Proposition de portefeuille et explication.** Elle part des actifs compatibles. Un agent rédige l'explication, mais uniquement à partir des verdicts calculés.
+1. **Vérifier les propositions sur le site déployé** avec le vrai modèle et un parcours vocal complet (voir [docs/deploiement_recommandation.md](docs/deploiement_recommandation.md)), et calibrer la pondération du score.
+2. **Ouvrir l'accès au jury** : adresses ajoutées au filtre, ou groupe Cognito déjà créé à brancher.
 3. **Élargir le chercheur.** Ajouter des sources autorisées en plus de Wikipédia (rapports annuels, sites des émetteurs). Utiliser toutes les positions des FNB, pas seulement les 10 principales. Faire relire par l'équipe les mots-clés `kw_dyn_*` avant de les partager entre utilisateurs.
-4. **Démonstration sur les trois personas.** Amira, Mateo et Robert passent le parcours, et on vérifie que le verdict change pour de bonnes raisons.
+4. **Démonstration sur les trois personas.** Résultats régénérés par `python scripts/tableau_personas.py` ([docs/resultats_personas.md](docs/resultats_personas.md)) ; reste à les tourner en vidéo.
 5. **Compléter la couverture si le besoin le justifie.** A11, C3, D10, E3, F1, G4 et G5 restent non demandés selon la grille ; l'accès aux marchés G3 est déjà recueilli.
 
 ## 10. Organisation du dépôt
@@ -280,8 +313,10 @@ scripts/              collecte et calcul des données, scénarios, vocabulaire d
 data_extra/           données ajoutées pour les 31 actifs de départ
 data_extended/        univers étendu (80 actifs) + indicateurs et mots-clés des 111 actifs
 config/               grille d'appariement (51 critères), seuils et correspondances profil ↔ actifs
-docs/                 grille lisible des critères
+docs/                 grille des critères, documentation technique, une page, script de vidéo, déploiement
 mvp_profil/           site Streamlit : agents, critères, conversation vocale, simulations, tests, déploiement
+mvp_profil/recommandation/   étape 4 du site : propositions (moteur, portefeuille fictif, agents, écrans, données préparées)
+infra/                ajouts AWS des propositions (CloudFormation, additif et réversible)
 ```
 
 ## 11. Pour les assistants IA qui reprennent le projet

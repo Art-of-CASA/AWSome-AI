@@ -1,0 +1,125 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  AlphaForge AI - ajouts pour la partie recommandation (simulation educative). Additif et reversible :
+  supprimer la pile retire tout. Ne modifie ni l'instance, ni CloudFront, ni le bucket existants.
+
+Parameters:
+  RoleServeur:
+    Type: String
+    Default: alphaforge-mvp-ec2
+    Description: Role IAM existant de l'instance qui heberge le site.
+  BudgetMensuelUSD:
+    Type: Number
+    Default: 50
+
+Resources:
+  # Traces observables : verdicts figes, appels d'outils, controles de fidelite. Cle = session, puis rang horodate.
+  TableTraces:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: alphaforge-traces
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - {AttributeName: session, AttributeType: S}
+        - {AttributeName: evenement, AttributeType: S}
+      KeySchema:
+        - {AttributeName: session, KeyType: HASH}
+        - {AttributeName: evenement, KeyType: RANGE}
+      Tags:
+        - {Key: projet, Value: alphaforge-mvp}
+
+  # Double du controle de gouvernance du code, cote modele : ni conseil personnalise, ni prediction, PII masquees.
+  Guardrail:
+    Type: AWS::Bedrock::Guardrail
+    Properties:
+      Name: alphaforge-gouvernance
+      Description: Simulation educative - ni conseil financier personnalise, ni prediction de rendement.
+      BlockedInputMessaging: "Cette demande sort du cadre de la simulation educative."
+      BlockedOutputsMessaging: "Reponse retiree : elle sortait du cadre de la simulation educative (ni conseil personnalise, ni prediction)."
+      TopicPolicyConfig:
+        TopicsConfig:
+          - Name: PredictionDeRendement
+            Type: DENY
+            Definition: "Affirmer ou promettre qu'un actif financier va monter, baisser ou rapporter un rendement precis dans le futur."
+            Examples:
+              - "Cette action va doubler l'an prochain."
+              - "Vous gagnerez au moins 10 % par an avec ce fonds."
+          - Name: ConseilPersonnalise
+            Type: DENY
+            Definition: "Dire a une personne d'acheter ou de vendre un titre precis comme un conseil financier personnalise, ou garantir un resultat."
+            Examples:
+              - "Je vous conseille d'acheter cette action des demain."
+              - "Vendez tout, c'est sans risque."
+      SensitiveInformationPolicyConfig:
+        PiiEntitiesConfig:
+          - {Type: EMAIL, Action: ANONYMIZE}
+          - {Type: PHONE, Action: ANONYMIZE}
+          - {Type: CREDIT_DEBIT_CARD_NUMBER, Action: BLOCK}
+          - {Type: CA_SOCIAL_INSURANCE_NUMBER, Action: BLOCK}
+      Tags:
+        - {Key: projet, Value: alphaforge-mvp}
+
+  # Acces du jury sans filtre par adresse IP : identifiant et mot de passe verifies par Cognito.
+  Utilisateurs:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: alphaforge-jury
+      AdminCreateUserConfig: {AllowAdminCreateUserOnly: true}
+      Policies:
+        PasswordPolicy: {MinimumLength: 10, RequireLowercase: true, RequireNumbers: true, RequireSymbols: false, RequireUppercase: true}
+      UserPoolTags: {projet: alphaforge-mvp}
+
+  ClientSite:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: alphaforge-site
+      UserPoolId: !Ref Utilisateurs
+      GenerateSecret: false
+      ExplicitAuthFlows: [ALLOW_USER_PASSWORD_AUTH, ALLOW_REFRESH_TOKEN_AUTH]
+
+  # Privileges minimaux ajoutes au role du serveur : le modele des deux agents, le Guardrail, la table de traces.
+  DroitsRecommandation:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: alphaforge-recommandation
+      Roles: [!Ref RoleServeur]
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: ModeleDesAgents
+            Effect: Allow
+            Action: [bedrock:InvokeModel, bedrock:InvokeModelWithResponseStream]
+            Resource:
+              - !Sub "arn:aws:bedrock:${AWS::Region}:${AWS::AccountId}:inference-profile/us.anthropic.claude-sonnet-5-5"
+              - "arn:aws:bedrock:*::foundation-model/anthropic.claude-sonnet-5-5*"
+          - Sid: Guardrail
+            Effect: Allow
+            Action: [bedrock:ApplyGuardrail]
+            Resource: !GetAtt Guardrail.GuardrailArn
+          - Sid: Traces
+            Effect: Allow
+            Action: [dynamodb:PutItem, dynamodb:Query]
+            Resource: !GetAtt TableTraces.Arn
+
+  Budget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: alphaforge-mvp
+        BudgetType: COST
+        TimeUnit: MONTHLY
+        BudgetLimit: {Amount: !Ref BudgetMensuelUSD, Unit: USD}
+
+Outputs:
+  TableTraces:
+    Value: !Ref TableTraces
+    Description: Variable ALPHAFORGE_TABLE_TRACES
+  GuardrailId:
+    Value: !GetAtt Guardrail.GuardrailId
+    Description: Variable ALPHAFORGE_GUARDRAIL_ID (version DRAFT par defaut)
+  CognitoClientId:
+    Value: !Ref ClientSite
+    Description: Variable ALPHAFORGE_COGNITO_CLIENT_ID
+  CognitoUserPoolId:
+    Value: !Ref Utilisateurs
+    Description: Pour creer le compte du jury (admin-create-user, puis admin-set-user-password)

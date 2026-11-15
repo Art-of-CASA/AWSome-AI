@@ -1,0 +1,448 @@
+{
+ "_note": "Traduction exécutable de config/criteres_appariement.csv : une entrée par ligne de la grille. La phrase d'origine reste dans la grille ; ici, l'effet (DURE > CALIBRAGE > PLAFOND > PREFERENCE > INFORMATION), le niveau de vérification et les colonnes d'actif lues. Le code est dans recommandation/appariement.py (niveau actif) et recommandation/portefeuille.py (niveau portefeuille). tests_recommandation/test_contrat.py échoue si une ligne de la grille n'a pas d'entrée ici.",
+ "regles": {
+  "A1": {
+   "effet": "INFORMATION",
+   "niveau": "profil",
+   "colonnes": [],
+   "resume": "Entre dans la synthèse du profil (lue telle quelle).",
+   "codee": true
+  },
+  "A2": {
+   "effet": "CALIBRAGE",
+   "niveau": "portefeuille",
+   "colonnes": [
+    "horizon_min_years"
+   ],
+   "resume": "Le plafond de capacité vient de la synthèse ; horizon_min_years est comparé à l'horizon pour chaque actif, sans borner le score.",
+   "codee": true
+  },
+  "A3": {
+   "effet": "PLAFOND",
+   "niveau": "actif",
+   "colonnes": [
+    "role",
+    "income_asset"
+   ],
+   "resume": "coussin_securite : seul le rôle liquidites est cohérent ; revenu : préférence pour les actifs de revenu.",
+   "codee": true
+  },
+  "A4": {
+   "effet": "INFORMATION",
+   "niveau": "profil",
+   "colonnes": [],
+   "resume": "Entre dans la synthèse du profil.",
+   "codee": true
+  },
+  "A5": {
+   "effet": "INFORMATION",
+   "niveau": "profil",
+   "colonnes": [],
+   "resume": "Entre dans la synthèse du profil.",
+   "codee": true
+  },
+  "A6": {
+   "effet": "INFORMATION",
+   "niveau": "profil",
+   "colonnes": [],
+   "resume": "Entre dans la synthèse du profil.",
+   "codee": true
+  },
+  "A7": {
+   "effet": "INFORMATION",
+   "niveau": "profil",
+   "colonnes": [],
+   "resume": "Entre dans la synthèse du profil (capacité plafonnée) ; alerte reprise à l'écran.",
+   "codee": true
+  },
+  "A8": {
+   "effet": "INFORMATION",
+   "niveau": "profil",
+   "colonnes": [],
+   "resume": "Entre dans la synthèse du profil.",
+   "codee": true
+  },
+  "A9": {
+   "effet": "INFORMATION",
+   "niveau": "portefeuille",
+   "colonnes": [],
+   "resume": "Retraits prévus : besoin de liquidité signalé, non chiffré par le profil ; aucune poche n'est inventée.",
+   "codee": true
+  },
+  "A10": {
+   "effet": "PREFERENCE",
+   "niveau": "actif",
+   "colonnes": [
+    "income_asset",
+    "dividend_cut_2022_2025",
+    "dividends_to_fcf_last"
+   ],
+   "resume": "souhaite : préférence pour les actifs de revenu ; essentiel : baisse de dividende ou dividendes supérieurs aux flux libres = en tension.",
+   "codee": true
+  },
+  "A11": {
+   "effet": "INFORMATION",
+   "niveau": "profil",
+   "colonnes": [],
+   "resume": "Critère non posé.",
+   "codee": false,
+   "raison_non_codee": "Question non posée par choix de l'équipe (docs/criteres_profil_actifs.md)."
+  },
+  "A12": {
+   "effet": "PLAFOND",
+   "niveau": "portefeuille",
+   "colonnes": [
+    "sector"
+   ],
+   "resume": "Plafond d'exposition effective au secteur de l'emploi (25 % au lieu de 40 %).",
+   "codee": true
+  },
+  "B1R": {
+   "effet": "INFORMATION",
+   "niveau": "profil",
+   "colonnes": [],
+   "resume": "Entre dans la synthèse du profil.",
+   "codee": true
+  },
+  "B1": {
+   "effet": "CALIBRAGE",
+   "niveau": "portefeuille",
+   "colonnes": [
+    "stress_loss"
+   ],
+   "resume": "Tension = perte de stress du portefeuille ÷ budget de perte ; par actif : poids maximal compatible.",
+   "codee": true
+  },
+  "B2": {
+   "effet": "INFORMATION",
+   "niveau": "profil",
+   "colonnes": [],
+   "resume": "Entre dans la synthèse du profil (le plus prudent du déclaré et de l'observé).",
+   "codee": true
+  },
+  "B3": {
+   "effet": "INFORMATION",
+   "niveau": "profil",
+   "colonnes": [],
+   "resume": "Entre dans la synthèse du profil.",
+   "codee": true
+  },
+  "B4": {
+   "effet": "INFORMATION",
+   "niveau": "actif",
+   "colonnes": [
+    "risk_class"
+   ],
+   "resume": "Consultation quotidienne et classe de risque >= 6 : avertissement.",
+   "codee": true
+  },
+  "B5": {
+   "effet": "CALIBRAGE",
+   "niveau": "portefeuille",
+   "colonnes": [
+    "vol_cad"
+   ],
+   "resume": "Volatilité du portefeuille <= plafond de la classe acceptée.",
+   "codee": true
+  },
+  "B6": {
+   "effet": "INFORMATION",
+   "niveau": "profil",
+   "colonnes": [],
+   "resume": "Entre dans la synthèse du profil.",
+   "codee": true
+  },
+  "B7": {
+   "effet": "CALIBRAGE",
+   "niveau": "portefeuille",
+   "colonnes": [
+    "kw_recuperation"
+   ],
+   "resume": "Durée sous l'eau du portefeuille <= durée supportable ; jamais_recupere signalé par actif.",
+   "codee": true
+  },
+  "C1": {
+   "effet": "PLAFOND",
+   "niveau": "actif",
+   "colonnes": [
+    "complexity"
+   ],
+   "resume": "Complexité de l'actif au-dessus du niveau mesuré : en tension.",
+   "codee": true
+  },
+  "C2": {
+   "effet": "INFORMATION",
+   "niveau": "actif",
+   "colonnes": [
+    "asset_class",
+    "complexity"
+   ],
+   "resume": "Première détention d'une classe complexe : avertissement.",
+   "codee": true
+  },
+  "C3": {
+   "effet": "PREFERENCE",
+   "niveau": "actif",
+   "colonnes": [],
+   "resume": "Critère non posé.",
+   "codee": false,
+   "raison_non_codee": "Question non posée par choix de l'équipe."
+  },
+  "D1": {
+   "effet": "DURE",
+   "niveau": "actif",
+   "colonnes": [
+    "asset_class"
+   ],
+   "resume": "Classe d'actifs refusée : exclusion.",
+   "codee": true
+  },
+  "D2": {
+   "effet": "DURE",
+   "niveau": "actif",
+   "colonnes": [
+    "asset_class"
+   ],
+   "resume": "0 % : exclusion des cryptoactifs ; sinon plafond de poids au niveau du portefeuille.",
+   "codee": true
+  },
+  "D3": {
+   "effet": "PREFERENCE",
+   "niveau": "actif",
+   "colonnes": [
+    "region",
+    "country",
+    "kw_risque_pays"
+   ],
+   "resume": "Région souhaitée : préférence.",
+   "codee": true
+  },
+  "D4": {
+   "effet": "PLAFOND",
+   "niveau": "portefeuille",
+   "colonnes": [
+    "fx_risk",
+    "kw_devise"
+   ],
+   "resume": "Plafond de la part exposée au change ; avertissement par actif.",
+   "codee": true
+  },
+  "D5": {
+   "effet": "PREFERENCE",
+   "niveau": "actif",
+   "colonnes": [
+    "themes",
+    "sector"
+   ],
+   "resume": "Thème d'intérêt : préférence, ne compense jamais une tension.",
+   "codee": true
+  },
+  "D6": {
+   "effet": "DURE",
+   "niveau": "actif",
+   "colonnes": [
+    "themes",
+    "sector"
+   ],
+   "resume": "Thème ou secteur refusé : exclusion.",
+   "codee": true
+  },
+  "D7": {
+   "effet": "PREFERENCE",
+   "niveau": "actif",
+   "colonnes": [
+    "growth",
+    "established",
+    "income_asset",
+    "speculative"
+   ],
+   "resume": "Style recherché : préférence ; « établie » et actif spéculatif : à surveiller.",
+   "codee": true
+  },
+  "D8": {
+   "effet": "PLAFOND",
+   "niveau": "actif",
+   "colonnes": [
+    "speculative",
+    "kw_attention",
+    "hype_recent"
+   ],
+   "resume": "Profil de niveau 3 ou moins + actif spéculatif ou très médiatisé : avertissement (à surveiller).",
+   "codee": true
+  },
+  "D9": {
+   "effet": "PLAFOND",
+   "niveau": "portefeuille",
+   "colonnes": [
+    "asset_class"
+   ],
+   "resume": "Poids maximal par titre individuel.",
+   "codee": true
+  },
+  "D10": {
+   "effet": "PREFERENCE",
+   "niveau": "actif",
+   "colonnes": [
+    "diversifier_vs_world",
+    "role"
+   ],
+   "resume": "Non posé : s'applique par défaut comme préférence pour les fonds de cœur et les actifs diversifiants.",
+   "codee": true
+  },
+  "D11": {
+   "effet": "PREFERENCE",
+   "niveau": "actif",
+   "colonnes": [
+    "asset_class"
+   ],
+   "resume": "Fonds indiciels ou titres : préférence.",
+   "codee": true
+  },
+  "D12": {
+   "effet": "DURE",
+   "niveau": "actif",
+   "colonnes": [
+    "speculative"
+   ],
+   "resume": "sans_speculatif : exclusion ; sinon plafond de la somme des poids spéculatifs.",
+   "codee": true
+  },
+  "D8O": {
+   "effet": "INFORMATION",
+   "niveau": "profil",
+   "colonnes": [],
+   "resume": "Signal observé, repris par le détecteur d'incohérence lors d'une demande de titre.",
+   "codee": true
+  },
+  "E1": {
+   "effet": "DURE",
+   "niveau": "actif",
+   "colonnes": [
+    "fossil_categorie",
+    "kw_exclusions"
+   ],
+   "resume": "Exclusion ou plafond selon config/correspondances.json (E1).",
+   "codee": true
+  },
+  "E2": {
+   "effet": "DURE",
+   "niveau": "actif",
+   "colonnes": [
+    "max_severity",
+    "controversy_topics"
+   ],
+   "resume": "aucune : toute controverse exclut ; pas_de_grave : « élevée » exclut, « moyenne » est signalée.",
+   "codee": true
+  },
+  "E3": {
+   "effet": "PREFERENCE",
+   "niveau": "actif",
+   "colonnes": [],
+   "resume": "Critère non posé.",
+   "codee": false,
+   "raison_non_codee": "Question non posée par choix de l'équipe."
+  },
+  "E4": {
+   "effet": "INFORMATION",
+   "niveau": "actif",
+   "colonnes": [
+    "in_jantzi_social_index"
+   ],
+   "resume": "Module le poids des critères ESG dans le score ; appartenance à l'indice Jantzi affichée.",
+   "codee": true
+  },
+  "E5": {
+   "effet": "DURE",
+   "niveau": "actif",
+   "colonnes": [
+    "kw_exclusions"
+   ],
+   "resume": "Activité refusée présente dans kw_exclusions : exclusion.",
+   "codee": true
+  },
+  "F1": {
+   "effet": "INFORMATION",
+   "niveau": "actif",
+   "colonnes": [],
+   "resume": "Critère non posé.",
+   "codee": false,
+   "raison_non_codee": "Question non posée par choix de l'équipe."
+  },
+  "F2": {
+   "effet": "DURE",
+   "niveau": "actif",
+   "colonnes": [
+    "kw_risque_pays"
+   ],
+   "resume": "Exclusion ou plafond selon config/correspondances.json (F2).",
+   "codee": true
+  },
+  "G1": {
+   "effet": "INFORMATION",
+   "niveau": "actif",
+   "colonnes": [
+    "unit_price_cad"
+   ],
+   "resume": "Prix unitaire > 5 % du montant : avertissement.",
+   "codee": true
+  },
+  "G2": {
+   "effet": "INFORMATION",
+   "niveau": "actif",
+   "colonnes": [
+    "foreign_dividend_withholding"
+   ],
+   "resume": "CELI et retenue étrangère sur les dividendes : information, pas un conseil fiscal.",
+   "codee": true
+  },
+  "G3": {
+   "effet": "DURE",
+   "niveau": "actif",
+   "colonnes": [
+    "access_canada",
+    "adr_us"
+   ],
+   "resume": "canada_usa : exclusion des actifs non accessibles.",
+   "codee": true
+  },
+  "G4": {
+   "effet": "PLAFOND",
+   "niveau": "actif",
+   "colonnes": [],
+   "resume": "Critère non posé.",
+   "codee": false,
+   "raison_non_codee": "Question non posée : tous les FNB de l'univers ont des frais bas."
+  },
+  "G5": {
+   "effet": "PREFERENCE",
+   "niveau": "actif",
+   "colonnes": [],
+   "resume": "Critère non posé.",
+   "codee": false,
+   "raison_non_codee": "Question non posée par choix de l'équipe."
+  },
+  "H1": {
+   "effet": "INFORMATION",
+   "niveau": "profil",
+   "colonnes": [],
+   "resume": "Entre dans la synthèse du profil (alerte).",
+   "codee": true
+  },
+  "H2": {
+   "effet": "DURE",
+   "niveau": "portefeuille",
+   "colonnes": [
+    "*"
+   ],
+   "resume": "Demande d'un titre : verdict = pire critère, figé avant la justification (recommandation/portefeuille.py, evaluer_demande).",
+   "codee": true
+  },
+  "H3": {
+   "effet": "INFORMATION",
+   "niveau": "profil",
+   "colonnes": [],
+   "resume": "Critères inconnus listés ; réglages prudents signalés ; aucun filtre inventé.",
+   "codee": true
+  }
+ }
+}
