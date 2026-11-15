@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import base64
 import binascii
+import html
 from copy import deepcopy
 from concurrent.futures import Future
 import json
@@ -972,13 +973,25 @@ def suivi_recherches():
     st.info("⏳ L'agent chercheur parcourt nos données et Wikipédia pour : " + " · ".join(f"« {k} »" for k in concepts))
 
 
+def marque_dynamique(c: dict) -> str:
+    """Le ✅ n'apparaît que pour une règle qui s'applique réellement ; une note ou une règle sans cible le dit."""
+    if c["statut"] not in ("validé", "retenu"):
+        return "❓ À préciser — aucun filtre automatique"
+    retenu = f" (retenu, {c['confiance']:.0%})" if c["statut"] == "retenu" else ""
+    if c["effet"] == "note":
+        return f"📝 Note, sans filtre{retenu}"
+    if c.get("etiquetage") == "en_attente":
+        return f"⏳ Recherche des actifs concernés en cours{retenu}"
+    if c.get("applicable"):
+        return "✅" if not retenu else f"☑️{retenu}"
+    return f"⚠️ Aucun filtre applicable pour l'instant{retenu}"
+
+
 def afficher_dynamiques(details: bool = False):
     for c in S.dynamiques:
-        marque = ("✅" if c["statut"] == "validé" else f"☑️ retenu ({c['confiance']:.0%})"
-                  if c["statut"] == "retenu" else "❓ À préciser — aucun filtre automatique")
-        if c.get("etiquetage") == "en_attente":
-            marque += " ⏳"
-        st.markdown(f"{marque} **{c['id']} · {c['nom']}**  \n{c['regle']}  \n<small>« {c['citation']} »</small>",
+        # Citation, nom et règle viennent de la parole de l'utilisateur ou du modèle : jamais interprétés comme HTML.
+        nom, regle_txt, citation = (html.escape(str(c[k]), quote=False) for k in ("nom", "regle", "citation"))
+        st.markdown(f"{marque_dynamique(c)} **{c['id']} · {nom}**  \n{regle_txt}  \n<small>« {citation} »</small>",
                     unsafe_allow_html=True)
         if details and c.get("preuves") is not None:
             with st.expander(f"Preuves de {c['id']} · mot-clé {c['colonne']}"):
@@ -1005,9 +1018,11 @@ def afficher_dynamiques(details: bool = False):
             st.info(c["motif"] + ". Vous pouvez préciser la règle ici ; sinon elle reste non applicable.")
             with st.form(f"confirmation_{c['id']}"):
                 pct = None
-                if c["effet"] == "plafonner":
-                    pct = st.number_input(f"Part maximale du portefeuille pour {c['nom']} (en %)",
-                                          min_value=0, max_value=100, value=c.get("plafond_pct"), step=1)
+                if c["effet"] in criteres_dynamiques.EFFETS_CHIFFRES:
+                    maximum = c["effet"] == "plafonner"
+                    pct = st.number_input(f"Part {'maximale' if maximum else 'minimale'} du portefeuille pour {c['nom']} (en %)",
+                                          min_value=0, max_value=100, step=1,
+                                          value=c.get("plafond_pct" if maximum else "minimum_pct"))
                 confirme = st.checkbox("Je confirme cette règle et la cible indiquée ci-dessus", value=False)
                 envoyer = st.form_submit_button("Confirmer cette précision", type="primary")
             if envoyer:

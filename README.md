@@ -109,6 +109,7 @@ Les critères fixes couvrent les cas prévus, pas les particularités de chacun.
 |---|---|---|
 | `exclure` | `exclusion` : l'actif est retiré | titre = `SHOP.TO` (son employeur) → 1 actif |
 | `plafonner` (+ %) | `plafond` : poids maximal | thème = `banque`, 10 % au plus → 8 actifs |
+| `minimum` (+ %) | `plancher` : part minimale demandée ; jamais un plafond | « au moins 10 % en or » → thème = `or`, 10 % au moins |
 | `privilegier` | `preference` : trie les suggestions, n'améliore jamais la compatibilité | devise = `EUR` → 5 actifs |
 | `note` | `information` : gardé et cité, aucun filtre automatique | particularité sans cible d'actif traduisible |
 
@@ -122,8 +123,10 @@ Le code contrôle tout :
 - la citation doit être exacte, sinon le critère est écarté ;
 - le critique doit être d'accord avec les deux confiances au-dessus du seuil pour que le critère soit **validé** ;
 - avec l'accord du critique mais une confiance réduite au-dessus du plancher de 50 %, le critère peut être **retenu** et signalé ;
-- un désaccord ou un plafond sans chiffre étayé laisse le critère **à préciser**, sans filtre automatique ;
+- un désaccord ou un plafond (ou un minimum) sans chiffre étayé laisse le critère **à préciser**, sans filtre automatique ;
 - en dessous, il n'est pas créé.
+
+Le **critique des critères personnels** a ses propres consignes : il juge l'intention et l'effet, et ne refuse pas un concept parce que son périmètre n'est pas encore connu (c'est le chercheur qui l'établit, preuves à l'appui). Il relit aussi toute la réponse : une idée qu'aucun critère ne traduit (« ni de tabac ») devient une **note à préciser**, visible, au lieu de disparaître. À l'écran, ✅ n'apparaît que pour une règle qui s'applique réellement ; une note, une recherche en cours ou une règle sans actif concerné l'indiquent explicitement.
 
 **« Limiter les banques » reste un plafond à préciser.** Un chiffre absent de la citation n'est jamais remplacé par une exclusion totale. L'interface permet de confirmer la cible et un pourcentage ; sans confirmation, la règle reste non applicable. Le code calcule aussi les **actifs concernés**. Chaque critère est exporté avec sa règle lisible, sa colonne d'actif, sa citation, sa confiance et son applicabilité. Confirmer une intention ne remplace pas les preuves d'exposition.
 

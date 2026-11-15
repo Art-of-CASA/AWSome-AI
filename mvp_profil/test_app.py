@@ -69,7 +69,8 @@ def faux_creer(backend, question, reponse, seuil, deja=0):
     return [{"id": f"X{deja + 1}", "nom": "Pas d'actions de son employeur (Shopify)", "effet": "exclure",
              "dimension": "titre", "valeurs": ["SHOP.TO"], "plafond_pct": 0, "actifs": ["SHOP.TO"],
              "citation": "je ne veux pas plus d'actions de mon employeur", "confiance": 0.9, "statut": "validé",
-             "motif": "ok", "regle": "Exclure : titre = SHOP.TO (1 actif de l'univers)", "source": "question ouverte (IA)"},
+             "motif": "ok", "regle": "Exclure : titre = SHOP.TO (1 actif de l'univers)", "source": "question ouverte (IA)",
+             "applicable": True},
             {"id": f"X{deja + 2}", "nom": "Rien de lié à Elon Musk", "effet": "exclure", "dimension": "a_etiqueter",
              "colonne": "", "valeurs": [], "plafond_pct": 0, "actifs": [], "concept": "entreprises liées à Elon Musk",
              "etiquetage": "en_attente", "citation": "rien qui touche à Elon Musk", "confiance": 0.85, "statut": "validé",
@@ -302,3 +303,30 @@ limite = at.session_state.dynamiques[0]
 assert limite["effet"] == "plafonner" and limite["plafond_pct"] == 7 and limite["applicable"], limite
 assert limite["statut"] == "validé" and "Plafonner à 7 %" in limite["regle"]
 print("Synthèse explicable, robustesse et confirmation d'un plafond sans exclusion : OK")
+
+# Part minimale à confirmer ; une règle validée sans cible n'affiche pas ✅ ; la parole n'est jamais du HTML.
+minimum = {"id": "X2", "nom": "Obligations minimum", "effet": "minimum", "dimension": "classe", "valeurs": ["etf_bond"],
+           "plafond_pct": 0, "minimum_pct": None, "actifs": ["XBB.TO"], "citation": "une part minimale en obligations",
+           "confiance": 0.9, "statut": "à préciser", "applicable": False, "motif": "Pourcentage minimal à préciser",
+           "regle": "Garder une part minimale (pourcentage à préciser) : classe = etf_bond", "source": "question ouverte (IA)"}
+sans_cible = {"id": "X3", "nom": "Tabac <b>gras</b>", "effet": "exclure", "dimension": "mot_cle_dynamique",
+              "colonne": "kw_dyn_tabac", "valeurs": ["oui"], "plafond_pct": 0, "actifs": [], "etiquetage": "fait",
+              "citation": "<img src=x onerror=alert(1)> pas de tabac", "confiance": 0.9, "statut": "validé",
+              "applicable": False, "motif": "ok", "regle": "Exclure : kw_dyn_tabac = oui (aucun lien établi)",
+              "source": "question ouverte (IA)", "preuves": [], "recherche": {}}
+at.session_state.dynamiques = [limite, minimum, sans_cible]
+at.run()
+assert not at.exception, at.exception
+textes = [m.value for m in at.markdown if "X3 ·" in m.value]
+assert textes and "⚠️ Aucun filtre applicable" in textes[0] and "✅" not in textes[0], textes
+assert "<img" not in textes[0] and "&lt;img" in textes[0] and "<b>" not in textes[0], textes
+assert any("Part minimale du portefeuille" in n.label for n in at.number_input), [n.label for n in at.number_input]
+champ = [n for n in at.number_input if "Part minimale" in n.label][0]
+champ.set_value(12)
+[c for c in at.checkbox if c.label.startswith("Je confirme cette règle")][0].check()
+[b for b in at.button if b.label == "Confirmer cette précision"][0].click()
+at.run()
+assert not at.exception, at.exception
+minimum = at.session_state.dynamiques[1]
+assert minimum["minimum_pct"] == 12 and minimum["applicable"] and minimum["regle"].startswith("Garder au moins 12 %"), minimum
+print("Critères personnels : part minimale confirmée, ✅ réservé aux règles applicables, texte échappé : OK")
