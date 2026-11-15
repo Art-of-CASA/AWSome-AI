@@ -12,6 +12,8 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import hashlib
+from zipfile import ZipFile
 
 RACINE = Path(__file__).resolve().parents[1]
 
@@ -34,7 +36,7 @@ def ecrire_script(chemin: Path, code: str) -> None:
     chemin.chmod(0o755)
 
 
-def cas(bash: str, mode: str) -> None:
+def cas(bash: str, mode: str, venv_lien: bool = False) -> None:
     with tempfile.TemporaryDirectory(prefix="alphaforge-deploiement-") as temporaire:
         cible = Path(temporaire).resolve()
         # Toutes les suppressions et déplacements du vrai script restent dans ce répertoire neuf.
@@ -48,15 +50,23 @@ def cas(bash: str, mode: str) -> None:
         paquet = cible / "paquet"
         paquet.mkdir()
         (paquet / "marker").write_text("nouveau", encoding="utf-8")
-        (paquet / "version_manifest.json").write_text(json.dumps({"version": "profil-test"}), encoding="utf-8")
         (paquet / "requirements.txt").write_text("-c constraints.txt\nstreamlit\n", encoding="utf-8")
+        fichiers = {n: hashlib.sha256((paquet / n).read_bytes()).hexdigest() for n in ("marker", "requirements.txt")}
+        version = "profil-" + hashlib.sha256("\n".join(f"{n}:{h}" for n,h in fichiers.items()).encode()).hexdigest()[:12]
+        (paquet / "version_manifest.json").write_text(json.dumps({"version": version, "fichiers": fichiers}))
+        archive = cible / "paquet.zip"
+        with ZipFile(archive, "w") as z:
+            for p in paquet.iterdir():
+                z.writestr(p.name, b"altere" if mode == "hash_failure" and p.name == "marker" else p.read_bytes())
+            if mode == "extra_failure": z.writestr("extra", "inattendu")
+            if mode == "path_failure": z.writestr("../escape", "interdit")
         journal = cible / "services.log"
         journal_pip = cible / "pip.log"
         faux_bin = cible / "bin"
         faux_bin.mkdir()
-        ecrire_script(faux_bin / "aws", '[ "$MOCK_MODE" != download_failure ] || exit 1\nprintf "archive" > "$4"\n')
+        ecrire_script(faux_bin / "aws", '[ "$MOCK_MODE" != download_failure ] || exit 1\ncp "$MOCK_ARCHIVE" "$4"\n')
         ecrire_script(faux_bin / "unzip", 'mkdir -p "$4"\ncp -R "$MOCK_PACKAGE/." "$4/"\n')
-        ecrire_script(faux_bin / "python3", 'exec "$MOCK_PYTHON" "$@"\n')
+        ecrire_script(faux_bin / "python3", '[ "${1:-}" != -m ] || exit 99\nexec "$MOCK_PYTHON" "$@"\n')
         ecrire_script(faux_bin / "systemctl", '''
 marque=$(cat "$ALPHAFORGE_RACINE/app/marker")
 printf '%s:%s\\n' "$*" "$marque" >> "$MOCK_LOG"
@@ -68,6 +78,11 @@ if [ "$MOCK_MODE" = restart_failure ] && [ "$(wc -l < "$MOCK_LOG")" -eq 1 ]; the
         ecrire_script(faux_bin / "timeout", 'shift\nexec "$@"\n')
         ecrire_script(installation / "venv" / "bin" / "python", '''
 if [ "${1:-}" = -m ]; then
+  if [ "$2" = venv ]; then
+    mkdir -p "$3/bin"
+    cp "$0" "$3/bin/python"
+    exit 0
+  fi
   [ "$2" = pip ] && [ "$3" = install ] && [ "$4" = -r ]
   [ -f "$5" ]
   printf '%s\\n' "$(cat "$ALPHAFORGE_RACINE/app/marker"):$5" >> "$MOCK_PIP_LOG"
@@ -79,7 +94,12 @@ mkdir -p traces
 printf 'pendant verification' > traces/pendant_verification.json
 [ "$MOCK_MODE" != app_failure ]
 ''')
-        env = {**os.environ, "ALPHAFORGE_RACINE": str(installation), "VERSION": "profil-test",
+        ancien_venv = installation / "venvs" / "original"
+        if venv_lien:
+            ancien_venv.parent.mkdir()
+            (installation / "venv").rename(ancien_venv)
+            (installation / "venv").symlink_to(ancien_venv, target_is_directory=True)
+        env = {**os.environ, "ALPHAFORGE_RACINE": str(installation), "VERSION": version, "MOCK_ARCHIVE": str(archive),
                "MOCK_MODE": mode, "MOCK_PACKAGE": str(paquet), "MOCK_LOG": str(journal), "MOCK_PIP_LOG": str(journal_pip),
                "MOCK_PYTHON": sys.executable, "MOCK_BIN": str(faux_bin),
                "MOCK_INSTALLER": str(RACINE / "scripts" / "installer_serveur.sh")}
@@ -107,7 +127,7 @@ exec bash "$MOCK_INSTALLER"
         for dossier in ("cache", "traces"):
             assert (installation / "app" / dossier / "conserve.json").read_text() == "ancien", (mode, sorties)
             assert not (installation / "app" / dossier / dossier).exists(), mode
-        if mode in ("download_failure", "version_failure", "pip_failure"):
+        if mode in ("download_failure", "version_failure", "pip_failure", "hash_failure", "extra_failure", "path_failure"):
             assert appels == [], (mode, appels, sorties)
             assert not (installation / "app.prev").exists(), mode
         elif succes:
@@ -122,7 +142,10 @@ exec bash "$MOCK_INSTALLER"
                 assert (installation / "app" / "traces" / "pendant_verification.json").exists(), sorties
             if mode == "restart_always_failure":
                 assert "redémarrage a échoué" in sorties, sorties
-        if mode in ("download_failure", "version_failure"):
+        assert (installation / "venv").is_symlink() == (succes or venv_lien), (mode, sorties)
+        if venv_lien and not succes:
+            assert (installation / "venv").resolve() == ancien_venv, (mode, sorties)
+        if mode in ("download_failure", "version_failure", "hash_failure", "extra_failure", "path_failure"):
             assert not journal_pip.exists(), mode
         else:
             installation_pip = journal_pip.read_text(encoding="utf-8")
@@ -137,10 +160,12 @@ def main() -> None:
     if bash is None:
         raise RuntimeError("Bash est requis pour vérifier le déploiement sous Linux/CI.")
     modes = ("success", "restart_failure", "health_failure", "app_failure", "restart_always_failure",
-             "version_failure", "download_failure", "pip_failure")
-    for mode in modes:
-        cas(bash, mode)
-    print(f"Déploiement OK : {len(modes)} scénarios Bash, retour arrière et conservation cache/traces, aucun appel cloud/service réel")
+             "version_failure", "download_failure", "pip_failure", "hash_failure", "extra_failure", "path_failure")
+    variantes = (False, True) if os.name != "nt" else (False,)
+    for venv_lien in variantes:
+        for mode in modes:
+            cas(bash, mode, venv_lien)
+    print(f"Déploiement OK : {len(modes) * len(variantes)} scénarios Bash, retour arrière et conservation cache/traces, aucun appel cloud/service réel")
 
 
 if __name__ == "__main__":

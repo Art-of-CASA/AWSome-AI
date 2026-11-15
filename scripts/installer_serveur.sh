@@ -5,8 +5,7 @@
 # 2. Installe ses dépendances avant l'activation, puis conserve le cache du chercheur et les traces locales.
 # 3. Redémarre le service, puis vérifie que le serveur répond ET que la page d'accueil s'exécute sans erreur.
 # 4. En cas d'échec, remet l'installation précédente en place et sort en erreur (le workflow échoue).
-# Limite : le venv est partagé. Le retour arrière restaure les fichiers, pas les dépendances déjà installées ;
-# une mise à jour incompatible des bibliothèques peut donc exiger une restauration séparée du venv.
+# Chaque publication prépare un venv distinct ; le retour arrière restaure aussi les dépendances.
 set -euo pipefail
 : "${VERSION:?VERSION manquante}"
 BUCKET="alphaforge-mvp-024848442163-us-east-1"
@@ -15,6 +14,8 @@ cd "$RACINE"
 RACINE="$(pwd -P)"
 if [ "$RACINE" = / ]; then echo "Racine d'installation invalide"; exit 1; fi
 PY="$RACINE/venv/bin/python"
+exec 9>"$RACINE/deploiement.lock"
+flock -n 9 || { echo "Un déploiement est déjà en cours"; exit 1; }
 
 conserver_donnees() {
   # Copier le contenu, pas le dossier parent : une seconde publication ne crée pas traces/traces/.
@@ -28,12 +29,16 @@ conserver_donnees() {
 
 ANCIENNE_DEPLACEE=0
 NOUVELLE_INSTALLEE=0
+VENV_DEPLACE=0
+VENV_ACTIVE=0
 retour_arriere() {
   statut="$1"
   trap - ERR
   # Une panne du service ou de la copie de secours ne doit pas interrompre les autres étapes de restauration.
   set +e
   echo "Échec du déploiement : retour à l'installation précédente"
+  if [ "$VENV_ACTIVE" = 1 ]; then unlink "$RACINE/venv"; fi
+  if [ "$VENV_DEPLACE" = 1 ]; then mv "$RACINE/venv.prev" "$RACINE/venv"; fi
   if [ "$NOUVELLE_INSTALLEE" = 1 ] && [ -d app ]; then
     if [ "$ANCIENNE_DEPLACEE" = 1 ]; then
       conserver_donnees app app.prev || echo "Attention : copie des données locales incomplète"
@@ -54,6 +59,38 @@ retour_arriere() {
 }
 
 aws s3 cp "s3://$BUCKET/app/mvp_profil.zip" app.zip --only-show-errors
+# Le vérificateur appartient à l'installateur de confiance, jamais au ZIP reçu.
+python3 - "$VERSION" <<'VERIFIER'
+import hashlib, json, sys, stat
+from pathlib import PurePosixPath
+from zipfile import ZipFile
+with ZipFile("app.zip") as z:
+    noms = z.namelist()
+    if len(noms) != len(set(noms)):
+        raise ValueError("Entrées répétées")
+    for info in z.infolist():
+        p = PurePosixPath(info.filename)
+        if p.is_absolute() or ".." in p.parts or "\\" in info.filename or stat.S_ISLNK(info.external_attr >> 16):
+            raise ValueError("Chemin non autorisé")
+    if sum(i.file_size for i in z.infolist()) > 50_000_000:
+        raise ValueError("Paquet trop volumineux")
+    def unique(paires):
+        d = {}
+        for k, v in paires:
+            if k in d: raise ValueError("Clé répétée")
+            d[k] = v
+        return d
+    m = json.loads(z.read("version_manifest.json"), object_pairs_hook=unique)
+    fichiers = m["fichiers"]
+    if not isinstance(fichiers, dict) or set(noms) != set(fichiers) | {"version_manifest.json"}:
+        raise ValueError("Inventaire incorrect")
+    for nom, attendu in fichiers.items():
+        if hashlib.sha256(z.read(nom)).hexdigest() != attendu:
+            raise ValueError("Empreinte incorrecte : " + nom)
+    version = "profil-" + hashlib.sha256("\n".join(f"{n}:{h}" for n,h in fichiers.items()).encode()).hexdigest()[:12]
+    if version != sys.argv[1] or m["version"] != version:
+        raise ValueError("Version incorrecte")
+VERIFIER
 rm -rf app.new
 mkdir app.new
 unzip -q app.zip -d app.new
@@ -61,14 +98,21 @@ TROUVEE="$(python3 -c 'import json; print(json.load(open("app.new/version_manife
 if [ "$TROUVEE" != "$VERSION" ]; then
   echo "Version du paquet inattendue : $TROUVEE au lieu de $VERSION"; rm -rf app.new; exit 1
 fi
-if ! "$PY" -m pip install -r "$RACINE/app.new/requirements.txt"; then
+mkdir -p "$RACINE/venvs"
+NOUVEAU_VENV="$(mktemp -d "$RACINE/venvs/release.XXXXXXXX")"
+# Garder l'interpréteur du service : le python3 système peut être une autre version.
+"$PY" -m venv "$NOUVEAU_VENV"
+if ! "$NOUVEAU_VENV/bin/python" -m pip install -r "$RACINE/app.new/requirements.txt"; then
   echo "Échec de l'installation des dépendances : fichiers de l'ancienne version conservés"
-  echo "Le venv partagé peut nécessiter une restauration séparée de ses dépendances"
   exit 1
 fi
 conserver_donnees app app.new
 rm -rf app.prev
+rm -rf "$RACINE/venv.prev"
 trap 'retour_arriere $?' ERR
+if [ -e "$RACINE/venv" ]; then mv "$RACINE/venv" "$RACINE/venv.prev"; VENV_DEPLACE=1; fi
+ln -s "$NOUVEAU_VENV" "$RACINE/venv"
+VENV_ACTIVE=1
 if [ -d app ]; then mv app app.prev; ANCIENNE_DEPLACEE=1; fi
 mv app.new app
 NOUVELLE_INSTALLEE=1

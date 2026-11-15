@@ -308,6 +308,18 @@ def _demande_ajout(q: str, ctx: Contexte) -> bool:
 def interpreter(texte: str, ctx: Contexte) -> list[tuple[str, dict]]:
     """Comprend les demandes simples sans modèle. Renvoie la liste des actions à exécuter (souvent une seule)."""
     q = sans_accents(texte).replace("’", "'")
+    # Les pourcentages dictés restent liés au texte utilisateur, même écrits en lettres.
+    petits = ["zero", "un", "deux", "trois", "quatre", "cinq", "six", "sept", "huit", "neuf",
+              "dix", "onze", "douze", "treize", "quatorze", "quinze", "seize", "dix sept", "dix huit", "dix neuf"]
+    nombres = {mot: i for i, mot in enumerate(petits)}
+    for base, mot in ((20, "vingt"), (30, "trente"), (40, "quarante"), (50, "cinquante"), (60, "soixante"), (80, "quatre vingt")):
+        nombres[mot] = base
+        for i in range(1, 20 if base in (60, 80) else 10):
+            nombres[mot + " " + petits[i]] = base + i
+            if i in (1, 11): nombres[mot + " et " + petits[i]] = base + i
+    nombres.update({"cent": 100, "quatre vingts": 80})
+    for mot in sorted(nombres, key=len, reverse=True):
+        q = re.sub(r"\b" + mot.replace(" ", "[ -]") + r"\s+pour cent\b", str(nombres[mot]) + " %", q)
     if ctx.etat.get("en_attente"):
         confirmation = _confirmation(texte)
         if confirmation == "oui":
@@ -454,6 +466,11 @@ def tour(ctx: Contexte, texte: str, modele=None) -> dict:
     ctx.noter("message", longueur=len(texte))
     appels: list[dict] = []
     source = "code"
+    proposition_initiale = etat.get("en_attente")
+    contenu_initial = copy.deepcopy(proposition_initiale)
+    actions_autorisees = interpreter(texte, ctx)
+    mutations = {"ajouter_au_portefeuille", "retirer_du_portefeuille", "annuler_les_mises_a_jour"}
+    mutations_effectuees = set()
 
     def executer_tour(nom, entree):
         # L'accord vient de la phrase réellement reçue, jamais d'une citation proposée par le modèle.
@@ -463,6 +480,9 @@ def tour(ctx: Contexte, texte: str, modele=None) -> dict:
                 return executer(ctx, "refuser", {})
             if accord != "oui" and ctx.etat.get("en_attente"):
                 return executer(ctx, "preciser_confirmation", {})
+            if (proposition_initiale is None or ctx.etat.get("en_attente") is not proposition_initiale
+                    or proposition_initiale != contenu_initial):
+                return {"decision": "a_preciser", "message": "Cette nouvelle proposition nécessite votre confirmation dans une nouvelle réponse."}
             entree = {"mots_de_la_personne": texte}
         q = sans_accents(texte).replace("’", "'")
         if nom == "ajouter_au_portefeuille":
@@ -475,6 +495,21 @@ def tour(ctx: Contexte, texte: str, modele=None) -> dict:
                     fiche = consulter_actif(ctx, (entree or {}).get("actif", ""))
                     return {"decision": "rien", "message": rediger("consulter_actif", fiche), "fiche": fiche}
                 return executer(ctx, "sans_modification", {})
+        if nom in mutations:
+            # Les arguments autorisés viennent des paroles reçues, pas du modèle.
+            candidats = [e for n, e in actions_autorisees if n == nom and
+                         ("actif" not in e or ctx.analyse.trouver(e["actif"]) ==
+                          ctx.analyse.trouver((entree or {}).get("actif", "")))]
+            if not candidats:
+                return {"decision": "rien", "message": "Précisez le changement souhaité et le titre concerné ; aucun changement n'est appliqué."}
+            entree = candidats[0]
+            cle = (nom, str(entree))
+            if cle in mutations_effectuees:
+                return {"decision": "rien", "message": "Cette demande a déjà été traitée."}
+            mutations_effectuees.add(cle)
+        if nom == "proposer_mise_a_jour_du_profil" and not re.search(
+                r"\b(?:change\w*|modifi\w*|revoi\w*|passe\w*|corrig\w*|mets|mettez)\b", q):
+            return {"decision": "rien", "message": "Indiquez la réponse du profil que vous souhaitez revoir."}
         return executer(ctx, nom, entree)
 
     if modele is not None:
