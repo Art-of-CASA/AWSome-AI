@@ -46,6 +46,12 @@ def incoherences(profil: dict) -> list[dict]:
     out = []
     b1, b1r = _v(profil, "B1"), _v(profil, "B1R")
     if b1 and b1r:
+        if b1r[0] == "vendre_tout" and b1[0] == "jamais":
+            out.append({"id": "R1", "criteres": ["B1R", "B1"],
+                        "texte": "Vous avez dit que vous vendriez tout après une baisse de 20 %, mais aussi que vous ne vendriez "
+                                 "jamais à cause d'une baisse. Qu'est-ce qui vous ressemble le plus ?",
+                        "options": [("Je vendrais vers −20 %, quand ça commence à baisser", {"B1": ["20"]}),
+                                    ("Je ne vendrais pas à cause d'une baisse", {"B1R": ["attendre"]})]})
         if b1r[0] == "vendre_tout" and b1[0] in ("30", "40", "50_plus"):
             out.append({"id": "R1", "criteres": ["B1R", "B1"],
                         "texte": f"Vous avez dit que vous vendriez tout après une baisse de 20 %, mais aussi que vous ne vendriez "
@@ -107,7 +113,7 @@ def signaux_coherence(profil: dict) -> list[dict]:
     """
     out = []
     b1, b5, b6 = _v(profil, "B1"), _v(profil, "B5"), _v(profil, "B6")
-    if b5 == ["faible_moins_8"] and b1 and b1[0] in ("40", "50_plus"):
+    if b5 == ["faible_moins_8"] and b1 and b1[0] in ("40", "50_plus", "jamais"):
         out.append({"id": "R6", "criteres": ["B5", "B1"],
                     "texte": "Préférer de faibles variations annuelles et conserver un placement malgré une forte baisse "
                              "décrivent deux aspects différents du risque. Ces deux réponses sont conservées."})

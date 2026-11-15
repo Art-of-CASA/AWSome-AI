@@ -149,3 +149,12 @@ assert _sim.portefeuille_replay(P(B5=["moderee_8_15"], A2=["3_5_ans"], D5=["ia"]
 assert _sim.portefeuille_replay(P(B5=["tres_elevee_plus_25"], A2=["plus_15_ans"])) == "technologie"
 assert _sim.portefeuille_replay(P(B5=["tres_elevee_plus_25"], A2=["3_5_ans"])) == "equilibre"
 print("Prudence garantie OK : replay et vraies contradictions préservés ; R6/R8/R9 sans relance ni mutation")
+
+# ---------- B1 « jamais » face à « je vendrais tout à −20 % » : vraie contradiction, donc R1 ----------
+_pj = {"B1": entree(["jamais"], "choix explicite"), "B1R": entree(["vendre_tout"], "QCM")}
+_r1 = [r for r in incoherences(_pj) if r["id"] == "R1"]
+assert len(_r1) == 1 and "jamais" in _r1[0]["texte"] and "−jamais" not in _r1[0]["texte"], _r1
+assert [o[1] for o in _r1[0]["options"]] == [{"B1": ["20"]}, {"B1R": ["attendre"]}]
+assert any(s["id"] == "R6" for s in signaux_coherence({"B1": entree(["jamais"], "choix explicite"),
+                                                        "B5": entree(["faible_moins_8"], "QCM")}))
+print("B1 « jamais » : contradiction R1 avec « tout vendre à −20 % » et signal R6 : OK")
