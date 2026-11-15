@@ -264,20 +264,24 @@ def page_accueil():
 
 
 def charger_persona(nom: str):
-    """Mode démonstration : profil fictif de l'énoncé, chargé depuis un fichier versionné (aucun appel au modèle)."""
+    """Mode démonstration : profil fictif chargé depuis un fichier versionné (aucun appel au modèle)."""
     d = json.loads((Path(__file__).parent / "personas" / f"{nom}.json").read_text(encoding="utf-8"))
     reset()
     S.profil, S.persona, S.phase = d["profil"], d, "termine"
+    if d.get("replay"):
+        S.replay_trace = d["replay"]
     st.rerun()
 
 
 def page_personas():
     st.divider()
-    st.markdown("**Démonstration : les trois profils fictifs de l'énoncé**")
-    st.caption("Chargés depuis mvp_profil/personas/. Les valeurs tirées de l'énoncé et les hypothèses de test "
+    st.markdown("**Démonstration : quatre profils fictifs**")
+    st.caption("Amira, Mateo et Robert proviennent de l'énoncé ; test simule un questionnaire complet. "
+               "Les valeurs tirées de l'énoncé, les hypothèses de test et les réponses simulées "
                "sont distinguées dans la colonne « source ».")
-    for col, nom in zip(st.columns(3), ("amira", "mateo", "robert")):
-        if col.button(f"Charger {nom.capitalize()}", width="stretch", key=f"persona_{nom}"):
+    for col, nom in zip(st.columns(4), ("amira", "mateo", "robert", "test")):
+        label = nom if nom == "test" else nom.capitalize()
+        if col.button(f"Charger {label}", width="stretch", key=f"persona_{nom}"):
             charger_persona(nom)
 
 

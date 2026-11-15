@@ -1,0 +1,479 @@
+{
+  "nom": "test",
+  "description": "38 ans, infirmière à Montréal, en couple avec un enfant. Placement de 40 000 $ CA dans un CELI sur douze ans, revenus stables, fonds d'urgence séparé et préférence pour des fonds diversifiés. Risque modéré et convictions sur le tabac et les armes.",
+  "source": "Questionnaire et mises en situation entièrement simulés",
+  "avertissement": "Profil FICTIF créé pour tester le parcours complet. Les citations sont des réponses inventées à la première personne ; elles ne proviennent ni d'une personne réelle ni de l'énoncé officiel.",
+  "profil": {
+    "A1": {
+      "valeurs": [
+        "milieu_carriere"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "J'ai 38 ans et je suis infirmière depuis douze ans à Montréal. Je ne prévois pas changer de métier pour le moment.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "A2": {
+      "valeurs": [
+        "10_15_ans"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Je pense garder cet argent douze ans environ. Ce n'est pas l'argent prévu pour les vacances ou les travaux de la maison.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "A3": {
+      "valeurs": [
+        "croissance"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Je veux faire grandir mon épargne pour avoir plus de liberté dans une douzaine d'années, éventuellement travailler quatre jours par semaine.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "A4": {
+      "valeurs": [
+        "moyenne_25_60"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Je place 40 000 dollars sur environ 90 000 dollars d'épargne au total, donc un peu moins de la moitié.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "A5": {
+      "valeurs": [
+        "plus_6_mois"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "J'ai 25 000 dollars disponibles dans un compte d'épargne. Avec environ 3 000 dollars de dépenses essentielles par mois, cela couvre un peu plus de huit mois.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "A6": {
+      "valeurs": [
+        "stables"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Mon poste est permanent et mon salaire de base tombe toutes les deux semaines. Je ne compte pas les heures supplémentaires dans mon budget.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "A7": {
+      "valeurs": [
+        "non"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Je paie ma carte en entier chaque mois. Il reste une hypothèque à 4,5 %, mais aucun prêt ni solde à plus de 8 %.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "A8": {
+      "valeurs": [
+        "1_2"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Nous avons une fille de sept ans. Mon conjoint travaille aussi, mais nous partageons ses dépenses et je dois en tenir compte.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "A9": {
+      "valeurs": [
+        "aucun"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Je n'ai pas prévu de retirer de ce placement avant les douze ans. Les dépenses de notre fille et les imprévus sont couverts à part.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "A10": {
+      "valeurs": [
+        "non"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Je n'ai pas besoin de dividendes pour payer les factures. Je préfère réinvestir les revenus du placement.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "A12": {
+      "valeurs": [
+        "sante"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Je travaille comme infirmière dans un hôpital public, donc dans la santé.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "B1R": {
+      "valeurs": [
+        "attendre"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Passer de 10 000 à 8 000 dollars me ferait mal, mais j'attendrais. Je vérifierais que mon projet n'a pas changé avant de toucher au portefeuille.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "B1": {
+      "valeurs": [
+        "30"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "À moins 30 %, je pense que je finirais par tout vendre pour pouvoir dormir. Avant cela, j'essaierais de tenir mon plan.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "B5": {
+      "valeurs": [
+        "moderee_8_15"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Des variations de l'ordre de 8 à 15 % par an me semblent supportables. Je ne veux pas voir mon épargne faire des montagnes russes de 30 %.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "B7": {
+      "valeurs": [
+        "longue_plus_2_ans"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Je pourrais attendre trois ou quatre ans pour retrouver la valeur de départ puisque cet argent n'est pas destiné à un achat proche.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "B3": {
+      "valeurs": [
+        "oui_garde"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "En 2022, mes fonds ont baissé et j'ai arrêté de les regarder chaque semaine. Je n'ai rien vendu et j'ai maintenu mes versements habituels.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "B4": {
+      "valeurs": [
+        "mensuelle"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Je regarde le relevé une fois par mois, surtout pour vérifier les versements et les frais.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "C2": {
+      "valeurs": [
+        "fonds_communs",
+        "fnb"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "J'ai commencé avec des fonds communs à ma banque, puis j'ai acheté un FNB diversifié. Je n'ai jamais détenu d'actions seules ni de cryptos.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "D1": {
+      "valeurs": [
+        "fnb_actions",
+        "obligations"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Je suis à l'aise avec les FNB d'actions et les obligations. Pour ce portefeuille, je ne souhaite ni actions individuelles, ni or, ni crypto.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "D2": {
+      "valeurs": [
+        "0"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Zéro en crypto. Je ne comprends pas assez bien ce qui fait leur valeur pour y placer mon épargne.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "D9": {
+      "valeurs": [
+        "5"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Même si je préfère les fonds, je ne voudrais jamais plus de 5 dollars sur 100 dans une seule entreprise.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "D11": {
+      "valeurs": [
+        "fnb"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Je préfère des FNB diversifiés : je n'ai ni le temps ni l'envie de choisir des entreprises une par une.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "D12": {
+      "valeurs": [
+        "sans_speculatif"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Je ne veux pas de placements spéculatifs qui peuvent perdre plus de la moitié de leur valeur.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "D4": {
+      "valeurs": [
+        "limite"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Je peux accepter un peu de risque de change pour diversifier, mais je voudrais limiter la part exposée aux devises étrangères.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "D3": {
+      "valeurs": [
+        "canada",
+        "etats_unis",
+        "europe"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "J'aimerais investir au Canada, aux États-Unis et en Europe, de préférence à travers des fonds.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "D5": {
+      "valeurs": [
+        "sante",
+        "infrastructures"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "La santé et les infrastructures m'intéressent parce que je comprends leur utilité. Mais mon salaire dépend déjà de la santé : je ne veux pas que tout le portefeuille en dépende aussi.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "D6": {
+      "valeurs": [
+        "armes",
+        "tabac"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Je refuse le tabac et les armes. Je souhaite que ces exclusions soient prises en compte aussi dans le choix des fonds.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "D7": {
+      "valeurs": [
+        "etablie"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Je préfère des entreprises solides et établies plutôt que de jeunes sociétés dont on promet une croissance énorme.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "D8": {
+      "valeurs": [
+        "parfois"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Quand tout le monde parle d'une action, il m'arrive d'avoir envie d'en acheter. En pratique, je prends quelques jours de recul et je reste avec mes fonds.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "E1": {
+      "valeurs": [
+        "limiter"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Je voudrais limiter le pétrole et le gaz, mais je n'exige pas de supprimer toute entreprise qui utilise de l'énergie fossile.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "E2": {
+      "valeurs": [
+        "pas_de_grave"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Une condamnation grave pour pollution ou corruption serait un motif d'exclusion. Je ne rejette pas une entreprise pour la moindre polémique.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "E4": {
+      "valeurs": [
+        "prefere"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Les critères environnementaux et sociaux comptent dans mon choix : c'est une préférence, avec des exclusions strictes pour le tabac, les armes et les controverses graves.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "E5": {
+      "valeurs": [
+        "armes",
+        "tabac"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Mes exclusions fermes sont les armes et le tabac. Je n'ai pas d'autre exclusion sectorielle systématique.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "F2": {
+      "valeurs": [
+        "aucune"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Je n'ai pas de pays à exclure par principe. Je veux surtout éviter une trop grande concentration dans un seul marché.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "G1": {
+      "valeurs": [
+        "25000_100000"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Le montant à investir dans cette simulation est de 40 000 dollars canadiens.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "G2": {
+      "valeurs": [
+        "celi"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Je veux utiliser mon CELI. J'ai vérifié mes droits de cotisation disponibles et ils couvrent ces 40 000 dollars.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "G3": {
+      "valeurs": [
+        "canada_usa"
+      ],
+      "source": "questionnaire simulé",
+      "citation": "Mon courtier donne accès aux bourses canadiennes et américaines. Pour l'Europe, je passerais par un fonds coté ici.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "C1": {
+      "valeurs": [
+        "intermediaire"
+      ],
+      "source": "quiz simulé",
+      "citation": "2/3 bonnes réponses. Intérêts composés : plus de 1 100 $. Une action est plus risquée qu'un fonds diversifié. Effet des taux sur les obligations : je ne sais pas.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "B2": {
+      "valeurs": [
+        "non_atteint"
+      ],
+      "source": "replay simulé",
+      "citation": "J'ai gardé mon placement aux quatre arrêts, malgré une baisse maximale montrée de 15.0 %. Je suis inquiète, mais mon horizon n'a pas changé.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "",
+      "reduction": null,
+      "baisse_max_montree": 15.0
+    },
+    "B6": {
+      "valeurs": [
+        "equilibre"
+      ],
+      "source": "fourchettes simulées",
+      "citation": "Je choisis le portefeuille équilibré. J'accepte une mauvaise année pour espérer une croissance raisonnable, mais pas la fourchette la plus risquée.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "D8O": {
+      "valeurs": [
+        "non"
+      ],
+      "source": "test effet de mode simulé",
+      "citation": "Aucun, je préférerais un fonds diversifié. Les titres médiatisés attirent mon attention, mais je ne veux pas miser ces 1 000 dollars sur une seule société.",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": ""
+    },
+    "H1": {
+      "valeurs": [
+        "non_teste"
+      ],
+      "source": "comparaison des réponses simulées",
+      "citation": "déclaré 30 %, non atteint (baisse montrée : 15 %)",
+      "confiance": 1.0,
+      "statut": "validé",
+      "motif": "Le replay n'a montré qu'une baisse de 15 % : la tolérance déclarée (−30 %) n'a pas été mise à l'épreuve."
+    }
+  },
+  "quiz": [
+    {
+      "question": "Vous placez 1 000 $ à 5 % par an pendant 2 ans, intérêts réinvestis. Au bout de 2 ans, vous avez :",
+      "reponse": "Plus de 1 100 $"
+    },
+    {
+      "question": "Acheter une seule action est en général … risqué qu'acheter un fonds qui en contient des centaines.",
+      "reponse": "plus"
+    },
+    {
+      "question": "Si les taux d'intérêt montent, le prix des obligations existantes a tendance à :",
+      "reponse": "Je ne sais pas"
+    }
+  ],
+  "replay": {
+    "portefeuille": "equilibre",
+    "decisions": [
+      {
+        "mois": 3,
+        "variation_marche": -0.0543,
+        "decision": "Garder"
+      },
+      {
+        "mois": 6,
+        "variation_marche": -0.1487,
+        "decision": "Garder"
+      },
+      {
+        "mois": 9,
+        "variation_marche": -0.1505,
+        "decision": "Garder"
+      },
+      {
+        "mois": 12,
+        "variation_marche": -0.1094,
+        "decision": "Garder"
+      }
+    ],
+    "final": 11678,
+    "apports": 10000,
+    "sans_rien_faire": 11678.0
+  }
+}

@@ -12,7 +12,7 @@ Site Streamlit qui établit un profil à partir d'une conversation, de questions
 
 ## Parcours
 
-L'accueil propose une conversation exclusivement orale et un questionnaire à choix complété oralement. Il permet aussi de charger les trois personas fictifs de l'énoncé, avec leurs hypothèses de test identifiées.
+L'accueil propose une conversation exclusivement orale et un questionnaire à choix complété oralement. Il permet aussi de charger les trois personas fictifs de l'énoncé, avec leurs hypothèses de test identifiées, et un quatrième profil nommé **test**. Ce dernier simule les réponses d'une infirmière de 38 ans : les 42 critères sont renseignés, avec des citations à la première personne, un quiz et les trois mises en situation. Les réponses sont entièrement fictives et identifiées comme telles. Le bouton **Charger test** ouvre directement sa synthèse ; le profil et la trace du replay sont téléchargeables dans l'export JSON.
 
 ### Conversation et analyse en arrière-plan
 
