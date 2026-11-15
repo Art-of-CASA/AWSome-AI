@@ -1,4 +1,4 @@
-# AlphaForge AI : audit de cohérence et plan de correction
+# AWSome AI : audit de cohérence et plan de correction
 
 15 novembre 2026. Aucun fichier du projet n'a été modifié. Les vérifications ont été faites sur une copie de l'archive `datathon-main-2.zip`, dans un environnement isolé.
 
@@ -15,7 +15,7 @@
 | Énoncé officiel (PDF) et présentation (PPTX), exclus par `.gitignore` | Je ne connais les consignes que par les citations des audits. Les numéros de page, la description exacte des personas et la grille d'évaluation ne sont pas vérifiés à la source. |
 | `scripts/audit_criteres.py`, cité comme source de tous les chiffres de `audit_criteres.md` | Les tableaux de verdicts par persona ne sont pas reproductibles. J'ai refait les calculs de portefeuille moi-même (voir 2.1). |
 | Script du « test sur les trois personas » de `docs/criteres_profil_actifs.md` | Tableau non reproductible. |
-| `alphaforge/evaluation.py` et `resultats/` (dossier parent), cités par `MODIFICATIONS_A_FAIRE.md` | Non vérifiable. |
+| `awsome-ai/evaluation.py` et `resultats/` (dossier parent), cités par `MODIFICATIONS_A_FAIRE.md` | Non vérifiable. |
 | Historique git (branche, commit `47f6cd2`) | Non vérifiable. |
 | Cache `mots_cles_dynamiques.json` du serveur, « Google Doc de critères » | Non vérifiable. |
 

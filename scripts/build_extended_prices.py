@@ -1,6 +1,6 @@
 """Prix, opérations sur titres et taux de change de l'univers étendu (Europe, Asie, Afrique, FNB mondiaux).
 
-Même format que le jeu de départ AlphaForge, pour pouvoir fusionner les deux univers.
+Même format que le jeu de départ AWSome AI, pour pouvoir fusionner les deux univers.
   data_extended/assets_universe.csv    copie de scripts/universe_extended.csv
   data_extended/prices_daily.csv       date, ticker, open, high, low, close, adj_close, volume, currency
   data_extended/corporate_actions.csv  ex_date, ticker, action, value, unit

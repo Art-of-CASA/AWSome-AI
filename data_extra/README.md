@@ -1,6 +1,6 @@
-# Données complémentaires AlphaForge AI
+# Données complémentaires AWSome AI
 
-Données ajoutées au jeu de départ (`Datathon2026/alphaforge_starter`) pour couvrir ce qui manquait aux critères de l'outil. Collecte du 14 novembre 2026. Simulation uniquement : rien ici n'est un conseil financier.
+Données ajoutées au jeu de départ (`Datathon2026/awsome-ai_starter`) pour couvrir ce qui manquait aux critères de l'outil. Collecte du 14 novembre 2026. Simulation uniquement : rien ici n'est un conseil financier.
 
 Le détail de chaque fichier (source, date, traitement, limites, conditions d'utilisation) est dans [sources_extra.csv](sources_extra.csv).
 

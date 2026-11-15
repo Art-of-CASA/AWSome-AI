@@ -17,7 +17,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 sys.path.insert(0, os.path.dirname(__file__))
-os.environ["ALPHAFORGE_CACHE"] = tempfile.mkdtemp()
+os.environ["AWSOME_AI_CACHE"] = tempfile.mkdtemp()
 
 import anthropic  # noqa: E402
 import httpx2 as httpx  # noqa: E402

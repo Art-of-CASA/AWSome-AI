@@ -1,4 +1,4 @@
-# Audit du projet AlphaForge AI, 15 novembre 2026
+# Audit du projet AWSome AI, 15 novembre 2026
 
 **Suite de l'audit :** les bugs reproduits ont été corrigés localement après ce diagnostic. Voir [les corrections et leurs 28 suites de validation](correctifs_audit_multi_agents_2026-11-15.md). La note et les exemples ci-dessous restent l'instantané de l'état audité avant correction.
 
@@ -8,7 +8,7 @@ L'audit a mobilisé un agent principal et trois agents spécialisés : code et a
 
 La version locale du contenu de production examinée est `profil-57bc447b2a10`, avec un inventaire de 59 fichiers. L'audit porte sur les fichiers locaux, y compris les modifications non validées dans Git ; il ne prouve pas que ce contenu est installé sur le site partagé.
 
-**Références officielles.** `Datathon2026/Datathon - Case Officiel 2026 FR.pdf`, pages 3 à 18, et grille de la page 19, rendue et inspectée visuellement ; `Datathon2026/Presentation_AlphaForge_AI_Participants.pptx`, diapositives 7, 9 et 10. La présentation précise l'exigence d'admissibilité AWS. Une allocation fictive, un nombre particulier d'agents ou un nombre minimal d'actifs ne sont pas obligatoires.
+**Références officielles.** `Datathon2026/Datathon - Case Officiel 2026 FR.pdf`, pages 3 à 18, et grille de la page 19, rendue et inspectée visuellement ; `Datathon2026/Presentation_AWSome AI_AI_Participants.pptx`, diapositives 7, 9 et 10. La présentation précise l'exigence d'admissibilité AWS. Une allocation fictive, un nombre particulier d'agents ou un nombre minimal d'actifs ne sont pas obligatoires.
 
 ## Appréciation selon les consignes
 
@@ -125,7 +125,7 @@ Ces formulations passent aussi le contrôle numérique faute de chiffres. Le Gua
 - **Retour arrière :** sous `set -e`, un échec de `systemctl restart` dans `scripts/installer_serveur.sh:25` quitte le script avant le bloc de restauration, lignes 44 à 52. Ce cas doit être inclus dans la gestion d'échec.
 - **État du journal :** si une écriture locale échoue directement, `traces.py:50` conserve `persister=True` et `stockage()` annonce toujours un fichier local. Le résultat devrait devenir « mémoire seulement ». Reproduction par simulation de `PermissionError`.
 - **Reproductibilité :** les dépendances ont des bornes minimales sans verrouillage constaté. L'installation sur le serveur ne met pas à jour les dépendances ; une CI fraîche peut donc réussir là où l'environnement ancien échoue.
-- **Archives de remise périmées :** `mvp_profil.zip` contient la version `profil-970d7c7ff946` (26 fichiers avec manifeste) ; `artifacts/alphaforge-refonte-2026-11-15.zip`, `profil-a07d721a7d20` (35 fichiers). Le vérificateur actuel `scripts/preparer_mvp.py:16` rejette les deux avec « Le manifeste ne décrit pas exactement tous les fichiers de production requis ». Il faut construire un nouveau paquet avant remise ; l'audit n'a pas remplacé ces archives.
+- **Archives de remise périmées :** `mvp_profil.zip` contient la version `profil-970d7c7ff946` (26 fichiers avec manifeste) ; `artifacts/awsome-ai-refonte-2026-11-15.zip`, `profil-a07d721a7d20` (35 fichiers). Le vérificateur actuel `scripts/preparer_mvp.py:16` rejette les deux avec « Le manifeste ne décrit pas exactement tous les fichiers de production requis ». Il faut construire un nouveau paquet avant remise ; l'audit n'a pas remplacé ces archives.
 - **Traces :** le texte des demandes peut être conservé ; aucune politique applicative de durée/suppression n'est constatée. C'est une limite d'exploitation avec des profils réels, pas une violation automatique pour les personas fictifs. Ne pas prétendre que DynamoDB est sans chiffrement : aucun tel défaut n'a été démontré.
 
 ## Conformité des livrables et de la démonstration

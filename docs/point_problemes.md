@@ -1,7 +1,7 @@
 # Point d'étape : écarts avec les consignes et incohérences du projet
 
 Version du 14 novembre 2026, branche `feat/profil-donnees-streamlit` (commit `47f6cd2`).
-Référence : énoncé officiel « Datathon 2026 – AlphaForge AI » (PDF FR) et présentation aux participants (PPTX).
+Référence : énoncé officiel « Datathon 2026 – AWSome AI » (PDF FR) et présentation aux participants (PPTX).
 
 Ce document liste les problèmes trouvés en confrontant le dépôt aux consignes. Pour chacun : ce qui ne va pas, où, la preuve, l'impact et la correction proposée. Les six tests hors ligne de `mvp_profil/` passent tous ; les problèmes ci-dessous sont des écarts de démarche ou de cohérence, pas des tests qui échouent.
 

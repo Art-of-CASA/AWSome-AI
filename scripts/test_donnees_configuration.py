@@ -123,7 +123,7 @@ assert resoudre_position("VOD.L", univers, table) == ("", "non_relie")
 assert resoudre_position("RY", univers, table) == ("RY.TO", "alias_cotation")
 
 # Un paquet altéré est rejeté par une exception, y compris sous python -O.
-with tempfile.TemporaryDirectory(prefix="alphaforge-paquet-") as dossier:
+with tempfile.TemporaryDirectory(prefix="awsome-ai-paquet-") as dossier:
     racine = Path(dossier).resolve()
     source = racine / "source"
     for nom in FICHIERS:

@@ -22,7 +22,7 @@ from . import fidelite, gabarits, gouvernance, incoherence, outils
 from .analyse import Analyse
 from .traces import Journal
 
-MODELE = os.environ.get("ALPHAFORGE_MODELE_RECOMMANDATION", "us.anthropic.claude-sonnet-5-5")
+MODELE = os.environ.get("AWSOME_AI_MODELE_RECOMMANDATION", "us.anthropic.claude-sonnet-5-5")
 TOURS_MAX = 6
 # Vérifié sur Bedrock le 2026-11-15 : Sonnet 5.5 renvoie aussi des blocs de raisonnement (reasoningContent), qui
 # comptent dans la limite de sortie. La limite est donc large ; ces blocs ne sont jamais affichés ni journalisés,
@@ -41,11 +41,11 @@ REGLES_COMMUNES = """Règles absolues :
 - N'expose pas ton raisonnement : donne la conclusion, les raisons observables et les preuves."""
 
 SYSTEMES = {
-    "conseiller": """Tu es l'agent CONSEILLER-PORTEFEUILLE d'AlphaForge, un outil de simulation éducative.
+    "conseiller": """Tu es l'agent CONSEILLER-PORTEFEUILLE d'AWSome AI, un outil de simulation éducative.
 Ton rôle : comprendre la demande, appeler les outils utiles dans le bon ordre, puis résumer le résultat pour la personne.
 Commence par lire_contraintes si tu ne connais pas encore le profil. Pour une demande d'ajout d'un titre, appelle evaluer_demande : le verdict qu'il renvoie est définitif.
 """ + REGLES_COMMUNES,
-    "explicateur": """Tu es l'agent EXPLICATEUR d'AlphaForge, un outil de simulation éducative.
+    "explicateur": """Tu es l'agent EXPLICATEUR d'AWSome AI, un outil de simulation éducative.
 Ton rôle : expliquer un verdict déjà calculé (actif, comparaison ou demande), avec ses preuves, ses hypothèses et ses limites.
 Quand la personne donne une justification pour contester un verdict, tu l'écoutes, tu reconnais ce qu'elle dit, mais tu ne changes PAS le verdict : il a été figé avant que tu lises sa justification. Explique ce qui devrait changer dans le profil pour que le verdict change (écran « Et si… ? »).
 Refuse poliment toute question que les données ne permettent pas de trancher (avenir d'un cours, meilleur titre à acheter).
@@ -73,8 +73,8 @@ class ModeleBedrock:
         self.modele = modele
         self.client = boto3.client("bedrock-runtime", region_name=region or os.environ.get("AWS_REGION", "us-east-1"),
                                    config=Config(read_timeout=60, connect_timeout=5, retries={"max_attempts": 2}))
-        self.guardrail = os.environ.get("ALPHAFORGE_GUARDRAIL_ID")
-        self.guardrail_version = os.environ.get("ALPHAFORGE_GUARDRAIL_VERSION", "DRAFT")
+        self.guardrail = os.environ.get("AWSOME_AI_GUARDRAIL_ID")
+        self.guardrail_version = os.environ.get("AWSOME_AI_GUARDRAIL_VERSION", "DRAFT")
 
     def converser(self, systeme: str, messages: list[dict], specs: list[dict]) -> dict:
         params = {"modelId": self.modele, "system": [{"text": systeme}], "messages": messages,
@@ -90,7 +90,7 @@ class ModeleBedrock:
 
 def modele_par_defaut():
     """Modèle Bedrock si des identifiants AWS sont disponibles et si le mode « sans modèle » n'est pas demandé."""
-    if os.environ.get("ALPHAFORGE_SANS_MODELE") == "1":
+    if os.environ.get("AWSOME_AI_SANS_MODELE") == "1":
         return None
     try:
         import boto3

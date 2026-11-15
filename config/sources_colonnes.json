@@ -1,5 +1,5 @@
 {
- "_note": "Origine de chaque colonne de data_extended/asset_criteria.csv, pour le registre de preuves. Construit à partir de data_extended/sources_extended.csv, data_extra/sources_extra.csv et Datathon2026/alphaforge_starter/sources_metadata.csv. « date » : last_date = dernière observation de prix de l'actif ; sinon date de collecte.",
+ "_note": "Origine de chaque colonne de data_extended/asset_criteria.csv, pour le registre de preuves. Construit à partir de data_extended/sources_extended.csv, data_extra/sources_extra.csv et Datathon2026/awsome-ai_starter/sources_metadata.csv. « date » : last_date = dernière observation de prix de l'actif ; sinon date de collecte.",
  "familles": [
   {
    "famille": "marche",

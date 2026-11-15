@@ -37,7 +37,7 @@ def ecrire_script(chemin: Path, code: str) -> None:
 
 
 def cas(bash: str, mode: str, venv_lien: bool = False) -> None:
-    with tempfile.TemporaryDirectory(prefix="alphaforge-deploiement-") as temporaire:
+    with tempfile.TemporaryDirectory(prefix="awsome-ai-deploiement-") as temporaire:
         cible = Path(temporaire).resolve()
         # Toutes les suppressions et déplacements du vrai script restent dans ce répertoire neuf.
         assert cible.parent == Path(tempfile.gettempdir()).resolve()
@@ -68,7 +68,7 @@ def cas(bash: str, mode: str, venv_lien: bool = False) -> None:
         ecrire_script(faux_bin / "unzip", 'mkdir -p "$4"\ncp -R "$MOCK_PACKAGE/." "$4/"\n')
         ecrire_script(faux_bin / "python3", '[ "${1:-}" != -m ] || exit 99\nexec "$MOCK_PYTHON" "$@"\n')
         ecrire_script(faux_bin / "systemctl", '''
-marque=$(cat "$ALPHAFORGE_RACINE/app/marker")
+marque=$(cat "$AWSOME_AI_RACINE/app/marker")
 printf '%s:%s\\n' "$*" "$marque" >> "$MOCK_LOG"
 if [ "$MOCK_MODE" = restart_always_failure ]; then exit 1; fi
 if [ "$MOCK_MODE" = restart_failure ] && [ "$(wc -l < "$MOCK_LOG")" -eq 1 ]; then exit 1; fi
@@ -85,7 +85,7 @@ if [ "${1:-}" = -m ]; then
   fi
   [ "$2" = pip ] && [ "$3" = install ] && [ "$4" = -r ]
   [ -f "$5" ]
-  printf '%s\\n' "$(cat "$ALPHAFORGE_RACINE/app/marker"):$5" >> "$MOCK_PIP_LOG"
+  printf '%s\\n' "$(cat "$AWSOME_AI_RACINE/app/marker"):$5" >> "$MOCK_PIP_LOG"
   [ "$MOCK_MODE" != pip_failure ]
   exit $?
 fi
@@ -99,7 +99,7 @@ printf 'pendant verification' > traces/pendant_verification.json
             ancien_venv.parent.mkdir()
             (installation / "venv").rename(ancien_venv)
             (installation / "venv").symlink_to(ancien_venv, target_is_directory=True)
-        env = {**os.environ, "ALPHAFORGE_RACINE": str(installation), "VERSION": version, "MOCK_ARCHIVE": str(archive),
+        env = {**os.environ, "AWSOME_AI_RACINE": str(installation), "VERSION": version, "MOCK_ARCHIVE": str(archive),
                "MOCK_MODE": mode, "MOCK_PACKAGE": str(paquet), "MOCK_LOG": str(journal), "MOCK_PIP_LOG": str(journal_pip),
                "MOCK_PYTHON": sys.executable, "MOCK_BIN": str(faux_bin),
                "MOCK_INSTALLER": str(RACINE / "scripts" / "installer_serveur.sh")}
@@ -109,7 +109,7 @@ printf 'pendant verification' > traces/pendant_verification.json
         commande = '''
 set -eu
 if command -v cygpath > /dev/null; then
-  for nom in ALPHAFORGE_RACINE MOCK_PACKAGE MOCK_LOG MOCK_PIP_LOG MOCK_PYTHON MOCK_BIN MOCK_INSTALLER; do
+  for nom in AWSOME_AI_RACINE MOCK_PACKAGE MOCK_LOG MOCK_PIP_LOG MOCK_PYTHON MOCK_BIN MOCK_INSTALLER; do
     printf -v "$nom" '%s' "$(cygpath -u "${!nom}")"
     export "$nom"
   done
@@ -131,11 +131,11 @@ exec bash "$MOCK_INSTALLER"
             assert appels == [], (mode, appels, sorties)
             assert not (installation / "app.prev").exists(), mode
         elif succes:
-            assert appels == ["restart alphaforge:nouveau"], (mode, appels, sorties)
+            assert appels == ["restart awsome-ai:nouveau"], (mode, appels, sorties)
             assert (installation / "app.prev" / "marker").read_text() == "ancien"
             assert (installation / "app" / "traces" / "pendant_verification.json").exists()
         else:
-            assert appels == ["restart alphaforge:nouveau", "restart alphaforge:ancien"], (mode, appels, sorties)
+            assert appels == ["restart awsome-ai:nouveau", "restart awsome-ai:ancien"], (mode, appels, sorties)
             assert (installation / "app.echec" / "marker").read_text() == "nouveau"
             assert not (installation / "app.prev").exists(), mode
             if mode == "app_failure":

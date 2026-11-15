@@ -1,6 +1,6 @@
 """Journal des actions observables : outils appelés, verdicts figés, contrôles. C'est ce que l'écran « Pourquoi ? » montre.
 
-Stockage : en mémoire toujours ; dans DynamoDB si ALPHAFORGE_TABLE_TRACES est défini (sinon fichier local traces/).
+Stockage : en mémoire toujours ; dans DynamoDB si AWSOME_AI_TABLE_TRACES est défini (sinon fichier local traces/).
 On journalise des ACTIONS (outil, entrée, sortie résumée, horodatage), jamais un raisonnement interne de modèle.
 """
 from __future__ import annotations
@@ -13,7 +13,7 @@ from pathlib import Path
 from functools import lru_cache
 from version_profil import version_courante
 
-DOSSIER = Path(os.environ.get("ALPHAFORGE_DOSSIER_TRACES", Path(__file__).resolve().parents[1] / "traces"))
+DOSSIER = Path(os.environ.get("AWSOME_AI_DOSSIER_TRACES", Path(__file__).resolve().parents[1] / "traces"))
 
 
 @lru_cache(maxsize=1)
@@ -41,10 +41,10 @@ class Journal:
         self.persister = persister
         self._table = None
         self.erreur_stockage: str | None = None
-        # Table créée par infra/alphaforge-recommandation.yaml. Absente ou inaccessible (poste local, autre compte) :
+        # Table créée par infra/awsome-ai-recommandation.yaml. Absente ou inaccessible (poste local, autre compte) :
         # la première écriture échoue et le journal bascule sur un fichier local, sans interrompre le site.
-        nom = os.environ.get("ALPHAFORGE_TABLE_TRACES", "alphaforge-traces")
-        if persister and nom and os.environ.get("ALPHAFORGE_TRACES_LOCALES") != "1":
+        nom = os.environ.get("AWSOME_AI_TABLE_TRACES", "awsome-ai-traces")
+        if persister and nom and os.environ.get("AWSOME_AI_TRACES_LOCALES") != "1":
             try:
                 import boto3
                 from botocore.config import Config

@@ -1,7 +1,7 @@
 {
   "nom": "Amira",
   "description": "26 ans, ingénieure logicielle. Profil de risque élevé, horizon de 15 ans ou plus (énoncé, p. 5).",
-  "source": "Énoncé officiel Datathon 2026, AlphaForge AI, p. 5 ; questionnaire complété par simulation",
+  "source": "Énoncé officiel Datathon 2026, AWSome AI, p. 5 ; questionnaire complété par simulation",
   "avertissement": "Profil FICTIF fondé sur le persona officiel. Toutes les réponses à la première personne et les décisions de mise en situation sont simulées ; les motifs indiquent leur lien avec l'énoncé ou les détails ajoutés. Le score de confiance décrit le classement de ces réponses, pas leur authenticité ni le comportement futur d'une personne.",
   "profil": {
     "A1": {

@@ -1,8 +1,8 @@
-# AlphaForge AI starter dataset
+# AWSome AI starter dataset
 
 *Version française plus bas.*
 
-Optional starting data for the PolyFinances AlphaForge AI datathon. You can use it as is, add to it, or ignore it. Everything here is simulation material. Nothing in it is investment advice.
+Optional starting data for the PolyFinances AWSome AI datathon. You can use it as is, add to it, or ignore it. Everything here is simulation material. Nothing in it is investment advice.
 
 Window: **2021-11-12 to 2026-11-12** (5 years, retrieved 2026-11-13). Five years instead of three so the 2022 drawdown, when stocks and bonds fell together, is in the sample.
 
@@ -76,9 +76,9 @@ Edit `UNIVERSE`, `START` and `END` at the top of the script to change the asset 
 
 ---
 
-# Jeu de données de départ AlphaForge AI
+# Jeu de données de départ AWSome AI
 
-Données facultatives pour le datathon PolyFinances AlphaForge AI. Vous pouvez les utiliser telles quelles, les compléter ou les ignorer. Tout ici sert à la simulation. Rien ne constitue un conseil en placement.
+Données facultatives pour le datathon PolyFinances AWSome AI. Vous pouvez les utiliser telles quelles, les compléter ou les ignorer. Tout ici sert à la simulation. Rien ne constitue un conseil en placement.
 
 Période : **12 novembre 2021 au 12 novembre 2026** (5 ans, extraction le 13 novembre 2026). Cinq ans plutôt que trois pour inclure 2022, quand actions et obligations ont reculé en même temps.
 

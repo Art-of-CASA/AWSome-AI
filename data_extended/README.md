@@ -1,4 +1,4 @@
-# Univers étendu AlphaForge AI : Europe, Asie, Afrique et FNB mondiaux
+# Univers étendu AWSome AI : Europe, Asie, Afrique et FNB mondiaux
 
 35 actifs ajoutés au jeu de départ, avec les mêmes données que lui et que `data_extra` : prix, dividendes, change, états financiers, FNB, ESG, attention médiatique, actualités. Période du 12 novembre 2021 au 12 novembre 2026, collecte du 14 novembre 2026. Simulation uniquement : rien ici n'est un conseil financier.
 

@@ -29,11 +29,11 @@ import pandas as pd
 import requests
 
 ROOT = Path(__file__).resolve().parents[1]
-STARTER = ROOT / "Datathon2026" / "alphaforge_starter"
+STARTER = ROOT / "Datathon2026" / "awsome-ai_starter"
 OUT = ROOT / "data_extra"
 RAW = OUT / "raw"
 RAW.mkdir(parents=True, exist_ok=True)
-UA = {"User-Agent": "alphaforge-datathon-research/0.1 (student project)"}
+UA = {"User-Agent": "awsome-ai-datathon-research/0.1 (student project)"}
 
 XEN_URL = ("https://www.blackrock.com/ca/investors/en/products/239574/ishares-jantzi-social-index-etf/"
            "1464253357814.ajax?fileType=csv&fileName=XEN_holdings&dataType=fund")

@@ -1,4 +1,4 @@
-"""Collecte des données complémentaires pour AlphaForge AI.
+"""Collecte des données complémentaires pour AWSome AI.
 
 Produit, dans data_extra/ :
   fundamentals_annual.csv   états financiers annuels (Yahoo Finance via yfinance), format long
@@ -27,12 +27,12 @@ import pandas as pd
 import yfinance as yf
 
 ROOT = Path(__file__).resolve().parents[1]
-STARTER = ROOT / "Datathon2026" / "alphaforge_starter"
+STARTER = ROOT / "Datathon2026" / "awsome-ai_starter"
 OUT = ROOT / "data_extra"
 OUT.mkdir(exist_ok=True)
 
 START, END = "2021-11-12", "2026-11-12"
-UA = {"User-Agent": "alphaforge-datathon-research/0.1 (student project)"}
+UA = {"User-Agent": "awsome-ai-datathon-research/0.1 (student project)"}
 
 universe = pd.read_csv(STARTER / "assets_universe.csv")
 EQUITIES: list[str] = []

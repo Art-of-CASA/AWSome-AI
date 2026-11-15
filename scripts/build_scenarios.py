@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
-STARTER = ROOT / "Datathon2026" / "alphaforge_starter"
+STARTER = ROOT / "Datathon2026" / "awsome-ai_starter"
 EXT = ROOT / "data_extended"
 
 p = pd.concat([pd.read_csv(STARTER / "prices_daily.csv"), pd.read_csv(EXT / "prices_daily.csv")])

@@ -1,6 +1,6 @@
-# AlphaForge AI : outil de décision d'investissement explicable (Datathon PolyFinances 2026)
+# AWSome AI : outil de décision d'investissement explicable (Datathon PolyFinances 2026)
 
-Prototype du cas « AlphaForge AI » (Banque Nationale, AWS) : un outil **agentique et explicable** qui établit le profil d'un investisseur par une conversation, le compare à des actifs décrits par des données publiques datées, et en tire un verdict par actif, un mini-portefeuille fictif et des explications traçables. **Simulation éducative uniquement** : aucun conseil financier personnalisé, aucune transaction réelle.
+Prototype du cas « AWSome AI » (Banque Nationale, AWS) : un outil **agentique et explicable** qui établit le profil d'un investisseur par une conversation, le compare à des actifs décrits par des données publiques datées, et en tire un verdict par actif, un mini-portefeuille fictif et des explications traçables. **Simulation éducative uniquement** : aucun conseil financier personnalisé, aucune transaction réelle.
 
 **Refonte de l'interface du 15 novembre 2026, locale.** Le parcours présente les questions dans des cartes avec des explications courtes, une progression visible et un résumé lisible du profil. Le replay de marché défile en continu : aucune décision n'est imposée et l'utilisateur peut intervenir au moment de son choix. La voix conserve son composant unique et les règles de calcul restent déterministes. Voir [les changements de présentation et de replay](docs/refonte_interface_2026-11-15.md). Cette refonte n'a pas été publiée sur AWS.
 
@@ -100,7 +100,7 @@ Les principes qui en découlent, à respecter partout :
 
 | Dossier | Contenu | Produit par |
 |---|---|---|
-| `Datathon2026/alphaforge_starter/` | Jeu de départ des organisateurs : 31 actifs (Canada, États-Unis, FNB, obligations, or, cryptos), prix, USD/CAD, taux | Organisateurs |
+| `Datathon2026/awsome-ai_starter/` | Jeu de départ des organisateurs : 31 actifs (Canada, États-Unis, FNB, obligations, or, cryptos), prix, USD/CAD, taux | Organisateurs |
 | `data_extra/` | Pour les 31 actifs de départ : états financiers et ratios, FNB (frais, positions, secteurs), ESG (implication fossile, controverses sourcées), attention Wikipédia, actualités, dates de publication macro (ALFRED) | `scripts/fetch_extra_data.py`, `build_esg.py`, `fetch_macro_release_dates.py` |
 | `data_extended/` | **80 actifs ajoutés** en trois lots : 35 (10 Europe, 10 Asie, 10 Afrique, 5 FNB mondiaux), 35 pour contraster les valeurs (tabac, armement, alcool, jeux d'argent, nucléaire, fossiles, renouvelables ; Amérique latine, Moyen-Orient) et 10 actifs stables ; même jeu de données ; change vers le CAD pour 17 devises ; puis **indicateurs et mots-clés des 111 actifs** (détail dans `data_extended/README.md`) | `build_extended_prices.py`, `compute_metrics.py`, `fetch_market_caps.py`, `build_asset_criteria.py` |
 | `config/` | `criteres_appariement.csv` (51 critères, alignés sur `criteres.py` par `scripts/sync_grille.py` : question, valeurs du profil, critère d'actif, règle, type de règle, personas) et `seuils_criteres.json` (tous les seuils, qui sont des hypothèses) | Équipe |
@@ -264,7 +264,7 @@ Le but est de recueillir rapidement les informations utiles sans deviner celles 
 
 ## 7. Déploiement
 
-Le site tourne sur une instance EC2 t3.small (Amazon Linux 2023, service systemd `alphaforge`). Il est servi en HTTPS par CloudFront, ce qui est nécessaire pour le micro. Une fonction CloudFront filtre les IP de l'équipe. Les mises à jour passent par S3 et Session Manager. Tout est décrit dans [mvp_profil/DEPLOIEMENT.md](mvp_profil/DEPLOIEMENT.md), y compris l'ajout d'une IP et la suppression complète après le datathon.
+Le site tourne sur une instance EC2 t3.small (Amazon Linux 2023, service systemd `awsome-ai`). Il est servi en HTTPS par CloudFront, ce qui est nécessaire pour le micro. Une fonction CloudFront filtre les IP de l'équipe. Les mises à jour passent par S3 et Session Manager. Tout est décrit dans [mvp_profil/DEPLOIEMENT.md](mvp_profil/DEPLOIEMENT.md), y compris l'ajout d'une IP et la suppression complète après le datathon.
 
 La version précédant le correctif de répétition est documentée comme **publiée le 15 novembre 2026** (paquet précédent sauvegardé dans `app/backup/` du bucket). Les anciennes mesures du serveur ne valident pas les nouvelles formulations ni leur gain de temps.
 

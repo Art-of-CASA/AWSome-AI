@@ -1,7 +1,7 @@
 {
   "nom": "Robert",
   "description": "59 ans, professionnel de la santé. Profil de risque faible à modéré, horizon de 3 à 5 ans (énoncé, p. 7).",
-  "source": "Énoncé officiel Datathon 2026, AlphaForge AI, p. 7 ; questionnaire complété par simulation",
+  "source": "Énoncé officiel Datathon 2026, AWSome AI, p. 7 ; questionnaire complété par simulation",
   "avertissement": "Profil FICTIF fondé sur le persona officiel. Toutes les réponses à la première personne et les décisions de mise en situation sont simulées ; les motifs indiquent leur lien avec l'énoncé ou les détails ajoutés. Le score de confiance décrit le classement de ces réponses, pas leur authenticité ni le comportement futur d'une personne.",
   "profil": {
     "A1": {

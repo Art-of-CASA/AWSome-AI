@@ -1,4 +1,4 @@
-# AlphaForge AI — analyse et plan de la partie recommandation
+# AWSome AI — analyse et plan de la partie recommandation
 
 15 novembre 2026. Aucun code écrit, aucun fichier du profil modifié. Simulation éducative : rien ici n'est un conseil financier.
 
@@ -50,7 +50,7 @@ Ce document contient l'étape 1 (analyse) et l'étape 2 (plan), écrits avant le
 | 7 | Grille D5 : une préférence « n'améliore JAMAIS la compatibilité » | La demande actuelle veut un score avec « préférences pondérées ». Les deux se concilient seulement si la préférence ne peut pas compenser une tension (section B du plan) |
 | 8 | Synthèse : « un critère inconnu reçoit le réglage le plus prudent » | Vrai pour 14 critères (`reglages_prudents`). Pour les autres (E1, E2, E5, D1, D6, F2…), rien n'est prévu : c'est au moteur de les traiter explicitement |
 | 9 | `stress_loss` présenté comme une mesure de stress | Identique à `max_drawdown` pour les 66 actifs. Une seule crise (2022) dans la fenêtre |
-| 10 | Contexte : Athena écarté ; déploiement GitHub Actions « absent » | Le bucket contient `donnees/*.parquet` et des `athena-resultats/` datés d'aujourd'hui, et un rôle IAM `GitHubActions-AlphaforgeDeploy` existe. Rien de cela n'est dans l'archive : un coéquipier travaille peut-être en parallèle |
+| 10 | Contexte : Athena écarté ; déploiement GitHub Actions « absent » | Le bucket contient `donnees/*.parquet` et des `athena-resultats/` datés d'aujourd'hui, et un rôle IAM `GitHubActions-AWSomeAIDeploy` existe. Rien de cela n'est dans l'archive : un coéquipier travaille peut-être en parallèle |
 | 11 | Rôle IAM du serveur | Il n'autorise que Haiku 5.5. Sonnet 5.5, DynamoDB, Lambda et Guardrails demanderont une politique supplémentaire |
 
 ## 1.4 Contrat de données du profil
@@ -103,7 +103,7 @@ Il n'y en a pas. La grille a un `type_regle` par critère et une colonne `person
 
 ## 1.6 AWS : inventaire et preuves
 
-Région `us-east-1`, compte d'atelier, rôle `WSParticipantRole`. Chaque test ci-dessous a créé puis supprimé une ressource nommée `alphaforge-test-perm-*`. Contrôle final : aucune ressource de test ne reste.
+Région `us-east-1`, compte d'atelier, rôle `WSParticipantRole`. Chaque test ci-dessous a créé puis supprimé une ressource nommée `awsome-ai-test-perm-*`. Contrôle final : aucune ressource de test ne reste.
 
 | Service | Test | Résultat |
 |---|---|---|
@@ -353,7 +353,7 @@ Fichier : `recommandation/gouvernance.py`. Test : un portefeuille qui viole un p
 
 ## Phase 5 — J. Interface
 
-**Sans modifier `mvp_profil/`.** Un lanceur neuf à la racine (`alphaforge_app.py`) utilise la navigation à pages de Streamlit : la page « Profil » exécute `mvp_profil/app.py` tel quel, et les nouvelles pages lisent `S.profil` dans la même session. À vérifier en premier, en 20 minutes, y compris le composant vocal. En cas d'échec : application séparée qui charge un persona en un clic ou le JSON exporté.
+**Sans modifier `mvp_profil/`.** Un lanceur neuf à la racine (`awsome-ai_app.py`) utilise la navigation à pages de Streamlit : la page « Profil » exécute `mvp_profil/app.py` tel quel, et les nouvelles pages lisent `S.profil` dans la même session. À vérifier en premier, en 20 minutes, y compris le composant vocal. En cas d'échec : application séparée qui charge un persona en un clic ou le JSON exporté.
 
 | Écran | Contenu |
 |---|---|
@@ -365,7 +365,7 @@ Fichier : `recommandation/gouvernance.py`. Test : un portefeuille qui viole un p
 | Reprise des questions | Modifier une réponse ou une hypothèse, voir les changements et leur cause |
 | Demande d'un titre | Titre, montant, verdict figé, puis champ de justification |
 
-Fichiers : `alphaforge_app.py`, `recommandation/pages/*.py`, `tests_recommandation/test_interface.py`.
+Fichiers : `awsome-ai_app.py`, `recommandation/pages/*.py`, `tests_recommandation/test_interface.py`.
 
 **Accès du jury.** Formulaire de connexion dans l'application, vérifié par Cognito (appel direct, sans Lambda@Edge) ; un compte « jury ». La fonction CloudFront de filtrage par IP est alors retirée et le groupe de sécurité ne garde que CloudFront. **Ces deux changements touchent le site en service : je les soumets avant de les faire.**
 
@@ -394,7 +394,7 @@ Acceptation : les sept écrans s'affichent pour les trois personas dans le test 
 
 **Écartés** : Step Functions (aucun enchaînement de Lambda), Knowledge Bases (les preuves sont des colonnes, pas des documents), AgentCore, API Gateway, Glue. **Athena** : écarté sauf décision contraire, voir les décisions ouvertes.
 
-Ordre : politique IAM du serveur (Sonnet, DynamoDB, Guardrail) → table DynamoDB → Guardrail → Cognito → Lambda et X-Ray si le temps le permet → gabarit CloudFormation → Budgets. Chaque ajout est réversible et étiqueté `projet = alphaforge-mvp`. Les sept Lambda et l'instance de l'atelier ne sont pas touchées.
+Ordre : politique IAM du serveur (Sonnet, DynamoDB, Guardrail) → table DynamoDB → Guardrail → Cognito → Lambda et X-Ray si le temps le permet → gabarit CloudFormation → Budgets. Chaque ajout est réversible et étiqueté `projet = awsome-ai-mvp`. Les sept Lambda et l'instance de l'atelier ne sont pas touchées.
 
 Limite à écrire dans la doc : région américaine et profil d'inférence américain, donc pas de résidence canadienne des données.
 

@@ -8,9 +8,9 @@ import tempfile
 SITE = Path(__file__).resolve().parent            # mvp_profil
 RACINE = SITE.parent
 sys.path.insert(0, str(SITE))
-os.environ.setdefault("ALPHAFORGE_SANS_MODELE", "1")
-os.environ.setdefault("ALPHAFORGE_TRACES_LOCALES", "1")     # jamais de DynamoDB pendant les tests
-os.environ.setdefault("ALPHAFORGE_DOSSIER_TRACES", tempfile.mkdtemp(prefix="alphaforge_traces_"))
+os.environ.setdefault("AWSOME_AI_SANS_MODELE", "1")
+os.environ.setdefault("AWSOME_AI_TRACES_LOCALES", "1")     # jamais de DynamoDB pendant les tests
+os.environ.setdefault("AWSOME_AI_DOSSIER_TRACES", tempfile.mkdtemp(prefix="awsome-ai_traces_"))
 
 from recommandation import chargement as ch  # noqa: E402
 from recommandation.analyse import Analyse  # noqa: E402

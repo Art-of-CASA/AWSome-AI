@@ -1,7 +1,7 @@
 {
   "nom": "Mateo",
   "description": "41 ans, gestionnaire des opérations. Profil de risque modéré, horizon de 8 à 12 ans (énoncé, p. 6).",
-  "source": "Énoncé officiel Datathon 2026, AlphaForge AI, p. 6 ; questionnaire complété par simulation",
+  "source": "Énoncé officiel Datathon 2026, AWSome AI, p. 6 ; questionnaire complété par simulation",
   "avertissement": "Profil FICTIF fondé sur le persona officiel. Toutes les réponses à la première personne et les décisions de mise en situation sont simulées ; les motifs indiquent leur lien avec l'énoncé ou les détails ajoutés. Le score de confiance décrit le classement de ces réponses, pas leur authenticité ni le comportement futur d'une personne.",
   "profil": {
     "A1": {

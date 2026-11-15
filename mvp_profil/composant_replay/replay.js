@@ -54,7 +54,7 @@
   let args = {}, model = null, ctx = null, previousFrame = null, lastPersisted = 0, lastAnnouncement = -1, lastDraw = 0, lastDispatched = -1;
   try { ctx = $("chart").getContext("2d"); } catch (_) { /* Dégradation explicite ci-dessous. */ }
   function frameHeight() { send("streamlit:setFrameHeight", { height: Math.ceil(document.body.scrollHeight) + 2 }); }
-  function storageKey() { return "alphaforge.replay." + args.session_id; }
+  function storageKey() { return "awsome-ai.replay." + args.session_id; }
   function save() {
     if (!model) return;
     try { root.sessionStorage.setItem(storageKey(), JSON.stringify(model)); } catch (_) { /* Mode privé : la session serveur conserve les décisions. */ }

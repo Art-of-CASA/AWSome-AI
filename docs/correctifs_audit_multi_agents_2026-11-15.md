@@ -57,7 +57,7 @@ Les journaux locaux sont dans `tmp/audit_2026-11-15/`, notamment `tests_apres_co
 
 ## Paquets prêts
 
-- `mvp_profil.zip` et `artifacts/alphaforge-refonte-2026-11-15.zip` : même version `profil-afb08c85729b`, 60 fichiers de production et un manifeste.
+- `mvp_profil.zip` et `artifacts/awsome-ai-refonte-2026-11-15.zip` : même version `profil-afb08c85729b`, 60 fichiers de production et un manifeste.
 - `data_extended.zip` : les 20 fichiers actuels de données, comparés à leurs sources locales.
 
 Les README contradictoires et les chiffres de présentation ont été actualisés. Le compte rendu de l'expérience « modèle seul » reste un instantané historique, explicitement identifié comme antérieur aux corrections.

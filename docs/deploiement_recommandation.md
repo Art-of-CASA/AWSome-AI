@@ -26,15 +26,15 @@ La première commande n'est nécessaire qu'après un changement de `data_extende
 
 ## 3. Ce qui est déjà en place dans le compte AWS
 
-Pile CloudFormation `alphaforge-recommandation` (`infra/alphaforge-recommandation.yaml`), additive : la supprimer retire tout.
+Pile CloudFormation `awsome-ai-recommandation` (`infra/awsome-ai-recommandation.yaml`), additive : la supprimer retire tout.
 
 | Ressource | Rôle | État |
 |---|---|---|
-| Politique `alphaforge-recommandation`, attachée au rôle du serveur | Autorise Sonnet 5.5, la table de traces et le Guardrail | Attachée : les agents fonctionneront dès le déploiement |
-| Table DynamoDB `alphaforge-traces` | Journal des actions (verdicts figés, appels d'outils, contrôles) | Utilisée automatiquement ; sinon fichier local |
-| Guardrail `alphaforge-gouvernance` | Bloque conseil personnalisé et prédiction | Créé, **désactivé par défaut** : il bloque aussi certains refus de prédiction |
-| Groupe Cognito `alphaforge-jury` | Accès par identifiant et mot de passe | Créé, **non branché au site** |
-| Budget `alphaforge-mvp` | Suivi du coût | Créé |
+| Politique `awsome-ai-recommandation`, attachée au rôle du serveur | Autorise Sonnet 5.5, la table de traces et le Guardrail | Attachée : les agents fonctionneront dès le déploiement |
+| Table DynamoDB `awsome-ai-traces` | Journal des actions (verdicts figés, appels d'outils, contrôles) | Utilisée automatiquement ; sinon fichier local |
+| Guardrail `awsome-ai-gouvernance` | Bloque conseil personnalisé et prédiction | Créé, **désactivé par défaut** : il bloque aussi certains refus de prédiction |
+| Groupe Cognito `awsome-ai-jury` | Accès par identifiant et mot de passe | Créé, **non branché au site** |
+| Budget `awsome-ai-mvp` | Suivi du coût | Créé |
 
 Les identifiants des ressources se lisent dans l'onglet « Sorties » de la pile.
 
@@ -42,11 +42,11 @@ Les identifiants des ressources se lisent dans l'onglet « Sorties » de la pile
 
 | Variable | Effet | Par défaut |
 |---|---|---|
-| `ALPHAFORGE_TABLE_TRACES` | Nom de la table du journal | `alphaforge-traces` ; fichier local si elle est inaccessible |
-| `ALPHAFORGE_TRACES_LOCALES=1` | Force le journal en fichier local | DynamoDB si possible |
-| `ALPHAFORGE_GUARDRAIL_ID`, `ALPHAFORGE_GUARDRAIL_VERSION` | Active le Guardrail sur les deux agents | Désactivé |
-| `ALPHAFORGE_MODELE_RECOMMANDATION` | Modèle des deux agents | `us.anthropic.claude-sonnet-5-5` |
-| `ALPHAFORGE_SANS_MODELE=1` | Force les textes de gabarit | Modèle actif si AWS répond |
+| `AWSOME_AI_TABLE_TRACES` | Nom de la table du journal | `awsome-ai-traces` ; fichier local si elle est inaccessible |
+| `AWSOME_AI_TRACES_LOCALES=1` | Force le journal en fichier local | DynamoDB si possible |
+| `AWSOME_AI_GUARDRAIL_ID`, `AWSOME_AI_GUARDRAIL_VERSION` | Active le Guardrail sur les deux agents | Désactivé |
+| `AWSOME_AI_MODELE_RECOMMANDATION` | Modèle des deux agents | `us.anthropic.claude-sonnet-5-5` |
+| `AWSOME_AI_SANS_MODELE=1` | Force les textes de gabarit | Modèle actif si AWS répond |
 
 ## 5. À vérifier après le premier déploiement
 

@@ -87,7 +87,7 @@ def faux_debat(backend, echanges, ids, seuil):
 
 
 try:
-    with tempfile.TemporaryDirectory(prefix="alphaforge-evaluation-") as dossier:
+    with tempfile.TemporaryDirectory(prefix="awsome-ai-evaluation-") as dossier:
         evaluation.ICI = Path(dossier)
         (evaluation.ICI / "validation").mkdir()
         evaluation.charger = lambda: [cas]

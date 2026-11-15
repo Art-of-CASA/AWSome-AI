@@ -14,7 +14,7 @@ from pathlib import Path
 
 RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "mvp_profil"))
-os.environ.setdefault("ALPHAFORGE_TRACES_LOCALES", "1")
+os.environ.setdefault("AWSOME_AI_TRACES_LOCALES", "1")
 
 from recommandation import chargement as ch, contraintes as C, mesures as M, portefeuille as P  # noqa: E402
 from recommandation.analyse import Analyse  # noqa: E402

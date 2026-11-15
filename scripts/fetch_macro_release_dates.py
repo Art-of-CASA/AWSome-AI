@@ -22,10 +22,10 @@ import pandas as pd
 import requests
 
 ROOT = Path(__file__).resolve().parents[1]
-STARTER = ROOT / "Datathon2026" / "alphaforge_starter"
+STARTER = ROOT / "Datathon2026" / "awsome-ai_starter"
 OUT = ROOT / "data_extra"
 OUT.mkdir(exist_ok=True)
-UA = {"User-Agent": "alphaforge-datathon-research/0.1 (student project)"}
+UA = {"User-Agent": "awsome-ai-datathon-research/0.1 (student project)"}
 
 US_MONTHLY = ["CPIAUCSL", "UNRATE"]
 VINTAGE_START, VINTAGE_END = "2021-11-01", "2026-11-13"

@@ -1,4 +1,4 @@
-# AlphaForge AI — une page
+# AWSome AI — une page
 
 **Datathon PolyFinances 2026 · Banque Nationale × AWS · simulation éducative, profils fictifs, aucun conseil financier**
 

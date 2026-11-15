@@ -51,7 +51,7 @@ def repartition_couleurs(criteres, seuil):
     return total
 
 
-# Statut -> (classe de style dans design.css, pastille du titre). Les couleurs vivent dans design.css (palette AlphaForge).
+# Statut -> (classe de style dans design.css, pastille du titre). Les couleurs vivent dans design.css (palette AWSome AI).
 STATUTS = {"rouge": ("preciser", "🔴", "À préciser"), "jaune": ("confirmer", "🟡", "À confirmer"),
            "vert": ("valide", "🟢", "Validé"), "attente": ("analyse", "🔵", "En analyse")}
 

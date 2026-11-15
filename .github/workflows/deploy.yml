@@ -23,7 +23,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: deploy-alphaforge-production
+  group: deploy-awsome-ai-production
   cancel-in-progress: false
 
 jobs:
@@ -85,13 +85,13 @@ jobs:
       - name: Configure AWS credentials through GitHub OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::024848442163:role/GitHubActions-AlphaforgeDeploy
+          role-to-assume: arn:aws:iam::024848442163:role/GitHubActions-AWSomeAIDeploy
           aws-region: us-east-1
 
       - name: Upload package to S3
         run: >-
           aws s3 cp "$RUNNER_TEMP/mvp_profil.zip"
-          s3://alphaforge-mvp-024848442163-us-east-1/app/mvp_profil.zip
+          s3://awsome-ai-mvp-024848442163-us-east-1/app/mvp_profil.zip
 
       - name: Install on the instance, check the page, roll back on failure
         shell: bash

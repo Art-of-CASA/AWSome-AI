@@ -8,8 +8,8 @@
 # Chaque publication prépare un venv distinct ; le retour arrière restaure aussi les dépendances.
 set -euo pipefail
 : "${VERSION:?VERSION manquante}"
-BUCKET="alphaforge-mvp-024848442163-us-east-1"
-RACINE="${ALPHAFORGE_RACINE:-/opt/alphaforge}"
+BUCKET="awsome-ai-mvp-024848442163-us-east-1"
+RACINE="${AWSOME_AI_RACINE:-/opt/awsome-ai}"
 cd "$RACINE"
 RACINE="$(pwd -P)"
 if [ "$RACINE" = / ]; then echo "Racine d'installation invalide"; exit 1; fi
@@ -48,7 +48,7 @@ retour_arriere() {
   fi
   if [ "$ANCIENNE_DEPLACEE" = 1 ]; then
     if mv app.prev app; then
-      systemctl restart alphaforge || echo "L'ancienne version est restaurée mais son redémarrage a échoué"
+      systemctl restart awsome-ai || echo "L'ancienne version est restaurée mais son redémarrage a échoué"
     else
       echo "Échec de la restauration des fichiers de l'ancienne version"
     fi
@@ -116,7 +116,7 @@ VENV_ACTIVE=1
 if [ -d app ]; then mv app app.prev; ANCIENNE_DEPLACEE=1; fi
 mv app.new app
 NOUVELLE_INSTALLEE=1
-systemctl restart alphaforge
+systemctl restart awsome-ai
 
 verifier() {
   for _ in $(seq 1 30); do

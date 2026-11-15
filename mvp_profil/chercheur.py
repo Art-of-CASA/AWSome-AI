@@ -56,8 +56,8 @@ HOTES_WIKI = {"fr": "fr.wikipedia.org", "en": "en.wikipedia.org"}
 TAILLE_MAX_WEB = 1_000_000
 TAILLE_MAX_ARGUMENT = 1000
 MAX_APPELS_OUTILS = 12
-USER_AGENT = "AlphaForge-datathon/1.0 (prototype etudiant de recherche de faits publics)"
-CACHE = Path(os.environ.get("ALPHAFORGE_CACHE", Path(__file__).with_name("cache"))) / "mots_cles_dynamiques.json"
+USER_AGENT = "AWSome AI-datathon/1.0 (prototype etudiant de recherche de faits publics)"
+CACHE = Path(os.environ.get("AWSOME_AI_CACHE", Path(__file__).with_name("cache"))) / "mots_cles_dynamiques.json"
 _verrou = threading.Lock()
 
 

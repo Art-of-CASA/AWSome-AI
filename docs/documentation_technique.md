@@ -1,6 +1,6 @@
-# AlphaForge AI — documentation technique
+# AWSome AI — documentation technique
 
-Datathon PolyFinances 2026, défi AlphaForge AI (Banque Nationale, AWS). Version du 15 novembre 2026.
+Datathon PolyFinances 2026, défi AWSome AI (Banque Nationale, AWS). Version du 15 novembre 2026.
 
 **Simulation éducative.** Profils fictifs, données publiques, aucun ordre réel, aucun conseil financier personnalisé. Les mesures décrivent le passé sur une période dite ; elles ne prédisent pas les rendements futurs.
 
@@ -268,7 +268,7 @@ Le lanceur découvre aussi les cinq suites de recommandation ; l'intégration co
 | Bedrock Guardrails | Bloque conseil personnalisé et prédiction, masque des données personnelles | Texte → accepté ou bloqué | Consigne seule : non vérifiable | Créé, désactivé par défaut |
 | DynamoDB | Journal des actions : verdicts figés, appels d'outils, contrôles | Action → ligne horodatée | Fichier local : perdu au redémarrage, ordre non prouvable | Créé, vérifié |
 | Cognito | Accès du jury par identifiant et mot de passe | Identifiants → accès | Filtre par adresse IP : inutilisable pour un jury | Groupe créé, non branché au site |
-| CloudFormation | Ajouts reproductibles et réversibles (`infra/alphaforge-recommandation.yaml`) | Gabarit → ressources | CDK : non initialisé dans le compte | Pile déployée |
+| CloudFormation | Ajouts reproductibles et réversibles (`infra/awsome-ai-recommandation.yaml`) | Gabarit → ressources | CDK : non initialisé dans le compte | Pile déployée |
 | Systems Manager, GitHub Actions (OIDC) | Déploiement à chaque fusion dans `main`, avec vérification et retour arrière | Paquet vérifié → site en service | Déploiement manuel | En service |
 | AWS Budgets | Suivi du coût | Seuil → suivi | — | Créé |
 

@@ -14,7 +14,7 @@ import pandas as pd
 import yfinance as yf
 
 ROOT = Path(__file__).resolve().parents[1]
-STARTER = ROOT / "Datathon2026" / "alphaforge_starter"
+STARTER = ROOT / "Datathon2026" / "awsome-ai_starter"
 EXT = ROOT / "data_extended"
 MINOR = {"GBp": ("GBP", 100.0), "ZAc": ("ZAR", 100.0)}
 

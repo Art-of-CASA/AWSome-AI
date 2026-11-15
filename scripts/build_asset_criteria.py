@@ -17,7 +17,7 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
-STARTER = ROOT / "Datathon2026" / "alphaforge_starter"
+STARTER = ROOT / "Datathon2026" / "awsome-ai_starter"
 EXTRA, EXT = ROOT / "data_extra", ROOT / "data_extended"
 CFG = json.loads((ROOT / "config" / "seuils_criteres.json").read_text(encoding="utf-8"))
 PROFIL = json.loads((ROOT / "mvp_profil" / "hypotheses_profil.json").read_text(encoding="utf-8"))

@@ -25,7 +25,7 @@ import pandas as pd
 
 RACINE = Path(__file__).resolve().parents[1]
 SORTIE = RACINE / "mvp_profil" / "recommandation" / "donnees"
-DEPART, ETENDU, EXTRA, CONFIG = (RACINE / "Datathon2026" / "alphaforge_starter", RACINE / "data_extended",
+DEPART, ETENDU, EXTRA, CONFIG = (RACINE / "Datathon2026" / "awsome-ai_starter", RACINE / "data_extended",
                                  RACINE / "data_extra", RACINE / "config")
 COPIES = {"actifs.csv": ETENDU / "asset_criteria.csv", "correspondances.json": CONFIG / "correspondances.json",
           "hypotheses_recommandation.json": CONFIG / "hypotheses_recommandation.json",

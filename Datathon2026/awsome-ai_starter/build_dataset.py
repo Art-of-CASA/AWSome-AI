@@ -1,4 +1,4 @@
-"""Build the AlphaForge AI starter dataset.
+"""Build the AWSome AI starter dataset.
 
 Usage:
     python -m venv .venv && .venv/bin/pip install pandas yfinance
