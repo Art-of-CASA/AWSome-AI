@@ -72,10 +72,29 @@ def test_personas_questionnaires_complets():
             assert "Aucune hypothèse disponible pour le moment." not in texte
 
 
+
+def test_repartition_dans_le_style():
+    """La barre utilise les classes et les couleurs de design.css, jamais de couleurs écrites en dur."""
+    import re
+    from pathlib import Path
+    from hypotheses import STATUTS, barre_repartition, repartition_couleurs
+    criteres = [{"statut": "validé", "valeurs": ["x"], "confiance": 1}, {"statut": "incertain"},
+                {"statut": "retenu", "valeurs": ["x"], "confiance": .9}, {"statut": "validé", "valeurs": ["x"], "confiance": 1}]
+    rep = repartition_couleurs(criteres, .8)
+    assert rep == {"rouge": 1, "jaune": 1, "vert": 2, "attente": 0}
+    html = barre_repartition(rep)
+    assert not re.search(r"#[0-9a-fA-F]{3,8}|background", html), html
+    assert 'class="af-hypo-valide" style="width:50.00%"' in html and "af-hypo-analyse" in html  # légende complète
+    assert "En analyse&nbsp;: <b>0</b>" in html and barre_repartition({k: 0 for k in rep})  # aucun critère : pas d'erreur
+    css = (Path(__file__).with_name("design.css")).read_text(encoding="utf-8")
+    for classe, _, _ in STATUTS.values():
+        assert f".af-hypo-{classe}" in css and f"st-key-hypothese_{classe}_" in css, classe
+
 if __name__ == "__main__":
     test_statut_prime_sur_confiance()
     test_seuils_et_recherche()
     test_tous_criteres_et_tri_global()
     test_demo_n_affiche_pas_de_correction()
     test_personas_questionnaires_complets()
+    test_repartition_dans_le_style()
     print("Hypothèses du profil : statuts, tri et démonstration OK")

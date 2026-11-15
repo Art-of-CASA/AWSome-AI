@@ -5,8 +5,10 @@ Lancer : streamlit run mvp_profil/demo_hypotheses.py
 import streamlit as st
 from criteres import CRITERES
 from hypotheses import afficher_hypotheses
+import interface
 
 st.set_page_config(page_title="AlphaForge · Démo du profil", page_icon="📊", layout="wide")
+interface.style()
 st.title("Votre profil d’investisseur")
 st.caption("DÉMO · Données fictives · Aucun appel à l’IA")
 if "demo_profil" not in st.session_state:

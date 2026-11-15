@@ -51,47 +51,37 @@ def repartition_couleurs(criteres, seuil):
     return total
 
 
+# Statut -> (classe de style dans design.css, pastille du titre). Les couleurs vivent dans design.css (palette AlphaForge).
+STATUTS = {"rouge": ("preciser", "🔴", "À préciser"), "jaune": ("confirmer", "🟡", "À confirmer"),
+           "vert": ("valide", "🟢", "Validé"), "attente": ("analyse", "🔵", "En analyse")}
+
+
+def barre_repartition(repartition: dict[str, int]) -> str:
+    """Barre et légende de répartition des statuts, en HTML stylé par design.css (aucun style en ligne sauf la largeur)."""
+    total = sum(repartition.values()) or 1
+    segments = "".join(f'<span class="af-hypo-{STATUTS[code][0]}" style="width:{nombre / total * 100:.2f}%"></span>'
+                       for code, nombre in repartition.items() if nombre)
+    legende = "".join(f'<span><i class="af-hypo-{classe}"></i>{texte}&nbsp;: <b>{repartition[code]}</b></span>'
+                      for code, (classe, _, texte) in STATUTS.items())
+    return ('<div class="af-hypo-repartition" role="img" aria-label="Répartition des critères par statut">'
+            f'<div class="af-hypo-barre">{segments}</div><div class="af-hypo-legende">{legende}</div></div>')
+
+
 def afficher_hypotheses(profil, dynamiques, seuil):
-    st.subheader("Hypothèses du profil")
-    st.write("Retrouvez ce que nous avons compris de vos réponses et les éléments qui le justifient.")
-    st.caption("Du moins certain au plus certain · Les critères à préciser sont ouverts par défaut.")
-    st.caption(f"🟢 Validé · 🟡 À confirmer · 🔴 À préciser · 🔵 Analyse en cours — Seuil de sûreté : {seuil:.0%}")
-    st.caption("La confiance indique la certitude de l’interprétation de votre réponse. Elle ne prédit pas votre comportement futur.")
-    couleurs = {"rouge": ("#dc5555", "🔴"), "jaune": ("#d5a020", "🟡"),
-                "vert": ("#32956a", "🟢"), "attente": ("#5685c6", "🔵")}
     criteres = lignes(profil, dynamiques)
     repartition = repartition_couleurs(criteres, seuil)
-    total = len(criteres)
-    segments = "".join(
-        f'<span style="width:{nombre / total * 100:.2f}%;background:{couleurs[code][0]}"></span>'
-        for code, nombre in repartition.items() if nombre
-    )
-    st.markdown(
-        '<div class="hypotheses-repartition" aria-label="Répartition des critères par statut">'
-        f'<div class="hypotheses-barre">{segments}</div>'
-        '<div class="hypotheses-legende">'
-        f'<span>🔴 À préciser&nbsp;: {repartition["rouge"]}</span>'
-        f'<span>🟡 À confirmer&nbsp;: {repartition["jaune"]}</span>'
-        f'<span>🟢 Validé&nbsp;: {repartition["vert"]}</span>'
-        f'<span>🔵 En analyse&nbsp;: {repartition["attente"]}</span>'
-        '</div></div>'
-        '<style>'
-        '.hypotheses-barre {display:flex; height:12px; overflow:hidden; border-radius:999px; '
-        'background:#e8e8e8; margin:0.3rem 0 0.35rem;} '
-        '.hypotheses-barre span {display:block; min-width:0;} '
-        '.hypotheses-legende {display:flex; flex-wrap:wrap; gap:0.25rem 1rem; font-size:0.85rem; '
-        'margin-bottom:1rem;} '
-        '</style>',
-        unsafe_allow_html=True,
-    )
+    st.html(f'<div class="af-section-intro"><div class="af-eyebrow">CE QUE NOUS AVONS COMPRIS · '
+            f'{len(criteres)} CRITÈRES</div><h2>Hypothèses du profil</h2>'
+            '<p>Retrouvez ce que nous avons compris de vos réponses et les éléments qui le justifient, '
+            'du moins certain au plus certain. Les critères à préciser sont ouverts par défaut.</p></div>')
+    st.html(barre_repartition(repartition))
+    st.caption(f"Seuil de sûreté : {seuil:.0%}. La confiance indique la certitude de l’interprétation de votre réponse ; "
+               "elle ne prédit pas votre comportement futur.")
     for c in criteres:
         couleur, statut = etat(c, seuil)
-        bordure, icone = couleurs[couleur]
-        # Les clés sont générées en interne, jamais à partir des citations.
-        cle = f"hypothese_{c['id']}"
-        st.markdown(f"<style>.st-key-{cle} details {{border-left: 5px solid {bordure};}}"
-                    f".st-key-{cle} summary {{background: {bordure}15;}}</style>", unsafe_allow_html=True)
-        with st.container(key=cle):
+        classe, icone, _ = STATUTS[couleur]
+        # Clé générée en interne (jamais à partir des citations) ; son préfixe porte le statut stylé par design.css.
+        with st.container(key=f"hypothese_{classe}_{c['id']}"):
             with st.expander(f"{icone} {c['nom']} · {statut}", expanded=couleur == "rouge"):
                 st.markdown("**Hypothèse**")
                 st.write(c.get("regle") or "; ".join(libelle(c["id"], v) for v in c.get("valeurs", []))

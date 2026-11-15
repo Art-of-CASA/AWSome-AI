@@ -132,6 +132,23 @@ html { scroll-behavior: smooth; }
 .af-asset-attention { color: var(--af-muted); font-size: 10px; border-top: 1px solid var(--af-border); margin: 18px 0 0; padding-top: 12px; line-height: 1.7; }
 .af-asset-attention small { display: block; font-size: 10px; }.af-asset-attention span { display: block; margin-top: 4px; }
 .af-asset-attention strong { font-size: 16px; font-weight: 500; color: var(--af-ink); }
+/* Hypothèses du profil : statuts dans la palette (terre cuite, ocre, vert forêt, bleu ardoise). */
+:root { --af-preciser: #b4553f; --af-confirmer: #c08a2d; --af-valide: #3f7d5c; --af-analyse: #4f7895; }
+.af-hypo-preciser { background: var(--af-preciser); } .af-hypo-confirmer { background: var(--af-confirmer); }
+.af-hypo-valide { background: var(--af-valide); } .af-hypo-analyse { background: var(--af-analyse); }
+.af-hypo-repartition { margin: 4px 0 14px; }
+.af-hypo-barre { display: flex; height: 10px; overflow: hidden; border-radius: 999px; background: var(--af-soft); margin: 6px 0 10px; }
+.af-hypo-barre span { display: block; min-width: 0; }
+.af-hypo-legende { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 11px; color: var(--af-muted); }
+.af-hypo-legende i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 7px; vertical-align: middle; }
+.af-hypo-legende b { color: var(--af-ink); font-weight: 600; }
+[class*="st-key-hypothese_"] [data-testid="stExpander"] { background: #fff; }
+[class*="st-key-hypothese_preciser_"] details { border-left: 4px solid var(--af-preciser); }
+[class*="st-key-hypothese_confirmer_"] details { border-left: 4px solid var(--af-confirmer); }
+[class*="st-key-hypothese_valide_"] details { border-left: 4px solid var(--af-valide); }
+[class*="st-key-hypothese_analyse_"] details { border-left: 4px solid var(--af-analyse); }
+[class*="st-key-hypothese_preciser_"] summary { background: #b4553f12; }
+[class*="st-key-hypothese_confirmer_"] summary { background: #c08a2d12; }
 @media (min-width: 1100px) { .st-key-profile_rail { position: sticky; top: 30px; } }
 @media (max-width: 1100px) {
   [data-testid="stMainBlockContainer"] { padding: 1rem 1.7rem 3rem; }
