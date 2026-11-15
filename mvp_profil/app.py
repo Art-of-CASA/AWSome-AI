@@ -45,6 +45,7 @@ from voix_composant import conversation_vocale
 from profil import (UTILISABLES, appliquer_correctif, connu, deduire, entree, incoherences, niveau_quiz,
                     recouper_rupture, valeur_curseur)
 from simulations import ETAPES
+from hypotheses import afficher_hypotheses
 
 # Une réponse non validée est redemandée UNE fois, autrement formulée et avec un seuil abaissé ; ensuite on retient
 # la meilleure réponse obtenue (si elle atteint le plancher de 50 %) au lieu de reposer la même question.
@@ -741,6 +742,15 @@ def afficher_dynamiques(details: bool = False):
 
 # ---------- Phase 3 : profil ----------
 def page_termine():
+    integrer_recherches()
+    synthese, hypotheses = st.tabs(["Synthèse", "Hypothèses du profil"])
+    with synthese:
+        synthese_existante()
+    with hypotheses:
+        afficher_hypotheses(S.profil, S.dynamiques, seuil)
+
+
+def synthese_existante():
     st.success("Profil terminé. Merci !")
     retours_situations()
     n = len(S.profil)
