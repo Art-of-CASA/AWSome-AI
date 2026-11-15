@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import os
+from jsonschema import Draft202012Validator
 
 from . import fidelite, gabarits, gouvernance, incoherence, outils
 from .analyse import Analyse
@@ -83,7 +84,8 @@ class ModeleBedrock:
         if self.guardrail:
             params["guardrailConfig"] = {"guardrailIdentifier": self.guardrail, "guardrailVersion": self.guardrail_version}
         r = self.client.converse(**params)
-        return {"message": r["output"]["message"], "arret": r.get("stopReason"), "usage": r.get("usage", {})}
+        return {"message": r["output"]["message"], "arret": r.get("stopReason"), "usage": r.get("usage", {}),
+                "request_id": r.get("ResponseMetadata", {}).get("RequestId"), "modele": self.modele}
 
 
 def modele_par_defaut():
@@ -203,21 +205,34 @@ def dialoguer(role: str, question: str, analyse: Analyse, journal: Journal | Non
         messages.pop()
     messages.append({"role": "user", "content": [{"text": invite}]})
     specs = specs if specs is not None else outils.specifications(role)
+    schemas = {s["toolSpec"]["name"]: s["toolSpec"]["inputSchema"]["json"] for s in specs}
     consignes = (systeme or SYSTEMES[role]) + CONTRAT_RESTITUTION
     rejets = 0
     try:
         for _ in range(TOURS_MAX + 2):
             rep = modele.converser(consignes, messages, specs)
+            if rep.get("request_id") or rep.get("usage"):
+                journal.noter("appel_modele", role=role, modele=rep.get("modele", getattr(modele, "modele", None)),
+                              request_id=rep.get("request_id"), usage=rep.get("usage", {}))
             msg = rep["message"]
             messages.append(msg)
             if rep["arret"] == "guardrail_intervened":
                 journal.noter("guardrail", role=role, action="intervention")
                 return secours("texte bloqué par le Guardrail Bedrock")
             demandes = [b["toolUse"] for b in msg.get("content", []) if "toolUse" in b]
-            if demandes and len([a for a in appels if a.get("par") == "agent"]) < TOURS_MAX * 2:
+            if demandes:
                 resultats = []
                 for d in demandes:
-                    sortie = executer(d["name"], d.get("input") or {})
+                    if len([a for a in appels if a.get("par") == "agent"]) >= TOURS_MAX * 2:
+                        journal.noter("limite_outils", role=role, limite=TOURS_MAX * 2)
+                        return secours("limite d'appels d'outils atteinte")
+                    nom, entree = d.get("name"), d.get("input", {})
+                    if nom not in schemas:
+                        sortie = {"erreur": "Outil non autorisé pour ce rôle."}
+                    elif not Draft202012Validator({**schemas[nom], "additionalProperties": False}).is_valid(entree):
+                        sortie = {"erreur": "Arguments non conformes au schéma de l'outil."}
+                    else:
+                        sortie = executer(nom, entree)
                     appels.append({"outil": d["name"], "entree": d.get("input") or {}, "sortie": sortie, "par": "agent"})
                     journal.noter("appel_outil", role=role, outil=d["name"], entree=d.get("input") or {},
                                   resume={k: sortie.get(k) for k in ("verdict", "libelle_verdict", "score", "ratio_tension",

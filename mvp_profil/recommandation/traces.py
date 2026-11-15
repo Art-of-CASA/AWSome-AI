@@ -10,8 +10,28 @@ import os
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
+from functools import lru_cache
+from version_profil import version_courante
 
 DOSSIER = Path(os.environ.get("ALPHAFORGE_DOSSIER_TRACES", Path(__file__).resolve().parents[1] / "traces"))
+
+
+@lru_cache(maxsize=1)
+def version_chargee() -> str:
+    return version_courante()
+
+
+def pour_stockage(evenement: dict) -> dict:
+    """La session peut afficher les entrées ; les journaux persistants ne conservent pas leur texte libre."""
+    sensibles = {"question", "texte", "citation", "entree", "erreur", "motif", "infractions", "sans_origine"}
+    def nettoyer(obj):
+        if isinstance(obj, dict):
+            return {k: ({"masque": True, "longueur": len(str(v))} if k in sensibles else nettoyer(v))
+                    for k, v in obj.items()}
+        if isinstance(obj, list):
+            return [nettoyer(v) for v in obj]
+        return obj
+    return nettoyer(evenement)
 
 
 class Journal:
@@ -35,10 +55,11 @@ class Journal:
 
     def noter(self, type_: str, **donnees) -> dict:
         ev = {"session": self.session, "rang": len(self.evenements) + 1,
-              "horodatage": datetime.now(timezone.utc).isoformat(timespec="milliseconds"), "type": type_, **donnees}
+              "horodatage": datetime.now(timezone.utc).isoformat(timespec="milliseconds"), "type": type_, **donnees,
+              "version_code": version_chargee()}
         self.evenements.append(ev)
         if self.persister:
-            charge = json.dumps(ev, ensure_ascii=False, default=str)
+            charge = json.dumps(pour_stockage(ev), ensure_ascii=False, default=str)
             try:
                 if self._table is not None:
                     self._table.put_item(Item={"session": self.session, "evenement": f"{ev['rang']:04d}#{ev['horodatage']}#{type_}",
