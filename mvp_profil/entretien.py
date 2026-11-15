@@ -1,7 +1,6 @@
 """Entretien conversationnel (oral ou écrit) : l'IA pose les questions de contexte et coche les critères au fil de l'eau.
 
-Le choix de la question appartient au code. La fonction historique replique() reste disponible pour une
-reformulation vocale utile ; elle n'est pas nécessaire à la lecture d'une question déterministe.
+Le choix de la question appartient au code ; aucune génération libre de question n'est nécessaire.
 En arrière-plan, le CLASSIFICATEUR range les paroles dans les critères (liste fermée, citation exacte,
 confiance), puis le CRITIQUE vérifie. Leur désaccord dispose de deux tours internes pour être résolu sans
 faire répéter l'utilisateur ; une clarification exige un manque ou une ambiguïté explicitement identifié.
@@ -36,49 +35,6 @@ MAX_TOURS = 10
 OUVERTURE = ("Bonjour ! Je vais vous poser quelques questions pour mieux vous connaître ; répondez librement, "
              "comme dans une conversation. Parlons de cette somme précise : à quoi servira l'argent que vous voulez placer, "
              "et dans combien d'années devrez-vous en récupérer la majeure partie ?")
-
-
-class Replique(BaseModel):
-    message: str          # ce que l'IA dit à voix haute : courte reprise + UNE question (ou conclusion)
-    termine: bool
-
-
-SYSTEM_REPLIQUE = """Tu es la voix d'un court entretien oral, en français, pour établir le profil d'un investisseur (simulation éducative, aucun conseil financier).
-Ta réplique sera lue à voix haute : une ou deux phrases courtes, naturelles, sans liste ni jargon ni symbole.
-- Reprends en quelques mots ce que l'utilisateur vient de dire, puis pose UNE seule question simple sur un ou deux sujets
-  encore à couvrir. L'ordre fourni est calculé par le code : respecte cette priorité, sauf si la conversation y a déjà répondu.
-- Ordre : projet/horizon, retraits du capital et revenu nécessaire, réserve et dettes, capacité/risque, contraintes, préférences.
-  Groupe seulement deux sujets naturellement liés (objectif + horizon, expérience + produits, thèmes + refus).
-  Pose séparément réserve de sécurité et part de l'épargne : leurs dénominateurs diffèrent. Pose séparément retrait de
-  capital et besoin de revenu : l'absence de retrait ne dit rien sur les dividendes/intérêts nécessaires pour vivre.
-- Pour une information numérique, donne le référent : part du placement ENTIER dans l'épargne, mois de dépenses couverts
-  SANS toucher au placement. Une réponse courte et précise est préférable à plusieurs questions ambiguës.
-- Un simple oui/non à deux sujets ne les résout pas automatiquement. Précise uniquement le sujet resté sans réponse.
-- Ne redemande jamais ce que l'utilisateur a déjà dit dans la conversation, même si le sujet figure encore dans la liste.
-- S'il y a des sujets « à reformuler » : l'utilisateur en a parlé, mais pas assez clairement. Commence par eux, UNE fois,
-  avec une formulation différente de la précédente et un exemple concret (montant, durée, choix entre deux options).
-  Si une PISTE est indiquée (ce que l'outil a cru comprendre), demande simplement de la confirmer, en une question courte et
-  naturelle qui reprend les mots de l'utilisateur : « Si je comprends bien, votre fils est encore à votre charge ? ». Ne lis
-  jamais la piste telle quelle : ce sont des codes internes (1_2, moins_3_ans…), à ne jamais prononcer.
-- Si l'utilisateur demande de répéter, n'a pas compris ou dit « pardon ? », répète ta dernière question en la reformulant plus simplement.
-- Si sa réponse est floue, reformule avec un exemple concret (des montants, une durée).
-- S'il pose une question hors sujet ou demande un conseil, réponds en une phrase que tu ne donnes pas de conseil, puis reviens à l'entretien.
-termine = true seulement quand tous les sujets à couvrir ont été abordés ; message annonce alors qu'il reste quelques questions à choix."""
-
-
-def replique(backend: Backend, echanges: list[tuple[str, str]], restants: list[str],
-             a_reformuler: list[str] = (), pistes: dict | None = None) -> Replique:
-    """pistes : {critère: (valeurs, citation)} déjà entrevues pour les sujets à reformuler -> l'IA demande confirmation."""
-    """Appel court et rapide : uniquement ce que l'IA va dire. Le classement se fait à part, en arrière-plan."""
-    conv = "\n".join(f"IA : {q}\nUtilisateur : {r}" for q, r in echanges)
-    sujets = "\n".join(f"{i + 1}. {CRITERES[c]['nom']} — {CRITERES[c]['relance']}" for i, c in enumerate(restants)) or "(aucun)"
-    prompt = f"Sujets encore à couvrir, par ordre d'utilité (formulations de référence, à adapter naturellement) :\n{sujets}\n\nConversation :\n{conv}"
-    if a_reformuler:
-        prompt = ("Sujets à reformuler (abordés, mais pas assez clairement) :\n"
-                  + "\n".join(f"- {CRITERES[c]['nom']}" + (f" (piste : {', '.join(pistes[c][0])}, d'après « {pistes[c][1]} »)"
-                                                            if pistes and c in pistes else "") for c in a_reformuler)
-                  + "\n\n" + prompt)
-    return _ask(backend, SYSTEM_REPLIQUE, prompt, Replique)
 
 
 def analyser(backend: Backend, echanges, a_couvrir: list[str], seuil: float | dict, facultatifs=()) -> dict:
