@@ -7,15 +7,16 @@
   relance si l'information manque.
 - Ils débattent (au plus MAX_TOURS tours) : le classificateur révise en tenant compte des objections.
 - Un critère est VALIDÉ seulement si le critique est d'accord ET si les deux confiances >= seuil
-  (80 % par défaut). Sinon, on repose UNE question, formulée autrement, avec un seuil abaissé (65 %).
+  (80 % par défaut). Une précision utilisateur exige une ambiguïté ou un manque explicitement identifié ;
+  une faible confiance, un désaccord entre modèles ou une panne ne sont pas des motifs suffisants.
 - Si la reformulation ne suffit pas non plus, une réponse peut être RETENUE au-dessus du plancher de 50 %
   seulement si le critique l'a approuvée. Un désaccord explicite ou une absence de vérification laisse le
   critère incertain. Une proposition récente différente remplace la précédente, même moins confiante.
   On ne repose donc jamais trois fois la même question.
 
 Rapidité : pas de raisonnement étendu (classification simple), réponses courtes, 2 tours au plus, et le
-critique n'est appelé que sur les critères où le classificateur est déjà sûr de lui ; un critère incertain
-pour le classificateur part directement en question de précision.
+critique n'est appelé que sur les critères où le classificateur est déjà sûr de lui. Une incertitude de modèle
+reste un état interne ; seule une ambiguïté utilisateur précisément diagnostiquée peut justifier une précision.
 
 DÉDUCTIONS : le classificateur peut conclure une valeur que l'utilisateur n'a pas dite mot pour mot si elle découle
 NÉCESSAIREMENT de ses paroles (« je suis à la retraite » -> secteur d'emploi retraite).
@@ -73,6 +74,8 @@ class Proposition(BaseModel):
     citation: str        # mots exacts de l'utilisateur ; vide si rien ne permet de conclure
     confiance: float     # 0 à 1
     justification: str
+    precision_necessaire: bool = False
+    motif_precision: str = ""
 
 
 class Classification(BaseModel):
@@ -85,6 +88,8 @@ class Avis(BaseModel):
     confiance: float     # confiance du critique que la classification finale est la bonne
     objection: str       # vide si accord
     valeurs_suggerees: list[str]
+    precision_necessaire: bool = False
+    motif_precision: str = ""
 
 
 class Critique(BaseModel):
@@ -104,6 +109,10 @@ Pour CHAQUE critère demandé, renvoie une proposition :
 - citation : les mots exacts de l'utilisateur qui justifient le choix (copie fidèle, pas de paraphrase). Vide si aucune.
 - confiance : entre 0 et 1. Au-dessus de 0,8 seulement si la citation dit clairement la chose. Si tu dois deviner ou extrapoler, reste sous 0,5.
 - justification : une phrase courte.
+- precision_necessaire : true seulement si une information de l'utilisateur manque ou si ses mots permettent plusieurs
+  valeurs différentes. motif_precision décrit exactement ce qui manque ou les deux interprétations possibles.
+  Une réponse claire suffit une seule fois. Ni la confiance sous le seuil ni une difficulté du modèle ne justifient
+  de demander à l'utilisateur de répéter. Dans ces cas laisse precision_necessaire=false et motif_precision vide.
 Règles : ne t'appuie que sur ce que l'utilisateur a écrit ; n'invente rien ; une réponse vague ou hors sujet donne une confiance basse.
 COMPRÉHENSION EN CONTEXTE :
 - Lis chaque réponse avec la question qui la précède et les échanges utiles. « Non » à « avez-vous des dettes à taux élevé ? »
@@ -162,6 +171,11 @@ Pour CHAQUE proposition du classificateur :
 - accord = true seulement si tu es convaincu que la classification correspond à ce que l'utilisateur a dit.
 - confiance : entre 0 et 1, ta propre certitude que la classification est correcte. Une réponse vague ne mérite pas plus de 0,6.
 - objection : ce qui ne va pas (vide si accord). valeurs_suggerees : ta proposition si tu n'es pas d'accord (sinon liste vide).
+- precision_necessaire : true uniquement si les paroles de l'utilisateur laissent un manque précis ou une ambiguïté
+  qui change la valeur du critère. motif_precision nomme ce manque ou ces interprétations concrètes. Une faible confiance,
+  une nuance sans effet, un désaccord avec le classificateur ou un problème technique ne suffisent pas.
+  Une réponse claire doit suffire une fois ; si la valeur proposée est fausse mais la réponse claire, propose la bonne
+  valeur au classificateur et résous le désaccord entre agents, sans réclamer une autre réponse à l'utilisateur.
 - Une réponse claire et directe (« dans 12 ans », « je suis infirmier », « deux personnes à charge ») mérite ton accord et une confiance
   élevée : ne la conteste pas pour une nuance qui ne change pas la valeur choisie. Être trop strict fait reposer à l'utilisateur
   une question à laquelle il a déjà répondu, ce qui est pénible.
@@ -299,6 +313,8 @@ class Resultat:
     valide: bool
     motif: str                # pourquoi non validé, ou justification
     accord_critique: bool | None = None  # None : non consulté ; False : ne peut jamais devenir « retenu »
+    precision_necessaire: bool = False
+    motif_precision: str = ""
 
 
 @dataclass
@@ -334,6 +350,21 @@ def retenable(r: Resultat | None) -> bool:
     return r.valide or r.accord_critique is True or r.motif.startswith("Confiance ")
 
 
+def _precision_declaree(*lectures) -> tuple[bool, str]:
+    """Un diagnostic explicite ; ni un score de confiance ni une erreur interne ne fait répéter l'utilisateur."""
+    vagues = {"pas clair", "a preciser", "reponse vague", "ambigu", "information manquante", "faible confiance"}
+    for lecture in lectures:
+        if lecture is None or not lecture.precision_necessaire:
+            continue
+        motif = lecture.motif_precision.strip()
+        normalise = _norm(motif)
+        if (not motif or normalise in vagues or
+                re.match(r"^(?:confiance|seuil|desaccord|panne|erreur api|erreur technique|modele indisponible)\b", normalise)):
+            continue
+        return True, motif
+    return False, ""
+
+
 def evaluer(cid, prop: Proposition | None, avis: Avis | None, echanges, seuil: float | dict) -> Resultat:
     seuil = _seuil(seuil, cid)
     if prop is None:
@@ -342,17 +373,24 @@ def evaluer(cid, prop: Proposition | None, avis: Avis | None, echanges, seuil: f
     c_cls = max(0.0, min(1.0, prop.confiance))
     c_cri = max(0.0, min(1.0, avis.confiance)) if avis else 0.0
     conf = min(c_cls, c_cri)
+    precision, motif_precision = _precision_declaree(avis, prop)
     if not vals:
         motif = "Information absente ou valeurs hors liste"
+        if prop.valeurs or (prop.citation and not _citation_presente(prop.citation, echanges)):
+            precision, motif_precision = False, ""
     elif not _citation_presente(prop.citation, echanges):
         motif, conf = "Citation introuvable dans la réponse de l'utilisateur", min(conf, 0.5)
+        precision, motif_precision = False, ""
     elif avis is None or not avis.accord:
         motif = f"Désaccord du critique : {avis.objection if avis else 'pas d avis'}"
+        if avis is None:
+            precision, motif_precision = False, ""
     elif conf < seuil:
         motif = f"Confiance {conf:.0%} sous le seuil de {seuil:.0%}"
     else:
         return Resultat(cid, vals, prop.citation, conf, True, prop.justification, True)
-    return Resultat(cid, vals, prop.citation, conf, False, motif, avis.accord if avis else None)
+    return Resultat(cid, vals, prop.citation, conf, False, motif, avis.accord if avis else None,
+                    precision, motif_precision)
 
 
 def precontrole(cid, prop: Proposition | None, echanges, seuil: float | dict) -> Resultat | None:
@@ -362,11 +400,17 @@ def precontrole(cid, prop: Proposition | None, echanges, seuil: float | dict) ->
         return Resultat(cid, [], "", 0.0, False, "Aucune proposition du classificateur")
     vals, conf = _valides(cid, prop.valeurs), max(0.0, min(1.0, prop.confiance))
     if not vals:
-        return Resultat(cid, [], prop.citation, conf, False, "Information absente ou valeurs hors liste")
+        precision, motif_precision = _precision_declaree(prop)
+        if prop.valeurs or (prop.citation and not _citation_presente(prop.citation, echanges)):
+            precision, motif_precision = False, ""
+        return Resultat(cid, [], prop.citation, conf, False, "Information absente ou valeurs hors liste",
+                        None, precision, motif_precision)
     if not _citation_presente(prop.citation, echanges):
         return Resultat(cid, vals, prop.citation, min(conf, 0.5), False, "Citation introuvable dans la réponse de l'utilisateur")
     if conf < seuil:
-        return Resultat(cid, vals, prop.citation, conf, False, f"Classificateur peu sûr ({conf:.0%})")
+        precision, motif_precision = _precision_declaree(prop)
+        return Resultat(cid, vals, prop.citation, conf, False, f"Classificateur peu sûr ({conf:.0%})",
+                        None, precision, motif_precision)
     return None
 
 
@@ -411,5 +455,5 @@ def debattre(backend: Backend, echanges: list[tuple[str, str]], criteres_ids: li
         a_traiter, classif = contestes, soumis
     resultats = {c: r for c, r in resultats.items() if c in criteres_ids or r.valide}  # facultatif non validé : oublié
     restants = [c for c, r in resultats.items() if not r.valide]
-    question = crit.question_relance.strip() if (crit and restants) else ""
+    question = crit.question_relance.strip() if (crit and any(resultats[c].precision_necessaire for c in restants)) else ""
     return Debat(resultats, tours, question)

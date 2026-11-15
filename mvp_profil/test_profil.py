@@ -4,7 +4,7 @@ Lancer : python mvp_profil/test_profil.py
 from __future__ import annotations
 
 from criteres import CRITERES, SECTIONS
-from profil import appliquer_correctif, entree, incoherences, niveau_quiz, valeur_curseur
+from profil import appliquer_correctif, entree, incoherences, niveau_quiz, valeur_curseur, signaux_coherence
 
 items = {it["id"]: it for s in SECTIONS for it in s["items"]}
 
@@ -51,10 +51,11 @@ print(f"Logique déterministe OK : {len(items)} questions fixes, {n_crit} critè
 
 # Nouvelles règles (critères ajoutés)
 assert [c["id"] for c in incoherences(P(D12=["sans_speculatif"], D2=["10"]))] == ["R5"]
-assert [c["id"] for c in incoherences(P(B5=["faible_moins_8"], B1=["40"]))] == ["R6"]
+assert incoherences(P(B5=["faible_moins_8"], B1=["40"])) == []
+assert [c["id"] for c in signaux_coherence(P(B5=["faible_moins_8"], B1=["40"]))] == ["R6"]
 assert [c["id"] for c in incoherences(P(E5=["alcool", "tabac"], D5=["alcool", "ia"]))] == ["R7"]
 assert incoherences(P(E5=["aucune"], D5=["aucun"])) == []
-print("Règles R5, R6, R7 OK")
+print("Règles R5/R7 et signal R6 sans relance : OK")
 
 # Déductions certaines : ce qui se déduit d'une réponse n'est plus demandé
 from profil import connu, deduire  # noqa: E402
@@ -75,8 +76,12 @@ assert p["B1"]["valeurs"] == ["10"] and p["H1"]["valeurs"] == ["grand"] and "−
 p = P(B1=["20"], B2=["10"]); recouper_rupture(p); assert p["B1"]["valeurs"] == ["10"] and p["H1"]["valeurs"] == ["faible"]
 p = P(B1=["20"], B2=["non_atteint"]); assert recouper_rupture(p) is None and p["B1"]["valeurs"] == ["20"]
 p = P(B1=["10"], B2=["30"]); recouper_rupture(p); assert p["B1"]["valeurs"] == ["10"]  # déclaré déjà plus prudent
-assert [c["id"] for c in incoherences(P(B5=["elevee_15_25"], B6=["prudent"]))] == ["R8"]
-assert [c["id"] for c in incoherences(P(D8=["non"], D8O=["oui"]))] == ["R9"]
+assert incoherences(P(B5=["elevee_15_25"], B6=["prudent"])) == []
+assert incoherences(P(B5=["faible_moins_8"], B6=["dynamique"])) == []
+assert incoherences(P(D8=["non"], D8O=["oui"])) == []
+assert [c["id"] for c in signaux_coherence(P(B5=["elevee_15_25"], B6=["prudent"]))] == ["R8"]
+assert [c["id"] for c in signaux_coherence(P(B5=["faible_moins_8"], B6=["dynamique"]))] == ["R8"]
+assert [c["id"] for c in signaux_coherence(P(D8=["non"], D8O=["oui"]))] == ["R9"]
 
 # Scénarios précalculés : le compromis risque/rendement est cohérent, 2 titres médiatisés sur 4
 import json, pathlib
@@ -123,15 +128,24 @@ recouper_rupture(p); assert p["H1"]["valeurs"] == ["non_teste"] and p["B1"]["val
 p = P(B1=["10"]); p["B2"] = entree(["non_atteint"], "replay", baisse_max_montree=15.0, reduction=None)
 recouper_rupture(p); assert p["H1"]["valeurs"] == ["aucun"]
 
-# 4. R3 ne se déclenche pas quand D1 n'est pas encore connu ; R9 n'assouplit jamais D12.
+# 4. R3 ne se déclenche pas quand D1 n'est pas connu ; les signaux ne modifient aucune réponse.
 p = P(D2=["5"]); p["D1"] = entree([], "à préciser", statut="à préciser", confiance=0.0)
 assert "R3" not in [c["id"] for c in incoherences(p)]
-r9 = incoherences(P(D8=["non"], D8O=["oui"], D12=["sans_speculatif"]))[0]
-assert "D12" not in r9["options"][0][1]
+from copy import deepcopy
+p = P(B5=["faible_moins_8"], B1=["40"], B6=["dynamique"], D8=["non"], D8O=["oui"], D12=["sans_speculatif"])
+avant = deepcopy(p)
+signaux = signaux_coherence(p)
+assert {s["id"] for s in signaux} == {"R6", "R8", "R9"}
+assert all(set(s) == {"id", "texte", "criteres"} and "?" not in s["texte"] for s in signaux)
+assert p == avant and p["D8"]["valeurs"] == ["non"] and p["D12"]["valeurs"] == ["sans_speculatif"]
+assert incoherences(p) == []
+assert signaux_coherence({}) == []
+p["D8O"]["statut"] = "incertain"
+assert "R9" not in [s["id"] for s in signaux_coherence(p)]
 
 # 5. Le portefeuille du replay suit le risque et l'horizon déclarés, pas le thème d'intérêt.
 import simulations as _sim  # noqa: E402
 assert _sim.portefeuille_replay(P(B5=["moderee_8_15"], A2=["3_5_ans"], D5=["ia"])) == "equilibre"
 assert _sim.portefeuille_replay(P(B5=["tres_elevee_plus_25"], A2=["plus_15_ans"])) == "technologie"
 assert _sim.portefeuille_replay(P(B5=["tres_elevee_plus_25"], A2=["3_5_ans"])) == "equilibre"
-print("Prudence garantie OK : R1b ne remonte plus la rupture, correctifs sans valeur inventée, non_teste, R3, R9, replay")
+print("Prudence garantie OK : replay et vraies contradictions préservés ; R6/R8/R9 sans relance ni mutation")

@@ -86,13 +86,6 @@ def incoherences(profil: dict) -> list[dict]:
                              "cryptoactifs, qui en font partie. Que préférez-vous ?",
                     "options": [("Pas de cryptoactifs", {"D2": ["0"]}),
                                 ("Une petite part spéculative, limitée à 5 %", {"D12": ["plafonne_5"], "D2": ["5"]})]})
-    b5 = _v(profil, "B5")
-    if b5 == ["faible_moins_8"] and b1 and b1[0] in ("40", "50_plus"):
-        out.append({"id": "R6", "criteres": ["B5", "B1"],
-                    "texte": "Vous préférez des placements qui varient peu (moins de 8 % par an), mais vous ne vendriez qu'après "
-                             "une baisse de 40 % ou plus. Qu'est-ce qui vous ressemble le plus ?",
-                    "options": [("Je supporte mal les variations : je vendrais bien avant −40 %", {"B1": None}),
-                                ("Les variations ne m'inquiètent pas tant que je ne vends pas", {"B5": None})]})
     e5 = _v(profil, "E5")
     commun = sorted(set(e5) & set(d5) - {"aucun", "aucune"})
     if commun:
@@ -100,23 +93,36 @@ def incoherences(profil: dict) -> list[dict]:
                     "texte": f"Vous excluez {', '.join(commun)}, mais vous l'avez aussi cité parmi vos thèmes d'intérêt. Que préférez-vous ?",
                     "options": [("L'exclure", {"D5": [t for t in d5 if t not in commun] or ["aucun"]}),
                                 ("Ne pas l'exclure", {"E5": [t for t in e5 if t not in commun] or ["aucune"]})]})
-    b6, d8, d8o = _v(profil, "B6"), _v(profil, "D8"), _v(profil, "D8O")
-    if b6 and b5 and ((b6[0] == "prudent" and b5[0] in ("elevee_15_25", "tres_elevee_plus_25"))
-                      or (b6[0] == "dynamique" and b5[0] == "faible_moins_8")):
+    return out
+
+
+def signaux_coherence(profil: dict) -> list[dict]:
+    """Constats explicatifs sans question, correction ou inférence comportementale.
+
+    Une limite de volatilité et un seuil de vente ne mesurent pas la même chose.
+    Accepter du risque n'oblige pas à le rechercher. Enfin, choisir un titre
+    médiatisé n'isole pas la cause du choix. Ces observations ne constituent donc
+    pas des contradictions démontrées ; elles ne déclenchent aucune relance.
+    Les identifiants historiques restent stables pour la traçabilité.
+    """
+    out = []
+    b1, b5, b6 = _v(profil, "B1"), _v(profil, "B5"), _v(profil, "B6")
+    if b5 == ["faible_moins_8"] and b1 and b1[0] in ("40", "50_plus"):
+        out.append({"id": "R6", "criteres": ["B5", "B1"],
+                    "texte": "Préférer de faibles variations annuelles et conserver un placement malgré une forte baisse "
+                             "décrivent deux aspects différents du risque. Ces deux réponses sont conservées."})
+    if b6 == ["prudent"] and b5 and b5[0] in ("elevee_15_25", "tres_elevee_plus_25"):
         out.append({"id": "R8", "criteres": ["B5", "B6"],
-                    "texte": "Dans les fourchettes, vous avez choisi un portefeuille "
-                             + ("prudent, alors que vous acceptiez de fortes variations." if b6[0] == "prudent"
-                                else "dynamique, alors que vous préfériez des variations faibles.")
-                             + " Qu'est-ce qui vous ressemble le plus ?",
-                    "options": [("Des variations modérées (8 à 15 % par an)", {"B5": ["moderee_8_15"]}),
-                                ("Des variations élevées (15 à 25 % par an), pour un meilleur rendement espéré", {"B5": ["elevee_15_25"]})]})
-    if d8 == ["non"] and d8o == ["oui"]:
+                    "texte": "Vous avez choisi une fourchette prudente tout en acceptant des variations plus fortes. "
+                             "Le risque maximal accepté n'est pas un minimum à rechercher ; ces réponses sont compatibles."})
+    elif b6 == ["dynamique"] and b5 == ["faible_moins_8"]:
+        out.append({"id": "R8", "criteres": ["B5", "B6"],
+                    "texte": "Le choix d'une fourchette dynamique ne mesure pas directement la volatilité acceptée. "
+                             "Les deux réponses sont conservées et leurs limites devront être vérifiées séparément."})
+    if _v(profil, "D8") == ["non"] and _v(profil, "D8O") == ["oui"]:
         out.append({"id": "R9", "criteres": ["D8", "D8O"],
-                    "texte": "Vous aviez dit ne pas être tenté par les titres dont tout le monde parle, mais dans la mise en "
-                             "situation vous avez choisi un titre très médiatisé, aux variations fortes. Qu'en pensez-vous ?",
-                    "options": [("J'ai été tenté : je préfère que l'outil limite ce type de titre à 5 % du portefeuille au plus",
-                                 {"D8": ["parfois"], **({} if d12 and d12[0] in ("sans_speculatif", "plafonne_5") else {"D12": ["plafonne_5"]})}),
-                                ("C'était un choix réfléchi, je l'assume", {"D8": ["oui"]})]})
+                    "texte": "Le titre choisi est médiatisé. Ce choix peut aussi refléter son secteur ou ses caractéristiques ; "
+                             "il ne démontre pas une attirance pour sa popularité. Vos préférences et plafonds restent conservés."})
     return out
 
 

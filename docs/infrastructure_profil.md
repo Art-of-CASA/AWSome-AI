@@ -1,6 +1,6 @@
 # Infrastructure du profil : ordre des questions, contrôles et restitution
 
-Ce document décrit le fonctionnement implémenté et publié sur le site le 15 novembre 2026. L'objectif est de recueillir les informations utiles avec moins de répétitions, en gardant une preuve de ce qui est déclaré, confirmé, mesuré ou encore inconnu. Les suggestions personnalisées et le moteur d'appariement restent une étape distincte.
+Ce document décrit le fonctionnement implémenté, avec le correctif des répétitions publié le 15 novembre 2026 (version `profil-afe8ed38fc7d`). L'identifiant de contenu visible dans l'interface distingue le code testé de la version du serveur. L'objectif est de recueillir les informations utiles avec moins de répétitions, en gardant une preuve de ce qui est déclaré, confirmé, mesuré ou encore inconnu. Les suggestions personnalisées et le moteur d'appariement restent une étape distincte.
 
 L'ordre est une **heuristique déterministe**, pas un optimum démontré du nombre de questions ou de la durée. Les coefficients d'utilité et les coûts sont des hypothèses explicites. Aucune mesure avec de vrais utilisateurs ou avec le modèle Bedrock n'établit encore le gain de temps ou la qualité des nouvelles formulations.
 
@@ -19,7 +19,7 @@ L'ordre est une **heuristique déterministe**, pas un optimum démontré du nomb
 | `chercheur.py` | Documente les liens entre un concept et les actifs, avec preuves et couverture. | Ne pas trouver un lien ne prouve pas son absence. |
 | `synthese.py` | Calcule la synthèse, les réponses décisives et la sensibilité locale. | Les hypothèses de risque ne sont pas une calibration validée ni une prévision. |
 
-La réplique et l'analyse ont deux rôles séparés : l'utilisateur peut continuer pendant la vérification, mais le panneau du profil ne marque une valeur comme validée qu'après les contrôles.
+Le pilote de questions déterministe et l'analyse ont deux rôles séparés : l'utilisateur peut continuer pendant la vérification, mais le panneau du profil ne marque une valeur comme validée qu'après les contrôles.
 
 ## 2. Ordre concret du parcours
 
@@ -41,7 +41,7 @@ Le dialogue oral couvre les critères de contexte, pas l'intégralité du questi
 
 ### Exemples de questions utiles
 
-Les formulations ci-dessous illustrent les consignes et les questions de référence. La réplique peut les adapter naturellement ; elles ne constituent pas un script imposant toutes les questions à chaque personne.
+Les formulations ci-dessous illustrent les consignes et les questions de référence. Le pilote choisit la formulation et sa cible ; les questions déjà répondues ne reviennent pas pendant la vérification. Toutes les réponses ouvertes passent par le micro.
 
 | Moment | Question ou format | Informations visées | Contrôle d'intégrité |
 |---|---|---|---|
@@ -103,7 +103,7 @@ Le classificateur et le critique reçoivent le sens des codes et les libellés d
 
 Les sources restent distinguées : QCM, curseur, quiz, conversation, déduction, replay ou confirmation. Être parent ne permet pas de compter automatiquement les personnes actuellement à charge. Le métier ne permet pas à lui seul de conclure que les revenus sont stables.
 
-Une précision libre est bornée à une reformulation. La baisse du seuil après reformulation ne transforme pas un désaccord en accord. Un résultat refusé par le critique reste non utilisable ; un accord avec confiance réduite peut être signalé comme « retenu ». Une information inconnue n'est pas transformée en consentement ou en exclusion.
+Une précision libre est bornée à une reformulation. Le parcours conserve son seuil de validation pendant la clarification ; un manque précis doit la justifier. Un désaccord interne seul ne demande pas à l'utilisateur de répéter. Un résultat refusé par le critique reste non utilisable ; un accord avec confiance réduite peut être signalé comme « retenu ». Une information inconnue n'est pas transformée en consentement ou en exclusion.
 
 ## 5. Analyse en arrière-plan et corrections
 
@@ -112,7 +112,7 @@ L'orchestration de la conversation est dans `app.py` :
 1. Chaque échange reçoit un numéro correspondant à la longueur de l'historique.
 2. Les critères déjà en cours de vérification ne sont pas relancés pour le même instantané.
 3. Si des réponses arrivent pendant une vérification, elles sont regroupées pour une analyse du dernier historique disponible.
-4. Un résultat portant sur un ancien instantané est ignoré ; un rattrapage reprend le texte à jour. Une version ancienne ne remplace pas une valeur intégrée plus récemment.
+4. La fraîcheur est vérifiée par critère. Un nouveau sujet ne périme pas un résultat utile antérieur ; seule une nouvelle réponse ou correction sur ce critère bloque l'ancien résultat.
 5. Une correction explicite, comme « je me corrige » ou « finalement », déclenche une relecture des informations déjà connues. La nouvelle valeur doit être étayée par les mots récents ; une ancienne citation ne suffit pas.
 6. Une correction ambiguë appelle une précision. La confiance élevée d'une ancienne interprétation ne doit pas empêcher une correction plus récente.
 7. Avant de quitter la conversation, le code termine les vérifications et leur rattrapage ; les critères encore inconnus passent dans les compléments.

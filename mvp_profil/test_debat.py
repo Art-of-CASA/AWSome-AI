@@ -150,7 +150,7 @@ d = debattre(client(s9), ech9, ["A2"])
 assert d.resultats["A2"].valeurs == ["3_5_ans"] and d.resultats["A2"].valide
 for body in ENVOIS[n:]:
     assert "dans quatre ans" in body["messages"][0]["content"]
-    assert "3_5_ans = 3 à 5 ans" in body["messages"][0]["content"]
+    assert "3_5_ans = 3 à moins de 5 ans" in body["messages"][0]["content"]
     assert "correction" in body["system"].lower()
 
 # 10) Un critique en désaccord à confiance élevée ne peut pas être contourné par le maintien « retenu ».
@@ -194,3 +194,52 @@ for body in ENVOIS[n:]:
 
 print("12 scénarios OK (dont Bedrock) :", len(ENVOIS), "requêtes simulées, contexte et contrôles conformes")
 print("Les réponses du modèle sont simulées : ces tests ne mesurent pas sa compréhension réelle.")
+
+# Une demande de précision doit décrire une ambiguïté utile, pas une difficulté du modèle.
+ech_precision = [("Dans combien d'années ?", "Entre huit et douze ans.")]
+p_precision = Proposition(critere_id="A2", valeurs=["5_10_ans"], citation="Entre huit et douze ans",
+                         confiance=0.65, justification="Fourchette chevauchante", precision_necessaire=True,
+                         motif_precision="L'horizon annoncé traverse les classes 5-10 et 10-15 ans.")
+r_precision = precontrole("A2", p_precision, ech_precision, 0.8)
+assert r_precision.precision_necessaire and "traverse" in r_precision.motif_precision
+p_precision.motif_precision = "Confiance sous le seuil de 80 %."
+r_precision = precontrole("A2", p_precision, ech_precision, 0.8)
+assert not r_precision.precision_necessaire and r_precision.motif_precision == ""
+
+p_clair = Proposition(critere_id="A2", valeurs=["10_15_ans"], citation="Dans douze ans",
+                      confiance=0.9, justification="Réponse claire")
+ech_clair = [("Dans combien d'années ?", "Dans douze ans.")]
+a_interne = Avis(critere_id="A2", accord=False, confiance=0.7, objection="Je préfère un autre code",
+                 valeurs_suggerees=["plus_15_ans"])
+r_interne = evaluer("A2", p_clair, a_interne, ech_clair, 0.8)
+assert not r_interne.valide and not r_interne.precision_necessaire
+a_interne.precision_necessaire, a_interne.motif_precision = True, "Pas clair"
+assert not evaluer("A2", p_clair, a_interne, ech_clair, 0.8).precision_necessaire
+
+p_precision.motif_precision = "La durée de huit à douze ans traverse deux classes."
+a_precision = Avis(critere_id="A2", accord=False, confiance=0.7, objection="La durée traverse deux classes",
+                   valeurs_suggerees=[], precision_necessaire=True,
+                   motif_precision="La durée de huit à douze ans traverse deux classes.")
+assert evaluer("A2", p_precision, a_precision, ech_precision, 0.8).precision_necessaire
+p_precision.citation = "dans trente ans"
+assert not evaluer("A2", p_precision, a_precision, ech_precision, 0.8).precision_necessaire
+assert not evaluer("A2", p_clair, None, ech_clair, 0.8).precision_necessaire
+p_clair.precision_necessaire, p_clair.motif_precision = True, "Une durée exacte serait plus confortable."
+a_ok = Avis(critere_id="A2", accord=True, confiance=0.95, objection="", valeurs_suggerees=[])
+r_ok = evaluer("A2", p_clair, a_ok, ech_clair, 0.8)
+assert r_ok.valide and not r_ok.precision_necessaire and r_ok.motif_precision == ""
+
+# Un critique trop zélé ne peut pas transformer son désaccord interne en question utilisateur.
+s_interne = {"classif": [{"propositions": [prop("A2", ["10_15_ans"], "Dans douze ans", 0.9)]}],
+             "critique": [{"avis": [avis("A2", False, 0.7, "Autre code possible")],
+                            "question_relance": "Répétez votre horizon."}]}
+d_interne = debattre(client(s_interne), ech_clair, ["A2"], max_tours=1)
+assert not d_interne.resultats["A2"].precision_necessaire and d_interne.question_relance == ""
+
+# La conversation dispose du même débat interne à deux tours que les réponses libres du questionnaire.
+import entretien
+n = len(ENVOIS)
+conv = entretien.analyser(client(s2), ECH, ["A3", "A2"], seuil=0.8)
+assert conv["A3"].valide and conv["A3"].valeurs == ["retraite"] and conv["A2"].valide
+assert len(ENVOIS) - n == 4
+print("Précisions justifiées uniquement et désaccord conversationnel résolu entre agents : OK")

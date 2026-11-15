@@ -1,8 +1,8 @@
 """Test hors ligne du parcours complet dans l'interface (Streamlit AppTest), agents simulés.
 
 Scénario : 6 pages fixes avec un « Je ne sais pas », une réponse libre floue et trois contradictions
-volontaires ; une question déjà connue retirée de sa page ; puis précisions À LA VOIX (réponse orale, demande de
-répétition, possibilité choisie à l'oral) et au clavier, question ouverte à la voix, jusqu'au profil final.
+volontaires ; une question déjà connue retirée de sa page ; réponses libres et précisions À LA VOIX,
+demande de répétition, possibilité choisie à l'oral et question ouverte jusqu'au profil final.
 Lancer : python mvp_profil/test_app.py
 """
 from __future__ import annotations
@@ -47,6 +47,7 @@ def parler(texte):
     VOIX["texte"] = texte
     at.run()
     assert not at.exception, at.exception
+    assert not at.chat_input and not at.text_area, "La réponse libre doit être orale."
 
 
 def faux_debat(backend, echanges, criteres_ids, seuil=0.8, max_tours=2, facultatifs=()):
@@ -54,8 +55,10 @@ def faux_debat(backend, echanges, criteres_ids, seuil=0.8, max_tours=2, facultat
     SEUILS.append(seuil)
     FACULTATIFS.append(list(facultatifs))
     flou = "flou" in echanges[-1][1]
-    res = {c: Resultat(c, [] if flou else [CRITERES[c]["valeurs"][0]], "x", 0.3 if flou else 0.9, not flou,
-                       "Classificateur peu sûr" if flou else "ok") for c in criteres_ids}
+    res = {c: Resultat(c, [] if flou else [CRITERES[c]["valeurs"][0]], echanges[-1][1], 0.3 if flou else 0.9,
+                       not flou, "Réponse réellement ambiguë" if flou else "ok", accord_critique=not flou,
+                       precision_necessaire=flou, motif_precision="Situation non renseignée" if flou else "")
+           for c in criteres_ids}
     return Debat(res, [{"tour": 1, "classificateur": {"propositions": []}, "critique": None, "valides": []}],
                  "Pouvez-vous préciser ?" if flou else "")
 
@@ -108,6 +111,7 @@ def suivant():
     [b for b in at.button if b.label in ("Continuer", "Terminer le questionnaire")][0].click()
     at.run()
     assert not at.exception, at.exception
+    assert not at.chat_input and not at.text_area
 
 
 # Page 1 : coussin de sécurité + plus de 15 ans -> contradiction R2
@@ -121,8 +125,10 @@ radio("1_q_a4", "Moins du quart"); radio("1_q_a1", "En milieu de carrière")
 suivant()
 assert at.session_state.section == 1 and len(at.warning) >= 1  # A5 manquant : on reste sur la page
 radio("1_q_a5", "Je ne sais pas")
-at.text_area(key="1_q_situation").input("c'est flou")
 suivant()
+assert at.session_state.phase == "libre_oral"
+parler("c'est flou")
+assert at.session_state.phase == "questionnaire"
 assert at.session_state.profil["A5"]["statut"] == "à préciser"
 
 # Page 3 : « je vends tout » mais curseur à 40 % -> contradiction R1
@@ -156,8 +162,9 @@ at.multiselect(key="5_q_d1").set_value(["FNB d'actions", "Obligations"])
 radio("5_q_d2", "Jusqu'à 10 %"); at.multiselect(key="5_q_d3").set_value(["Canada"])
 radio("5_q_d12", "Au plus 10 % du portefeuille"); radio("5_q_d4", "Limiter la part en devises étrangères")
 radio("5_q_d8", "Non"); radio("5_q_d11", "Un mélange des deux"); radio("5_q_d9", "10 % au plus")
-at.text_area(key="5_q_themes").input("L'IA et la santé m'intéressent, je refuse le tabac.")
 suivant()
+assert at.session_state.phase == "libre_oral"
+parler("L'IA et la santé m'intéressent, je refuse le tabac.")
 
 assert at.session_state.phase == "simulations"
 
@@ -178,7 +185,7 @@ assert at.session_state.profil["B2"]["valeurs"] == ["non_atteint"]
 # Mise en situation 2 : fourchettes, choix du plus dynamique
 choisir("Votre choix", [o for o in [r for r in at.radio if r.label == "Votre choix"][0].options if o.startswith("N° 5")][0], "Choisir")
 assert at.session_state.profil["B6"]["valeurs"] == ["dynamique"]
-# Mise en situation 3 : effet de mode, choix du titre A (très médiatisé) alors que D8 déclaré = « Non » -> R9
+# Mise en situation 3 : titre médiatisé choisi, conservé comme signal sans question ni correction de D8/D12.
 choisir("Votre choix", "Titre A", "Choisir")
 assert at.session_state.profil["D8O"]["valeurs"] == ["oui"]
 # Déclaré −40 %, tout gardé, mais le replay n'a montré qu'environ −15 % : la tolérance n'a PAS été testée
@@ -191,14 +198,17 @@ assert "D7" in fac_situation and "A3" not in fac_situation and "C1" not in fac_s
 # Précisions : le groupe comportant les dettes passe d'abord, puis la réserve d'urgence.
 file = at.session_state.file
 assert [f["criteres"] for f in file] == [["A6", "A12", "A8", "A7"], ["A5"]], file
-assert at.session_state.vocal["etape"] == "prec:0"  # la question est lue à voix haute
-at.chat_input[0].set_value("toujours flou").run()
+assert at.session_state.vocal["etape"].startswith("prec:")  # identifiant propre à la précision lue
+parler("toujours flou")
 assert at.session_state.profil["A6"]["statut"] == "incertain"  # pas de 3e question
-assert APPELS[-1] == ["A6", "A12", "A8", "A7"] and SEUILS[-1] == 0.65  # précision = 2e tentative, seuil abaissé
-parler("environ 4 mois de dépenses")  # réponse à l'oral
-assert at.session_state.profil["A5"]["statut"] == "validé" and APPELS[-1] == ["A5"]
+assert APPELS[-1] == ["A6", "A12", "A8", "A7"] and SEUILS[-1] == 0.8
+nb_appels = len(APPELS)
+parler("J'ai 4 mois de dépenses de côté, en dehors de ce placement.")
+assert at.session_state.profil["A5"]["statut"] == "validé"
+assert at.session_state.profil["A5"]["valeurs"] == ["3_6_mois"]
+assert len(APPELS) == nb_appels, "Une réponse numérique explicite ne nécessite aucun modèle."
 
-# Cohérence : R1, R2, R3 et R9 (déclaré « pas tenté » mais titre médiatisé choisi) posées une à une
+# Cohérence : seules les contradictions établies R1, R2 et R3 donnent une question.
 vus = []
 # La 1re contradiction se règle à l'oral : demande de répétition (relue, rien d'enregistré), puis « la première »
 premiere = at.session_state.file[0]
@@ -209,7 +219,7 @@ assert at.session_state.vocal["n"] == n_avant + 1  # relue
 parler("euh, la première")
 vus.append(premiere["id"])
 assert premiere["id"] in at.session_state.coherences_posees
-for _ in range(3):
+for _ in range(2):
     item = at.session_state.file[0]
     assert item["kind"] == "coherence", item
     vus.append(item["id"])
@@ -217,7 +227,9 @@ for _ in range(3):
     [b for b in at.button if b.label == "Valider"][0].click()
     at.run()
     assert not at.exception, at.exception
-assert sorted(vus) == ["R1", "R2", "R3", "R9"], vus
+assert sorted(vus) == ["R1", "R2", "R3"], vus
+assert at.session_state.profil["D8"]["valeurs"] == ["non"]
+assert at.session_state.profil["D12"]["valeurs"] == ["plafonne_10"]
 
 # Question ouverte finale -> critère dynamique
 assert at.session_state.phase == "ouverte" and at.session_state.vocal["etape"] == "ouverte"
@@ -237,6 +249,7 @@ print(f"Parcours OK : {len(p)} critères, {sum(v['statut'] == 'validé' for v in
       f"{sum(v['statut'] != 'validé' for v in p.values())} incertains, contradictions résolues : {', '.join(sorted(vus))}")
 
 # Second scénario : l'utilisateur déclare −40 % mais vend dès le 2e arrêt du replay -> on retient l'observé
+VOIX["texte"] = None
 at = AppTest.from_file(os.path.join(os.path.dirname(__file__), "app.py"), default_timeout=30)
 at.run()
 at.session_state.phase = "simulations"
@@ -258,6 +271,7 @@ assert any("retient le plus prudent" in w.value for w in at.warning)
 print(f"Replay avec vente OK : déclaré −40 %, vendu au 2e arrêt -> rupture retenue −{b2} % (écart grand)")
 
 # Mode démonstration : un persona de l'énoncé se charge en un clic et sa synthèse s'affiche
+VOIX["texte"] = None
 at = AppTest.from_file(os.path.join(os.path.dirname(__file__), "app.py"), default_timeout=30)
 at.run()
 [b for b in at.button if b.label == "Charger Robert"][0].click(); at.run()

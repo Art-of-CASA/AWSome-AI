@@ -6,7 +6,11 @@ Ce document explique toute la démarche : le but, les principes, les données, l
 
 **Site en ligne : https://d29e3l5vv5fmjy.cloudfront.net** (accès limité aux IP de l'équipe ; voir [mvp_profil/DEPLOIEMENT.md](mvp_profil/DEPLOIEMENT.md)).
 
-**État de cette évolution : publiée sur le site partagé le 15 novembre 2026.** L'ordre adaptatif, les nouveaux contrôles, les confirmations, les états de recherche et la restitution décrits ci-dessous sont en ligne ; le parcours vocal n'a pas encore été réessayé sur le site. Le parcours et ses garanties sont détaillés dans [docs/infrastructure_profil.md](docs/infrastructure_profil.md). Aucun nouveau résultat réel Bedrock ni gain de durée avec des utilisateurs n'a été mesuré pour cette évolution.
+**Correctif des répétitions et parcours oral (publié le 15 novembre 2026, version `profil-afe8ed38fc7d`).** Les réponses numériques explicites sont lues par des règles avant l'IA (quinze ans et six mois inclus). Le code verrouille les sujets déjà répondus, distingue les analyses en cours et limite une ambiguïté réelle à une clarification. Les réponses ouvertes passent exclusivement par le micro, y compris le questionnaire classique, les précisions et la question finale. R6, R8 et R9 deviennent des observations sans question imposée. Le numéro de contenu apparaît dans l'interface, l'export et le paquet préparé par `python scripts/preparer_mvp.py` ; cette commande ne publie rien.
+
+Voir [le diagnostic et les mesures de fiabilité](docs/fiabilite_questions.md) et [la comparaison aux questionnaires existants](docs/recherche_questionnaires.md). Les tests de règles et d'interface ne mesurent pas la fiabilité du vrai modèle ou de Transcribe ; aucun pourcentage d'exactitude réelle n'est annoncé sans observations annotées.
+
+**État de la version précédente, selon l'historique du dépôt : publiée sur le site partagé le 15 novembre 2026.** L'ordre adaptatif, les nouveaux contrôles, les confirmations, les états de recherche et la restitution décrits ci-dessous sont en ligne ; le parcours vocal n'a pas encore été réessayé sur le site. Le parcours et ses garanties sont détaillés dans [docs/infrastructure_profil.md](docs/infrastructure_profil.md). Aucun nouveau résultat réel Bedrock ni gain de durée avec des utilisateurs n'a été mesuré pour cette évolution.
 
 ---
 
@@ -22,7 +26,7 @@ Le cas demande un outil qui aide trois profils fictifs à prendre une décision 
 
 ## 2. L'idée centrale : un profil reproductible, comparé aux actifs par des mots-clés
 
-1. **On pose les questions restantes par ordre d'utilité**, selon leurs prérequis de sécurité et leur impact sur le profil (conversation orale ou écrite, QCM, curseurs, quiz, mises en situation). Le tri ne supprime aucune information nécessaire.
+1. **On pose les questions restantes par ordre d'utilité**, selon leurs prérequis de sécurité et leur impact sur le profil (conversation exclusivement orale, QCM, curseurs, quiz, mises en situation). Le tri ne supprime aucune information nécessaire.
 2. **L'IA classe les réponses dans une liste fermée de mots-clés** par critère (exemple : horizon = `moins_3_ans`, `3_5_ans`, `5_10_ans`, `10_15_ans` ou `plus_15_ans`). Les réponses fermées donnent toujours la même valeur. Pour les réponses libres, `mvp_profil/evaluer_classement.py` compare les valeurs et statuts effectifs sur un jeu de **51 phrases / 88 couples phrase–critère**, avec erreurs des réponses validées et retenables distinguées. **La mesure avec le vrai modèle reste à lancer.**
 3. **Chaque actif est classé sous les mêmes mots-clés**, cette fois par du code, à partir de données datées : volatilité, perte maximale, récupération, exclusions ESG, risque pays, devise, attention médiatique…
 4. **Les règles d'appariement sont préparées** pour comparer les deux côtés et expliquer les exclusions, plafonds et tensions. Leur exécution et la construction d'un résultat personnalisé ne sont pas encore implémentées.
@@ -158,7 +162,7 @@ Site Streamlit. Les modèles sont **Claude Haiku 5.5 sur Amazon Bedrock**, dans 
 
 ### Parcours
 
-1. **Conversation orale mains libres (recommandé) ou écrite.** Elle couvre 16 critères de contexte : objectif, horizon, étape de vie, retraits, revenu, épargne, situation, emploi, personnes à charge, dettes, expérience d'une baisse, produits détenus, régions, thèmes.
+1. **Conversation orale mains libres (recommandé).** Elle couvre 16 critères de contexte : objectif, horizon, étape de vie, retraits, revenu, épargne, situation, emploi, personnes à charge, dettes, expérience d'une baisse, produits détenus, régions, thèmes.
    - La voix est détectée dans le navigateur, transcrite par **Amazon Transcribe** (fr-CA) et lue par **Amazon Polly** (voix Gabrielle).
    - La réplique et le classement ont des tâches distinctes : l'analyse se fait en arrière-plan, et le panneau de droite coche ✅ après contrôle. Les analyses sont regroupées sur l'historique à jour ; un résultat périmé ne remplace pas une correction récente.
 2. **Questions de référence à ordre adaptatif** : QCM, curseur, quiz de connaissances, deux questions libres. L'ordre privilégie projet et horizon, liquidité et capacité, risque et connaissances, contraintes et accès, puis préférences. Les pages déjà ouvertes ne sont pas déplacées. En parcours conversation, une page « Compléments » reprend ce qui reste inconnu.
@@ -166,8 +170,8 @@ Site Streamlit. Les modèles sont **Claude Haiku 5.5 sur Amazon Bedrock**, dans 
    - le replay d'un marché en baisse (2022, date masquée), qui mesure le point de rupture ;
    - des fourchettes de résultats, construites par bootstrap par blocs et centrées sur les hypothèses de FP Canada 2026 ;
    - l'effet de mode, avec 4 titres masqués dont 2 très médiatisés.
-4. **Précisions, à la voix** : réponses « Je ne sais pas », réponses libres non validées, et **10 règles de cohérence** entre réponses.
-   - L'IA lit chaque question à voix haute, et on répond à l'oral ou au clavier.
+4. **Précisions, à la voix** : réponses « Je ne sais pas », réponses libres non validées, et **règles de cohérence établies** entre réponses ; R6, R8 et R9 sont des observations sans question imposée.
+   - L'outil lit chaque question ouverte à voix haute, et on répond exclusivement au micro.
    - Pour une contradiction, elle énonce les possibilités (« Première possibilité : … ») ; un agent reconnaît celle que la personne choisit (« plutôt la deuxième »), sinon il redemande.
    - « Pardon, pouvez-vous répéter ? » fait relire la question.
 5. **Question ouverte finale, à la voix → critères dynamiques.**
@@ -190,7 +194,7 @@ Toutes les sorties sont **structurées** (schémas Pydantic) et générées sans
 
 **Validation et relance bornée :**
 1. **1re tentative, seuil de 80 %** (réglable dans la barre latérale). Le critère est validé si les valeurs sont autorisées, si la citation existe vraiment dans les mots de l'utilisateur (comparaison tolérante à la ponctuation et à la casse), si le critique est d'accord et si les deux confiances atteignent le seuil.
-2. Sinon, **une seule reformulation**, posée autrement et avec un exemple concret, **avec un seuil abaissé à 65 %**.
+2. Sinon, **une seule reformulation**, posée autrement et avec un exemple concret, **avec le même seuil de validation** : une confiance faible seule ne justifie pas une relance.
 3. Si ce n'est toujours pas validé, une réponse peut rester **retenue avec confiance réduite**, à condition d'être étayée, d'avoir reçu **l'accord du critique** et d'atteindre le **plancher de 50 %**. Une proposition contestée ou non vérifiée ne devient jamais utilisable par ce mécanisme. Une nouvelle valeur différente ou une objection récente prime sur l'ancienne confiance. À défaut, le critère reste « incertain » ; les réglages prudents éventuels sont signalés.
 
 Les reformulations libres sont bornées ; une information toujours inconnue reste visible et peut être reprise dans les compléments structurés. Un sujet que l'utilisateur n'a jamais abordé n'est pas compté comme un échec : il reste à couvrir.
@@ -222,7 +226,7 @@ Le but est de recueillir rapidement les informations utiles sans deviner celles 
 
 Le site tourne sur une instance EC2 t3.small (Amazon Linux 2023, service systemd `alphaforge`). Il est servi en HTTPS par CloudFront, ce qui est nécessaire pour le micro. Une fonction CloudFront filtre les IP de l'équipe. Les mises à jour passent par S3 et Session Manager. Tout est décrit dans [mvp_profil/DEPLOIEMENT.md](mvp_profil/DEPLOIEMENT.md), y compris l'ajout d'une IP et la suppression complète après le datathon.
 
-L'évolution du profil décrite dans ce README a été **publiée le 15 novembre 2026** (paquet précédent sauvegardé dans `app/backup/` du bucket). Les anciennes mesures du serveur ne valident pas les nouvelles formulations ni leur gain de temps.
+La version précédant le correctif de répétition est documentée comme **publiée le 15 novembre 2026** (paquet précédent sauvegardé dans `app/backup/` du bucket). Les anciennes mesures du serveur ne valident pas les nouvelles formulations ni leur gain de temps.
 
 ## 8. Lancer et tester en local
 

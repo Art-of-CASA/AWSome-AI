@@ -37,6 +37,7 @@ import streamlit as st
 import chercheur
 import criteres_dynamiques
 import entretien
+import moteur_conversation
 from agents import (AgentError, aws_identifiants_presents, backend_anthropic, backend_bedrock, debattre, meilleur,
                     retenable, seuil_essai, _citation_presente)
 from criteres import CRITERES, DECLARATIFS, SECTIONS, est_deduit
@@ -44,10 +45,13 @@ from criteres_dynamiques import AIDE_OUVERTE, QUESTION_OUVERTE
 from entretien import CRITERES_CONVERSATION, MAX_TOURS, OUVERTURE, synthese_vocale, transcrire
 from voix_composant import conversation_vocale
 from profil import (UTILISABLES, appliquer_correctif, connu, deduire, entree, incoherences, niveau_quiz,
-                    recouper_rupture, valeur_curseur)
+                    recouper_rupture, valeur_curseur, signaux_coherence)
 from simulations import ETAPES
 from synthese import phrase, synthetiser, libelle_valeur
 from pilotage import prioriser_criteres, prioriser_items, prioriser_sections
+from questions_conversation import enregistrer_question
+from reponses_directes import analyser_reponses
+from version_profil import version_courante
 
 # Une réponse non validée est redemandée UNE fois, autrement formulée et avec un seuil abaissé ; ensuite on retient
 # une réponse vérifiée par le critique (si elle atteint le plancher de 50 %) ; un désaccord reste incertain.
@@ -62,7 +66,8 @@ def reset():
     st.session_state.update(
         phase="accueil", section=0, sections=SECTIONS, profil={}, en_cours=[], file=[], coherences_posees=set(),
         debats=[], chat=[], precisions_pretes=False, sim_etape=0, message_rupture=None, conv=None,
-        meilleurs={}, dynamiques=[], reponse_ouverte="", recherches=[],
+        meilleurs={}, dynamiques=[], reponse_ouverte="", erreur_ouverte=None, recherches=[], questions_posees={},
+        libres_en_attente=[], libres_traitees=set(), retour_libres="questionnaire", evenements_questions=[],
         # Composant vocal UNIQUE (conversation, précisions, question ouverte) : n = numéro de la dernière phrase de l'IA,
         # ack = dernier énoncé de l'utilisateur traité, etape = question en cours, actif = l'utilisateur a parlé
         vocal={"n": 0, "ack": 0, "audio": "", "fin": False, "etape": None, "actif": False}, retires=0)
@@ -71,6 +76,9 @@ def reset():
 if "phase" not in st.session_state:
     reset()
 S = st.session_state
+for nom, valeur in {"questions_posees": {}, "libres_en_attente": [], "libres_traitees": set(),
+                    "retour_libres": "questionnaire", "evenements_questions": [], "erreur_ouverte": None}.items():
+    S.setdefault(nom, valeur)
 
 # ---------- Barre latérale ----------
 with st.sidebar:
@@ -86,12 +94,14 @@ with st.sidebar:
     seuil = st.slider("Seuil de sûreté", 0.50, 0.95, 0.80, 0.05,
                       help="Une réponse libre est validée si les deux agents sont d'accord avec au moins ce niveau de confiance.")
     max_tours = st.slider("Tours de débat maximum", 1, 3, 2)
-    voix = st.toggle("Lire les questions à voix haute (Amazon Polly)", value=True)
+    voix = True
+    st.caption("Les questions ouvertes et leurs réponses se font à l'oral.")
     st.caption("Modèle : Claude Haiku 5.5 (classificateur et critique)")
     if st.button("Recommencer", width="stretch"):
         reset()
         st.rerun()
     st.caption("Simulation éducative. Aucun conseil financier personnalisé.")
+    st.caption("Version du profil : " + version_courante())
 
 
 @st.cache_resource
@@ -105,10 +115,20 @@ def executeur() -> ThreadPoolExecutor:
 
 
 def a_preciser(criteres: list[str], texte: str | None = None, echanges=None, motif="Réponse « Je ne sais pas »"):
+    restants = []
     for cid in criteres:
-        S.profil[cid] = entree([], "à préciser", statut="à préciser", confiance=0.0, motif=motif)
-    S.file.append({"kind": "libre", "criteres": list(criteres), "essai": 0, "echanges": list(echanges or []),
-                   "texte": texte or CRITERES[criteres[0]]["relance"]})
+        if connu(S.profil, cid):
+            continue
+        if S.questions_posees.get(cid, {}).get("clarifications", 0) >= 1:
+            S.profil.setdefault(cid, entree([], "non établi", statut="incertain", confiance=0))
+            S.profil[cid]["statut"] = "incertain"
+            continue
+        S.profil[cid] = entree([], "à préciser", statut="à préciser", confiance=0.0, motif=motif,
+                               citation=(echanges or [("", "")])[-1][1])
+        restants.append(cid)
+    if restants:
+        S.file.append({"kind": "libre", "criteres": restants, "essai": 0, "echanges": list(echanges or []),
+                       "texte": texte or CRITERES[restants[0]]["relance"]})
 
 
 def retenir_meilleure(cid: str, source: str) -> bool:
@@ -157,10 +177,15 @@ def enregistrer_debat(debat, item_id: str, definitif: bool) -> list[str]:
         if r.valide:
             S.profil[cid] = entree(r.valeurs, source_ia(r, "réponse libre (IA)"), r.citation, r.confiance,
                                    motif=r.motif if est_deduit(r.motif) else "")
+        elif retenable(r):
+            S.profil[cid] = entree(r.valeurs, source_ia(r, "réponse orale (IA)"), r.citation, r.confiance,
+                                   "retenu", motif=r.motif)
         elif definitif:
             retenir_meilleure(cid, "réponse libre (IA)")
-        else:
+        elif getattr(r, "precision_necessaire", False) and getattr(r, "motif_precision", ""):
             restants.append(cid)
+        else:
+            S.profil[cid] = entree([], "réponse orale non établie", r.citation, 0, "incertain", motif=r.motif)
     return restants
 
 
@@ -170,19 +195,16 @@ def page_accueil():
              "en situation, puis votre profil.")
     c1, c2 = st.columns(2)
     with c1.container(border=True):
-        st.markdown("**🎙️ Conversation (recommandé)**\n\nUne courte discussion, à l'oral ou à l'écrit : l'IA pose les "
+        st.markdown("**🎙️ Conversation (recommandé)**\n\nUne courte discussion à l'oral : l'outil pose les "
                     "questions sur votre projet et votre situation, et coche les critères au fur et à mesure.")
         if st.button("Commencer en conversation", type="primary", disabled=not pret, width="stretch"):
             # suivi : {critère: nb de réponses au moment où il a été jugé « à reformuler »} ; reformules : déjà redemandés
-            S.conv = {"echanges": [], "question": OUVERTURE, "restants": list(CRITERES_CONVERSATION), "jobs": [],
-                      "analyses_couvertes": {}, "versions_integrees": {}, "revisions": {}, "relances_posees": {},
-                      "tours": 0, "fin": False, "erreur": None, "suivi": {}, "reformules": []}
+            S.conv = moteur_conversation.creer(S.questions_posees)
             dire(OUVERTURE, "conv:0")
             S.phase = "conversation"
             st.rerun()
     with c2.container(border=True):
-        st.markdown("**📝 Questionnaire classique**\n\nToutes les questions sous forme de choix et de réponses "
-                    "écrites, page par page.")
+        st.markdown("**📝 Questionnaire classique**\n\nDes choix à l'écran, complétés par des réponses ouvertes à l'oral.")
         if st.button("Questionnaire classique", disabled=not pret, width="stretch"):
             S.phase, S.sections = "questionnaire", prioriser_sections(S.profil, SECTIONS)
             st.rerun()
@@ -236,120 +258,43 @@ def _clore(cid: str):
 
 
 def planifier_analyse_conversation():
-    """Coalesce les réponses arrivées pendant un contrôle, sans analyser deux fois le même instantané."""
+    moteur_conversation.planifier(S.conv, S.profil, executeur(), backend_pour(cle), entretien.analyser, seuil)
+
+
+def appliquer_verifications(reprendre: bool = True):
     c = S.conv
-    n = len(c["echanges"])
-    if not n:
-        return
-    en_verif = {cid for j in c["jobs"] for cid in j["criteres"] + j.get("facultatifs", [])}
-    couvertes = c.setdefault("analyses_couvertes", {})
-    revisions = list(c.setdefault("revisions", {}))
-    candidats = prioriser_criteres(S.profil, list(dict.fromkeys(c["restants"] + revisions)))
-    a_couvrir = [cid for cid in candidats if cid not in en_verif and couvertes.get(cid, 0) < n]
-    autres = [cid for cid in facultatifs(list(CRITERES_CONVERSATION) + revisions)
-              if cid not in en_verif and couvertes.get(cid, 0) < n]
-    if not a_couvrir and not autres:
-        return
-    relances = c.setdefault("relances_posees", {})
-    seuils = {cid: seuil_essai(seuil, 1 if cid in relances and n > relances[cid] else 0)
-              for cid in a_couvrir + autres}
-    fut = executeur().submit(entretien.analyser, backend_pour(cle), list(c["echanges"]), a_couvrir, seuils, autres)
-    c["jobs"].append({"future": fut, "criteres": a_couvrir, "facultatifs": autres, "n": n,
-                      "revisions": {cid: c["revisions"][cid] for cid in a_couvrir if cid in revisions}})
-    couvertes.update({cid: n for cid in a_couvrir + autres})
-
-
-def appliquer_verifications():
-    """Intègre les vérifications du critique terminées en arrière-plan.
-
-    - validé -> coché ✅ ;
-    - abordé mais pas assez sûr -> « à reformuler » : l'IA le redemande UNE fois, autrement ; quand la réponse à cette
-      reformulation est analysée, on tranche : meilleure réponse « retenue » (>= 50 %) ou renvoi au QCM des Compléments ;
-    - jamais abordé (aucune valeur) -> reste à couvrir.
-    """
-    c = S.conv
-    for job in [j for j in c["jobs"] if j["future"].done()]:
-        if job["n"] < len(c["echanges"]):
-            c["jobs"].remove(job)
-            continue  # le rattrapage vérifiera le dernier texte, qui peut corriger l'ancien
-        try:
-            resultats = job["future"].result()
-        except AgentError:
-            resultats = {}
-        for cid in job["criteres"]:
-            versions = c.setdefault("versions_integrees", {})
-            if job["n"] < versions.get(cid, 0):
-                continue  # une ancienne tâche ne remplace jamais une réponse plus récente
-            versions[cid] = job["n"]
-            r = resultats.get(cid)
-            revision = cid in job.get("revisions", [])
-            if revision:
-                tour_correction = job["revisions"][cid]
-                if r and r.valide and r.valeurs == S.profil[cid]["valeurs"]:
-                    c["revisions"].pop(cid, None)
-                    continue  # information inchangée : ne pas la reclasser à chaque tour suivant
-                if not r or not _citation_presente(r.citation, c["echanges"][tour_correction - 1:job["n"]]):
-                    continue  # une ancienne citation ne prouve pas une correction de la dernière réponse
-                if c["revisions"].get(cid, 0) <= job["n"]:
-                    c["revisions"].pop(cid, None)
-                if r.valeurs == S.profil[cid]["valeurs"]:
-                    continue
-                if not r.valide:
-                    precedent = S.profil[cid]
-                    S.profil[cid] = entree([], "correction à préciser", statut="à préciser", confiance=0.0,
-                                           motif="La correction doit être clarifiée", precedent=precedent)
-                    if cid not in CRITERES_CONVERSATION:
-                        a_preciser([cid], echanges=list(c["echanges"]), motif="Correction à confirmer")
-                        continue
-                    if cid not in c["restants"]:
-                        c["restants"].append(cid)
-            if r is not None and r.valeurs:
-                S.meilleurs[cid] = meilleur(S.meilleurs.get(cid), r)
-            if r is not None and r.valide:
-                S.profil[cid] = entree(r.valeurs, source_ia(r, "conversation (IA)"), r.citation, r.confiance,
-                                       motif=r.motif if est_deduit(r.motif) else "")
-                _clore(cid)
-            elif r is not None and r.valeurs:
-                if cid not in c["suivi"]:
-                    c["suivi"][cid] = len(c["echanges"])  # la prochaine réplique le reformulera
-                elif cid in c.get("relances_posees", {}) and job["n"] > c["relances_posees"][cid]:
-                    retenir_meilleure(cid, "conversation (IA)")
-                    _clore(cid)
-                if cid in c["suivi"] and cid not in c["restants"]:
-                    c["restants"].append(cid)
-            elif cid not in c["restants"] and S.profil.get(cid, {}).get("statut") not in UTILISABLES:
-                c["restants"].append(cid)
-        for cid in job.get("facultatifs", []):  # dit au passage : validé, donc ne sera plus demandé
-            r = resultats.get(cid)
-            if r is not None and r.valide and not connu(S.profil, cid):
-                S.profil[cid] = entree(r.valeurs, source_ia(r, "conversation (IA)"), r.citation, r.confiance,
-                                       motif=r.motif if est_deduit(r.motif) else "")
-        for cid in deduire(S.profil):
-            _clore(cid)
-        S.debats.append({"question": "conversation", "tours": [],
-                         "resultats": {k: vars(v) for k, v in resultats.items()}})
-        c["jobs"].remove(job)
+    moteur_conversation.integrer(c, S.profil)
+    S.meilleurs.update(c["meilleurs"])
+    if c["traces"]:
+        S.debats.extend(c["traces"])
+        c["traces"] = []
     planifier_analyse_conversation()
+    if reprendre and c["attente"]:
+        decision = moteur_conversation.suivante(c, S.profil, MAX_TOURS)
+        if not decision["attendre"]:
+            moteur_conversation.poser(c, decision)
+            dire(c["question"], f"conv:{c['tours']}:{','.join(c['cibles_question'])}", fin=c["fin"])
 
 
 def fin_conversation():
     c = S.conv
-    with st.spinner("Les agents terminent leurs vérifications…"):
+    with st.spinner("Vérification des réponses déjà recueillies…"):
         planifier_analyse_conversation()
         while c["jobs"]:
             for job in list(c["jobs"]):
-                job["future"].result() if not job["future"].exception() else None
-            appliquer_verifications()
-    for cid in list(c["suivi"]):  # reformulation sans réponse claire : meilleure réponse obtenue
-        if cid in c["reformules"] and retenir_meilleure(cid, "conversation (IA)"):
-            _clore(cid)
-    manquants = [cid for cid in CRITERES_CONVERSATION if S.profil.get(cid, {}).get("statut") not in UTILISABLES]
+                try:
+                    job["future"].result()
+                except Exception:
+                    pass  # la réponse reste conservée ; une panne ne devient pas une nouvelle question
+            appliquer_verifications(reprendre=False)
+    manquants = [cid for cid in CRITERES_CONVERSATION if not connu(S.profil, cid)
+                 and c["questions_posees"].get(cid, {}).get("clarifications", 0) == 0]
     S.sections, S.section, S.phase = sections_apres_conversation(manquants), 0, "questionnaire"
     st.rerun()
 
 
 # ---------- Voix : un composant UNIQUE pour la conversation, les précisions et la question ouverte ----------
-PHASES_VOCALES = ("conversation", "precisions", "ouverte")
+PHASES_VOCALES = ("conversation", "libre_oral", "precisions", "ouverte")
 
 
 def dire(texte: str, etape: str, fin: bool = False):
@@ -372,7 +317,7 @@ def barre_vocale():
     situation, il reste « en veille » (micro coupé) si l'utilisateur a déjà parlé ; il reprend aux précisions.
     Renvoie le dernier énoncé non traité : {"kind": "texte", "texte": ...} ou {"kind": "termine"}, sinon None."""
     v = S.vocal
-    veille = S.phase not in PHASES_VOCALES
+    veille = S.phase not in PHASES_VOCALES or (S.phase == "conversation" and S.conv.get("attente", False))
     if veille and not (v["actif"] and S.phase in ("questionnaire", "simulations")):
         return None
     valeur = conversation_vocale(audio_b64=v["audio"], n=v["n"], ack=v["ack"], fin=v["fin"], voix=voix,
@@ -412,62 +357,42 @@ def voix_b64(texte: str) -> str:
 
 
 def repondre(texte: str):
-    """Un tour de conversation : on n'attend que la réplique ; le classement part en arrière-plan."""
     c = S.conv
-    c["echanges"].append((c["question"], texte))
-    if entretien.demande_correction(texte):
-        c.setdefault("revisions", {}).update({cid: len(c["echanges"]) for cid in DECLARATIFS if connu(S.profil, cid)})
-    planifier_analyse_conversation()
-    # L'IA reformule une seule fois ce qui a été abordé sans être clair, et ne redemande jamais un sujet déjà reformulé.
-    a_reformuler = prioriser_criteres(S.profil, [cid for cid in c["restants"] if cid in c["suivi"] and cid not in c["reformules"]])[:1]
-    nouveaux = prioriser_criteres(S.profil, [cid for cid in c["restants"] if cid not in c["suivi"]])
-    try:
-        pistes = {cid: (S.meilleurs[cid].valeurs, S.meilleurs[cid].citation) for cid in a_reformuler
-                  if S.meilleurs.get(cid) and S.meilleurs[cid].valeurs}  # « si je comprends bien… ? »
-        rep = entretien.replique(backend_pour(cle), c["echanges"], nouveaux, a_reformuler, pistes)
-    except AgentError as e:
-        c["erreur"] = str(e)
-        c["question"] = "La réponse vocale est indisponible. Votre réponse est conservée ; vous pouvez continuer ou passer aux questions à choix."
+    if entretien.demande_repetition(texte):
+        redire(c["question"], f"conv:{c['tours']}:{','.join(c['cibles_question'])}")
         st.rerun()
-    c["reformules"] += a_reformuler
-    c.setdefault("relances_posees", {}).update({cid: len(c["echanges"]) for cid in a_reformuler})
-    c["tours"] += 1
-    fin = rep.termine or c["tours"] >= MAX_TOURS
-    message = rep.message if rep.termine or not fin else \
-        "Merci beaucoup, j'ai l'essentiel. On continue avec quelques questions à choix."
-    c.update(question=message, fin=fin, erreur=None)
-    dire(message, f"conv:{c['tours']}", fin=fin)
+    echos = moteur_conversation.recevoir(c, S.profil, texte)
+    planifier_analyse_conversation()
+    appliquer_verifications()
+    decision = moteur_conversation.suivante(c, S.profil, MAX_TOURS)
+    moteur_conversation.poser(c, decision, " ".join(echos) + (" " if echos else ""))
+    dire(c["question"], f"conv:{c['tours']}:{','.join(c['cibles_question'])}", fin=c["fin"])
     st.rerun()
 
 
 def page_conversation():
     c = S.conv
     appliquer_verifications()
-    fait = len(CRITERES_CONVERSATION) - len(c["restants"])
-    st.progress(fait / len(CRITERES_CONVERSATION), text=f"Conversation · {fait} critères sur {len(CRITERES_CONVERSATION)} cochés")
-    # La voix passe par le composant unique, en haut de la page (barre_vocale) : il n'est jamais recréé.
+    fait = sum(connu(S.profil, cid) for cid in CRITERES_CONVERSATION)
+    st.progress(fait / len(CRITERES_CONVERSATION), text=f"Conversation · {fait} informations renseignées")
     if ENONCE and ENONCE["kind"] == "termine":
         fin_conversation()
-    if ENONCE:
-        if ENONCE["texte"]:
-            repondre(ENONCE["texte"])
-        st.rerun()  # rien compris : l'accusé de réception relance l'écoute
-    if c["erreur"]:
-        st.warning(c["erreur"])
-    st.caption("Transcription de la conversation")
-    for q, r in c["echanges"]:
-        st.chat_message("assistant").write(q)
-        st.chat_message("user").write(r)
+    if ENONCE and ENONCE["texte"] and not c["attente"]:
+        repondre(ENONCE["texte"])
+    if c["attente"]:
+        st.info("Vos réponses sont conservées. Le contrôle termine son travail ; inutile de les répéter.")
+    st.caption("Réponses ouvertes exclusivement à l'oral. La transcription ci-dessous est une trace de vos paroles.")
+    with st.expander("Transcription de la conversation", expanded=False):
+        for q, r in c["echanges"]:
+            st.chat_message("assistant").write(q)
+            st.chat_message("user").write(r)
     st.chat_message("assistant").write(c["question"])
     if c["fin"]:
         if st.button("Continuer vers les questions suivantes", type="primary"):
             fin_conversation()
         return
-    ecrit = st.chat_input("…ou écrivez votre réponse")
-    if st.button("Passer aux questions suivantes", help="Ce qui n'est pas coché sera demandé sous forme de questions."):
+    if st.button("Passer aux questions suivantes", help="Les réponses déjà données sont conservées et vérifiées."):
         fin_conversation()
-    if ecrit:
-        repondre(ecrit)
 
 
 @st.fragment(run_every=1)
@@ -499,39 +424,43 @@ def liste_criteres_conversation():
 # ---------- Phase 1 : questionnaire fixe ----------
 def a_demander(it: dict) -> dict | None:
     """La question, réduite à ce qui reste inconnu ; None si tout est déjà su (dit ailleurs, ou déduit)."""
+    if it["type"] == "libre" and it["id"] in S.libres_traitees:
+        return None
     crits = it.get("criteres", [it.get("critere")])
     inconnus = [c for c in crits if not connu(S.profil, c) and S.profil.get(c, {}).get("statut") != "analyse en cours"]
+    if it["type"] == "libre":
+        inconnus = [c for c in inconnus if not S.questions_posees.get(c, {}).get("initiales", 0)
+                    or ((S.conv or {}).get("suivi", {}).get(c)
+                        and S.questions_posees.get(c, {}).get("clarifications", 0) < 1)]
     if not inconnus:
         return None
     return {**it, "criteres": inconnus} if it["type"] == "libre" else it
 
 
 def page_questionnaire():
-    SECTIONS = S.sections  # noqa: N806  (questionnaire complet, ou questions restantes après la conversation)
-    if not SECTIONS:
+    sections = S.sections
+    if not sections:
         S.phase = "simulations"
         st.rerun()
-    # Questions DYNAMIQUES : ce que les réponses libres (terminées en arrière-plan) ont appris, ou ce qui se déduit
-    # d'une réponse, n'est plus demandé.
     recuperer_analyses(attendre=False)
     deduire(S.profil)
-    sec = SECTIONS[S.section]
+    sec = sections[S.section]
     items = prioriser_items(S.profil, [x for x in (a_demander(it) for it in sec["items"]) if x])
     retires = [it for it in sec["items"] if not a_demander(it)]
     if not items:
-        S.retires += len(retires)
-        S.section += 1
-        if S.section >= len(SECTIONS):
-            S.phase = "simulations"
-        st.rerun()
-    st.progress(S.section / len(SECTIONS), text=f"Étape {S.section + 1} sur {len(SECTIONS)} · {sec['titre']}")
+        avancer_questionnaire([])
+    libres = [it for it in items if it["type"] == "libre"]
+    fermes = [it for it in items if it["type"] != "libre"]
+    if not fermes:
+        avancer_questionnaire(libres)
+    st.progress(S.section / len(sections), text=f"Étape {S.section + 1} sur {len(sections)} · {sec['titre']}")
     if retires:
-        noms = ", ".join(CRITERES[c]["nom"].lower() for it in retires for c in it.get("criteres", [it.get("critere")]))
-        st.caption(f"✨ {len(retires)} question(s) retirée(s) : vous y avez déjà répondu, ou cela se déduit de vos "
-                   f"réponses ({noms}).")
+        st.caption(f"{len(retires)} question(s) retirée(s) : vos réponses sont déjà renseignées.")
+    if libres:
+        st.caption("Les réponses ouvertes de cette étape seront recueillies à l'oral après ces choix.")
     with st.form(f"section_{S.section}"):
         rep = {}
-        for it in items:
+        for it in fermes:
             k = f"{S.section}_{it['id']}"
             if it["type"] == "qcm":
                 rep[it["id"]] = st.radio(it["texte"], [o[0] for o in it["options"]], index=None, key=k)
@@ -546,20 +475,18 @@ def page_questionnaire():
                 st.markdown(f"**{it['texte']}**")
                 rep[it["id"]] = [st.radio(q["texte"], q["options"], index=None, key=f"{k}_{i}")
                                  for i, q in enumerate(it["questions"])]
-            elif it["type"] == "libre":
-                rep[it["id"]] = st.text_area(it["texte"], placeholder=it.get("aide", ""), key=k)
-        envoye = st.form_submit_button("Continuer" if S.section < len(SECTIONS) - 1 else "Terminer le questionnaire",
+        envoye = st.form_submit_button("Continuer" if S.section < len(sections) - 1 else "Terminer le questionnaire",
                                        type="primary", disabled=not pret)
     if not envoye:
         return
-    manquants = [it["texte"] for it in items
+    manquants = [it["texte"] for it in fermes
                  if (it["type"] == "qcm" and rep[it["id"]] is None)
                  or (it["type"] == "quiz" and any(r is None for r in rep[it["id"]]))]
     if manquants:
         st.warning("Merci de répondre à : " + " · ".join(manquants))
         return
     S.retires += len(retires)
-    for it in items:
+    for it in fermes:
         r = rep[it["id"]]
         if it["type"] == "qcm":
             val = dict(it["options"])[r]
@@ -569,7 +496,7 @@ def page_questionnaire():
                 S.profil[it["critere"]] = entree([val], "QCM", citation=r)
         elif it["type"] == "qcm_multi":
             vals = [dict(it["options"])[x] for x in r]
-            if len(vals) > 1:  # « Aucun(e) » coché avec d'autres cases : on garde les autres
+            if len(vals) > 1:
                 vals = [v for v in vals if v not in ("aucun", "aucune")]
             if vals:
                 S.profil[it["critere"]] = entree(vals, "QCM", citation=", ".join(r))
@@ -584,19 +511,67 @@ def page_questionnaire():
             idx = [q["options"].index(x) for q, x in zip(it["questions"], r)]
             niveau, score = niveau_quiz(it, idx)
             S.profil[it["critere"]] = entree([niveau], "quiz", citation=f"{score}/{len(it['questions'])} bonnes réponses", score=score)
-        elif it["type"] == "libre":
-            if not r.strip():
-                a_preciser(it["criteres"], motif="Réponse libre vide")
-            else:
-                for cid in it["criteres"]:
-                    S.profil[cid] = entree([], "réponse libre (IA)", statut="analyse en cours", confiance=0.0)
-                ech = [(it["texte"], r.strip())]
-                fut = executeur().submit(debattre, backend_pour(cle), ech, it["criteres"], seuil, max_tours,
-                                         facultatifs(it["criteres"]))  # ce qui est dit au passage est aussi gardé
-                S.en_cours.append({"item": it["id"], "criteres": it["criteres"], "echanges": ech, "future": fut})
+    avancer_questionnaire(libres)
+
+
+def avancer_questionnaire(libres: list[dict]):
     S.section += 1
-    if S.section >= len(SECTIONS):
-        S.phase = "simulations"
+    S.retour_libres = "simulations" if S.section >= len(S.sections) else "questionnaire"
+    S.libres_en_attente = list(libres)
+    S.phase = "libre_oral" if libres else S.retour_libres
+    st.rerun()
+
+
+def integrer_reponses_directes(question: str, texte: str, criteres: list[str]) -> list[str]:
+    reponses = analyser_reponses(question, texte, criteres)["reponses"]
+    for cid, reponse in reponses.items():
+        S.profil[cid] = dict(reponse)
+    return [cid for cid in criteres if not connu(S.profil, cid)]
+
+
+def page_libre_oral():
+    while S.libres_en_attente:
+        it = S.libres_en_attente[0]
+        ids = [cid for cid in it["criteres"] if not connu(S.profil, cid)]
+        if it["id"] in S.libres_traitees or not ids:
+            S.libres_en_attente.pop(0)
+            continue
+        break
+    if not S.libres_en_attente:
+        S.phase = S.retour_libres
+        st.rerun()
+    texte_question = it["texte"] if ids == it["criteres"] else " ".join(CRITERES[cid]["relance"] for cid in ids)
+    etape = f"libre:{it['id']}"
+    st.subheader("Votre réponse à l'oral")
+    st.caption("Une seule réponse suffit. Le contrôle se poursuit pendant les étapes suivantes.")
+    st.write(texte_question)
+    if S.vocal["etape"] != etape:
+        for cid in ids:
+            deja = S.questions_posees.get(cid, {}).get("initiales", 0)
+            question = {"criteres": [cid], "clarification": bool(deja)}
+            if not deja or S.questions_posees.get(cid, {}).get("clarifications", 0) < 1:
+                enregistrer_question(S.questions_posees, question, len(S.evenements_questions) + 100)
+        dire(texte_question, etape)
+    dit = entendu()
+    if dit and entretien.demande_repetition(dit):
+        redire(texte_question, etape)
+        st.rerun()
+    passer = st.button("Passer cette question", help="Ces informations restent inconnues ; aucune réponse ne sera inventée.")
+    if not dit and not passer:
+        return
+    S.libres_traitees.add(it["id"])
+    S.libres_en_attente.pop(0)
+    if dit:
+        restants = integrer_reponses_directes(texte_question, dit, ids)
+        if restants:
+            ech = [(texte_question, dit)]
+            for cid in restants:
+                S.profil[cid] = entree([], "réponse orale en analyse", statut="analyse en cours", confiance=0)
+            fut = executeur().submit(debattre, backend_pour(cle), ech, restants, seuil, max_tours, facultatifs(restants))
+            S.en_cours.append({"item": it["id"], "criteres": restants, "echanges": ech, "future": fut})
+    else:
+        for cid in ids:
+            S.profil[cid] = entree([], "question passée", statut="incertain", confiance=0, motif="L'utilisateur a choisi de passer")
     st.rerun()
 
 
@@ -630,7 +605,10 @@ def recuperer_analyses(attendre: bool = True):
                 debat = job["future"].result()
             except AgentError as e:
                 st.error(str(e))
-                a_preciser(job["criteres"], echanges=job["echanges"], motif=str(e))
+                for cid in job["criteres"]:
+                    if not connu(S.profil, cid):
+                        S.profil[cid] = entree([], "analyse indisponible", job["echanges"][-1][1], 0,
+                                               "incertain", motif="Réponse conservée, contrôle indisponible")
                 continue
             restants = enregistrer_debat(debat, job["item"], definitif=False)
             if restants:
@@ -670,23 +648,24 @@ def appliquer_coherence(item: dict, choix: str):
 
 
 def repondre_precision(item: dict, reponse: str):
+    restants = integrer_reponses_directes(item["texte"], reponse, item["criteres"])
     ech = item["echanges"] + [(item["texte"], reponse)]
+    S.chat += [{"role": "assistant", "content": item["texte"]}, {"role": "user", "content": reponse}]
+    if not restants:
+        S.file.pop(0)
+        st.rerun()
     try:
-        with st.spinner("Les deux agents analysent votre réponse…"):
-            # Une précision est déjà une 2e tentative (question reformulée) : seuil abaissé. Ce qui est dit au passage
-            # sur d'autres critères encore inconnus est gardé aussi (facultatifs).
-            debat = debattre(backend_pour(cle), ech, item["criteres"], seuil=seuil_essai(seuil, item["essai"] + 1),
-                             max_tours=max_tours, facultatifs=facultatifs(item["criteres"]))
+        with st.spinner("Vérification de votre réponse…"):
+            debat = debattre(backend_pour(cle), ech, restants, seuil=seuil,
+                             max_tours=max_tours, facultatifs=facultatifs(restants))
     except AgentError as e:
         st.error(str(e))
-        return
-    S.chat += [{"role": "assistant", "content": item["texte"]}, {"role": "user", "content": reponse}]
+        for cid in restants:
+            S.profil[cid] = entree([], "analyse indisponible", reponse, 0, "incertain", motif="Réponse conservée")
+        S.file.pop(0)
+        st.rerun()
     S.file.pop(0)
-    dernier_essai = item["essai"] + 1 >= MAX_RELANCES
-    restants = enregistrer_debat(debat, "précision", definitif=dernier_essai)
-    if restants:
-        S.file.insert(0, {"kind": "libre", "criteres": restants, "essai": item["essai"] + 1, "echanges": ech,
-                          "texte": debat.question_relance or CRITERES[restants[0]]["relance"]})
+    enregistrer_debat(debat, "précision orale", definitif=True)
     st.rerun()
 
 
@@ -717,8 +696,15 @@ def page_precisions():
         with st.chat_message(m["role"]):
             st.write(m["content"])
     item = S.file[0]
-    etape = f"prec:{len(S.chat)}"
-    dire(oral(item), etape)  # la question est lue à voix haute ; on peut répondre à l'oral ou au clavier
+    etape = f"prec:{item.get('id', ','.join(item['criteres']))}:{len(S.chat)}"
+    if item["kind"] == "libre" and S.vocal["etape"] != etape:
+        ids = [cid for cid in item["criteres"] if S.questions_posees.get(cid, {}).get("clarifications", 0) < 1]
+        if not ids:
+            S.file.pop(0)
+            st.rerun()
+        item["criteres"] = ids
+        enregistrer_question(S.questions_posees, {"criteres": ids, "clarification": True}, len(S.chat) + 1000)
+    dire(oral(item), etape)
     dit = entendu()
     if dit and entretien.demande_repetition(dit):
         redire(oral(item), etape)
@@ -744,7 +730,13 @@ def page_precisions():
         return
     with st.chat_message("assistant"):
         st.write(item["texte"])
-    reponse = st.chat_input("Votre réponse…", disabled=not pret) or dit
+    if st.button("Je ne peux pas préciser", help="Cette information reste inconnue et sera signalée dans le profil."):
+        for cid in item["criteres"]:
+            S.profil[cid] = entree([], "non renseigné", statut="incertain", confiance=0, motif="Précision passée")
+        S.file.pop(0)
+        S.chat.append({"role": "user", "content": "Je ne peux pas préciser"})
+        st.rerun()
+    reponse = dit
     if reponse:
         repondre_precision(item, reponse)
 
@@ -752,38 +744,41 @@ def page_precisions():
 # ---------- Phase 2 bis : question ouverte -> critères dynamiques ----------
 def page_ouverte():
     retours_situations()
-    st.subheader("Une dernière chose")
-    st.caption("Ce que vous dites ou écrivez ici devient des critères propres à vous, ajoutés à votre profil.")
+    st.subheader("Une dernière chose, à l'oral")
+    st.caption("Vos paroles peuvent compléter votre profil par une contrainte ou une préférence personnelle.")
+    st.write(QUESTION_OUVERTE)
     dire(QUESTION_OUVERTE, "ouverte")
     dit = entendu()
     if dit and entretien.demande_repetition(dit):
         redire(QUESTION_OUVERTE, "ouverte")
         st.rerun()
-    with st.form("ouverte"):
-        texte = st.text_area(QUESTION_OUVERTE, placeholder=AIDE_OUVERTE, height=130)
-        c1, c2 = st.columns(2)
-        envoyer = c1.form_submit_button("Envoyer", type="primary", disabled=not pret, width="stretch")
-        rien = c2.form_submit_button("Je n'ai rien à ajouter", width="stretch")
-    if dit:
-        texte, envoyer = dit, True
-    if rien or (envoyer and not texte.strip()):
+    rien = st.button("Je n'ai rien à ajouter")
+    if rien or (dit and dit.strip().casefold().strip(".! ") in ("rien", "non", "rien à ajouter", "je n'ai rien à ajouter", "non rien à ajouter")):
+        S.reponse_ouverte = dit or ""
         S.phase = "termine"
         st.rerun()
-    if not envoyer:
+    texte = dit
+    if not texte and S.get("erreur_ouverte"):
+        st.warning("Votre réponse est conservée. Vous pouvez relancer son analyse sans la répéter.")
+        if st.button("Réessayer l'analyse de ma réponse"):
+            texte = S.reponse_ouverte
+    if not texte:
         return
+    S.reponse_ouverte = texte.strip()
     try:
         with st.spinner("Les agents créent vos critères personnels…"):
-            nouveaux = criteres_dynamiques.creer(backend_pour(cle), QUESTION_OUVERTE, texte.strip(), seuil,
+            nouveaux = criteres_dynamiques.creer(backend_pour(cle), QUESTION_OUVERTE, S.reponse_ouverte, seuil,
                                                  deja=len(S.dynamiques))
     except AgentError as e:
-        st.error(str(e))
+        S.erreur_ouverte = str(e)
+        st.error("L'analyse est indisponible ; votre réponse est conservée.")
         return
+    S.erreur_ouverte = None
     S.dynamiques += nouveaux
-    for c in nouveaux:  # idées sans valeur existante : le chercheur crée le mot-clé pendant que le profil s'affiche
+    for c in nouveaux:
         if c.get("etiquetage") == "en_attente":
             fut = executeur().submit(chercheur.etiqueter, backend_pour(cle), c["concept"], c["effet"])
             S.recherches.append({"id": c["id"], "future": fut})
-    S.reponse_ouverte = texte.strip()
     S.phase = "termine"
     st.rerun()
 
@@ -882,6 +877,11 @@ def afficher_synthese():
     st.dataframe(pd.DataFrame(lignes), hide_index=True, width="stretch")
     for a in s["alertes"]:
         st.warning(a)
+    signaux = signaux_coherence(S.profil)
+    if signaux:
+        with st.expander("Observations sur vos choix — aucune réponse à répéter"):
+            for signal in signaux:
+                st.info(signal["texte"])
     if s["reglages_prudents_appliques"]:
         st.markdown("**Ce que l'outil ne sait pas** (réglage le plus prudent appliqué) : "
                     + ", ".join(f"{CRITERES[d['critere']]['nom']} → `{d['valeur']}`" for d in s["reglages_prudents_appliques"]))
@@ -941,6 +941,17 @@ def page_termine():
 
 # ---------- Mise en page ----------
 st.title("Votre profil d'investisseur")
+if S.phase == "conversation" and S.conv and "versions_reponses" not in S.conv:
+    # Rechargement d'une ancienne version : conserver les paroles et les faits déjà fournis.
+    ancien = S.conv
+    S.conv = moteur_conversation.creer(S.questions_posees)
+    for question, reponse in ancien.get("echanges", []):
+        S.conv["question"] = S.conv["question_cible"] = question
+        moteur_conversation.recevoir(S.conv, S.profil, reponse)
+    S.conv["fin"] = True
+    S.sections = sections_apres_conversation([cid for cid in CRITERES_CONVERSATION if not connu(S.profil, cid)])
+    S.section, S.phase = 0, "questionnaire"
+    st.info("Le parcours a été mis à jour. Vos réponses sont conservées ; les informations reconnues ne seront pas redemandées.")
 st.info("**Simulation éducative.** Cet outil n'exécute aucune transaction et ne fournit pas de conseil financier "
         "personnalisé. Les profils et les montants sont fictifs.", icon="ℹ️")
 if not pret:
@@ -951,7 +962,7 @@ col, col_profil = st.columns([3, 2], gap="large")
 with col:
     ENONCE = barre_vocale()  # premier élément de la colonne, dans toutes les phases vocales : jamais recréé
     {"accueil": page_accueil, "conversation": page_conversation, "questionnaire": page_questionnaire,
-     "simulations": page_simulations, "precisions": page_precisions, "ouverte": page_ouverte,
+     "simulations": page_simulations, "libre_oral": page_libre_oral, "precisions": page_precisions, "ouverte": page_ouverte,
      "termine": page_termine}[S.phase]()
     if S.debats and S.debats[-1]["tours"]:
         d = S.debats[-1]
@@ -992,11 +1003,14 @@ with col_profil:
         if S.dynamiques:
             st.markdown("**Critères propres à vous**")
             afficher_dynamiques()
-        export = {"genere_le": datetime.now().isoformat(timespec="seconds"), "modele": backend_pour(cle).model,
+        export = {"genere_le": datetime.now().isoformat(timespec="seconds"), "version_application": version_courante(), "modele": backend_pour(cle).model,
                   "acces": backend_pour(cle).nom, "seuil": seuil, "profil": S.profil,
                   "criteres_dynamiques": S.dynamiques, "reponse_ouverte": S.reponse_ouverte, "debats": S.debats,
                   "replay": S.get("replay_trace"), "synthese": synthetiser(S.profil) if S.phase == "termine" else None,
-                  "persona": (S.get("persona") or {}).get("nom")}
+                  "persona": (S.get("persona") or {}).get("nom"),
+                  "parcours": {"questions_posees": S.questions_posees,
+                               "evenements": (S.conv or {}).get("evenements", []) + S.evenements_questions,
+                               "echanges_oraux": (S.conv or {}).get("echanges", [])}}
         st.download_button("Télécharger le profil (JSON)", json.dumps(export, ensure_ascii=False, indent=2, default=str),
                            file_name="profil_investisseur.json", mime="application/json", width="stretch")
     else:

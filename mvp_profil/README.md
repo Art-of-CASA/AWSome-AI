@@ -1,5 +1,9 @@
 # MVP : profil d'investisseur explicable
 
+**Correctif des relances (publié le 15 novembre 2026, version `profil-afe8ed38fc7d`).** Les questions ouvertes et leurs réponses sont exclusivement orales. Le pilote `questions_conversation.py` choisit les cibles, `reponses_directes.py` traite les faits explicites A2/A5/A7 et `moteur_conversation.py` intègre les analyses avec une fraîcheur par critère. Aucun appel de génération n'est requis pour choisir la question suivante. Les ambiguïtés réelles ont une seule clarification ; les erreurs techniques conservent la réponse. La calibration du micro conserve aussi la parole reçue pendant ses premières 700 ms. R6/R8/R9 restent des observations sans relance ni modification des réponses.
+
+La version est affichée dans la barre latérale et exportée avec les questions et les échanges oraux. `python scripts/preparer_mvp.py` construit un paquet intégral avec un manifeste vérifié, sans accès AWS. Détails : [diagnostic et protocole](../docs/fiabilite_questions.md), [recherche de questionnaires](../docs/recherche_questionnaires.md).
+
 Site Streamlit qui établit un profil à partir d'une conversation, de questions fermées et de mises en situation. Les réponses libres sont classées puis vérifiées par deux agents Claude Haiku 5.5. Les critères sont alignés avec [config/criteres_appariement.csv](../config/criteres_appariement.csv). **Simulation éducative : aucun conseil financier personnalisé, aucune transaction réelle.** Le moteur de suggestions personnalisées reste à développer.
 
 **Version hébergée sur AWS : https://d29e3l5vv5fmjy.cloudfront.net** (HTTPS via CloudFront, accès limité aux IP de l'équipe ; voir [DEPLOIEMENT.md](DEPLOIEMENT.md)). Les appels utilisent Amazon Bedrock, Transcribe et Polly avec le rôle IAM du serveur.
@@ -8,19 +12,19 @@ Site Streamlit qui établit un profil à partir d'une conversation, de questions
 
 ## Parcours
 
-L'accueil propose une conversation orale ou écrite et un questionnaire classique. Il permet aussi de charger les trois personas fictifs de l'énoncé, avec leurs hypothèses de test identifiées.
+L'accueil propose une conversation exclusivement orale et un questionnaire à choix complété oralement. Il permet aussi de charger les trois personas fictifs de l'énoncé, avec leurs hypothèses de test identifiées.
 
 ### Conversation et analyse en arrière-plan
 
 La conversation couvre 16 critères de contexte : objectif, horizon, retraits, revenu, étape de vie, épargne, réserve, situation, emploi, personnes à charge, dettes, expérience d'une baisse, produits détenus, régions et thèmes.
 
-- La réplique pose une question courte sur un ou deux sujets liés. Le classificateur et le critique analysent les réponses en arrière-plan ; une information n'est cochée comme validée qu'après contrôle.
+- Le pilote déterministe choisit une question courte et ses cibles parmi les sujets restant réellement à demander. Le classificateur et le critique analysent les réponses en arrière-plan ; une information n'est cochée comme validée qu'après contrôle.
 - Une information spontanée peut renseigner d'autres critères encore inconnus. Une proposition facultative non validée n'est pas conservée comme réponse acquise.
 - Les analyses sont regroupées sur l'historique à jour. Les numéros d'échange empêchent un ancien résultat de remplacer une correction récente. Avant de quitter la conversation, le code termine les vérifications et leur rattrapage.
 - Une précision est reformulée une seule fois. Si le critique refuse encore la proposition, elle reste incertaine ; sa confiance élevée ne permet pas de contourner le refus.
 - La conversation est bornée à dix tours. Les informations manquantes sont reprises dans les « Compléments » ; passer aux questions suivantes ne les remplit pas automatiquement.
 
-Pour la voix, un clic « Démarrer » autorise le micro et le son. Le composant [composant_voix/index.html](composant_voix/index.html) détecte la parole et envoie les énoncés ; Amazon Transcribe les transcrit en fr-CA et Amazon Polly lit les questions avec la voix Gabrielle. Le même composant reste à sa place pendant les changements de page, en veille pendant les QCM. On peut aussi répondre au clavier et demander de répéter.
+Pour la voix, un clic « Démarrer » autorise le micro et le son. Le composant [composant_voix/index.html](composant_voix/index.html) détecte la parole et envoie les énoncés ; Amazon Transcribe les transcrit en fr-CA et Amazon Polly lit les questions avec la voix Gabrielle. Le même composant reste à sa place pendant les changements de page, en veille pendant les QCM. Les champs de réponse libre écrite sont supprimés. On peut demander oralement de répéter la question.
 
 ### Questions restantes à ordre adaptatif
 
@@ -79,7 +83,7 @@ Les deux agents reçoivent les critères et les libellés exacts des choix du qu
 - Être parent, rembourser un prêt pour les études d'un fils ou vivre ensemble ne suffit pas à connaître le nombre actuel de personnes financièrement à charge. Le métier seul ne prouve pas la stabilité des revenus.
 - Aucun retrait du capital ne signifie pas absence de besoin de revenu : les intérêts ou dividendes peuvent financer des dépenses essentielles.
 
-Le code précontrôle les listes autorisées, la citation et la confiance avant le critique. Le seuil initial est 80 %, puis 65 % après une reformulation. Un résultat approuvé par le critique peut rester « retenu » avec confiance réduite au-dessus de 50 % ; **un désaccord ou une absence de vérification ne deviennent pas utilisables par repli**. Les confiances sont déclarées par les modèles, sans calibration probabiliste démontrée.
+Le code précontrôle les listes autorisées, la citation et la confiance avant le critique. Le seuil de validation reste 80 % dans le parcours, y compris lors d'une clarification. Une faible confiance seule ne déclenche pas de nouvelle question. Un résultat approuvé par le critique peut rester « retenu » avec confiance réduite au-dessus de 50 % ; **un désaccord ou une absence de vérification ne deviennent pas utilisables par repli**. Les confiances sont déclarées par les modèles, sans calibration probabiliste démontrée.
 
 ## Lancer en local
 

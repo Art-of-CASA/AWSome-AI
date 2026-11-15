@@ -1,9 +1,10 @@
 """Entretien conversationnel (oral ou écrit) : l'IA pose les questions de contexte et coche les critères au fil de l'eau.
 
-Pour que la conversation soit fluide, l'utilisateur n'attend qu'UN appel court par tour : la RÉPLIQUE
-(reprise brève + question suivante, ou répétition si on le lui demande). Le reste se fait EN ARRIÈRE-PLAN
-pendant qu'il répond : le CLASSIFICATEUR range ses paroles dans les critères (liste fermée, citation exacte,
-confiance), puis le CRITIQUE vérifie ; un critère n'est coché ✅ qu'après son accord (seuil 80 %).
+Le choix de la question appartient au code. La fonction historique replique() reste disponible pour une
+reformulation vocale utile ; elle n'est pas nécessaire à la lecture d'une question déterministe.
+En arrière-plan, le CLASSIFICATEUR range les paroles dans les critères (liste fermée, citation exacte,
+confiance), puis le CRITIQUE vérifie. Leur désaccord dispose de deux tours internes pour être résolu sans
+faire répéter l'utilisateur ; une clarification exige un manque ou une ambiguïté explicitement identifié.
 Un sujet abordé mais pas assez clair est reformulé UNE seule fois (seuil abaissé à 65 %) ; ensuite on retient
 une réponse vérifiée avec accord (plancher 50 %) ; un désaccord reste incertain. Un sujet jamais abordé reste à couvrir.
 
@@ -22,14 +23,14 @@ import wave
 from pydantic import BaseModel
 
 from agents import (REGION, AgentError, Backend, Classification, Proposition, _ask, classifier, critiquer,
-                    evaluer, precontrole)
+                    evaluer, precontrole, debattre)
 from criteres import CRITERES, describe
 
 # Critères de contexte couverts par la conversation (les autres restent en QCM, quiz et mises en situation).
 CRITERES_CONVERSATION = ["A3", "A2", "A9", "A10", "A1", "A4", "A5", "A6", "A12", "A8", "A7", "B3", "C2", "D3", "D5", "D6"]
 MAX_TOURS = 10
 OUVERTURE = ("Bonjour ! Je vais vous poser quelques questions pour mieux vous connaître ; répondez librement, "
-             "comme dans une conversation. Pour commencer : à quoi servira l'argent que vous voulez placer, "
+             "comme dans une conversation. Parlons de cette somme précise : à quoi servira l'argent que vous voulez placer, "
              "et dans combien d'années devrez-vous en récupérer la majeure partie ?")
 
 
@@ -83,11 +84,8 @@ def analyser(backend: Backend, echanges, a_couvrir: list[str], seuil: float | di
     """
     if not a_couvrir and not facultatifs:
         return {}
-    classif = classifier(backend, echanges, a_couvrir, facultatifs=facultatifs)
-    voulus = set(a_couvrir) | set(facultatifs)
-    res = verifier(backend, echanges, [p for p in classif.propositions if p.critere_id in voulus and
-                                       (p.critere_id in a_couvrir or p.valeurs)], seuil)
-    return {c: r for c, r in res.items() if c in a_couvrir or r.valide}
+    return debattre(backend, echanges, a_couvrir, seuil=seuil, max_tours=2,
+                    facultatifs=facultatifs).resultats
 
 
 def verifier(backend: Backend, echanges, propositions: list[Proposition], seuil: float | dict) -> dict:

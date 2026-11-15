@@ -134,13 +134,13 @@ function traiterAudio(e) {
   let somme = 0; for (const x of entree) somme += x * x;
   const rms = Math.sqrt(somme / entree.length);
   $("orbe").style.transform = "scale(" + (1 + Math.min(0.5, rms * 6)).toFixed(3) + ")";
-  if (tempsCalib < 700) {                                // calibration du bruit de fond au démarrage
-    tempsCalib += ms; calibration.push(rms);
-    if (tempsCalib >= 700) {
+  if (tempsCalib < 700) {                                // la calibration ne doit jamais supprimer le début d'une réponse
+    tempsCalib += ms;
+    if (rms < seuil) calibration.push(rms);              // la parole au-dessus du seuil n'est pas du bruit de fond
+    if (tempsCalib >= 700 && calibration.length) {
       const moyenne = calibration.reduce((a, b) => a + b, 0) / calibration.length;
       seuil = Math.max(0.012, moyenne * 2.5);
     }
-    return;
   }
   if (!parole) {
     preroll.push(morceau); msPreroll += ms;
@@ -194,7 +194,7 @@ async function demarrer() {
     const muet = contexte.createGain(); muet.gain.value = 0;      // le processeur doit être relié à une sortie
     source.connect(proc); proc.connect(muet); muet.connect(contexte.destination);
   } catch (err) {
-    afficher("pause", "Micro indisponible", "Autorisez le micro (HTTPS requis) ou écrivez votre réponse sous ce cadre.");
+    afficher("pause", "Micro indisponible", "Autorisez le micro sur cette page HTTPS, puis cliquez de nouveau sur Démarrer.");
     return;
   }
   demarre = true;

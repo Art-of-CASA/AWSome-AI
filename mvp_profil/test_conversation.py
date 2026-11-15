@@ -1,297 +1,229 @@
-"""Test hors ligne du parcours « conversation » (Streamlit AppTest), agents et voix simulés.
+"""Conversation orale hors ligne : réponse unique, questions ciblées et analyses retardées.
 
-Vérifie : coche des critères au fil de la conversation (après vérification du critique en arrière-plan),
-critère refusé par le critique reformulé UNE seule fois puis laissé incertain (pas de 3e question),
-passage aux questions avec une page « Compléments » qui reprend en QCM ce que la conversation n'a pas
-couvert, et conversion audio WAV -> PCM pour Transcribe.
+Les modèles, Transcribe et Polly sont simulés. Le véritable pilote de questions
+et le parseur des réponses explicites sont exercés dans Streamlit AppTest.
 Lancer : python mvp_profil/test_conversation.py
+Sous Windows, asyncio doit pouvoir ouvrir ses sockets locales internes.
 """
 from __future__ import annotations
 
+from copy import deepcopy
 import io
 import os
+from pathlib import Path
 import sys
+from threading import Event
+import time
 import wave
 
-sys.path.insert(0, os.path.dirname(__file__))
-os.environ["AWS_ACCESS_KEY_ID"] = "AKIATEST"      # identifiants factices : rien ne part vers AWS
+ICI = Path(__file__).resolve().parent
+sys.path.insert(0, str(ICI))
+os.environ["AWS_ACCESS_KEY_ID"] = "AKIATEST"
 os.environ["AWS_SECRET_ACCESS_KEY"] = "test"
 
-import entretien  # noqa: E402
 import agents  # noqa: E402
-from agents import Proposition, Resultat  # noqa: E402
+import criteres_dynamiques  # noqa: E402
+import entretien  # noqa: E402
+import voix_composant  # noqa: E402
+from agents import Debat, Resultat  # noqa: E402
 from streamlit.testing.v1 import AppTest  # noqa: E402
 
-REPLIQUES, REFORMULER, ANALYSES, SEUILS, PISTES = [], [], [], [], []
+
+VOIX = {"n": 0, "texte": None}
+APPELS = []
+LECTURES = []
+OUVERTES = []
+MODE = {"analyse": lambda *args, **kwargs: {}}
 
 
-def fausse_replique(backend, echanges, restants, a_reformuler=(), pistes=None):
-    PISTES.append(dict(pistes or {}))
-    REPLIQUES.append(list(restants))
-    REFORMULER.append(list(a_reformuler))
-    fin = "c'est tout" in echanges[-1][1]
-    return entretien.Replique(message="Et prévoyez-vous des retraits avant cette échéance ?", termine=fin)
+def composant_simule(**kw):
+    return {"kind": "audio", "n": VOIX["n"], "wav": ""} if VOIX["texte"] is not None else None
 
 
-def fausse_analyse(backend, echanges, a_couvrir, seuil, facultatifs=()):
-    """Classificateur + critique simulés : le critique valide tout sauf A8."""
-    ANALYSES.append(list(a_couvrir))
-    SEUILS.append(dict(seuil))
-    texte = echanges[-1][1]
-    props = []
-    if "retraite" in texte:
-        props += [("A3", ["retraite"], "ma retraite"), ("A2", ["10_15_ans"], "dans 12 ans")]
-    if "infirmier" in texte:
-        props += [("A12", ["sante"], "infirmier"), ("A8", ["0"], "infirmier")]
-    return {cid: Resultat(cid, v, cit, 0.9, cid != "A8", "ok" if cid != "A8" else "Désaccord du critique")
-            for cid, v, cit in props if cid in a_couvrir}
+def lecture_simulee(texte):
+    LECTURES.append(texte)
+    return b""
 
 
-def pas_de_voix(texte):
-    raise RuntimeError("Polly indisponible en test")
+def analyse_simulee(backend, echanges, a_couvrir, seuil, facultatifs=()):
+    APPELS.append({"n": len(echanges), "criteres": list(a_couvrir), "facultatifs": list(facultatifs),
+                   "echanges": list(echanges)})
+    return MODE["analyse"](backend, echanges, a_couvrir, seuil, facultatifs)
 
 
-entretien.replique, entretien.analyser, entretien.synthese_vocale = fausse_replique, fausse_analyse, pas_de_voix
+def debat_simule(backend, echanges, criteres_ids, seuil=0.8, max_tours=2, facultatifs=()):
+    res = analyse_simulee(backend, echanges, criteres_ids, seuil, facultatifs)
+    return Debat(res, [], "Pouvez-vous préciser ce point ?")
+
+
+def decouverte_simulee(backend, question, reponse, seuil, deja=0):
+    OUVERTES.append(reponse)
+    return []
+
+
+def replique_interdite(*args, **kwargs):
+    raise AssertionError("Un modèle ne doit plus choisir ni reformuler librement la prochaine question.")
+
+
 agents.aws_identifiants_presents = lambda: True
 agents.backend_bedrock = lambda: agents.Backend(None, agents.MODELES["bedrock"], "test hors ligne")
-
-at = AppTest.from_file(os.path.join(os.path.dirname(__file__), "app.py"), default_timeout=30)
-at.run()
-[b for b in at.button if b.label == "Commencer en conversation"][0].click(); at.run()
-assert at.session_state.phase == "conversation" and not at.exception, at.exception
-
-c = at.session_state.conv
-v = at.session_state.vocal
-assert v["n"] == 1 and v["audio"] == "" and v["ack"] == 0 and v["etape"] == "conv:0"  # réplique d ouverture n° 1 (voix indisponible en test)
-at.chat_input[0].set_value("C'est pour ma retraite, dans 12 ans. Je suis infirmier.").run()
-c = at.session_state.conv
-assert c["tours"] == 1 and at.session_state.vocal["n"] == 2 and len(REPLIQUES) == 1 and "A3" in ANALYSES[0]
-import time; time.sleep(0.5); at.run()  # l'analyse en arrière-plan est terminée : on l'intègre
-p = at.session_state.profil
-assert p["A3"]["valeurs"] == ["retraite"] and p["A3"]["source"] == "conversation (IA)"
-assert p["A2"]["statut"] == "validé" and p["A12"]["valeurs"] == ["sante"]
-assert "A8" not in p and "A8" in at.session_state.conv["suivi"]  # refusé par le critique : à reformuler une fois
-assert any("✅" in m.value for m in at.markdown) and any("🔁" in m.value for m in at.markdown)
-
-# Le tour suivant n'analyse plus les critères déjà cochés ; A8 est reformulé (une seule fois), avec un seuil abaissé
-at.chat_input[0].set_value("Non, je n'y toucherai pas.").run()
-assert "A3" not in ANALYSES[-1] and "A8" in ANALYSES[-1] and "A3" not in REPLIQUES[-1]
-assert PISTES[-1] == {"A8": (["0"], "infirmier")}  # l IA demande confirmation de ce qu elle a cru comprendre
-assert REFORMULER[-1] == ["A8"] and "A8" not in REPLIQUES[-1] and SEUILS[-1]["A8"] == 0.8 and SEUILS[-1]["A9"] == 0.8
-time.sleep(0.5); at.chat_input[0].set_value("Oui c'est ça.").run()
-assert REFORMULER[-1] == [] and "A8" not in REPLIQUES[-1]  # jamais redemandé une 2e fois
-assert SEUILS[-1]["A8"] == 0.65  # seulement après la réponse à la précision réellement posée
-
-# Passage aux questions : page « Compléments » avec seulement ce qui manque
-[b for b in at.button if b.label == "Passer aux questions suivantes"][0].click(); at.run()
-secs = at.session_state.sections
-assert at.session_state.phase == "questionnaire" and secs[0]["titre"] == "Compléments", [s["titre"] for s in secs]
-ids = [it["id"] for it in secs[0]["items"]]
-assert "q_a3" not in ids and "q_a2" not in ids and "q_a9" in ids, ids
-situation = next(it for it in secs[0]["items"] if it["id"] == "q_situation")
-assert situation["criteres"] == ["A6", "A8", "A7"], situation["criteres"]  # A8 contesté reste à préciser
-a8 = at.session_state.profil["A8"]
-assert a8["statut"] == "incertain", a8
-assert [s["titre"] for s in secs[1:]] == ["Vous et le risque", "Vos connaissances", "Vos valeurs et votre compte", "Vos préférences"]
-assert not any(it["id"] in ("q_b3", "q_c2", "q_d3", "q_themes") for s in secs[1:] for it in s["items"])
-
-# Audio : WAV 16 bits stéréo -> PCM mono pour Amazon Transcribe
-buf = io.BytesIO()
-with wave.open(buf, "wb") as w:
-    w.setnchannels(2); w.setsampwidth(2); w.setframerate(16000)
-    w.writeframes(b"\x01\x00\x02\x00" * 1600)
-pcm, taux = entretien.pcm_depuis_wav(buf.getvalue())
-assert taux == 16000 and len(pcm) == 3200 and pcm[:2] == b"\x01\x00"
-print(f"Conversation OK : {sum(v['statut'] == 'validé' for v in p.values())} critères cochés au 1er tour, "
-      f"A8 contesté gardé incertain, page Compléments de {len(ids)} questions")
-
-# Fin de conversation : la réplique de conclusion est marquée « fin » et un bouton permet de continuer à l'écrit
-at = AppTest.from_file(os.path.join(os.path.dirname(__file__), "app.py"), default_timeout=30)
-at.run()
-[b for b in at.button if b.label == "Commencer en conversation"][0].click(); at.run()
-at.chat_input[0].set_value("Je crois que c'est tout.").run()
-assert at.session_state.conv["fin"] and any(b.label == "Continuer vers les questions suivantes" for b in at.button)
-print("Fin de conversation OK")
-
-# Déduction certaine : retraite -> secteur retraite ; préférence dite au passage gardée sans autre question.
-def analyse_deduction(backend, echanges, a_couvrir, seuil, facultatifs=()):
-    ANALYSES.append(list(a_couvrir)); FACULTATIFS_VUS.append(list(facultatifs))
-    out = {}
-    if "A12" in a_couvrir:
-        out["A12"] = Resultat("A12", ["retraite"], "je suis à la retraite", 0.9, True,
-                              "Déduit : la retraite renseigne le secteur retraite")
-    if "D7" in facultatifs:
-        out["D7"] = Resultat("D7", ["dividende"], "je préfère les entreprises qui versent des dividendes", 0.9, True, "ok")
-    return out
+agents.debattre = debat_simule
+entretien.analyser = analyse_simulee
+entretien.replique = replique_interdite
+entretien.transcrire = lambda wav: VOIX["texte"]
+entretien.synthese_vocale = lecture_simulee
+voix_composant.conversation_vocale = composant_simule
+criteres_dynamiques.creer = decouverte_simulee
 
 
-FACULTATIFS_VUS = []
-entretien.analyser = analyse_deduction
-at = AppTest.from_file(os.path.join(os.path.dirname(__file__), "app.py"), default_timeout=30)
-at.run()
-[b for b in at.button if b.label == "Commencer en conversation"][0].click(); at.run()
-at.chat_input[0].set_value("je suis à la retraite, et je préfère les entreprises "
-                           "qui versent des dividendes.").run()
-assert "D7" in FACULTATIFS_VUS[-1] and "A3" not in FACULTATIFS_VUS[-1] and "C1" not in FACULTATIFS_VUS[-1]
-time.sleep(0.5); at.run()
-p = at.session_state.profil
-assert p["A12"]["source"] == "déduit (IA)" and p["A12"]["motif"].startswith("Déduit") and "A12" not in at.session_state.conv["restants"]
-assert p["D7"]["valeurs"] == ["dividende"] and p["D7"]["statut"] == "validé"
-at.chat_input[0].set_value("Je reviens tout de suite.").run()
-assert "A12" not in REPLIQUES[-1]
-print("Déduction certaine et préférence dite au passage : OK")
-
-# Une correction explicite d'un critère déjà coché est revue avec une citation récente.
-from profil import entree
+def verifier_interface_orale(at):
+    assert not at.exception, at.exception
+    assert not at.chat_input, "Une réponse libre doit passer par le micro, pas par une saisie de chat."
+    assert not at.text_area, "Une réponse libre ne doit pas demander de saisie écrite."
 
 
-def analyse_correction(backend, echanges, a_couvrir, seuil, facultatifs=()):
-    if "A2" not in a_couvrir:
-        return {}
-    texte = echanges[-1][1]
-    court = "deux ans" in texte
-    return {"A2": Resultat("A2", ["moins_3_ans" if court else "10_15_ans"],
-                            "deux ans" if court else "12 ans", 0.9, True, "correction explicite")}
+def nouvelle_conversation():
+    VOIX["texte"] = None
+    at = AppTest.from_file(str(ICI / "app.py"), default_timeout=30)
+    at.run()
+    [b for b in at.button if b.label == "Commencer en conversation"][0].click()
+    at.run()
+    verifier_interface_orale(at)
+    assert at.session_state.phase == "conversation"
+    assert set(at.session_state.conv["cibles_question"]) == {"A3", "A2"}
+    return at
 
 
-entretien.analyser = analyse_correction
-at = AppTest.from_file(os.path.join(os.path.dirname(__file__), "app.py"), default_timeout=30)
-at.run()
-[b for b in at.button if b.label == "Commencer en conversation"][0].click(); at.run()
-at.session_state.profil["A2"] = entree(["10_15_ans"], "conversation (IA)", "12 ans", 0.95)
-at.session_state.conv["restants"].remove("A2")
-at.chat_input[0].set_value("En fait, je voulais dire deux ans.").run()
-time.sleep(0.2); at.run()
-assert at.session_state.profil["A2"]["valeurs"] == ["moins_3_ans"], at.session_state.profil["A2"]
-assert at.session_state.profil["A2"]["citation"] == "deux ans"
-print("Correction d'un critère déjà validé : OK")
+def parler(at, texte):
+    VOIX["n"] += 1
+    VOIX["texte"] = texte
+    at.run()
+    verifier_interface_orale(at)
 
-# Une réponse arrivée pendant le contrôle est vérifiée par rattrapage ; l'ancien résultat est ignoré.
-from threading import Event
 
+def terminer_analyses(at):
+    for _ in range(30):
+        time.sleep(0.05)
+        at.run()
+        verifier_interface_orale(at)
+        if not at.session_state.conv["jobs"]:
+            return
+    raise AssertionError("Les analyses simulées ne se terminent pas.")
+
+
+def nb_initiales(at, cid):
+    info = at.session_state.conv["questions_posees"].get(cid, {})
+    return info if isinstance(info, int) else info.get("initiales", 0)
+
+
+def est_regle(entree):
+    return "règle" in entree["source"].casefold() or "déterministe" in entree["source"].casefold()
+
+
+# Réponses chiffrées claires : le profil est renseigné immédiatement, même si le modèle est bloqué.
 liberer = Event()
-instantanes = []
+demarree = Event()
 
 
 def analyse_retardee(backend, echanges, a_couvrir, seuil, facultatifs=()):
-    instantanes.append(len(echanges))
-    if len(echanges) == 1:
-        liberer.wait(20)
-    return analyse_correction(backend, echanges, a_couvrir, seuil, facultatifs)
+    demarree.set()
+    if not liberer.wait(20):
+        raise AssertionError("Le test n'a pas libéré l'analyse retardée.")
+    texte = " ".join(r for _, r in echanges)
+    res = {}
+    if "ma retraite" in texte:
+        res["A3"] = Resultat("A3", ["retraite"], "ma retraite", 0.95, True, "déclaration claire", True)
+    # Une contradiction provenant d'un modèle ne doit jamais écraser la réponse directe plus récente.
+    res["A2"] = Resultat("A2", ["3_5_ans"], "15 ans", 0.95, True, "sortie simulée erronée", True)
+    res["A5"] = Resultat("A5", ["moins_3_mois"], "six mois", 0.95, True, "sortie simulée erronée", True)
+    return res
 
 
-entretien.analyser = analyse_retardee
-at = AppTest.from_file(os.path.join(os.path.dirname(__file__), "app.py"), default_timeout=30)
-at.run()
-[b for b in at.button if b.label == "Commencer en conversation"][0].click(); at.run()
+MODE["analyse"] = analyse_retardee
+APPELS.clear()
+at = nouvelle_conversation()
 try:
-    at.chat_input[0].set_value("C'est pour dans 12 ans.").run()
-    at.chat_input[0].set_value("En fait ce sera dans deux ans.").run()
+    parler(at, "C'est pour ma retraite, j'aurai besoin de cet argent dans 15 ans.")
+    assert demarree.wait(2), "Le test doit réellement exercer une analyse en arrière-plan."
+    p = at.session_state.profil
+    assert p["A2"]["valeurs"] == ["10_15_ans"] and est_regle(p["A2"]), p.get("A2")
+    assert p["A2"].get("nombre") == 15
+    assert "A2" not in at.session_state.conv["cibles_question"]
+    assert "A3" not in at.session_state.conv["cibles_question"], "Le projet répondu est en cours de contrôle."
+    assert at.session_state.conv["cibles_question"], "Le contrôle transverse ne doit pas bloquer tous les autres sujets."
+    initiales_reserve = nb_initiales(at, "A5")
+
+    parler(at, "J'ai six mois de dépenses de côté en dehors de ce placement.")
+    p = at.session_state.profil
+    assert p["A5"]["valeurs"] == ["3_6_mois"] and est_regle(p["A5"]), p.get("A5")
+    assert p["A5"].get("nombre") == 6
+    assert not {"A2", "A5"} & set(at.session_state.conv["cibles_question"])
+    assert nb_initiales(at, "A2") == 1 and nb_initiales(at, "A5") == initiales_reserve <= 1
 finally:
     liberer.set()
-for _ in range(5):
-    time.sleep(0.2); at.run()
-    if not at.session_state.conv["jobs"]:
-        break
-assert 1 in instantanes and 2 in instantanes, instantanes
-assert at.session_state.profil["A2"]["valeurs"] == ["moins_3_ans"], at.session_state.profil
-assert at.session_state.profil["A2"]["citation"] == "deux ans"
-print("Rattrapage asynchrone et exclusion des instantanés périmés : OK")
 
-# L'échec d'une réplique conserve l'échange analysé ; la réponse suivante a un numéro distinct.
-echecs = []
+terminer_analyses(at)
+p = at.session_state.profil
+assert p["A2"]["valeurs"] == ["10_15_ans"] and p["A5"]["valeurs"] == ["3_6_mois"], p
+assert p["A3"]["valeurs"] == ["retraite"], "Une réponse antérieure sur un autre sujet doit être conservée."
+assert nb_initiales(at, "A2") == 1 and nb_initiales(at, "A5") == initiales_reserve <= 1
+assert not {"A2", "A5"} & set(at.session_state.conv["cibles_question"])
+assert est_regle(p["A2"]) and est_regle(p["A5"])
+print("15 ans et six mois : validés en une réponse ; aucune répétition ; résultat LLM contradictoire ignoré")
 
+# Demander explicitement de répéter relit la question sans consommer une nouvelle question ni analyser l'énoncé.
+avant_question = at.session_state.conv["question"]
+avant_echanges = list(at.session_state.conv["echanges"])
+avant_compteurs = deepcopy(at.session_state.conv["questions_posees"])
+avant_lectures = len(LECTURES)
+parler(at, "Pouvez-vous répéter ?")
+assert at.session_state.conv["question"] == avant_question
+assert at.session_state.conv["echanges"] == avant_echanges
+assert at.session_state.conv["questions_posees"] == avant_compteurs
+assert len(LECTURES) > avant_lectures and LECTURES[-1] == avant_question
+print("Répétition uniquement demandée par l'utilisateur : relecture sans nouvelle collecte")
 
-def replique_en_panne(backend, echanges, restants, a_reformuler=(), pistes=None):
-    if not echecs:
-        echecs.append(True)
-        raise agents.AgentError("Indisponibilité simulée")
-    return fausse_replique(backend, echanges, restants, a_reformuler, pistes)
+# Une correction claire s'applique immédiatement, même si l'horizon avait déjà été coché.
+MODE["analyse"] = lambda *args, **kwargs: {}
+parler(at, "Je me corrige : j'aurai besoin de cet argent dans deux ans.")
+assert at.session_state.profil["A2"]["valeurs"] == ["moins_3_ans"], at.session_state.profil["A2"]
+assert "deux ans" in at.session_state.profil["A2"]["citation"]
+assert est_regle(at.session_state.profil["A2"])
+assert "A2" not in at.session_state.conv["cibles_question"]
+terminer_analyses(at)
+print("Correction récente de quinze à deux ans : appliquée sans redemander l'horizon")
 
-
-entretien.replique, entretien.analyser = replique_en_panne, analyse_correction
-at = AppTest.from_file(os.path.join(os.path.dirname(__file__), "app.py"), default_timeout=30)
-at.run()
-[b for b in at.button if b.label == "Commencer en conversation"][0].click(); at.run()
-at.chat_input[0].set_value("C'est pour dans 12 ans.").run()
-assert not at.exception and len(at.session_state.conv["echanges"]) == 1
-at.chat_input[0].set_value("En fait dans deux ans.").run()
-time.sleep(0.2); at.run()
-assert len(at.session_state.conv["echanges"]) == 2
-assert at.session_state.profil["A2"]["valeurs"] == ["moins_3_ans"]
-print("Réplique indisponible : réponse conservée et reprise sans ancien classement : OK")
-
-# Plusieurs ambiguïtés : seule la précision posée peut être considérée répondue ou bénéficier du seuil réduit.
-entretien.replique = fausse_replique
-seuils_par_tour = []
-
-
-def ambigu(backend, echanges, a_couvrir, seuil, facultatifs=()):
-    seuils_par_tour.append(dict(seuil))
-    return {cid: Resultat(cid, ["faible_moins_25" if cid == "A4" else "0"],
-                          echanges[-1][1], 0.6, False, "Confiance 60 % sous le seuil")
-            for cid in ("A4", "A8") if cid in a_couvrir}
-
-
-entretien.analyser = ambigu
-at = AppTest.from_file(os.path.join(os.path.dirname(__file__), "app.py"), default_timeout=30)
-at.run()
-[b for b in at.button if b.label == "Commencer en conversation"][0].click(); at.run()
-at.chat_input[0].set_value("Il faut préciser ma situation.").run()
-time.sleep(0.2); at.run()
-at.chat_input[0].set_value("Je vous écoute.").run()
-poses = list(at.session_state.conv["reformules"])
-assert len(poses) == 1 and len(REFORMULER[-1]) == 1, poses
-autre = next(cid for cid in ("A4", "A8") if cid not in poses)
-at.chat_input[0].set_value("Voici ma précision.").run()
-time.sleep(0.2); at.run()
-assert at.session_state.conv["analyses_couvertes"][autre] == 3
-assert seuils_par_tour[-1][autre] == 0.8, seuils_par_tour
-assert autre in at.session_state.conv["restants"], at.session_state.conv
-print("Une reformulation effectivement posée par tour, seuil réduit seulement pour sa réponse : OK")
-
-# Une correction d'une valeur déjà connue reste prouvée par son propre tour,
-# même si la personne répond à un autre sujet pendant le contrôle asynchrone.
-controle_correction = Event()
-correction_commencee = Event()
-instantanes_correction = []
-
-
-def correction_puis_autre_sujet(backend, echanges, a_couvrir, seuil, facultatifs=()):
-    if "A2" not in a_couvrir:
-        return {}
-    instantanes_correction.append(len(echanges))
-    if len(echanges) == 1:
-        correction_commencee.set()
-        controle_correction.wait(20)
-    # Le vrai classificateur lit tout l'historique : le dernier énoncé ne répète pas forcément la correction.
-    if any("deux ans" in reponse for _, reponse in echanges):
-        return {"A2": Resultat("A2", ["moins_3_ans"], "deux ans", 0.9, True,
-                               "Correction explicite de l'horizon, les autres réponses sont sans rapport", True)}
+# Les précisions libres sont orales, puis la question ouverte finale est elle aussi orale.
+def situation_precisee(backend, echanges, a_couvrir, seuil, facultatifs=()):
+    if "A4" in a_couvrir:
+        return {"A4": Resultat("A4", ["faible_moins_25"], echanges[-1][1], 0.95, True, "réponse claire", True)}
     return {}
 
 
-entretien.replique, entretien.analyser = fausse_replique, correction_puis_autre_sujet
-at = AppTest.from_file(os.path.join(os.path.dirname(__file__), "app.py"), default_timeout=30)
+MODE["analyse"] = situation_precisee
+at.session_state.profil.pop("A4", None)
+at.session_state.phase = "precisions"
+at.session_state.precisions_pretes = True
+at.session_state.file = [{"kind": "libre", "criteres": ["A4"], "texte": "Quelle part de votre épargne représente ce placement ?",
+                          "essai": 0, "echanges": []}]
 at.run()
-[b for b in at.button if b.label == "Commencer en conversation"][0].click(); at.run()
-at.session_state.profil["A2"] = entree(["10_15_ans"], "conversation (IA)", "dans 12 ans", 0.95)
-at.session_state.conv["restants"].remove("A2")
-try:
-    at.chat_input[0].set_value("En fait, je me corrige : ce sera dans deux ans.").run()
-    assert not at.exception, at.exception
-    assert correction_commencee.wait(5), "Le contrôle de la correction doit être lancé avant la réponse suivante"
-    at.chat_input[0].set_value("Je n'ai pas de dettes à taux élevé.").run()
-    assert not at.exception, at.exception
-    assert at.session_state.profil["A2"]["valeurs"] == ["10_15_ans"]
-finally:
-    controle_correction.set()
-for _ in range(10):
-    time.sleep(0.2); at.run()
-    if not at.session_state.conv["jobs"]:
-        break
-assert 1 in instantanes_correction and 2 in instantanes_correction, instantanes_correction
-assert at.session_state.profil["A2"]["valeurs"] == ["moins_3_ans"], at.session_state.profil["A2"]
-assert at.session_state.profil["A2"]["citation"] == "deux ans"
-assert "A2" not in at.session_state.conv["revisions"]
-print("Correction connue puis réponse sur un autre sujet pendant le contrôle : citation du tour de correction préservée, OK")
+verifier_interface_orale(at)
+parler(at, "Ce placement représente moins du quart de mon épargne totale.")
+assert at.session_state.profil["A4"]["valeurs"] == ["faible_moins_25"]
+at.session_state.phase = "ouverte"
+at.run()
+verifier_interface_orale(at)
+parler(at, "Je n'ai rien à ajouter.")
+assert at.session_state.phase == "termine" and at.session_state.reponse_ouverte == "Je n'ai rien à ajouter."
+print("Précisions et question ouverte finale : réponses au micro, aucun chat ni zone de texte libre")
+
+# La conversion audio reste vérifiée sans Transcribe réel.
+buf = io.BytesIO()
+with wave.open(buf, "wb") as w:
+    w.setnchannels(2)
+    w.setsampwidth(2)
+    w.setframerate(16000)
+    w.writeframes(b"\x01\x00\x02\x00" * 1600)
+pcm, taux = entretien.pcm_depuis_wav(buf.getvalue())
+assert taux == 16000 and len(pcm) == 3200 and pcm[:2] == b"\x01\x00"
+print("Audio WAV stéréo vers PCM mono : OK")
