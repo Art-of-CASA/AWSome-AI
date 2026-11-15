@@ -42,6 +42,15 @@ def lignes(profil, dynamiques):
                   key=lambda c: c.get("confiance", 0))
 
 
+def repartition_couleurs(criteres, seuil):
+    """Nombre de critères pour chaque statut affiché dans la vue."""
+    total = {"rouge": 0, "jaune": 0, "vert": 0, "attente": 0}
+    for critere in criteres:
+        couleur, _ = etat(critere, seuil)
+        total[couleur] += 1
+    return total
+
+
 def afficher_hypotheses(profil, dynamiques, seuil):
     st.subheader("Hypothèses du profil")
     st.write("Retrouvez ce que nous avons compris de vos réponses et les éléments qui le justifient.")
@@ -50,7 +59,32 @@ def afficher_hypotheses(profil, dynamiques, seuil):
     st.caption("La confiance indique la certitude de l’interprétation de votre réponse. Elle ne prédit pas votre comportement futur.")
     couleurs = {"rouge": ("#dc5555", "🔴"), "jaune": ("#d5a020", "🟡"),
                 "vert": ("#32956a", "🟢"), "attente": ("#5685c6", "🔵")}
-    for c in lignes(profil, dynamiques):
+    criteres = lignes(profil, dynamiques)
+    repartition = repartition_couleurs(criteres, seuil)
+    total = len(criteres)
+    segments = "".join(
+        f'<span style="width:{nombre / total * 100:.2f}%;background:{couleurs[code][0]}"></span>'
+        for code, nombre in repartition.items() if nombre
+    )
+    st.markdown(
+        '<div class="hypotheses-repartition" aria-label="Répartition des critères par statut">'
+        f'<div class="hypotheses-barre">{segments}</div>'
+        '<div class="hypotheses-legende">'
+        f'<span>🔴 À préciser&nbsp;: {repartition["rouge"]}</span>'
+        f'<span>🟡 À confirmer&nbsp;: {repartition["jaune"]}</span>'
+        f'<span>🟢 Validé&nbsp;: {repartition["vert"]}</span>'
+        f'<span>🔵 En analyse&nbsp;: {repartition["attente"]}</span>'
+        '</div></div>'
+        '<style>'
+        '.hypotheses-barre {display:flex; height:12px; overflow:hidden; border-radius:999px; '
+        'background:#e8e8e8; margin:0.3rem 0 0.35rem;} '
+        '.hypotheses-barre span {display:block; min-width:0;} '
+        '.hypotheses-legende {display:flex; flex-wrap:wrap; gap:0.25rem 1rem; font-size:0.85rem; '
+        'margin-bottom:1rem;} '
+        '</style>',
+        unsafe_allow_html=True,
+    )
+    for c in criteres:
         couleur, statut = etat(c, seuil)
         bordure, icone = couleurs[couleur]
         # Les clés sont générées en interne, jamais à partir des citations.
