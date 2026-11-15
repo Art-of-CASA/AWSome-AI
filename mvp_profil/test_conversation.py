@@ -37,7 +37,8 @@ MODE = {"analyse": lambda *args, **kwargs: {}}
 
 
 def composant_simule(**kw):
-    return {"kind": "audio", "n": VOIX["n"], "wav": ""} if VOIX["texte"] is not None else None
+    return {"kind": "audio", "n": VOIX["n"], "wav": "", "instance_id": "micro-test",
+            "session_id": kw["session_id"], "question_id": kw["question_id"], "playback_id": kw["n"]} if VOIX["texte"] is not None else None
 
 
 def lecture_simulee(texte):

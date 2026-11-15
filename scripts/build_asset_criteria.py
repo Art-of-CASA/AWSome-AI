@@ -20,6 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 STARTER = ROOT / "Datathon2026" / "alphaforge_starter"
 EXTRA, EXT = ROOT / "data_extra", ROOT / "data_extended"
 CFG = json.loads((ROOT / "config" / "seuils_criteres.json").read_text(encoding="utf-8"))
+PROFIL = json.loads((ROOT / "mvp_profil" / "hypotheses_profil.json").read_text(encoding="utf-8"))
 ASOF = pd.Timestamp("2026-11-12")
 
 # --- Critères écrits à la main (hypothèses de l'équipe, à justifier) -------------------------
@@ -288,6 +289,8 @@ SECTEURS_CYCLIQUES = {"Consumer Discretionary", "Materials", "Industrials", "Ene
 
 
 def _tranche(x, bornes, noms, defaut="non_disponible"):
+    if len(bornes) != len(noms):
+        raise ValueError("Chaque borne doit posséder exactement un libellé.")
     if pd.isna(x):
         return defaut
     for b, n in zip(bornes, noms):
@@ -296,17 +299,68 @@ def _tranche(x, bornes, noms, defaut="non_disponible"):
     return noms[-1]
 
 
+def classe_volatilite(vol_pct: float) -> str:
+    """Conventions B5 : moins de 8 ; de 8 à 15 inclus ; plus de 15 à 25 inclus ; plus de 25.
+
+    Les limites sont celles déjà déclarées par la synthèse du profil, pas un
+    second barème indépendant dans les données d'actifs.
+    """
+    bornes = PROFIL["volatilite_max_par_B5_pct"]
+    if pd.isna(vol_pct):
+        return "non_disponible"
+    if vol_pct < bornes["faible_moins_8"]:
+        return "faible_moins_8"
+    for mot in ("moderee_8_15", "elevee_15_25"):
+        if vol_pct <= bornes[mot]:
+            return mot
+    return "tres_elevee_plus_25"
+
+
+def classe_recuperation(jours: float, statut: str) -> str:
+    """B7 utilise des plafonds inclusifs de 365/730 jours ; absence de retour = état distinct."""
+    if pd.isna(jours):
+        return statut
+    for mot, limite in PROFIL["duree_sous_eau_max_jours_par_B7"].items():
+        if limite is None or jours <= limite:
+            return mot
+    raise ValueError("La grille B7 doit contenir une durée sans plafond.")
+
+
+def classe_frais(ratio: float) -> str:
+    """Bornes de frais versionnées, exprimées en ratios annuels, sans seuil caché."""
+    if pd.isna(ratio):
+        return "non_applicable"
+    bornes = CFG["frais_fnb_bornes"]
+    if len(bornes) != 3 or not 0 < bornes[0] < bornes[1] < bornes[2]:
+        raise ValueError("Trois bornes de frais positives et strictement croissantes sont requises.")
+    def code(x):
+        pct = x * 100
+        return str(int(pct)) if float(pct).is_integer() else f"{pct:.2f}".replace(".", "_")
+    b0, b1, b2 = map(code, bornes)
+    noms = [f"ultra_reduits_moins_{b0}", f"faibles_{b0}_{b1}", f"moderes_{b1}_{b2}", f"eleves_a_partir_de_{b2}"]
+    return _tranche(ratio, [*bornes, float("inf")], noms)
+
+
+def sensibilite_macro(r) -> str:
+    tags = []
+    if r.rate_sensitivity == "baisse_si_taux_montent":
+        tags.append("sensible_aux_taux")
+    if r.sector == "Energy" or "petrole" in r.themes or r.fossil_involvement == "directe":
+        tags.append("sensible_au_petrole")
+    if r.fx_risk == "notable":
+        tags.append("sensible_aux_devises")
+    return ";".join(tags) or "aucune_sensibilite_marquee"
+
+
 def mots_cles(df, caps: pd.Series, top10: pd.Series, n_top: pd.Series) -> pd.DataFrame:
     """Colonnes kw_* : chaque valeur est un mot-clé du tableau de l'équipe, calculé à partir de nos données."""
     eq = df.asset_class == "equity"
     pct = lambda s: -s * 100  # noqa: E731  (perte en % positif)
     df["kw_perte_max_historique"] = [_tranche(pct(x), [10, 20, 30, 40, 1e9], ["moins_10", "10_20", "20_30", "30_40", "plus_40"])
                                      for x in df.max_drawdown]
-    df["kw_volatilite"] = [_tranche(v * 100, [8, 15, 25, 1e9], ["faible_moins_8", "moderee_8_15", "elevee_15_25", "tres_elevee_plus_25"])
-                           for v in df.vol_cad]
+    df["kw_volatilite"] = [classe_volatilite(v * 100) for v in df.vol_cad]
     # Durée SOUS L'EAU (du sommet au retour au sommet), comparable à B7. Non récupéré : statut explicite.
-    df["kw_recuperation"] = [(st if pd.isna(d) else _tranche(d, [365, 730, 1e9], ["rapide_moins_1_an", "moyenne_1_2_ans", "longue_plus_2_ans"]))
-                             for d, st in zip(df.underwater_days, df.recovery_status)]
+    df["kw_recuperation"] = [classe_recuperation(d, st) for d, st in zip(df.underwater_days, df.recovery_status)]
     df["kw_choc_2022"] = [("hausse" if r > 0 else _tranche(-r * 100, [10, 25, 1e9], ["baisse_limitee_moins_10", "baisse_moderee_10_25", "baisse_forte_plus_25"]))
                           if pd.notna(r) else "non_disponible" for r in df.return_2022]
     df["kw_beta"] = [_tranche(b, [0.7, 1.2, 1e9], ["faible_moins_0_7", "neutre_0_7_1_2", "eleve_plus_1_2"]) for b in df.beta_vt_weekly]
@@ -359,18 +413,11 @@ def mots_cles(df, caps: pd.Series, top10: pd.Series, n_top: pd.Series) -> pd.Dat
                       else "cyclique" if (s in SECTEURS_CYCLIQUES or s == "Communication Services")
                       else "refuge" if t == "GLD" else "obligataire" if a == "etf_bond" else "speculatif" if a == "crypto" else "marche_large"
                       for s, t, a, th in zip(df.sector, df.ticker, df.asset_class, df.themes)]
-    def macro(r):
-        t = []
-        if r.rate_sensitivity == "baisse_si_taux_montent": t.append("sensible_aux_taux")
-        if r.sector == "Energy" or "petrole" in r.themes or r.fossil_involvement == "directe": t.append("sensible_au_petrole")
-        if r.fx_risk == "notable" or (r.currency != "CAD" and abs(r.fx_vol_contribution) >= 0.02): t.append("sensible_aux_devises")
-        return ";".join(t) or "aucune_sensibilite_marquee"
-    df["kw_sensibilite_macro"] = df.apply(macro, axis=1)
+    df["kw_sensibilite_macro"] = df.apply(sensibilite_macro, axis=1)
     df["kw_protection_inflation"] = ["or" if ("or" in th.split(";")) else "matieres_premieres_energie" if s == "Energy"
                                      else "a_resiste_en_2022" if (pd.notna(r) and r > 0) else "sans_protection_demontree"
                                      for th, s, r in zip(df.themes, df.sector, df.return_2022)]
-    df["kw_frais"] = [(_tranche(f * 100, [0.15, 0.5, 1, 1e9], ["ultra_reduits_moins_0_15", "faibles_0_15_0_50", "moderes_0_50_1", "eleves_plus_1"])
-                       if pd.notna(f) else "non_applicable") for f in df.etf_expense_ratio]
+    df["kw_frais"] = [classe_frais(f) for f in df.etf_expense_ratio]
     # Un FNB dont moins de 6 lignes pèsent plus de 80 % détient d'autres fonds (XEQT, BNDW) : la règle des
     # 10 premières positions ne s'applique pas. (Pour AGG, Yahoo ne renvoie qu'une ligne de liquidités : non concerné.)
     df["kw_concentration"] = ["titre_individuel" if a == "equity" else "actif_unique" if a in ("crypto", "etf_commodity")

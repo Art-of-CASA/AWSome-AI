@@ -1,6 +1,6 @@
 # Infrastructure du profil : ordre des questions, contrôles et restitution
 
-Ce document décrit le fonctionnement implémenté, avec le correctif des répétitions publié le 15 novembre 2026 (version `profil-afe8ed38fc7d`). L'identifiant de contenu visible dans l'interface distingue le code testé de la version du serveur. L'objectif est de recueillir les informations utiles avec moins de répétitions, en gardant une preuve de ce qui est déclaré, confirmé, mesuré ou encore inconnu. Les suggestions personnalisées et le moteur d'appariement restent une étape distincte.
+Ce document décrit le fonctionnement implémenté, avec le correctif des répétitions et les corrections de la revue publiés le 15 novembre 2026 (version actuelle `profil-970d7c7ff946`). L'identifiant de contenu visible dans l'interface distingue le code testé de la version du serveur. L'objectif est de recueillir les informations utiles avec moins de répétitions, en gardant une preuve de ce qui est déclaré, confirmé, mesuré ou encore inconnu. Les suggestions personnalisées et le moteur d'appariement restent une étape distincte.
 
 L'ordre est une **heuristique déterministe**, pas un optimum démontré du nombre de questions ou de la durée. Les coefficients d'utilité et les coûts sont des hypothèses explicites. Aucune mesure avec de vrais utilisateurs ou avec le modèle Bedrock n'établit encore le gain de temps ou la qualité des nouvelles formulations.
 

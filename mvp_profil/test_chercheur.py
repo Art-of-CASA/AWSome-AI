@@ -1,8 +1,8 @@
 """Test hors ligne de l'agent CHERCHEUR (faux serveur : vrai SDK et vrais outils, Wikipédia simulé, aucun coût).
 
 Scénario « rien qui touche à Elon Musk » : l'agent appelle trois outils (nos données, recherche Wikipédia, page
-Wikipédia), puis rend 6 verdicts. Le code doit garder les 2 preuves réelles de Tesla, écarter un ticker hors univers, une preuve
-inventée et une source jamais lue ; le critique en refuse un autre ; les FNB qui détiennent Tesla deviennent exposés ;
+Wikipédia), puis rend 6 verdicts. Le code garde la preuve liée à Tesla, écarte un ticker hors univers, une preuve
+inventée et une source mal attribuée ; le critique refuse séparément la preuve générique ; les FNB qui détiennent Tesla deviennent exposés ;
 le mot-clé est mis en cache et repris sans nouvel appel.
 Lancer : python mvp_profil/test_chercheur.py
 """
@@ -57,7 +57,9 @@ ETAPES = [
             {"ticker": "1211.HK", "valeur": "partiel", "preuve": "constructeur de véhicules électriques", "source": "web:fr:Elon Musk", "confiance": 0.9},
         ]})}]},
 ]
-CRITIQUE = {"avis": [{"critere_id": "TSLA", "accord": True, "confiance": 0.9, "objection": "", "valeurs_suggerees": []}],
+CRITIQUE = {"avis": [{"critere_id": "TSLA#1", "accord": True, "confiance": 0.9, "objection": "", "valeurs_suggerees": []},
+                     {"critere_id": "TSLA#2", "accord": False, "confiance": 0.9,
+                      "objection": "La classe equity ne prouve aucun lien à Musk.", "valeurs_suggerees": []}],
             "question_relance": ""}  # 1211.HK (BYD) : pas d accord (aucun avis) -> écarté
 
 
@@ -82,10 +84,11 @@ motifs = {(r["ticker"], r["motif"]) for r in res["rejetes"]}
 assert ("SPCX", "ticker hors univers") in motifs
 assert ("NVDA", "passage introuvable dans les sources lues") in motifs       # preuve inventée
 assert ("AAPL", "passage introuvable dans les sources lues") in motifs
-assert any(t == "1211.HK" and m.startswith("critique") for t, m in motifs)  # refusé par le critique
+assert any(t == "1211.HK" and "non attribuable" in m for t, m in motifs)
+assert any(t == "TSLA" and m.startswith("critique") for t, m in motifs)
 assert set(res["fnb_exposes"]) >= {"SPY", "QQQ", "ESGV"} and "XIU.TO" not in res["fnb_exposes"], res["fnb_exposes"]
 assert any(v["url"] == "https://fr.wikipedia.org/wiki/Elon_Musk" for v in res["verdicts"])
-assert any(v["source"] == "fiche:TSLA" for v in res["verdicts"])  # identifiant mal recopié : corrigé vers la source réellement lue
+assert len(res["verdicts"]) == 1 and res["verdicts"][0]["id_preuve"] == "TSLA#1"
 assert [a["outil"] for a in res["appels_outils"]] == ["chercher_dans_donnees", "recherche_web", "lire_page_web"]
 assert res["etats_actifs"]["TSLA"] == "oui" and res["etats_actifs"]["SPY"] == "partiel"
 assert res["etats_actifs"]["NVDA"] == "inconnu" and "NVDA" in res["inconnus"]
@@ -108,6 +111,9 @@ assert WEB[0][0] == "https://fr.wikipedia.org/w/api.php" and WEB[0][1]["srsearch
 n, w = len(ENVOIS), len(WEB)
 res2 = chercheur.etiqueter(b, "Entreprises liées à Elon Musk", "exclure")
 assert res2["depuis_cache"] and res2["oui"] == ["TSLA"] and len(ENVOIS) == n and len(WEB) == w
+assert res2["appels_outils"] == [] and res2["rejetes"] == []
+cache_public = json.loads(chercheur.CACHE.read_text(encoding="utf-8"))
+assert all("appels_outils" not in v and "rejetes" not in v and "concept" not in v for v in cache_public.values())
 
 # Le critère dynamique devient une règle sur le nouveau mot-clé
 c = {"id": "X1", "nom": "Rien de lié à Elon Musk", "effet": "exclure", "dimension": cd.A_ETIQUETER, "colonne": "",
@@ -116,7 +122,7 @@ assert "recherche des actifs concernés en cours" in cd.regle(c)
 cd.appliquer_etiquetage(c, res)
 assert c["etiquetage"] == "fait" and c["actifs"] == ["TSLA"] and c["colonne"] == res["mot_cle"]
 assert c["regle"].startswith(f"Exclure : {res['mot_cle']} = oui (TSLA) ; FNB qui en détiennent : QQQ (3,4 %)"), c["regle"]
-print(f"Chercheur OK : 3 outils, TSLA retenu sur preuve vérifiée, 4 verdicts écartés, "
+print(f"Chercheur OK : 3 outils, TSLA retenu sur preuve vérifiée, {len(res['rejetes'])} verdicts écartés, "
       f"{len(res['fnb_exposes'])} FNB exposés ({', '.join(res['fnb_exposes'])}), cache réutilisé")
 print("Règle :", c["regle"])
 
@@ -124,7 +130,8 @@ print("Règle :", c["regle"])
 def recherche_simulee(concept, verdicts, avis, texte, cache):
     """Les outils du faux chercheur ont lu cette source ; aucun appel réseau ni modèle réel."""
     def boucle(backend, concept, effet, rech):
-        rech.journal["test:source"] = texte
+        rech.journal["web:en:Apple"] = texte
+        rech.entites["web:en:Apple"] = {"AAPL"}
         return chercheur.Etiquetage(definition=concept, verdicts=verdicts)
 
     critique = chercheur.Critique(avis=avis, question_relance="")
@@ -134,11 +141,11 @@ def recherche_simulee(concept, verdicts, avis, texte, cache):
 
 
 def verdict(ticker, valeur, preuve, confiance=0.95):
-    return {"ticker": ticker, "valeur": valeur, "preuve": preuve, "source": "test:source", "confiance": confiance}
+    return {"ticker": ticker, "valeur": valeur, "preuve": preuve, "source": "web:en:Apple", "confiance": confiance}
 
 
-def accord(ticker, confiance=0.95):
-    return {"critere_id": ticker, "accord": True, "confiance": confiance, "objection": "", "valeurs_suggerees": []}
+def accord(ticker, confiance=0.95, indice=1):
+    return {"critere_id": f"{ticker}#{indice}", "accord": True, "confiance": confiance, "objection": "", "valeurs_suggerees": []}
 
 
 with tempfile.TemporaryDirectory() as dossier:
@@ -184,7 +191,7 @@ with tempfile.TemporaryDirectory() as dossier:
 
     # Des conclusions contradictoires sur le même actif ne sont pas arbitrées silencieusement.
     contradiction = recherche_simulee("preuves contradictoires", [verdict("AAPL", "oui", texte),
-        verdict("AAPL", "non_concerne", texte)], [accord("AAPL")], texte, cache)
+        verdict("AAPL", "non_concerne", texte)], [accord("AAPL"), accord("AAPL", indice=2)], texte, cache)
     assert contradiction["etats_actifs"]["AAPL"] == "inconnu" and len(contradiction["rejetes"]) == 2
 
     # Même préfixe lisible, concepts complets différents : les nouvelles clés sont distinctes.

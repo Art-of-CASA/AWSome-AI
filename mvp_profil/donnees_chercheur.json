@@ -1,5 +1,6 @@
 {
  "source": "data_extra/ et data_extended/",
+ "correspondances_positions": "config/correspondances_positions_fnb.json",
  "actifs": {
   "RY.TO": {
    "nom": "Royal Bank of Canada",
@@ -800,61 +801,71 @@
     "symbole": "RY",
     "nom": "Royal Bank of Canada",
     "poids": 0.095283,
-    "ticker": "RY.TO"
+    "ticker": "RY.TO",
+    "nature_lien": "alias_cotation"
    },
    {
     "symbole": "TD",
     "nom": "The Toronto-Dominion Bank",
     "poids": 0.069282,
-    "ticker": "TD.TO"
+    "ticker": "TD.TO",
+    "nature_lien": "alias_cotation"
    },
    {
     "symbole": "SHOP",
     "nom": "Shopify Inc Registered Shs -A- Subord Vtg",
     "poids": 0.064465,
-    "ticker": "SHOP.TO"
+    "ticker": "SHOP.TO",
+    "nature_lien": "alias_cotation"
    },
    {
     "symbole": "BMO.TO",
     "nom": "Bank of Montreal",
     "poids": 0.040551,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "CNQ.TO",
     "nom": "Canadian Natural Resources Ltd",
     "poids": 0.039143,
-    "ticker": "CNQ.TO"
+    "ticker": "CNQ.TO",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "BNS.TO",
     "nom": "Bank of Nova Scotia",
     "poids": 0.038657,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "ENB.TO",
     "nom": "Enbridge Inc",
     "poids": 0.037182,
-    "ticker": "ENB.TO"
+    "ticker": "ENB.TO",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "CM.TO",
     "nom": "Canadian Imperial Bank of Commerce",
     "poids": 0.036,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "SU.TO",
     "nom": "Suncor Energy Inc",
     "poids": 0.031452,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "BN.TO",
     "nom": "Brookfield Corp Registered Shs -A- Limited Vtg",
     "poids": 0.028387,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    }
   ],
   "SPY": [
@@ -862,61 +873,71 @@
     "symbole": "AAPL",
     "nom": "Apple Inc",
     "poids": 0.077007,
-    "ticker": "AAPL"
+    "ticker": "AAPL",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "NVDA",
     "nom": "NVIDIA Corp",
     "poids": 0.075823,
-    "ticker": "NVDA"
+    "ticker": "NVDA",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "MSFT",
     "nom": "Microsoft Corp",
     "poids": 0.059332,
-    "ticker": "MSFT"
+    "ticker": "MSFT",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "AMZN",
     "nom": "Amazon.com Inc",
     "poids": 0.036119,
-    "ticker": "AMZN"
+    "ticker": "AMZN",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "GOOGL",
     "nom": "Alphabet Inc Class A",
     "poids": 0.025141,
-    "ticker": "GOOGL"
+    "ticker": "GOOGL",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "AVGO",
     "nom": "Broadcom Inc",
     "poids": 0.023752,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "META",
     "nom": "Meta Platforms Inc Class A",
     "poids": 0.020763,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "GOOG",
     "nom": "Alphabet Inc Class C",
     "poids": 0.020247,
-    "ticker": ""
+    "ticker": "GOOGL",
+    "nature_lien": "meme_emetteur"
    },
    {
     "symbole": "LLY",
     "nom": "Eli Lilly and Co",
     "poids": 0.017367,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "TSLA",
     "nom": "Tesla Inc",
     "poids": 0.017252,
-    "ticker": "TSLA"
+    "ticker": "TSLA",
+    "nature_lien": "titre_exact"
    }
   ],
   "QQQ": [
@@ -924,61 +945,71 @@
     "symbole": "AAPL",
     "nom": "Apple Inc",
     "poids": 0.081592,
-    "ticker": "AAPL"
+    "ticker": "AAPL",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "NVDA",
     "nom": "NVIDIA Corp",
     "poids": 0.080006,
-    "ticker": "NVDA"
+    "ticker": "NVDA",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "MSFT",
     "nom": "Microsoft Corp",
     "poids": 0.062867,
-    "ticker": "MSFT"
+    "ticker": "MSFT",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "MU",
     "nom": "Micron Technology Inc",
     "poids": 0.044747,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "AMZN",
     "nom": "Amazon.com Inc",
     "poids": 0.042053,
-    "ticker": "AMZN"
+    "ticker": "AMZN",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "AMD",
     "nom": "Advanced Micro Devices Inc",
     "poids": 0.036903,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "TSLA",
     "nom": "Tesla Inc",
     "poids": 0.03407,
-    "ticker": "TSLA"
+    "ticker": "TSLA",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "META",
     "nom": "Meta Platforms Inc Class A",
     "poids": 0.029664,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "WMT",
     "nom": "Walmart Inc",
     "poids": 0.026899,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "GOOGL",
     "nom": "Alphabet Inc Class A",
     "poids": 0.026637,
-    "ticker": "GOOGL"
+    "ticker": "GOOGL",
+    "nature_lien": "titre_exact"
    }
   ],
   "ESGV": [
@@ -986,61 +1017,71 @@
     "symbole": "NVDA",
     "nom": "NVIDIA Corp",
     "poids": 0.089166,
-    "ticker": "NVDA"
+    "ticker": "NVDA",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "AAPL",
     "nom": "Apple Inc",
     "poids": 0.080584,
-    "ticker": "AAPL"
+    "ticker": "AAPL",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "MSFT",
     "nom": "Microsoft Corp",
     "poids": 0.063776,
-    "ticker": "MSFT"
+    "ticker": "MSFT",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "AMZN",
     "nom": "Amazon.com Inc",
     "poids": 0.040452,
-    "ticker": "AMZN"
+    "ticker": "AMZN",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "GOOGL",
     "nom": "Alphabet Inc Class A",
     "poids": 0.033533,
-    "ticker": "GOOGL"
+    "ticker": "GOOGL",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "AVGO",
     "nom": "Broadcom Inc",
     "poids": 0.027344,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "GOOG",
     "nom": "Alphabet Inc Class C",
     "poids": 0.027139,
-    "ticker": ""
+    "ticker": "GOOGL",
+    "nature_lien": "meme_emetteur"
    },
    {
     "symbole": "META",
     "nom": "Meta Platforms Inc Class A",
     "poids": 0.026679,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "MU",
     "nom": "Micron Technology Inc",
     "poids": 0.020095,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "TSLA",
     "nom": "Tesla Inc",
     "poids": 0.017347,
-    "ticker": "TSLA"
+    "ticker": "TSLA",
+    "nature_lien": "titre_exact"
    }
   ],
   "AGG": [
@@ -1048,7 +1089,8 @@
     "symbole": "BISXX",
     "nom": "BlackRock Cash Funds Instl SL Agency",
     "poids": 0.029345,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    }
   ],
   "VT": [
@@ -1056,61 +1098,71 @@
     "symbole": "NVDA",
     "nom": "NVIDIA Corp",
     "poids": 0.045432,
-    "ticker": "NVDA"
+    "ticker": "NVDA",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "AAPL",
     "nom": "Apple Inc",
     "poids": 0.041058,
-    "ticker": "AAPL"
+    "ticker": "AAPL",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "MSFT",
     "nom": "Microsoft Corp",
     "poids": 0.032492,
-    "ticker": "MSFT"
+    "ticker": "MSFT",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "AMZN",
     "nom": "Amazon.com Inc",
     "poids": 0.020609,
-    "ticker": "AMZN"
+    "ticker": "AMZN",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "GOOGL",
     "nom": "Alphabet Inc Class A",
     "poids": 0.017322,
-    "ticker": "GOOGL"
+    "ticker": "GOOGL",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "2330.TW",
     "nom": "Taiwan Semiconductor Manufacturing Co Ltd",
     "poids": 0.016246,
-    "ticker": "2330.TW"
+    "ticker": "2330.TW",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "AVGO",
     "nom": "Broadcom Inc",
     "poids": 0.013932,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "META",
     "nom": "Meta Platforms Inc Class A",
     "poids": 0.013592,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "GOOG",
     "nom": "Alphabet Inc Class C",
     "poids": 0.013586,
-    "ticker": ""
+    "ticker": "GOOGL",
+    "nature_lien": "meme_emetteur"
    },
    {
     "symbole": "MU",
     "nom": "Micron Technology Inc",
     "poids": 0.010239,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    }
   ],
   "VEA": [
@@ -1118,61 +1170,71 @@
     "symbole": "005930.KQ",
     "nom": "Samsung Electronics Co Ltd",
     "poids": 0.028149,
-    "ticker": "005930.KS"
+    "ticker": "005930.KS",
+    "nature_lien": "alias_cotation"
    },
    {
     "symbole": "000660.KQ",
     "nom": "SK hynix Inc",
     "poids": 0.022973,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "ASML.AS",
     "nom": "ASML Holding NV",
     "poids": 0.021403,
-    "ticker": "ASML.AS"
+    "ticker": "ASML.AS",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "HSBA.L",
     "nom": "HSBC Holdings PLC",
     "poids": 0.010495,
-    "ticker": "HSBA.L"
+    "ticker": "HSBA.L",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "ROP.SW",
     "nom": "Roche Holding AG Ordinary Shares new",
     "poids": 0.009048,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "SHEL.L",
     "nom": "Shell PLC",
     "poids": 0.008566,
-    "ticker": "SHEL.L"
+    "ticker": "SHEL.L",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "RY",
     "nom": "Royal Bank of Canada",
     "poids": 0.008518,
-    "ticker": "RY.TO"
+    "ticker": "RY.TO",
+    "nature_lien": "alias_cotation"
    },
    {
     "symbole": "NOVN.SW",
     "nom": "Novartis AG Registered Shares",
     "poids": 0.008233,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "8306.T",
     "nom": "Mitsubishi UFJ Financial Group Inc",
     "poids": 0.007828,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "AZN.L",
     "nom": "AstraZeneca PLC",
     "poids": 0.007496,
-    "ticker": "AZN.L"
+    "ticker": "AZN.L",
+    "nature_lien": "titre_exact"
    }
   ],
   "VWO": [
@@ -1180,61 +1242,71 @@
     "symbole": "2330.TW",
     "nom": "Taiwan Semiconductor Manufacturing Co Ltd",
     "poids": 0.15745,
-    "ticker": "2330.TW"
+    "ticker": "2330.TW",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "0700.HK",
     "nom": "Tencent Holdings Ltd",
     "poids": 0.028167,
-    "ticker": "0700.HK"
+    "ticker": "0700.HK",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "9988.HK",
     "nom": "Alibaba Group Holding Ltd Ordinary Shares",
     "poids": 0.02112,
-    "ticker": "9988.HK"
+    "ticker": "9988.HK",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "2454.TW",
     "nom": "MediaTek Inc",
     "poids": 0.01875,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "2308.TW",
     "nom": "Delta Electronics Inc",
     "poids": 0.009456,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "00939",
     "nom": "China Construction Bank Corp Class H",
     "poids": 0.009099,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "2317.TW",
     "nom": "Hon Hai Precision Industry Co Ltd",
     "poids": 0.007944,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "HDFCBANK.NS",
     "nom": "HDFC Bank Ltd",
     "poids": 0.006969,
-    "ticker": "HDFCBANK.NS"
+    "ticker": "HDFCBANK.NS",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "RELIANCE.NS",
     "nom": "Reliance Industries Ltd",
     "poids": 0.006882,
-    "ticker": "RELIANCE.NS"
+    "ticker": "RELIANCE.NS",
+    "nature_lien": "titre_exact"
    },
    {
     "symbole": "01398",
     "nom": "Industrial And Commercial Bank Of China Ltd Class H",
     "poids": 0.00648,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    }
   ],
   "XEQT.TO": [
@@ -1242,31 +1314,36 @@
     "symbole": "XTOT.TO",
     "nom": "iShares Core S&P Total U.S. Stk Mktt ETF",
     "poids": 0.312599,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "XIC.TO",
     "nom": "iShares Core S&P/TSX Cap Composite ETF",
     "poids": 0.257178,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "XEF.TO",
     "nom": "iShares Core MSCI EAFE IMI ETF",
     "poids": 0.241392,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "ITOT",
     "nom": "iShares Core S&P Total US Stock Mkt ETF",
     "poids": 0.143202,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "XEC.TO",
     "nom": "iShares Core MSCI Emer Mkts IMI ETF",
     "poids": 0.044765,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    }
   ],
   "BNDW": [
@@ -1274,13 +1351,15 @@
     "symbole": "BND",
     "nom": "Vanguard Total Bond Market ETF",
     "poids": 0.513101,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    },
    {
     "symbole": "BNDX",
     "nom": "Vanguard Total International Bond ETF",
     "poids": 0.486877,
-    "ticker": ""
+    "ticker": "",
+    "nature_lien": "non_relie"
    }
   ]
  },

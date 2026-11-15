@@ -35,24 +35,36 @@ def echanges_pour(phrase: dict) -> list[tuple[str, str]]:
     """Les cas simples restent compatibles ; un cas peut aussi porter sur une conversation."""
     echanges = phrase.get("echanges")
     if echanges is None:
-        echanges = [(phrase["question"], phrase["reponse"])]
-    assert echanges and all(isinstance(e, (list, tuple)) and len(e) == 2 and
-                            all(isinstance(t, str) for t in e) for e in echanges), \
-        f"{phrase['id']} : échanges invalides"
+        echanges = [(phrase.get("question"), phrase.get("reponse"))]
+    if not isinstance(echanges, (list, tuple)) or not echanges or not all(
+            isinstance(e, (list, tuple)) and len(e) == 2 and all(isinstance(t, str) for t in e)
+            for e in echanges):
+        raise ValueError(f"{phrase.get('id', '?')} : échanges invalides")
     return [tuple(e) for e in echanges]
 
 
 def charger() -> list[dict]:
-    phrases = json.loads(JEU.read_text(encoding="utf-8"))["phrases"]
+    contenu = json.loads(JEU.read_text(encoding="utf-8"))
+    if not isinstance(contenu, dict) or not isinstance(contenu.get("phrases"), list):
+        raise ValueError("Le jeu doit contenir une liste de phrases.")
+    phrases = contenu["phrases"]
     ids = set()
     for p in phrases:
-        assert p["id"] not in ids, f"Identifiant de phrase dupliqué : {p['id']}"
+        if not isinstance(p, dict) or not isinstance(p.get("id"), str) or not p["id"]:
+            raise ValueError("Chaque phrase doit avoir un identifiant texte non vide.")
+        if p["id"] in ids:
+            raise ValueError(f"Identifiant de phrase dupliqué : {p['id']}")
         ids.add(p["id"])
         echanges_pour(p)
+        if not isinstance(p.get("attendu"), dict):
+            raise ValueError(f"{p['id']} : les valeurs attendues doivent former un objet.")
         for cid, vals in p["attendu"].items():
-            assert cid in CRITERES and cid not in MESURES, f"{p['id']} : critère inconnu ou mesuré ({cid})"
-            assert all(v in CRITERES[cid]["valeurs"] for v in vals), f"{p['id']} : valeur hors liste pour {cid} : {vals}"
-            assert CRITERES[cid]["multiple"] or len(vals) <= 1, f"{p['id']} : {cid} n'accepte qu'une valeur"
+            if cid not in CRITERES or cid in MESURES:
+                raise ValueError(f"{p['id']} : critère inconnu ou mesuré ({cid})")
+            if not isinstance(vals, list) or any(not isinstance(v, str) or v not in CRITERES[cid]["valeurs"] for v in vals):
+                raise ValueError(f"{p['id']} : valeur hors liste pour {cid} : {vals}")
+            if len(vals) != len(set(vals)) or (not CRITERES[cid]["multiple"] and len(vals) > 1):
+                raise ValueError(f"{p['id']} : valeurs répétées ou cardinalité invalide pour {cid}")
     return phrases
 
 

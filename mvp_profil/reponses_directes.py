@@ -53,10 +53,10 @@ _MOTS_NOMBRES = "|".join(re.escape(m).replace(r"\ ", r"[ -]+")
                          for m in sorted(_NOMBRES, key=len, reverse=True))
 # La séparation souple autorise aussi « 15ans » et « sixmois », sans reconnaître un morceau de mot.
 _NOMBRE = rf"(?:\d+(?:[,.]\d+)?|{_MOTS_NOMBRES})"
-_DUREE = re.compile(rf"(?<![\w.,])(?P<n>{_NOMBRE})\s*(?P<u>annees?|ans?|mois)\b(?P<demi>\s+et\s+demi(?:e)?)?")
-_INTERVALLE = re.compile(rf"(?<![\w.,])(?P<entre>entre\s+)?(?P<a>{_NOMBRE})\s+(?P<sep>a|et)\s+(?P<b>{_NOMBRE})\s*(?P<u>annees?|ans?|mois)\b")
-_INCERTAIN = re.compile(r"\b(?:peut[- ]etre|pas sur|pas certain|je ne sais|j'hesite|je crois|ca depend|selon|environ|a peu pres|une quinzaine)\b")
-_BORNE = re.compile(r"\b(?:au moins|au plus|plus de|moins de|pas avant|minimum|maximum|jusqu'a)\b")
+_DUREE = re.compile(rf"(?<!\w)(?<!\d[.,])(?P<n>{_NOMBRE})\s*(?P<u>annees?|ans?|mois)\b(?P<demi>\s+et\s+demi(?:e)?)?")
+_INTERVALLE = re.compile(rf"(?<!\w)(?<!\d[.,])(?P<entre>entre\s+)?(?P<a>{_NOMBRE})\s+(?P<sep>a|et)\s+(?P<b>{_NOMBRE})\s*(?P<u>annees?|ans?|mois)\b")
+_INCERTAIN = re.compile(r"\b(?:peut[- ]etre|pas sur|pas certain|je ne sais|j'hesite|je crois|je pense|probablement|sans doute|normalement|vers|autour de|presque|voire|idealement|ca depend|selon|environ|a peu pres|une quinzaine)\b")
+_BORNE = re.compile(r"\b(?:au moins|au plus|plus de|moins de|pas avant|minimum|maximum|jusqu'a|d'ici|avant|au[ -]dela|au pire|au plus tard|ou plus)\b")
 _BORNE_INF = re.compile(r"\b(?:au moins|plus de|pas avant|minimum|au minimum)\b")
 _NEGATION = re.compile(r"\b(?:pas|jamais|ni|sans)\b|\bn[' ]")
 _PASSE = re.compile(r"\b(?:depuis|il y a|cela fait|ca fait|j'avais|j'ai eu)\b|j'ai(?: deja)? (?:investi|place|garde|laisse)\b")
@@ -86,7 +86,7 @@ def _cibles_question(question: str) -> set[str]:
         # « combien de temps ... sans toucher au placement » est une question de réserve.
         if "sans toucher" in q and not re.search(r"\bhorizon\b|majeure partie|recuperer", q):
             cibles.discard("A2")
-    if re.search(r"dettes? a taux eleve|credit a taux eleve|solde de carte|pret personnel a taux eleve", q):
+    if re.search(r"dettes? a taux eleve|dettes? a plus de huit pour cent|credit a taux eleve|solde de carte|pret personnel a taux eleve", q):
         cibles.add("A7")
     return cibles
 
@@ -139,7 +139,24 @@ def _resultat(cid: str, reponse: str, valeur: str, **mesure) -> dict:
             "motif": "Réponse explicite dans le référent demandé ; bornes déterministes sans chevauchement.", **mesure}
 
 
-def analyser_reponses(question: str, reponse: str, criteres_ids=()) -> dict:
+def _question_a7_autorisee(question: str, criteres_question=None) -> bool:
+    """Une question identifiée par le code, ou l'une de ses deux formulations de référence."""
+    from criteres import CRITERES
+    from questions_conversation import QUESTIONS
+
+    def normaliser_ponctuation(t):
+        return " ".join(re.sub(r"[^\w' ]", " ", _normaliser(t)).split())
+
+    q = normaliser_ponctuation(question)
+    if criteres_question is not None:
+        if set(criteres_question) != {"A7"}:
+            return False
+        autres_sujets = r"\b(?:reserve|personnes|enfants|revenus|secteur|horizon|actions|fnb|emploi)\b"
+        return _cibles_question(question) == {"A7"} and not re.search(autres_sujets, q)
+    return q in {normaliser_ponctuation(CRITERES["A7"]["relance"]), normaliser_ponctuation(QUESTIONS["A7"])}
+
+
+def analyser_reponses(question: str, reponse: str, criteres_ids=(), *, criteres_question=None) -> dict:
     """Retourne réponses vérifiées et ambiguïtés ciblées, sans appel réseau ni mutation.
 
     ``criteres_ids`` restreint les critères à examiner ; sa présence ne prouve pas
@@ -148,6 +165,9 @@ def analyser_reponses(question: str, reponse: str, criteres_ids=()) -> dict:
     autorises = set(criteres_ids) if criteres_ids else set(SUPPORTES)
     autorises &= set(SUPPORTES)
     if not reponse.strip():
+        return {"reponses": {}, "a_preciser": {}}
+    # Une demande de manipuler les règles n'est pas une déclaration de situation.
+    if re.search(r"\b(?:ignore\w*|consigne\w*|prompt\w*)\b|\b(?:classe|valide)\s+(?:mon|ma|le|ce)\b", _normaliser(reponse)):
         return {"reponses": {}, "a_preciser": {}}
     q_cibles = _cibles_question(question)
     options: dict[str, list[dict]] = {}
@@ -206,11 +226,13 @@ def analyser_reponses(question: str, reponse: str, criteres_ids=()) -> dict:
             sans_reference = re.sub(r"sans (?:toucher|recourir).{0,20}placement", "", t)
             if borne_inf:
                 sans_reference = _BORNE_INF.sub("", sans_reference)
-            if _INCERTAIN.search(t) or (_BORNE.search(t) and not borne_inf) or _PASSE.search(t) or (negation and _NEGATION.search(sans_reference)):
+            if _INCERTAIN.search(t):
+                continue  # le modèle peut interpréter cette nuance sans faire répéter l'utilisateur
+            if (_BORNE.search(t) and not borne_inf) or _PASSE.search(t) or (negation and _NEGATION.search(sans_reference)):
                 ambiguites[cid] = _precision(cid, "Durée hésitante, bornée, passée ou niée : aucune valeur imposée.")
                 continue
             reste_quantites = (_INTERVALLE.sub("", t) if intervalle else _DUREE.sub("", t))
-            autres_nombres = [m[0] for m in re.finditer(rf"(?<![\w.,]){_NOMBRE}(?![\w.,])", reste_quantites)
+            autres_nombres = [m[0] for m in re.finditer(rf"(?<!\w)(?<!\d[.,]){_NOMBRE}(?!\w)(?![.,]\d)", reste_quantites)
                               if not (_nombre(m[0]) == 1 and re.match(r"\s+(?:fonds|reserve|placement|coussin|horizon|capital|portefeuille|projet)\b",
                                                                    reste_quantites[m.end():]))] if durees else []
             if autres_nombres:
@@ -241,8 +263,8 @@ def analyser_reponses(question: str, reponse: str, criteres_ids=()) -> dict:
                    if borne_inf else {}),
                 **({"intervalle": mesures, "intervalle_mois": mois} if len(mesures) == 2 else {})))
     if "A7" in autorises:
-        q, r = _normaliser(question), _normaliser(reponse).strip(" .!?")
-        if q_cibles == {"A7"} and not re.search(r"\b(?:et|ainsi que)\b", q):
+        r = " ".join(re.sub(r"[^\w' ]", " ", _normaliser(reponse)).split())
+        if _question_a7_autorisee(question, criteres_question):
             oui = {"oui", "oui effectivement", "oui j'en ai"}
             non = {"non", "non aucune", "non aucune dette", "aucune dette a taux eleve", "je n'ai aucune dette a taux eleve"}
             if r in oui | non:
@@ -258,6 +280,6 @@ def analyser_reponses(question: str, reponse: str, criteres_ids=()) -> dict:
     return {"reponses": reponses, "a_preciser": {c: a for c, a in ambiguites.items() if c not in reponses}}
 
 
-def extraire_reponses(question: str, reponse: str, criteres_ids=()) -> dict[str, dict]:
+def extraire_reponses(question: str, reponse: str, criteres_ids=(), *, criteres_question=None) -> dict[str, dict]:
     """Seulement les réponses immédiatement utilisables ; consulter analyser_reponses pour les ambiguïtés."""
-    return analyser_reponses(question, reponse, criteres_ids)["reponses"]
+    return analyser_reponses(question, reponse, criteres_ids, criteres_question=criteres_question)["reponses"]

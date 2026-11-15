@@ -31,7 +31,8 @@ VOIX = {"n": 0, "texte": None}  # micro simulé : chaque appel à parler() envoi
 
 
 def fausse_voix(**kw):
-    return {"kind": "audio", "n": VOIX["n"], "wav": ""} if VOIX["texte"] is not None else None
+    return {"kind": "audio", "n": VOIX["n"], "wav": "", "instance_id": "micro-test",
+            "session_id": kw["session_id"], "question_id": kw["question_id"], "playback_id": kw["n"]} if VOIX["texte"] is not None else None
 
 
 def pas_de_voix(texte):
@@ -132,7 +133,7 @@ assert at.session_state.phase == "questionnaire"
 assert at.session_state.profil["A5"]["statut"] == "à préciser"
 
 # Page 3 : « je vends tout » mais curseur à 40 % -> contradiction R1
-radio("2_q_b1r", "Je vends tout pour arrêter les pertes"); at.slider(key="2_q_b1").set_value(40)
+radio("2_q_b1r", "Je vends tout pour arrêter les pertes"); at.selectbox(key="2_q_b1").select(40)
 radio("2_q_b5", "800 à 1 500 $ (modérée, 8 à 15 %)"); radio("2_q_b7", "Un à deux ans")
 radio("2_q_b3", "Jamais"); radio("2_q_b4", "Chaque mois")
 suivant()

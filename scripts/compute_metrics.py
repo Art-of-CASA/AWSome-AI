@@ -20,6 +20,7 @@ Méthode (toutes les valeurs sont descriptives : le passé ne prédit pas l'aven
 from __future__ import annotations
 
 from pathlib import Path
+import json
 
 import numpy as np
 import pandas as pd
@@ -27,7 +28,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 STARTER = ROOT / "Datathon2026" / "alphaforge_starter"
 EXT = ROOT / "data_extended"
-SRRI = [0.005, 0.02, 0.05, 0.10, 0.15, 0.25]  # bornes supérieures des classes 1 à 6
+CFG = json.loads((ROOT / "config" / "seuils_criteres.json").read_text(encoding="utf-8"))
 
 
 def load():
@@ -54,7 +55,22 @@ def to_cad(p: pd.DataFrame, fx: pd.DataFrame) -> pd.DataFrame:
 
 
 def risk_class(vol: float) -> int:
-    return 1 + sum(vol > b for b in SRRI)
+    # Cette échelle d'actif reste distincte des classes de tolérance B5 du profil.
+    return 1 + sum(vol > b for b in CFG["classe_risque_bornes_volatilite"])
+
+
+def rendement_annee(prix: pd.Series, annee: int) -> float | None:
+    """Rendement entre la dernière clôture de l'année précédente et la fin de l'année visée.
+
+    Sans clôture antérieure, l'année n'est pas comparable : ne pas substituer sa
+    première clôture, qui supprimerait le rendement du premier jour de cotation.
+    """
+    prix = prix.dropna().sort_index()
+    courant = prix[prix.index.year == annee]
+    precedent = prix[prix.index.year == annee - 1]
+    if courant.empty or precedent.empty:
+        return None
+    return float(courant.iloc[-1] / precedent.iloc[-1] - 1)
 
 
 def metrics(cad: pd.DataFrame) -> pd.DataFrame:
@@ -70,7 +86,6 @@ def metrics(cad: pd.DataFrame) -> pd.DataFrame:
         trough = dd.idxmin()
         peak_before = s[:trough].idxmax()
         rec = s[trough:][s[trough:] >= s[peak_before]]
-        y22 = s[s.index.year == 2022]
         w = pd.concat({"asset": weekly[tk], "VT": weekly["VT"], "SPY": weekly["SPY"]}, axis=1).dropna()
         w = w.rename(columns={"asset": tk}) if tk not in ("VT", "SPY") else w.assign(**{tk: w["asset"]})
         vol = r.std() * np.sqrt(ppy)
@@ -83,7 +98,7 @@ def metrics(cad: pd.DataFrame) -> pd.DataFrame:
             underwater_days=(rec.index[0] - peak_before).days if len(rec) else None,
             underwater_days_so_far=None if len(rec) else (s.index[-1] - peak_before).days,
             current_drawdown=dd.iloc[-1],
-            return_2022=y22.iloc[-1] / y22.iloc[0] - 1 if len(y22) > 1 else None,
+            return_2022=rendement_annee(s, 2022),
             var95_daily=np.percentile(r, 5),
             worst_month=s.resample("ME").last().pct_change().min(),
             corr_vt_weekly=w[tk].corr(w["VT"]), beta_vt_weekly=w[tk].cov(w["VT"]) / w["VT"].var(),

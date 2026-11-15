@@ -1,5 +1,7 @@
 # Déploiement du MVP sur AWS
 
+Les corrections du 15 novembre issues de la revue de code sont préparées localement. Leur publication sur le site partagé reste à vérifier : le numéro affiché doit correspondre à `version_manifest.json` du paquet installé. Les essais historiques ci-dessous ne valident pas cette nouvelle version.
+
 > Les identifiants du compte, des ressources et les adresses IP ont été retirés de ce fichier (remplacés par `<...>`). Ils se retrouvent dans la console AWS, grâce à l'étiquette `projet = alphaforge-mvp`. Ne les remettez pas dans le dépôt.
 
 Déployé le 14 novembre 2026 dans le compte du datathon (`<ID_DU_COMPTE>`), région us-east-1. Le site appelle Claude Haiku 5.5 sur Amazon Bedrock grâce au **rôle IAM du serveur** : aucune clé ni aucun identifiant à manipuler.
@@ -45,9 +47,10 @@ Pour ajouter un coéquipier sur un autre réseau : ajouter son IP dans la liste 
 
 - **Donner l'accès à un coéquipier sur un autre réseau :** ajouter son IP (`/32`) à la règle entrante du port 8501 du groupe `alphaforge-mvp-sg`.
 - **Mettre le code à jour :**
-  1. Recréer `mvp_profil.zip` avec `app.py`, `agents.py`, `criteres.py`, `criteres_dynamiques.py`, `chercheur.py`, `profil.py`, `simulations.py`, `entretien.py`, `voix_composant.py`, `composant_voix/index.html`, `synthese.py`, `hypotheses_profil.json`, le dossier `personas/`, `scenarios.json`, `vocabulaire_actifs.json`, `donnees_chercheur.json` et `requirements.txt` à la racine (puis `venv/bin/pip install -r app/requirements.txt` si les dépendances changent).
+  1. Lancer `python scripts/lancer_tests.py`, puis **uniquement** `python scripts/preparer_mvp.py` pour construire `mvp_profil.zip`. Ne pas maintenir une liste manuelle de fichiers : l'inventaire provient de `mvp_profil/version_profil.py`. Le préparateur contrôle tous les fichiers, leurs empreintes et la version, même avec Python `-O`.
   2. L'envoyer sur `s3://alphaforge-mvp-<ID_DU_COMPTE>-us-east-1/app/mvp_profil.zip`.
   3. Sur l'instance, via Session Manager, lancer : `cd /opt/alphaforge && aws s3 cp s3://alphaforge-mvp-<ID_DU_COMPTE>-us-east-1/app/mvp_profil.zip app.zip && unzip -o app.zip -d app && systemctl restart alphaforge`
+  4. Si les dépendances ont changé, installer `app/requirements.txt` dans l'environnement du service avant le redémarrage. Comparer ensuite la version dans l'interface et l'export à celle du manifeste installé. Tester le vrai parcours QCM → oral, la lecture avant écoute, la pause/reprise et une nouvelle session ; un test simulé seul ne vérifie pas le micro du navigateur.
 - **Journaux :** `/var/log/alphaforge-setup.log` (installation) et `journalctl -u alphaforge` (site).
 - **Mettre en pause :** arrêter l'instance (elle garde tout). Attention : l'IP publique change au redémarrage.
 - **Tout supprimer après le datathon :** dans cet ordre, la distribution CloudFront (la désactiver, attendre, puis la supprimer) et sa fonction, l'instance, le groupe de sécurité, le profil d'instance et le rôle, puis le bucket.

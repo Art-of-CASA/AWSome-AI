@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import json
 import re
+import unicodedata
 from pathlib import Path
 from typing import Literal
 
@@ -125,11 +126,22 @@ def plafond_etaye(citation: str, plafond: int | None) -> bool:
     autre_proposition = r"(?:%|pour\s+cent).*\b(?:et|puis)\s+(?:je|nous|on|mon|ma|mes|les|le|la)\b"
     if ";" in citation or re.search(autre_proposition, citation, re.IGNORECASE) or len(re.findall(r"%|\bpour\s+cent\b", citation)) != 1:
         return False
-    nombres = {0: "zéro|zero", 1: "un", 2: "deux", 3: "trois", 4: "quatre", 5: "cinq", 10: "dix",
+    texte = "".join(ch for ch in unicodedata.normalize("NFKD", citation.casefold()) if not unicodedata.combining(ch))
+    # Un minimum ne devient pas un maximum. « pas plus de » reste un plafond valable.
+    sans_maximum_negatif = re.sub(r"\bpas\s+plus\s+de\b", "", texte)
+    if re.search(r"\b(?:au moins|minimum|plancher|a partir de|plus de)\b", sans_maximum_negatif):
+        return False
+    nombres = {0: "zéro|zero", 1: "un", 2: "deux", 3: "trois", 4: "quatre", 5: "cinq", 6: "six", 7: "sept", 8: "huit", 9: "neuf", 10: "dix",
+               11: "onze", 12: "douze", 13: "treize", 14: "quatorze", 16: "seize",
                15: "quinze", 20: "vingt", 25: "vingt[- ]cinq", 30: "trente", 40: "quarante", 50: "cinquante",
                60: "soixante", 75: "soixante[- ]quinze", 80: "quatre[- ]vingts?", 100: "cent"}
     nombre = str(plafond) + ("|" + nombres[plafond] if plafond in nombres else "")
-    return bool(re.search(rf"(?<![\w.,])(?:{nombre})\s*(?:%|pour\s+cent)(?!\w)", citation.lower()))
+    trouve = re.search(rf"(?<![\w.,])(?:{nombre})\s*(?:%|pour\s+cent)(?!\w)", citation.lower())
+    if not trouve:
+        return False
+    un_nombre = r"(?:\d+(?:[.,]\d+)?|zero|un|une|deux|trois|quatre|cinq|six|sept|huit|neuf|dix|onze|douze|treize|quatorze|quinze|seize|vingt|trente|quarante|cinquante|soixante|cent)"
+    avant = texte[:trouve.start()]
+    return not re.search(rf"\b{un_nombre}\s*(?:a|-|et|ou)\s*$", avant)
 
 
 def _nettoyer(c: CritereIA) -> tuple[str, str, list[str], int | None]:

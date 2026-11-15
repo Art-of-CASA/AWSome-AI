@@ -1,6 +1,7 @@
-"""Construit et vérifie le paquet local, sans connexion ni publication AWS."""
+"""Construit et vérifie le paquet local complet, sans connexion ni publication AWS."""
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -9,22 +10,40 @@ from zipfile import ZipFile, ZIP_DEFLATED
 RACINE = Path(__file__).resolve().parents[1]
 SOURCE = RACINE / "mvp_profil"
 sys.path.insert(0, str(SOURCE))
-from version_profil import empreintes, version_courante
+from version_profil import FICHIERS, version_depuis_empreintes
 
 
-def construire(sortie: Path) -> dict:
-    manifest = {"version": version_courante(SOURCE), "fichiers": empreintes(SOURCE)}
+def verifier_archive(sortie: Path) -> dict:
+    """Validation explicite, aussi active avec python -O ; aucun extrait n'est exécuté."""
+    with ZipFile(sortie) as archive:
+        noms = archive.namelist()
+        if len(noms) != len(set(noms)):
+            raise ValueError("Le paquet contient des noms de fichiers répétés.")
+        manifest = json.loads(archive.read("version_manifest.json"))
+        if not isinstance(manifest, dict) or not isinstance(manifest.get("fichiers"), dict):
+            raise ValueError("Le manifeste du paquet est invalide.")
+        fichiers = manifest["fichiers"]
+        if set(fichiers) != set(FICHIERS) or set(noms) != set(FICHIERS) | {"version_manifest.json"}:
+            raise ValueError("Le manifeste ne décrit pas exactement tous les fichiers de production requis.")
+        for nom, attendu in fichiers.items():
+            if hashlib.sha256(archive.read(nom)).hexdigest() != attendu:
+                raise ValueError(f"Empreinte du paquet incorrecte : {nom}")
+        if manifest.get("version") != version_depuis_empreintes(fichiers):
+            raise ValueError("La version du manifeste ne correspond pas à ses empreintes.")
+    return manifest
+
+
+def construire(sortie: Path, source: Path = SOURCE) -> dict:
+    # Les octets sont lus une seule fois : le zip et son manifeste décrivent le même contenu.
+    contenus = {nom: (source / nom).read_bytes() for nom in FICHIERS}
+    fichiers = {nom: hashlib.sha256(contenu).hexdigest() for nom, contenu in contenus.items()}
+    manifest = {"version": version_depuis_empreintes(fichiers), "fichiers": fichiers}
     sortie.parent.mkdir(parents=True, exist_ok=True)
     with ZipFile(sortie, "w", compression=ZIP_DEFLATED) as archive:
-        for nom in manifest["fichiers"]:
-            archive.write(SOURCE / nom, nom)
+        for nom, contenu in contenus.items():
+            archive.writestr(nom, contenu)
         archive.writestr("version_manifest.json", json.dumps(manifest, ensure_ascii=False, indent=2))
-    import hashlib
-    with ZipFile(sortie) as archive:
-        for nom, attendu in manifest["fichiers"].items():
-            assert hashlib.sha256(archive.read(nom)).hexdigest() == attendu, nom
-        assert json.loads(archive.read("version_manifest.json"))["version"] == manifest["version"]
-    return manifest
+    return verifier_archive(sortie)
 
 
 if __name__ == "__main__":

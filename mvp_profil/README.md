@@ -1,6 +1,6 @@
 # MVP : profil d'investisseur explicable
 
-**Correctif des relances (publié le 15 novembre 2026, version `profil-afe8ed38fc7d`).** Les questions ouvertes et leurs réponses sont exclusivement orales. Le pilote `questions_conversation.py` choisit les cibles, `reponses_directes.py` traite les faits explicites A2/A5/A7 et `moteur_conversation.py` intègre les analyses avec une fraîcheur par critère. Aucun appel de génération n'est requis pour choisir la question suivante. Les ambiguïtés réelles ont une seule clarification ; les erreurs techniques conservent la réponse. La calibration du micro conserve aussi la parole reçue pendant ses premières 700 ms. R6/R8/R9 restent des observations sans relance ni modification des réponses.
+**Correctifs du 15 novembre 2026, après revue de code (publiés, version `profil-970d7c7ff946`).** Les questions et réponses ouvertes restent exclusivement orales. Le composant reçoit la question avant d'écouter, identifie chaque session/question/lecture et rejette les anciens enregistrements. Les contrôles sont bornés et leurs échecs conservent les réponses ; leurs résultats périmés ne remplacent pas les choix récents. Les citations, les plafonds et les preuves du chercheur sont vérifiés plus strictement. Voir [le détail des corrections](../docs/corrections_revue_2026-11-15.md). La dernière version publiée documentée auparavant était `profil-afe8ed38fc7d` ; la version actuellement installée sur CloudFront n'a pas été vérifiée.
 
 La version est affichée dans la barre latérale et exportée avec les questions et les échanges oraux. `python scripts/preparer_mvp.py` construit un paquet intégral avec un manifeste vérifié, sans accès AWS. Détails : [diagnostic et protocole](../docs/fiabilite_questions.md), [recherche de questionnaires](../docs/recherche_questionnaires.md).
 
@@ -20,9 +20,9 @@ La conversation couvre 16 critères de contexte : objectif, horizon, retraits, r
 
 - Le pilote déterministe choisit une question courte et ses cibles parmi les sujets restant réellement à demander. Le classificateur et le critique analysent les réponses en arrière-plan ; une information n'est cochée comme validée qu'après contrôle.
 - Une information spontanée peut renseigner d'autres critères encore inconnus. Une proposition facultative non validée n'est pas conservée comme réponse acquise.
-- Les analyses sont regroupées sur l'historique à jour. Les numéros d'échange empêchent un ancien résultat de remplacer une correction récente. Avant de quitter la conversation, le code termine les vérifications et leur rattrapage.
+- Les analyses sont regroupées sur l'historique à jour. La fraîcheur par critère empêche un ancien résultat de remplacer une correction récente. La fermeture attend les contrôles sans bloquer les rendus, avec une échéance de 90 secondes ; un échec ne demande pas de répéter la réponse.
 - Une précision est reformulée une seule fois. Si le critique refuse encore la proposition, elle reste incertaine ; sa confiance élevée ne permet pas de contourner le refus.
-- La conversation est bornée à dix tours. Les informations manquantes sont reprises dans les « Compléments » ; passer aux questions suivantes ne les remplit pas automatiquement.
+- La conversation est bornée à dix tours. Les informations jamais clarifiées peuvent être reprises dans les « Compléments » ; un critère déjà clarifié reste inconnu sans troisième demande imposée. Passer aux questions suivantes ne remplit pas les inconnues automatiquement.
 
 Pour la voix, un clic « Démarrer » autorise le micro et le son. Le composant [composant_voix/index.html](composant_voix/index.html) détecte la parole et envoie les énoncés ; Amazon Transcribe les transcrit en fr-CA et Amazon Polly lit les questions avec la voix Gabrielle. Le même composant reste à sa place pendant les changements de page, en veille pendant les QCM. Les champs de réponse libre écrite sont supprimés. On peut demander oralement de répéter la question.
 

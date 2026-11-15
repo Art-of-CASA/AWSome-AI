@@ -33,7 +33,7 @@ import re
 from dataclasses import dataclass, field
 
 import anthropic
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from criteres import CRITERES, SECTIONS, describe
 
@@ -41,6 +41,8 @@ MAX_TOURS = 2
 BAISSE_REFORMULATION = 0.15  # 2e tentative (question reformulée) : seuil abaissé de 15 points (80 % -> 65 %)
 SEUIL_PLANCHER = 0.50        # en dessous, une réponse n'est jamais retenue (ce serait une devinette)
 REGION = os.environ.get("AWS_REGION", "us-east-1")
+DELAI_MODELE_SECONDES = 30.0  # délai I/O du SDK ; l'orchestrateur borne aussi l'attente applicative
+REPRISES_MODELE = 1
 # Même modèle (Claude Haiku 5.5) des deux côtés ; sur Bedrock, il s'appelle par son profil d'inférence.
 MODELES = {"bedrock": "us.anthropic.claude-haiku-5-5", "anthropic": "claude-haiku-5-5"}
 
@@ -55,11 +57,14 @@ class Backend:
 
 def backend_bedrock(region: str = REGION) -> Backend:
     # Identifiants AWS lus par la chaîne standard (variables AWS_*, ~/.aws, rôle de l'instance si hébergé sur AWS).
-    return Backend(anthropic.AnthropicBedrock(aws_region=region), MODELES["bedrock"], f"Amazon Bedrock ({region})")
+    return Backend(anthropic.AnthropicBedrock(aws_region=region, timeout=DELAI_MODELE_SECONDES,
+                                             max_retries=REPRISES_MODELE),
+                   MODELES["bedrock"], f"Amazon Bedrock ({region})")
 
 
 def backend_anthropic(api_key: str) -> Backend:
-    return Backend(anthropic.Anthropic(api_key=api_key), MODELES["anthropic"], "API Anthropic")
+    return Backend(anthropic.Anthropic(api_key=api_key, timeout=DELAI_MODELE_SECONDES,
+                                      max_retries=REPRISES_MODELE), MODELES["anthropic"], "API Anthropic")
 
 
 def aws_identifiants_presents() -> bool:
@@ -233,14 +238,24 @@ def appeler(backend: Backend, methode, **kwargs):
         raise AgentError("Aucun identifiant AWS trouvé sur cette machine.") from e
     except bx.BotoCoreError as e:
         raise AgentError(f"Erreur AWS : {e}") from e
+    except ValidationError as e:
+        raise AgentError("Réponse du modèle illisible, hors schéma ou tronquée ; votre réponse est conservée.") from e
     except (anthropic.AuthenticationError, anthropic.PermissionDeniedError) as e:
         raise AgentError(f"Accès refusé par {backend.nom} : identifiants absents, expirés ou sans droit sur le modèle.") from e
     except anthropic.RateLimitError as e:
         raise AgentError("Limite de débit atteinte : réessayez dans quelques secondes.") from e
     except anthropic.APIStatusError as e:
         raise AgentError(f"Erreur de l'API ({e.status_code}) : {e.message}") from e
+    except anthropic.APITimeoutError as e:
+        raise AgentError("Le délai de réponse du modèle est dépassé ; votre réponse est conservée.") from e
     except anthropic.APIConnectionError as e:
-        raise AgentError("Impossible de joindre l'API Anthropic.") from e
+        raise AgentError(f"Impossible de joindre {backend.nom} ; votre réponse est conservée.") from e
+    except anthropic.APIError as e:
+        raise AgentError(f"Réponse de {backend.nom} indisponible ou invalide ; votre réponse est conservée.") from e
+    except RuntimeError as e:
+        if "credential" in str(e).casefold() and "bedrock" in backend.nom.casefold():
+            raise AgentError("Identifiants AWS indisponibles lors de la signature Bedrock.") from e
+        raise AgentError("Échec interne de l'appel au modèle ; votre réponse est conservée.") from e
     if resp.stop_reason == "refusal":
         raise AgentError("Le modèle a refusé de répondre à cette demande.")
     if resp.stop_reason == "max_tokens":
@@ -275,9 +290,10 @@ def critiquer(backend: Backend, echanges, criteres_ids, classification: Classifi
 
 # ---------- Contrôles déterministes ----------
 def _valides(cid: str, valeurs: list[str]) -> list[str]:
-    autorisees = CRITERES[cid]["valeurs"]
-    vals = [v for v in valeurs if v in autorisees]
-    return vals if CRITERES[cid]["multiple"] else vals[:1]
+    if cid not in CRITERES or any(v not in CRITERES[cid]["valeurs"] for v in valeurs):
+        return []
+    vals = list(dict.fromkeys(valeurs))
+    return vals if CRITERES[cid]["multiple"] or len(vals) == 1 else []
 
 
 def _norm(s: str) -> str:
@@ -286,12 +302,9 @@ def _norm(s: str) -> str:
 
 
 def _citation_presente(citation: str, echanges) -> bool:
-    """La citation doit venir des mots de l'utilisateur (comparaison souple : casse, ponctuation, espaces)."""
-    texte = f" {_norm(' '.join(r for _, r in echanges))} "
-    # Une citation peut être coupée par des points de suspension : chaque morceau doit être présent.
-    morceaux = [_norm(m) for m in citation.replace("…", "...").split("...")]
-    morceaux = [m for m in morceaux if m]
-    return bool(morceaux) and all(f" {m} " in texte for m in morceaux)
+    """Un passage contigu d'une seule réponse ; aucune ellipse ne peut supprimer une négation."""
+    cite = _norm(citation)
+    return bool(cite) and any(f" {cite} " in f" {_norm(reponse)} " for _, reponse in echanges)
 
 
 def seuil_essai(seuil: float, essai: int) -> float:
@@ -375,7 +388,7 @@ def evaluer(cid, prop: Proposition | None, avis: Avis | None, echanges, seuil: f
     conf = min(c_cls, c_cri)
     precision, motif_precision = _precision_declaree(avis, prop)
     if not vals:
-        motif = "Information absente ou valeurs hors liste"
+        motif = "Sortie du modèle incohérente : valeurs multiples ou hors liste" if prop.valeurs else "Information absente"
         if prop.valeurs or (prop.citation and not _citation_presente(prop.citation, echanges)):
             precision, motif_precision = False, ""
     elif not _citation_presente(prop.citation, echanges):
@@ -403,7 +416,8 @@ def precontrole(cid, prop: Proposition | None, echanges, seuil: float | dict) ->
         precision, motif_precision = _precision_declaree(prop)
         if prop.valeurs or (prop.citation and not _citation_presente(prop.citation, echanges)):
             precision, motif_precision = False, ""
-        return Resultat(cid, [], prop.citation, conf, False, "Information absente ou valeurs hors liste",
+        motif = "Sortie du modèle incohérente : valeurs multiples ou hors liste" if prop.valeurs else "Information absente"
+        return Resultat(cid, [], prop.citation, conf, False, motif,
                         None, precision, motif_precision)
     if not _citation_presente(prop.citation, echanges):
         return Resultat(cid, vals, prop.citation, min(conf, 0.5), False, "Citation introuvable dans la réponse de l'utilisateur")
@@ -429,21 +443,35 @@ def debattre(backend: Backend, echanges: list[tuple[str, str]], criteres_ids: li
         props = {p.critere_id: p for p in classif.propositions}
         if t == 1:  # facultatifs dont l'utilisateur a parlé : traités comme les autres, mais seulement s'ils sont validés
             a_traiter += [f for f in facultatifs if f in props and props[f].valeurs]
-        sures = []
+        sures, a_reparer = [], []
         for cid in a_traiter:
             r = precontrole(cid, props.get(cid), echanges, seuil)
             if r is None:
                 sures.append(cid)
             else:
                 resultats[cid] = r
+                if r.motif.startswith("Sortie du modèle incohérente"):
+                    a_reparer.append(cid)
         trace = {"tour": t, "classificateur": classif.model_dump(), "critique": None, "valides": []}
-        if not sures:  # rien de solide à faire vérifier : seul l'utilisateur peut compléter
+        if not sures:
+            if a_reparer and t < max_tours:
+                crit = Critique(avis=[Avis(critere_id=c, accord=False, confiance=0,
+                                          objection=resultats[c].motif + ". Relis la réponse existante et corrige ta sortie, sans inventer de valeur.",
+                                          valeurs_suggerees=[]) for c in a_reparer], question_relance="")
+                trace.update(critique=crit.model_dump(), origine_critique="contrôle déterministe")
+                tours.append(trace)
+                a_traiter = a_reparer
+                continue
             tours.append(trace)
             break
         soumis = Classification(propositions=[props[c] for c in sures])
         crit = critiquer(backend, echanges, sures, soumis)
+        if a_reparer:
+            crit.avis += [Avis(critere_id=c, accord=False, confiance=0,
+                               objection=resultats[c].motif + ". Corrige la sortie à partir des paroles déjà reçues.",
+                               valeurs_suggerees=[]) for c in a_reparer]
         avis = {a.critere_id: a for a in crit.avis}
-        contestes = []
+        contestes = list(a_reparer)
         for cid in sures:
             resultats[cid] = evaluer(cid, props[cid], avis.get(cid), echanges, seuil)
             if not resultats[cid].valide:
@@ -452,7 +480,7 @@ def debattre(backend: Backend, echanges: list[tuple[str, str]], criteres_ids: li
         tours.append(trace)
         if not contestes:
             break
-        a_traiter, classif = contestes, soumis
+        a_traiter = contestes
     resultats = {c: r for c, r in resultats.items() if c in criteres_ids or r.valide}  # facultatif non validé : oublié
     restants = [c for c, r in resultats.items() if not r.valide]
     question = crit.question_relance.strip() if (crit and any(resultats[c].precision_necessaire for c in restants)) else ""

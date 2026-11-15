@@ -26,6 +26,10 @@ from agents import (REGION, AgentError, Backend, Classification, Proposition, _a
                     evaluer, precontrole, debattre)
 from criteres import CRITERES, describe
 
+MAX_AUDIO_S = 30
+MAX_WAV_OCTETS = MAX_AUDIO_S * 48_000 * 2 * 2 + 4096
+DELAI_TRANSCRIPTION_S = 40
+
 # Critères de contexte couverts par la conversation (les autres restent en QCM, quiz et mises en situation).
 CRITERES_CONVERSATION = ["A3", "A2", "A9", "A10", "A1", "A4", "A5", "A6", "A12", "A8", "A7", "B3", "C2", "D3", "D5", "D6"]
 MAX_TOURS = 10
@@ -143,16 +147,34 @@ def choisir_option(backend: Backend, question: str, options: list[str], reponse:
 def synthese_vocale(texte: str) -> bytes:
     """Amazon Polly, voix neuronale Gabrielle (français canadien). Renvoie un MP3."""
     import boto3
-    r = boto3.client("polly", region_name=REGION).synthesize_speech(
-        Text=texte, VoiceId="Gabrielle", Engine="neural", LanguageCode="fr-CA", OutputFormat="mp3")
-    return r["AudioStream"].read()
+    from botocore.config import Config
+    try:
+        client = boto3.client("polly", region_name=REGION,
+                              config=Config(connect_timeout=5, read_timeout=15,
+                                            retries={"total_max_attempts": 1, "mode": "standard"}))
+        r = client.synthesize_speech(Text=texte, VoiceId="Gabrielle", Engine="neural",
+                                     LanguageCode="fr-CA", OutputFormat="mp3")
+        with r["AudioStream"] as audio:
+            return audio.read()
+    except Exception as exc:
+        raise AgentError("La lecture vocale est indisponible. Vous pouvez la réessayer.") from exc
 
 
 def pcm_depuis_wav(donnees: bytes) -> tuple[bytes, int]:
-    with wave.open(io.BytesIO(donnees)) as w:
-        if w.getsampwidth() != 2:
-            raise AgentError("Format audio inattendu (16 bits attendus).")
-        pcm, taux, canaux = w.readframes(w.getnframes()), w.getframerate(), w.getnchannels()
+    if not donnees or len(donnees) > MAX_WAV_OCTETS:
+        raise AgentError("Enregistrement vide ou trop volumineux (30 secondes maximum).")
+    try:
+        with wave.open(io.BytesIO(donnees)) as w:
+            taux, canaux = w.getframerate(), w.getnchannels()
+            if w.getsampwidth() != 2 or canaux not in (1, 2) or taux not in (8000, 16000, 22050, 24000, 32000, 44100, 48000):
+                raise AgentError("Format audio inattendu (WAV PCM 16 bits, mono ou stéréo attendu).")
+            if w.getnframes() > taux * MAX_AUDIO_S:
+                raise AgentError("Réponse trop longue (30 secondes maximum).")
+            pcm = w.readframes(w.getnframes())
+            if len(pcm) != w.getnframes() * canaux * 2:
+                raise AgentError("Enregistrement incomplet. Veuillez réessayer.")
+    except (wave.Error, EOFError, OSError, ValueError) as exc:
+        raise AgentError("Enregistrement audio invalide. Veuillez réessayer.") from exc
     if canaux == 2:  # stéréo -> mono (on garde le canal gauche)
         pcm = b"".join(pcm[i:i + 2] for i in range(0, len(pcm), 4))
     return pcm, taux
@@ -189,8 +211,14 @@ async def _transcrire(pcm: bytes, taux: int, langue: str) -> str:
 
 def transcrire(donnees_wav: bytes, langue: str = "fr-CA") -> str:
     """Amazon Transcribe en streaming : WAV 16 bits -> texte."""
-    pcm, taux = pcm_depuis_wav(donnees_wav)
     try:
-        return asyncio.run(_transcrire(pcm, taux, langue))
+        pcm, taux = pcm_depuis_wav(donnees_wav)
+        async def bornee():
+            return await asyncio.wait_for(_transcrire(pcm, taux, langue), timeout=DELAI_TRANSCRIPTION_S)
+        return asyncio.run(bornee())
+    except AgentError:
+        raise
+    except TimeoutError as exc:
+        raise AgentError("La transcription a dépassé son délai. Vous pouvez réessayer.") from exc
     except Exception as e:  # noqa: BLE001
         raise AgentError(f"Transcription impossible : {e}") from e

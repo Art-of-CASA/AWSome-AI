@@ -6,12 +6,16 @@ Le registre des questions reste indépendant du temps de réponse des services.
 """
 from __future__ import annotations
 
-from agents import _citation_presente, meilleur, retenable
+from concurrent.futures import Future
+from time import monotonic
+
+from agents import AgentError, _citation_presente, meilleur, retenable
 from criteres import DECLARATIFS
 from entretien import CRITERES_CONVERSATION, OUVERTURE, demande_correction
 from profil import connu, deduire, entree
 from questions_conversation import choisir_question, enregistrer_question
 from reponses_directes import analyser_reponses
+from taches import expiree, suivre_tache
 
 
 def creer(questions_posees: dict | None = None) -> dict:
@@ -49,7 +53,7 @@ def recevoir(c: dict, profil: dict, texte: str) -> list[str]:
             if connu(profil, cid):
                 c["revisions"][cid] = n
                 c["versions_reponses"][cid] = n
-    lecture = analyser_reponses(c.get("question_cible", question), texte, DECLARATIFS)
+    lecture = analyser_reponses(c.get("question_cible", question), texte, DECLARATIFS, criteres_question=cibles)
     echos = []
     for cid, reponse in lecture["reponses"].items():
         profil[cid] = dict(reponse)
@@ -98,17 +102,24 @@ def planifier(c: dict, profil: dict, executeur, backend, analyser, seuil: float)
     # La sûreté n'est pas assouplie parce que le modèle a tardé à répondre.
     seuils = {cid: seuil for cid in demandes + autres}
     historique = list(c["echanges"])
-    fut = executeur.submit(analyser, backend, historique, demandes, seuils, autres)
-    c["jobs"].append({"future": fut, "criteres": demandes, "facultatifs": autres, "n": n,
-                      "echanges": historique,
+    try:
+        fut = executeur.submit(analyser, backend, historique, demandes, seuils, autres)
+    except AgentError as exc:
+        fut = Future()
+        fut.set_exception(exc)
+    c["jobs"].append(suivre_tache({"future": fut, "criteres": demandes, "facultatifs": autres, "n": n,
+                      "echanges": historique, "soumis_le": monotonic(),
                       "versions": {cid: c["versions_reponses"].get(cid, 0) for cid in demandes + autres},
-                      "revisions": {cid: c["revisions"][cid] for cid in demandes if cid in c["revisions"]}})
+                      "revisions": {cid: c["revisions"][cid] for cid in demandes if cid in c["revisions"]}}))
     c["analyses_couvertes"].update({cid: n for cid in demandes + autres})
 
 
 def integrer(c: dict, profil: dict) -> None:
-    for job in [j for j in c["jobs"] if j["future"].done()]:
+    for job in [j for j in c["jobs"] if j["future"].done() or expiree(j)]:
         try:
+            if expiree(job):
+                job["future"].cancel()
+                raise AgentError("Délai du contrôle dépassé ; réponse conservée.")
             resultats = job["future"].result()
         except Exception as e:  # une panne ne signifie pas que la personne doit redire sa réponse
             c["traces"].append({"question": "conversation", "tours": [], "resultats": {},

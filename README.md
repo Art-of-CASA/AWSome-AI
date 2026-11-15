@@ -8,9 +8,11 @@ Ce document explique toute la démarche : le but, les principes, les données, l
 
 **Correctif des répétitions et parcours oral (publié le 15 novembre 2026, version `profil-afe8ed38fc7d`).** Les réponses numériques explicites sont lues par des règles avant l'IA (quinze ans et six mois inclus). Le code verrouille les sujets déjà répondus, distingue les analyses en cours et limite une ambiguïté réelle à une clarification. Les réponses ouvertes passent exclusivement par le micro, y compris le questionnaire classique, les précisions et la question finale. R6, R8 et R9 deviennent des observations sans question imposée. Le numéro de contenu apparaît dans l'interface, l'export et le paquet préparé par `python scripts/preparer_mvp.py` ; cette commande ne publie rien.
 
+**Révision de code du 15 novembre : corrections publiées le 15 novembre 2026 (version `profil-970d7c7ff946`).** Les calculs, seuils, correspondances et contrôles de paquet décrits ci-dessous se vérifient localement ; seul le manifeste du paquet effectivement installé permet d'identifier le contenu du serveur.
+
 Voir [le diagnostic et les mesures de fiabilité](docs/fiabilite_questions.md) et [la comparaison aux questionnaires existants](docs/recherche_questionnaires.md). Les tests de règles et d'interface ne mesurent pas la fiabilité du vrai modèle ou de Transcribe ; aucun pourcentage d'exactitude réelle n'est annoncé sans observations annotées.
 
-**État de la version précédente, selon l'historique du dépôt : publiée sur le site partagé le 15 novembre 2026.** L'ordre adaptatif, les nouveaux contrôles, les confirmations, les états de recherche et la restitution décrits ci-dessous sont en ligne ; le parcours vocal n'a pas encore été réessayé sur le site. Le parcours et ses garanties sont détaillés dans [docs/infrastructure_profil.md](docs/infrastructure_profil.md). Aucun nouveau résultat réel Bedrock ni gain de durée avec des utilisateurs n'a été mesuré pour cette évolution.
+**Historique : une version précédente a été publiée sur le site partagé le 15 novembre 2026.** Les corrections actuelles de la revue sont locales ; leur état est décrit dans [docs/corrections_revue_2026-11-15.md](docs/corrections_revue_2026-11-15.md). La version affichée par le serveur reste à comparer au manifeste installé. Le parcours et ses garanties sont détaillés dans [docs/infrastructure_profil.md](docs/infrastructure_profil.md). Aucun nouveau résultat réel Bedrock ni gain de durée avec des utilisateurs n'a été mesuré pour cette évolution.
 
 ---
 
@@ -95,13 +97,13 @@ Pour chacun des 66 actifs, le fichier donne :
 - les indicateurs en CAD : volatilité, perte maximale, jours de récupération, choc de 2022, bêta, corrélations, dividendes, ratios financiers ;
 - 23 mots-clés `kw_*` : `kw_volatilite`, `kw_recuperation`, `kw_exclusions`, `kw_risque_pays`, `kw_devise`, `kw_attention`, `kw_frais`…
 
-Plusieurs critères du profil utilisent **exactement les mêmes valeurs** que les mots-clés d'actif (B5 ↔ `kw_volatilite`, B7 ↔ `kw_recuperation`, E5 ↔ `kw_exclusions`, F2 ↔ `kw_risque_pays`) : la comparaison est directe.
+Le vocabulaire de B5 correspond à `kw_volatilite`, mais le plafond se vérifie sur la volatilité du **portefeuille**. B7 compare sa durée supportable à une durée sous l'eau chiffrée ; les états d'actif `baisse_en_cours` et `jamais_recupere` restent distincts des trois réponses du profil. E5 et F2 utilisent les traductions explicites de [correspondances.json](config/correspondances.json), qui distinguent exclusion, plafond et couverture absente ; une égalité de libellés ne suffit pas.
 
 ### Critères dynamiques : propres à chaque personne ([mvp_profil/criteres_dynamiques.py](mvp_profil/criteres_dynamiques.py))
 
 Les critères fixes couvrent les cas prévus, pas les particularités de chacun. Par exemple : « je travaille chez Shopify et j'ai déjà beaucoup d'actions de mon employeur », « je m'installe en Europe dans 5 ans », « pas plus de 10 % de banques », « rien qui touche à Elon Musk ». **À la toute fin du parcours, une question ouverte** demande ce que la personne aimerait encore préciser, et l'IA en tire des critères créés pour elle (X1, X2…).
 
-**Un critère dynamique est relié aux données des actifs dès sa création.** Ce n'est pas du texte libre, mais une règle `(effet, dimension, valeurs)` exprimée avec le **vocabulaire réel des actifs**. Ce vocabulaire est contenu dans [vocabulaire_actifs.json](mvp_profil/vocabulaire_actifs.json), extrait de `asset_criteria.csv` par `scripts/build_vocabulaire.py`. Il compte 17 dimensions et 234 valeurs, chacune avec la liste des tickers qui l'ont :
+**Un critère dynamique est relié aux données des actifs dès sa création.** Ce n'est pas du texte libre, mais une règle `(effet, dimension, valeurs)` exprimée avec le **vocabulaire réel des actifs**. Ce vocabulaire est contenu dans [vocabulaire_actifs.json](mvp_profil/vocabulaire_actifs.json), extrait de `asset_criteria.csv` par `scripts/build_vocabulaire.py`. Il compte 17 dimensions et 242 valeurs, chacune avec la liste des tickers qui l'ont :
 
 | Effet | Type de règle (même typologie que la grille) | Exemple |
 |---|---|---|
@@ -239,20 +241,12 @@ py -m venv .venv
 En local, il faut des identifiants AWS temporaires (variables `AWS_*` ou `~/.aws`), ou une clé Anthropic dans la barre latérale. Les tests sont hors ligne, sans coût : un faux serveur remplace l'API, et le vrai SDK construit les requêtes.
 
 ```bash
-.venv/Scripts/python mvp_profil/test_profil.py
-.venv/Scripts/python mvp_profil/test_debat.py
-.venv/Scripts/python mvp_profil/test_dynamiques.py
-.venv/Scripts/python mvp_profil/test_chercheur.py
-.venv/Scripts/python mvp_profil/test_app.py
-.venv/Scripts/python mvp_profil/test_conversation.py
-.venv/Scripts/python mvp_profil/test_synthese.py
-.venv/Scripts/python mvp_profil/test_pilotage.py
-.venv/Scripts/python mvp_profil/test_evaluation.py
-.venv/Scripts/python scripts/test_grille.py
+.venv/Scripts/python scripts/lancer_tests.py --lister
+.venv/Scripts/python scripts/lancer_tests.py
 .venv/Scripts/python mvp_profil/evaluer_classement.py --verifier
 ```
 
-La vérification comprend **9 suites dans `mvp_profil/` et le contrôle de grille**, ainsi que la validation du jeu de phrases. Les réponses de modèle simulées vérifient les règles et l'orchestration ; elles ne mesurent pas l'exactitude réelle du modèle. L'évaluation réelle doit encore être lancée explicitement et produit un rapport séparant exactitude, stabilité, erreurs des sorties validées et erreurs des sorties retenables. Les confiances déclarées ne sont pas des probabilités calibrées.
+Le lanceur découvre toutes les suites `mvp_profil/test_*.py`, `mvp_profil/test_*.cjs` et `scripts/test_*.py`, y compris le contrôle de grille et les corrections de données/configuration. Node.js est nécessaire aux suites vocales du navigateur. Chaque suite a un délai borné ; un échec produit un code de retour non nul. Il refuse Python `-O`, qui désactiverait les assertions des tests. La validation de production du corpus et du paquet utilise, elle, des exceptions actives même sous `-O`. Les réponses de modèle simulées vérifient les règles et l'orchestration ; elles ne mesurent pas l'exactitude réelle du modèle. L'évaluation réelle doit encore être lancée explicitement et produit un rapport séparant exactitude, stabilité, erreurs des sorties validées et erreurs des sorties retenables. Les confiances déclarées ne sont pas des probabilités calibrées.
 
 ## 9. Où on en est, et où on veut aller
 
@@ -295,10 +289,10 @@ mvp_profil/           site Streamlit : agents, critères, conversation vocale, s
 - **Statuts du profil** : `validé`, `retenu` (accord du critique avec confiance réduite au-dessus du plancher), `incertain` et `à préciser`. Seuls `validé` et `retenu` sont utilisables pour les critères fixes (`profil.UTILISABLES`, `profil.connu`). Pour les critères dynamiques, vérifier aussi `criteres_dynamiques.est_applicable` : une confirmation, une cible ou des preuves peuvent encore manquer. Un désaccord du critique ne devient pas « retenu ».
 - **Sources du profil** : QCM, curseur, quiz, réponse libre (IA), conversation (IA), **déduit (IA)**, **déduction (règle)**, cohérence, replay… Une question n'est posée que si son critère n'est pas déjà connu (`app.a_demander`). Pour ajouter une déduction certaine, il suffit d'ajouter une ligne à `profil.REGLES_DEDUCTION`.
 - **Voix** : `app.dire(texte, etape)` fait dire une nouvelle phrase à l'IA, une seule fois par étape. `app.entendu()` renvoie ce que la personne vient de dire. Le composant (`composant_voix/index.html`) n'existe qu'en un seul exemplaire, en haut de la colonne principale. Ne le déplacez pas : il serait recréé, et la voix serait coupée.
-- **Tests** : faites passer les 9 suites de la section 8 et `scripts/test_grille.py` avant tout commit. `test_evaluation.py` vérifie les métriques sans cloud ; `evaluer_classement.py --verifier` contrôle les 51 phrases et 88 couples. Les tests d'interface utilisent `streamlit.testing.v1.AppTest`, avec des agents simulés et de faux identifiants AWS.
+- **Tests** : faites passer `scripts/lancer_tests.py` et `evaluer_classement.py --verifier` (51 phrases et 88 couples) avant tout commit. `--lister` donne l'inventaire actualisé et `--filtre` cible une suite. Les tests d'interface utilisent `streamlit.testing.v1.AppTest`, avec des agents simulés et de faux identifiants AWS ; leur boucle asyncio demande des sockets locales.
 - **Windows** : utilisez `py` ou `.venv/Scripts/python`, avec `PYTHONIOENCODING=utf-8` pour les accents dans la console.
 - **Cohérence** : un correctif de cohérence n'écrit jamais une valeur que la personne n'a pas choisie (`None` = critère redemandé), et `profil.recouper_rupture` est rappelée après chaque correctif : le point de rupture retenu ne dépasse jamais celui observé au replay.
-- **Déploiement** : zip du dossier `mvp_profil` (y compris `vocabulaire_actifs.json`, `donnees_chercheur.json`, `scenarios.json`, `hypotheses_profil.json`, `synthese.py`, `pilotage.py` et le dossier `personas/`), envoi sur S3, puis redémarrage par Session Manager (voir DEPLOIEMENT.md). Ne pas supposer que l'archive existante ou le serveur incluent les modifications locales.
+- **Déploiement** : créer le paquet avec `scripts/preparer_mvp.py`, seule procédure de préparation, puis envoi sur S3 et redémarrage par Session Manager (voir DEPLOIEMENT.md). L'inventaire de production vient de `mvp_profil/version_profil.py` ; empreintes et version sont vérifiées dans l'archive. Ne pas supposer que l'archive existante ou le serveur incluent les modifications locales.
 - **Collaboration** : travaillez sur une branche, ouvrez une pull request, et attendez la relecture d'un coéquipier avant de fusionner dans `main`. Ne versionnez aucun secret (voir ci-dessous).
 
 ## Sécurité et collaboration
@@ -308,6 +302,6 @@ Ce qui suit décrit l'infrastructure **réellement en place** (détail dans [mvp
 - **Aucune clé dans le dépôt ni sur le serveur.** Le site appelle Amazon Bedrock, Transcribe et Polly avec le **rôle IAM de l'instance EC2**, limité à ces actions et à la lecture du paquet du site sur S3.
 - **Accès au site** : HTTPS par CloudFront, avec une fonction CloudFront qui ne laisse passer que les adresses IP de l'équipe. Le groupe de sécurité de l'instance n'accepte que CloudFront et ces mêmes adresses. Il n'y a ni mot de passe ni comptes utilisateurs : c'est suffisant pour une démonstration, pas pour de vrais utilisateurs.
 - **Mises à jour** : un paquet zip déposé sur S3, puis un redémarrage par Session Manager. Aucun port SSH n'est ouvert. Il n'y a pas de déploiement automatique.
-- **Données personnelles** : aucune. Les profils sont fictifs ; le mode démonstration charge les trois personas de l'énoncé.
+- **Données de profil** : les personas de démonstration sont fictifs, mais les réponses saisies oralement peuvent contenir des informations personnelles et financières. Elles sont traitées par les services de transcription et de modèle configurés et conservées dans la session et l'export. Les requêtes brutes et rejets du chercheur ne sont plus partagés dans le cache de faits publics. Ne pas utiliser de données réelles pour cette simulation sans politique de confidentialité adaptée.
 - **En local** : identifiants AWS temporaires (variables `AWS_*` ou `~/.aws`), jamais versionnés. Le fichier `.env.example` ne contient que des noms de variables.
 - **Collaboration** : une branche par changement, une pull request, la relecture d'un coéquipier avant de fusionner dans `main`. Ne versionnez aucun secret, aucun identifiant de compte, aucune adresse IP.

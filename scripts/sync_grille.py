@@ -23,10 +23,13 @@ REGLES = {
     "A2": f"{NIVEAU} : l'horizon fixe le plafond de capacité (hypotheses_profil.json), donc le budget de perte ; horizon_min_years reste une information par actif",
     "A3": "coussin_securite : rôle liquidites seulement ; projet_date : liquidites et obligations_amortisseur près de l'échéance ; revenu : préférence satellite_revenu ; croissance : tous les rôles dans les plafonds",
     "A5": "Moins de 3 mois : un cran de capacité en moins ; aucun : alerte et niveau plafonné à 2 (niveau du portefeuille)",
+    "A8": "Trois personnes à charge ou plus (3_plus) : un cran de capacité en moins ; 0 et 1_2 : pas de décote automatique",
     "A9": "Montant à retirer dans moins de 3 ans : poche réservée de rôle liquidites ou obligations_amortisseur",
     "B1": f"{NIVEAU} : tension = perte de stress du portefeuille ÷ budget de perte (synthese.py) : <0,8 cohérent ; 0,8-1 à surveiller ; >1 en tension",
     "B5": f"{NIVEAU} : volatilité du portefeuille <= plafond de la classe acceptée (8, 15, 25 %)",
     "B7": f"{NIVEAU} : durée sous l'eau du portefeuille <= durée supportable ; kw_recuperation (du sommet au retour) reste une information par actif ; baisse_en_cours et jamais_recupere sont signalés",
+    "B6": "Choix observé des fourchettes, conservé sans modification ; combinaison avec B5 signalée dans les observations (R8), sans question imposée ni nouveau plafond",
+    "D8O": "Choix d'un titre médiatisé observé ; signal R9 distinct de l'attrait déclaré D8, sans question imposée ni changement de D8/D12",
     "C1": "complexity de l'actif <= score du quiz + 1 (score 0 : complexité 1 seulement) ; le score est gardé avec le niveau",
     "F2": "Voir config/correspondances.json (F2) : exclure_emergents exclut marche_emergent et exposition_chine, plafonne marche_emergent_partiel",
     "E1": "Voir config/correspondances.json (E1) : exclusion par fossil_categorie ; les FNB exposés (energie_fossile_via_fonds) sont plafonnés, pas exclus",
@@ -61,7 +64,8 @@ for l in lignes:
     if cid in REGLES:
         l["regle_appariement"] = REGLES[cid]
 manquants = [c for c in CRITERES if c not in ids]
-assert not manquants, f"Critères du code absents de la grille : {manquants}"
+if manquants:
+    raise ValueError(f"Critères du code absents de la grille : {manquants}")
 with CSV.open("w", encoding="utf-8", newline="") as f:
     w = csv.DictWriter(f, fieldnames=champs[:5] + ["demande"] + champs[5:], lineterminator="\n")
     w.writeheader()

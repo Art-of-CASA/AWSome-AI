@@ -92,11 +92,15 @@ refuse("Quel est votre horizon et combien de mois de réserve avez-vous ?", "six
 refuse("Quel est votre horizon et combien de mois de réserve avez-vous ?", "quinze ans", "A2")
 
 # Négation, hésitation, historique et corrections : le parseur ne remplace pas le jugement contextuel.
-for phrase in ("pas quinze ans", "15 ans pas 5", "quinze ans ou cinq", "peut-être quinze ans", "environ quinze ans",
-               "je crois quinze ans", "depuis quinze ans", "j'avais quinze ans", "plus de quinze et moins de dix-huit ans"):
+for phrase in ("pas quinze ans", "15 ans pas 5", "quinze ans ou cinq", "depuis quinze ans", "j'avais quinze ans", "plus de quinze et moins de dix-huit ans"):
     refuse(HORIZON, phrase, "A2", precision=True)
-for phrase in ("pas six mois", "peut-être six mois", "six mois ou deux", "depuis six mois"):
+for phrase in ("pas six mois", "six mois ou deux", "depuis six mois"):
     refuse(RESERVE, phrase, "A5", precision=True)
+for question, texte, cid in ((HORIZON, "peut-être quinze ans", "A2"), (HORIZON, "environ quinze ans", "A2"),
+                             (HORIZON, "je crois quinze ans", "A2"), (RESERVE, "peut-être six mois", "A5")):
+    resultat = analyser_reponses(question, texte)
+    assert cid not in resultat["reponses"] and cid not in resultat["a_preciser"], resultat
+    cas += 1  # la nuance passe à l'IA, elle n'impose pas une nouvelle question
 refuse(HORIZON, "mon horizon est quinze ans ; mon horizon est vingt ans", "A2", precision=True)
 refuse(RESERVE, "", "A5")
 refuse(RESERVE, "je ne sais pas", "A5")

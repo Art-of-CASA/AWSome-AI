@@ -1,5 +1,5 @@
 {
-  "_note": "Tous les seuils sont des HYPOTHÈSES de l'équipe, à déclarer dans la documentation. Modifier ici puis relancer scripts/build_asset_criteria.py.",
+  "_note": "Tous les seuils sont des HYPOTHÈSES de l'équipe. Après modification : compute_metrics.py, puis build_asset_criteria.py et les générateurs des fichiers du MVP. Les bornes de frais reprennent les valeurs effectivement utilisées auparavant ; l'ancienne clé frais_fnb_eleves=0.004, inutilisée, a été retirée.",
   "classe_risque_bornes_volatilite": [
     0.005,
     0.02,
@@ -40,7 +40,7 @@
   "devises_forte_inflation": [
     "EGP"
   ],
-  "frais_fnb_eleves": 0.004,
+  "frais_fnb_bornes": [0.0015, 0.005, 0.01],
   "baisse_en_cours_creux_max_jours": 365,
   "role_liquidites_volatilite_max": 0.02,
   "role_obligations_amortisseur_volatilite_max": 0.08,

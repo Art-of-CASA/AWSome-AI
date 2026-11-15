@@ -1,0 +1,12 @@
+{
+  "_note": "Correspondances explicites des principales positions vers l'univers. Le ticker d'origine est conservé. Une relation même émetteur agrège une exposition à l'entreprise, sans assimiler les titres pour l'exécution ou les prix. Les symboles inconnus ne sont jamais rapprochés par préfixe.",
+  "aliases_cotation": {
+    "RY": {"ticker": "RY.TO", "raison": "Royal Bank of Canada : cotation de référence canadienne de l'univers."},
+    "TD": {"ticker": "TD.TO", "raison": "Toronto-Dominion Bank : cotation de référence canadienne de l'univers."},
+    "SHOP": {"ticker": "SHOP.TO", "raison": "Shopify : cotation de référence canadienne de l'univers."},
+    "005930.KQ": {"ticker": "005930.KS", "raison": "La position locale nomme Samsung Electronics ; correction explicite du suffixe fourni dans les positions."}
+  },
+  "meme_emetteur": {
+    "GOOG": {"ticker": "GOOGL", "raison": "Alphabet classe C et classe A : classes distinctes du même émetteur. GOOGL sert de référence aux expositions de l'univers."}
+  }
+}
