@@ -135,9 +135,8 @@ def evaluer_actif(ticker: str, ctr: dict, uni: Univers, registre: Registre | Non
     else:
         ok = horizon_min <= ctr["horizon_annees"]
         ligne("A2", "Horizon de placement", "CALIBRAGE", "coherent" if ok else "a_surveiller",
-              (f"Horizon minimal indicatif de l'actif : {horizon_min:.0f} ans ; horizon de la personne : "
-               f"{C._libelle('A2', ctr['horizon'])}" + ("" if ok else ". À détenir en petite part seulement : "
-               "le risque se vérifie sur le portefeuille entier.") +
+              (f"Horizon minimal indicatif de l'actif : {horizon_min:.0f} ans ; horizon du profil : "
+               f"{C._libelle('A2', ctr['horizon']).lower()}" + ("" if ok else ". À détenir en petite part seulement.") +
                (" (horizon par défaut, question sans réponse)" if ctr["horizon_par_defaut"] else "")),
               ["horizon_min_years", "risk_class"], ["A2"], pond["CALIBRAGE"],
               notes["coherent" if ok else "a_surveiller"], borne=False)

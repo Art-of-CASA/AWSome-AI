@@ -94,8 +94,11 @@ Construction déterministe, sans bibliothèque d'optimisation, pour rester expli
 2. Deux poches selon le rôle : amortisseur (liquidités, obligations) et croissance.
 3. Sélection : jusqu'à trois fonds de cœur, un représentant par thème d'intérêt déclaré, puis les meilleurs scores, deux titres au plus par secteur.
 4. Poids proportionnels au score (un fonds de cœur compte triple), rabotés par les plafonds ; l'excédent est redistribué.
-5. La part de croissance part de la borne haute indicative du niveau de risque et descend par pas de 5 points jusqu'à respecter : perte de stress ≤ 0,8 × budget, volatilité ≤ plafond, durée sous l'eau ≤ limite.
-6. Une contrainte impossible à tenir est **nommée**, jamais masquée.
+5. La part de croissance part de la borne haute indicative du niveau de risque et descend par pas de 5 points jusqu'à respecter : perte de stress ≤ 0,8 × budget, volatilité ≤ plafond, durée sous l'eau ≤ limite. La contrainte qui a arrêté la descente est **nommée** à l'écran.
+6. Si même la répartition la plus prudente dépasse une limite, le reste passe en fonds de liquidités, puis en **encaisse** (non investie, affichée et expliquée). Une part que les plafonds ne permettent pas de placer reste aussi en encaisse.
+7. Un actif ajouté à la demande de la personne garde son poids ; le reste se réorganise autour de lui sous les mêmes plafonds.
+
+**Vérification sur des profils aléatoires.** Les trois personas ne suffisent pas à éprouver un calcul. Un test tire 200 profils au hasard (réponses manquantes, incertaines, contradictoires) et exige, pour chaque portefeuille construit : aucun actif non compatible, aucun poids au-dessus du maximum, aucune limite dépassée, perte de stress sous le budget, encaisse expliquée. Ce test a révélé trois défauts de la première version, corrigés depuis : une part non investie sans explication, un budget de perte dépassé quand aucun actif défensif n'était accepté, et des refus sans diagnostic.
 
 **Mesures**, sur les prix en CAD du 12 novembre 2021 au 12 novembre 2026, portefeuille rééquilibré chaque jour : volatilité annualisée, perte maximale, durée sous l'eau, rendement de 2022, pire mois, expositions effectives à travers les FNB.
 
@@ -115,14 +118,34 @@ Cas de référence : Robert, tenté par un titre très médiatisé.
 
 Le texte de la justification n'est pas un paramètre du moteur : le verdict ne peut pas en dépendre. Un test le vérifie avec dix justifications, dont une tentative de détournement.
 
-### 3.5 Recherche, comparaison, « Et si… ? » (`analyse.py`)
+### 3.5 Parler au conseiller (`conversation.py`)
+
+La personne écrit ou dit ce qu'elle aimerait ajouter. Le partage des rôles ne change pas.
+
+| Étape | Qui | Ce qui se passe |
+|---|---|---|
+| Comprendre | Modèle (ou interprète à règles sans modèle) | Quel actif, quelle part, quelle envie ; choix de l'outil |
+| Décider | Code | Ajout appliqué, part réduite proposée, ou refus |
+| Proposer | Code | Alternatives compatibles : fonds qui détient le titre, même thème, même secteur |
+| Revoir le profil | Code, après accord explicite | Les réponses déclarées à revoir sont nommées ; rien n'est appliqué sans « oui » |
+| Rédiger | Modèle, sous contrôle | Deux à quatre phrases ; un chiffre sans origine ou une prédiction fait basculer sur le texte du code |
+
+Trois garde-fous propres à la conversation :
+
+- **Ce qui est mesuré ne se déclare pas.** Le replay, les fourchettes et le quiz ne peuvent pas être revus dans la conversation. Robert peut relever un plafond qu'il avait déclaré ; son budget de perte, tiré de son comportement observé, ne bouge pas.
+- **Une promesse est vérifiée avant d'être faite.** Avant de dire « il faudrait revoir telle réponse », le code rejoue l'ajout sur le profil modifié.
+- **Le profil d'origine est conservé.** Les réponses mises à jour sont gardées à part, affichées, et s'annulent d'un clic.
+
+À l'oral, la demande passe par Amazon Transcribe et la réponse par Amazon Polly, comme pour l'entretien.
+
+### 3.6 Recherche, comparaison, « Et si… ? » (`analyse.py`)
 
 - **Recherche** par ticker ou par nom, sans accents ni casse. Un actif absent de l'univers reçoit la réponse « absent », jamais une évaluation.
 - **Comparaison** critère par critère. L'**écart décisif** est le premier critère qui diffère, dans l'ordre exclusion, budget de risque, plafond, préférence.
 - **« Et si… ? »** : une réponse est modifiée dans une copie du profil, tout est recalculé, et chaque changement nomme la règle en cause. Le profil enregistré n'est pas touché.
 - **Sensibilité** : horizon d'un cran, seuils du score à ± 5, seuil de tension à 0,7 et 0,9, période sans 2022. Ce n'est ni un intervalle de confiance ni une prévision.
 
-### 3.6 L'univers peut changer
+### 3.7 L'univers peut changer
 
 Le moteur relit l'univers à chaque démarrage (`donnees/actifs.csv`, copie de `data_extended/asset_criteria.csv`). Aucun ticker ni nombre d'actifs n'est écrit dans le code. Pour ajouter un actif : l'ajouter aux données, relancer `python scripts/build_donnees_recommandation.py`, pousser. Un test ajoute un actif, en retire trois, insère une ligne incomplète et retire une colonne requise.
 
@@ -131,7 +154,7 @@ Le moteur relit l'univers à chaque démarrage (`donnees/actifs.csv`, copie de `
 | Composant | Type | Pourquoi il existe | Outils |
 |---|---|---|---|
 | Entretien, classificateur, critique, découvreur, chercheur | Modèles (Haiku 5.5) | Établir le profil à partir de paroles, avec citation exacte | Partie profil |
-| **Conseiller** | Modèle à outils (Sonnet 5.5) | Traduire une demande en langage courant en une suite d'outils, puis résumer | `lire_contraintes`, `construire_portefeuille`, `chercher_actif`, `comparer_actifs`, `evaluer_demande`, `et_si`, `tester_sensibilite` |
+| **Conseiller** | Modèle à outils (Sonnet 5.5) | Comprendre une demande en langage courant, choisir l'outil, résumer | Conversation : `ajouter_au_portefeuille`, `chercher_par_envie`, `retirer_du_portefeuille`, `proposer_mise_a_jour_du_profil`, `confirmer`, `refuser`, `annuler_les_mises_a_jour`, `voir_le_portefeuille`. Résumé : `lire_contraintes`, `construire_portefeuille`, `et_si`, `tester_sensibilite` |
 | **Explicateur** | Modèle à outils (Sonnet 5.5) | Répondre à « pourquoi ? » à partir d'un verdict déjà figé, et refuser ce que les données ne soutiennent pas | `lire_contraintes`, `chercher_actif`, `comparer_actifs`, `evaluer_demande`, `lire_preuve` |
 | Détecteur d'incohérence | Code | Relever une demande contraire au profil avant toute rédaction | — |
 | Vérificateur de fidélité | Code | Empêcher un chiffre inventé d'atteindre l'écran | — |
@@ -147,11 +170,13 @@ Deux agents à modèle seulement pour la recommandation. Le détecteur et le vé
 
 Un texte rejeté est redemandé une fois, puis remplacé par un texte de gabarit écrit par le code à partir des seules sorties d'outils. La mention « simulation » est ajoutée par le code.
 
-**Explications fidèles aux actions observables.** L'écran « Pourquoi ? » montre les outils appelés, leurs entrées, leurs sorties et les preuves. Le raisonnement interne du modèle n'est ni affiché ni journalisé.
+**Explications fidèles aux actions observables.** L'affichage courant est sobre : phrases en clair et sources (donnée, valeur, date, origine). Le réglage « Détails techniques » montre, pour qui veut vérifier, les outils appelés, leurs entrées et sorties, le contrôle de chaque texte et le journal des actions. Le raisonnement interne du modèle n'est ni affiché ni journalisé.
+
+**Pourquoi pas des agents de A à Z ?** Nous l'avons essayé : Sonnet 5.5 a construit seul neuf portefeuilles (trois par persona) à partir du profil et de l'univers complet. Il respecte les contraintes écrites, mais dépasse dans trois cas sur neuf une règle qu'on ne lui avait pas rappelée, estime sa perte de stress à 5,5 points près, ne redonne pas les mêmes poids d'un essai à l'autre et met 14 à 29 secondes. Le compte rendu, régénérable, est dans `docs/experience_modele_seul.md`. D'où le partage retenu : les règles pour ce qui doit être exact, les agents pour comprendre, expliquer et refuser.
 
 ## 5. Exemple : d'une conclusion à la donnée
 
-Robert (59 ans, risque faible à modéré, 3 à 5 ans) demande 20 % de NVIDIA dans son portefeuille fictif.
+Robert (59 ans, risque faible à modéré, 3 à 5 ans) demande 20 % de NVIDIA dans son portefeuille fictif. Dans la conversation, l'outil refuse 20 %, propose 5 %, et n'ajoute rien avant son accord.
 
 | Étape | Action observable | Résultat |
 |---|---|---|
@@ -165,7 +190,7 @@ Robert (59 ans, risque faible à modéré, 3 à 5 ans) demande 20 % de NVIDIA da
 |---|---|---|
 | Part demandée de 20 % au-dessus du plafond par titre de 5 % | `profil:D9` | Réponse du profil (simulée pour le persona) |
 | Placements spéculatifs : 20 % pour une limite de 5 % | `profil:D12`, `actif:NVDA:speculative` | Profil ; volatilité de 51,0 % (≥ 45 %) |
-| Perte de stress de 6,0 % à 18,8 %, budget de 15 % | `calcul:demande:perte_stress_apres` | Prix en CAD, 2021-11-15 au 2026-11-12 |
+| À 20 %, perte de stress de 6,0 % à 18,8 %, budget de 15 % ; à 5 %, de 6,0 % à 8,6 % | `calcul:demande:perte_stress_apres` | Prix en CAD, 2021-11-15 au 2026-11-12 |
 | Actif très médiatisé face à un profil de niveau 2 | `actif:NVDA:kw_attention`, `profil:D8` | Pages vues Wikipédia ; réponse du profil |
 | Part maximale compatible : 5 % | `hypothese:tension`, `profil:D9` | Seuils écrits |
 
@@ -207,7 +232,8 @@ Hypothèses de calcul à connaître : rééquilibrage quotidien ; plafond de 40 
 | Suite | Ce qu'elle vérifie |
 |---|---|
 | `mvp_profil/test_reco_contrat.py` | Chaque ligne de la grille a une règle ; chaque libellé du profil a un pendant côté actif ; états explicites ; univers variable ; données embarquées à jour ; paquet complet |
-| `mvp_profil/test_reco_moteur.py` | Exclusions non compensables, bornes du score, preuves ; portefeuilles des trois personas ; demande de titre ; recherche ; comparaison ; « Et si… ? » ; déterminisme |
+| `mvp_profil/test_reco_moteur.py` | Exclusions non compensables, bornes du score, preuves ; portefeuilles des trois personas ; encaisse et ajouts ; **200 profils aléatoires** ; demande de titre ; recherche ; comparaison ; « Et si… ? » ; déterminisme |
+| `mvp_profil/test_reco_conversation.py` | Part réduite proposée puis appliquée ; exclusions tenues ; alternatives toujours compatibles ; profil mis à jour seulement après accord ; réponses mesurées protégées ; modèle sans pouvoir de décision |
 | `mvp_profil/test_reco_agents.py` | Fidélité des chiffres ; dix justifications sans effet sur le verdict ; ordre de la trace ; gabarits fidèles ; rejets et secours ; gouvernance |
 | `mvp_profil/test_reco_interface.py` | Le site entier dans `app.py` : de la synthèse aux six écrans, pour les trois personas ; recherche ; demande ; sensibilité ; profil jamais modifié |
 | 21 suites du profil et des données | Toujours vertes |
@@ -216,9 +242,9 @@ Hypothèses de calcul à connaître : rééquilibrage quotidien ; plafond de 40 
 python scripts/lancer_tests.py
 ```
 
-Le lanceur découvre aussi les quatre suites de recommandation ; l'intégration continue les exécute avant chaque déploiement.
+Le lanceur découvre aussi les cinq suites de recommandation ; l'intégration continue les exécute avant chaque déploiement.
 
-**Vérifié en réel sur Amazon Bedrock le 15 novembre 2026** : Sonnet 5.5 appelle les outils, reçoit leurs résultats et rédige ; il refuse de prédire un cours et de dire d'acheter, sans inventer de chiffre ni d'identifiant de preuve. Le Guardrail bloque un texte de conseil et laisse passer une explication fidèle.
+**Vérifié en réel sur Amazon Bedrock le 15 novembre 2026** : Sonnet 5.5 appelle les outils, reçoit leurs résultats et rédige ; il refuse de prédire un cours et de dire d'acheter, sans inventer de chiffre ni d'identifiant de preuve. Avec les outils de la conversation, il choisit le bon sur six messages types (ajout avec part, envie, retrait, confirmation, pression « ignore mes limites », question hors sujet) ; un tour complet prend environ 3 secondes. Le Guardrail bloque un texte de conseil et laisse passer une explication fidèle.
 
 **Non vérifié** : le parcours complet avec le modèle réel depuis le serveur déployé (les agents n'ont tourné dans l'application qu'avec un modèle simulé) ; la fiabilité du classement des réponses libres (mesure prête, non lancée) ; l'exactitude des liens de controverses.
 
@@ -261,7 +287,9 @@ Le lanceur découvre aussi les quatre suites de recommandation ; l'intégration 
 - **Biais du survivant.** L'univers a été choisi en 2026.
 - **Personas.** Leurs 42 réponses sont simulées à partir de l'énoncé : elles illustrent le fonctionnement, elles ne décrivent pas de vraies personnes. Pour un profil réel incomplet, une durée de récupération issue d'un réglage par défaut est signalée « à confirmer » et ne bloque pas la construction.
 - **Pondération du score.** Hypothèse d'équipe, non calibrée sur des décisions réelles. Les scores se regroupent sur peu de valeurs.
-- **Portefeuille.** Heuristique explicable, pas une optimisation. Les portefeuilles restent loin du budget de perte (tension de 0,4 à 0,6) : la part de croissance est bornée par la part d'actions indicative du profil.
+- **Portefeuille.** Heuristique explicable, pas une optimisation. Les portefeuilles restent loin du budget de perte (tension de 0,4 à 0,6) : la part de croissance est bornée par la part d'actions indicative du profil. Dans notre expérience, le modèle seul utilisait mieux le budget d'Amira.
+- **Conversation sans modèle.** L'interprète à règles comprend un nom d'actif, une part, une envie simple, oui et non ; il ne comprend pas une phrase complexe.
+- **Mises à jour du profil.** Elles vivent dans les propositions : la synthèse et l'export du profil gardent les réponses d'origine.
 - **FNB.** Seules les dix premières positions et la répartition sectorielle sont connues.
 - **Exclusions et controverses.** Saisies à la main, non exhaustives : « aucune trouvée » ne veut pas dire « aucune ».
 - **Régions.** L'Amérique latine et le Moyen-Orient n'existent pas dans le critère D3 du profil.

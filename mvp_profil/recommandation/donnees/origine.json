@@ -2,7 +2,7 @@
  "sources": {
   "data_extended/asset_criteria.csv": "9a81a89f1256dda1e34aa7e7733b09438897d233a4635cf1cc04bc2829fd46da",
   "config/correspondances.json": "240354fa5e2e2402a035e7bf731ba8e3a4b40b121a8bae849538fc215d431076",
-  "config/hypotheses_recommandation.json": "a9585779f02388eeec4b94e4bbbe99f41abbadc2a6c1b3d6e74837bfecd2509f",
+  "config/hypotheses_recommandation.json": "93276f0c6082e16022d8b7bb975c2d286515c2940c067ef67d3f0381da10f3aa",
   "config/regles_appariement.json": "f7a9e57c37d406d9475f64a8858444d4c0847db3f6c2a88570616ade13b49b6e",
   "config/sources_colonnes.json": "f47504134858af483e1bc1ce3472bd26bd9e1a19023f540b4cbd7024b3a428d4",
   "Datathon2026/alphaforge_starter/prices_daily.csv": "ff2a3f2d0a7d72ea835e8d616d041e0510f018340cef3d3e55b918830e8a569d",

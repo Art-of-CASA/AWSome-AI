@@ -16,6 +16,8 @@ INTERDITS = [
     (r"\b(?:achetez|vendez|n'hésitez pas à acheter)\b", "incitation à agir"),
     (r"\b(?:garanti|garantie|sans risque|sûr de gagner|ne peut pas perdre)\b", "promesse"),
     (r"\b(?:va|vont|devrait|devraient) (?:monter|grimper|doubler|rebondir|surperformer|rapporter)\b", "prédiction de rendement"),
+    (r"\b(?:rapportera|rapporteront|montera|monteront|grimpera|doublera|doubleront|gagnera|gagnerez|progressera|rebondira|surperformera)\b",
+     "prédiction de rendement"),
     (r"\brendement (?:attendu|futur|prévu) de \d", "prédiction de rendement"),
     (r"\b100 ?% explicable\b", "formulation trompeuse (dire « traçable »)"),
 ]

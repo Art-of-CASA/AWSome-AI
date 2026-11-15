@@ -160,35 +160,48 @@ def _choisir(resultats: dict, uni, ctr: dict, hyp: dict) -> dict:
     return {"seuil": seuil, "candidats": len(cands), "croissance": choisis, "amortisseur": choisis_amort}
 
 
-def _poids(part_croissance: float, selection: dict, ctr: dict, uni, hyp: dict) -> tuple[dict, float]:
+def _poids(part_croissance: float, selection: dict, ctr: dict, uni, hyp: dict, imposes: dict | None = None) -> tuple[dict, float]:
+    """Poids pour une part de croissance donnée. Ce qui ne peut être investi sous les plafonds reste en ENCAISSE
+    (non investie, sans risque ni rendement dans les mesures) : c'est dit, jamais caché.
+
+    imposes : {ticker: part} demandés par la personne et déjà jugés compatibles ; leur poids est fixe, le reste
+    du portefeuille se réorganise autour d'eux sous les mêmes plafonds.
+    """
+    imposes = imposes or {}
     mult = hyp["portefeuille"]["multiplicateur_coeur"]
-    crois, amort = selection["croissance"], selection["amortisseur"]
+    crois = [r for r in selection["croissance"] if r["ticker"] not in imposes]
+    amort = [r for r in selection["amortisseur"] if r["ticker"] not in imposes]
+    imp_c = sum(p for t, p in imposes.items() if uni[t]["role"] not in AMORTISSEURS)
+    imp_a = sum(p for t, p in imposes.items() if uni[t]["role"] in AMORTISSEURS)
     brut_c = {r["ticker"]: r["score"] * (mult if r["role"] == "coeur" else 1.0) for r in crois}
     tot = sum(brut_c.values()) or 1.0
-    g = part_croissance if crois else 0.0
-    cible = {t: g * v / tot for t, v in brut_c.items()}
+    g = max(part_croissance, imp_c)
+    cible = {t: max(0.0, g - imp_c) * v / tot for t, v in brut_c.items()}
+    reste_amort = max(0.0, 1.0 - g - imp_a)
     for r in amort:
-        cible[r["ticker"]] = (1 - g) / len(amort)
-    tickers = list(cible)
+        cible[r["ticker"]] = reste_amort / len(amort)
+    cible.update(imposes)
     plafonds = {r["ticker"]: (r["poids_max_pct"] or 0) / 100 for r in crois + amort}
-    w, non_investi = plafonner(cible, plafonds, _groupes_plafonnes(ctr, uni, tickers), [r["ticker"] for r in amort])
+    plafonds.update(imposes)
+    w, encaisse = plafonner(cible, plafonds, _groupes_plafonnes(ctr, uni, list(cible)), [r["ticker"] for r in amort],
+                            fixes=tuple(imposes))
     for pl in ctr["planchers"]:  # part minimale demandée : remontée, le reste réduit en proportion
         dans = [t for t in w if t in pl["actifs"]]
         actuel, vise = sum(w[t] for t in dans), pl["minimum_pct"] / 100
         if dans and actuel < vise - EPS:
-            autres = [t for t in w if t not in dans]
+            autres = [t for t in w if t not in dans and t not in imposes]
             total_autres = sum(w[t] for t in autres)
             ajout = min(vise - actuel, total_autres)
             for t in dans:
                 w[t] += ajout * ((w[t] / actuel) if actuel > EPS else 1 / len(dans))
             for t in autres:
                 w[t] -= ajout * (w[t] / total_autres) if total_autres > EPS else 0.0
-    return {t: x for t, x in w.items() if x > 1e-6}, non_investi
+    return {t: x for t, x in w.items() if x > 1e-6}, encaisse
 
 
 def _etat_tension(ratio: float, hyp: dict) -> str:
     t = hyp["tension"]
-    return "coherent" if ratio < t["coherent_max"] else "a_surveiller" if ratio <= t["a_surveiller_max"] else "en_tension"
+    return "coherent" if ratio <= t["coherent_max"] + 1e-9 else "a_surveiller" if ratio <= t["a_surveiller_max"] + 1e-9 else "en_tension"
 
 
 def controles(poids: dict, ctr: dict, uni, hyp: dict, registre: Registre, st: dict | None = None, **periode) -> dict:
@@ -231,7 +244,7 @@ def controles(poids: dict, ctr: dict, uni, hyp: dict, registre: Registre, st: di
     croissance = round(sum(w for t, w in poids.items() if uni[t]["role"] not in AMORTISSEURS) * 100, 1)
     ctl("Part de la poche de croissance (hors liquidités et obligations)", "A2", croissance, ctr["part_croissance_max_pct"],
         "respectee" if croissance <= ctr["part_croissance_max_pct"] + 0.05 else "a_surveiller",
-        f"Borne haute indicative du niveau {ctr['niveau']} sur 5 (mvp_profil/hypotheses_profil.json) ; repère, pas un plafond dur.")
+        f"Repère indicatif pour un profil de niveau {ctr['niveau']} sur 5, pas un plafond.")
     ctl("Part de cryptoactifs", "D2", expo["crypto_pct"], plaf["crypto_pct"],
         "respectee" if expo["crypto_pct"] <= plaf["crypto_pct"] + 0.05 else "en_conflit")
     if plaf["speculatif_pct"] is not None:
@@ -274,41 +287,92 @@ def controles(poids: dict, ctr: dict, uni, hyp: dict, registre: Registre, st: di
             "stress": st, "expositions": expo}
 
 
+LIMITES = {"stress": "votre budget de perte", "volatilite": "la variation annuelle que vous acceptez",
+           "duree": "la durée de récupération que vous supportez"}
+
+
+def diagnostic_exclusions(resultats: dict, n: int = 5) -> list[dict]:
+    """Quelles réponses écartent le plus d'actifs ? Sert à dire quoi revoir quand presque rien n'est compatible."""
+    compte: dict[tuple, int] = {}
+    for r in resultats.values():
+        for l in r.get("lignes", []):
+            if l["etat"] == "exclu":
+                compte[(l["critere"], l["libelle"])] = compte.get((l["critere"], l["libelle"]), 0) + 1
+    return [{"critere": c, "libelle": lib, "nb_actifs_exclus": k}
+            for (c, lib), k in sorted(compte.items(), key=lambda kv: (-kv[1], kv[0]))[:n]]
+
+
 def construire(ctr: dict, resultats: dict, uni, montant: float | None = None, hyp: dict | None = None,
-               registre: Registre | None = None, **periode) -> dict:
-    """Mini-portefeuille fictif : poids, mesures, tension en % et en dollars, contrôles et preuves."""
+               registre: Registre | None = None, imposes: dict | None = None, **periode) -> dict:
+    """Mini-portefeuille fictif : poids, encaisse, mesures, tension en % et en dollars, contrôles et preuves.
+
+    imposes : {ticker: part en %} ajoutés à la demande de la personne (déjà jugés compatibles par evaluer_demande).
+    """
     hyp = hyp or hypotheses()
     reg = registre if registre is not None else Registre()
     montant = montant or hyp["montant_fictif_defaut_cad"]
+    imposes = {t: p / 100 for t, p in (imposes or {}).items() if t in resultats and resultats[t]["verdict"] not in ("exclu", "absent", "donnees_insuffisantes")}
     sel = _choisir(resultats, uni, ctr, hyp)
-    if not sel["amortisseur"] and not sel["croissance"]:
-        return {"erreur": "Aucun actif n'atteint le seuil de compatibilité : aucun portefeuille n'est proposé.",
-                "seuil_entree": sel["seuil"]}
+    if not sel["amortisseur"] and not sel["croissance"] and not imposes:
+        return {"erreur": "Aucun actif n'atteint le seuil de compatibilité avec ce profil : aucun portefeuille n'est proposé.",
+                "seuil_entree": sel["seuil"], "diagnostic": diagnostic_exclusions(resultats)}
     pas = hyp["portefeuille"]["pas_part_croissance_pct"]
     cible = hyp["tension"]["coherent_max"] * ctr["budget_perte_pct"]
     bloque_duree = not (ctr["duree_par_defaut"] and not hyp["portefeuille"]["duree_sous_eau_par_defaut_bloquante"])
-    meilleur, retenu, essais = None, None, []
-    depart = int(min(100, ctr["part_croissance_max_pct"]) // pas * pas)
-    for g in range(depart, -1, -pas):
-        w, non_investi = _poids(g / 100, sel, ctr, uni, hyp)
-        if not w:
-            continue
+    essais: list[dict] = []
+
+    def juger(w: dict, encaisse: float, libelle: str):
         st = M.stress(w, uni, hyp, **periode)
-        if "erreur" in st:
-            return {"erreur": st["erreur"]}
         m = st["mesures"]
-        ok = (st["perte_stress_pct"] <= cible and
-              (ctr["volatilite_max_pct"] is None or m["volatilite_pct"] <= ctr["volatilite_max_pct"]) and
-              (not bloque_duree or ctr["duree_sous_eau_max_jours"] is None or m["jours_sous_eau"] <= ctr["duree_sous_eau_max_jours"]))
-        essais.append({"part_croissance_pct": g, "perte_stress_pct": st["perte_stress_pct"], "volatilite_pct": m["volatilite_pct"],
-                       "jours_sous_eau": m["jours_sous_eau"], "accepte": ok})
-        if meilleur is None or st["perte_stress_pct"] < meilleur[2]["perte_stress_pct"]:
-            meilleur = (g, w, st, non_investi)
-        if ok:
-            retenu = (g, w, st, non_investi)
+        echecs = [k for k, non in (
+            ("stress", st["perte_stress_pct"] > cible),
+            ("volatilite", ctr["volatilite_max_pct"] is not None and m["volatilite_pct"] > ctr["volatilite_max_pct"]),
+            ("duree", bloque_duree and ctr["duree_sous_eau_max_jours"] is not None and m["jours_sous_eau"] > ctr["duree_sous_eau_max_jours"])) if non]
+        essais.append({"essai": libelle, "encaisse_pct": round(encaisse * 100, 1), "perte_stress_pct": st["perte_stress_pct"],
+                       "volatilite_pct": m["volatilite_pct"], "jours_sous_eau": m["jours_sous_eau"], "accepte": not echecs, "echecs": echecs})
+        return st, echecs
+
+    meilleur = retenu = None
+    depart = int(min(100, ctr["part_croissance_max_pct"]) // pas * pas)
+    # 1. La plus grande part de croissance qui respecte tout, en partant du repère du niveau de risque.
+    for g in range(depart, -1, -pas):
+        w, encaisse = _poids(g / 100, sel, ctr, uni, hyp, imposes)
+        st, echecs = juger(w, encaisse, f"part de croissance de {g} %")
+        if meilleur is None or st["perte_stress_pct"] < meilleur[1]["perte_stress_pct"]:
+            meilleur = (w, st, encaisse)
+        if not echecs:
+            retenu = (w, st, encaisse)
             break
+    # 2. Si même la répartition la plus prudente dépasse une limite : garder une part en encaisse, par pas de 5 points.
+    if retenu is None:
+        w0, _, e0 = meilleur
+        libres = {t: x for t, x in w0.items() if t not in imposes}
+        # Les fonds de liquidités compatibles passent avant l'encaisse : ils restent investis, presque sans variation.
+        liquides = sorted((r for r in resultats.values() if r["role"] == "liquidites" and r["verdict"] == "compatible"
+                           and r["ticker"] not in imposes and r["ticker"] in set(M.ch.prix_cad().columns)),
+                          key=lambda r: (-(r["score"] or 0), uni[r["ticker"]].get("fx_risk") != "aucun", r["ticker"]))[:3]
+        for k in range(100 - pas, -1, -pas):
+            w = {**{t: x * k / 100 for t, x in libres.items() if x * k / 100 > 1e-6 and uni[t]["role"] != "liquidites"}, **imposes}
+            for r in liquides:
+                place = max(0.0, 1.0 - sum(w.values()))
+                w[r["ticker"]] = min(place / max(1, len(liquides) - liquides.index(r)), (r["poids_max_pct"] or 0) / 100)
+            w = {t: x for t, x in w.items() if x > 1e-6}
+            encaisse = max(0.0, 1.0 - sum(w.values()))
+            st, echecs = juger(w, encaisse, f"{100 - k} % du reste en liquidités ou en encaisse")
+            if not echecs:
+                retenu = (w, st, encaisse)
+                break
+        else:
+            meilleur = (w, st, encaisse)   # même le titre demandé seul dépasse une limite : conflit nommé
     conflit_construction = retenu is None
-    g, w, st, non_investi = retenu or meilleur
+    w, st, encaisse = retenu or meilleur
+    rejets = [e for e in essais if not e["accepte"]]
+    if conflit_construction:
+        limite_par = [LIMITES[k] for k in essais[-1]["echecs"]]
+    elif rejets:
+        limite_par = [LIMITES[k] for k in rejets[-1]["echecs"]]
+    else:
+        limite_par = ["la part d'actions indicative de votre niveau de risque"]
     ct = controles(w, ctr, uni, hyp, reg, st, **periode)
     lignes = []
     for t, x in sorted(w.items(), key=lambda kv: (-kv[1], kv[0])):
@@ -316,22 +380,31 @@ def construire(ctr: dict, resultats: dict, uni, montant: float | None = None, hy
         lignes.append({"ticker": t, "nom": a["name"], "role": a["role"], "classe": a["asset_class"],
                        "poche": "amortisseur" if a["role"] in AMORTISSEURS else "croissance",
                        "poids_pct": round(x * 100, 1), "montant_cad": round(x * montant, 2), "score": r["score"],
-                       "poids_max_pct": r["poids_max_pct"],
-                       "pourquoi": "; ".join(l["libelle"] for l in r["lignes"] if l["etat"] == "satisfaite") or
-                                   "cohérent avec le budget de risque et les plafonds",
+                       "poids_max_pct": r["poids_max_pct"], "demande": t in imposes,
+                       "pourquoi": ("ajouté à votre demande ; " if t in imposes else "") +
+                                   ("; ".join(l["libelle"] for l in r["lignes"] if l["etat"] == "satisfaite") or
+                                    "cohérent avec le budget de risque et les plafonds"),
                        "preuves": [reg.actif(a, "stress_loss"), reg.actif(a, "role")]})
-    perte_cad = round(st["perte_stress_pct"] / 100 * montant, 2)
-    budget_cad = round(ctr["budget_perte_pct"] / 100 * montant, 2)
+    part = lambda poche: round(sum(x for t, x in w.items() if (uni[t]["role"] in AMORTISSEURS) == (poche == "amortisseur")) * 100, 1)  # noqa: E731
+    encaisse_pct = round(encaisse * 100, 1)
+    raison_encaisse = None
+    if encaisse_pct >= 0.5:
+        raison_encaisse = ("aucun actif défensif (liquidités, obligations courtes) n'est compatible avec vos réponses"
+                           if not sel["amortisseur"] else
+                           "même la répartition la plus prudente dépassait " + " et ".join(limite_par)
+                           if len(essais) > (depart // pas + 1) else "vos plafonds par titre et par fonds laissent une part sans emploi")
     return {
         "nature": "Mini-portefeuille FICTIF, simulation éducative : aucun ordre, aucun conseil financier personnalisé.",
         "montant_fictif_cad": montant, "lignes": lignes, "nb_positions": len(lignes),
-        "part_croissance_pct": round(sum(l["poids_pct"] for l in lignes if l["poche"] == "croissance"), 1),
-        "part_amortisseur_pct": round(sum(l["poids_pct"] for l in lignes if l["poche"] == "amortisseur"), 1),
-        "non_investi_pct": round(non_investi * 100, 1),
+        "part_croissance_pct": part("croissance"), "part_amortisseur_pct": part("amortisseur"),
+        "encaisse_pct": encaisse_pct, "encaisse_cad": round(encaisse * montant, 2), "raison_encaisse": raison_encaisse,
+        "non_investi_pct": encaisse_pct,
+        "limite_par": limite_par, "repere_part_croissance_pct": ctr["part_croissance_max_pct"],
+        "ajouts": {t: round(p * 100, 1) for t, p in imposes.items()},
         "seuil_entree": sel["seuil"], "seuil_entree_demande": hyp["portefeuille"]["seuil_entree"], "nb_candidats": sel["candidats"],
         "mesures": st["mesures"], "stress": {k: v for k, v in st.items() if k != "mesures"},
-        "budget_perte_pct": ctr["budget_perte_pct"], "budget_perte_cad": budget_cad,
-        "perte_stress_pct": st["perte_stress_pct"], "perte_stress_cad": perte_cad,
+        "budget_perte_pct": ctr["budget_perte_pct"], "budget_perte_cad": round(ctr["budget_perte_pct"] / 100 * montant, 2),
+        "perte_stress_pct": st["perte_stress_pct"], "perte_stress_cad": round(st["perte_stress_pct"] / 100 * montant, 2),
         "ratio_tension": ct["ratio_tension"], "etat_tension": ct["etat_tension"],
         "controles": ct["lignes"], "conflits": ct["conflits"], "a_confirmer": ct["a_confirmer"],
         "conflit_construction": conflit_construction,

@@ -19,6 +19,7 @@ FICHIERS = (
     "recommandation/analyse.py", "recommandation/preuves.py", "recommandation/fidelite.py",
     "recommandation/gouvernance.py", "recommandation/incoherence.py", "recommandation/traces.py",
     "recommandation/outils.py", "recommandation/gabarits.py", "recommandation/agents.py", "recommandation/ecrans.py",
+    "recommandation/conversation.py",
     "recommandation/donnees/actifs.csv", "recommandation/donnees/prix_cad.csv", "recommandation/donnees/fnb.json",
     "recommandation/donnees/correspondances.json", "recommandation/donnees/hypotheses_recommandation.json",
     "recommandation/donnees/regles_appariement.json", "recommandation/donnees/sources_colonnes.json",

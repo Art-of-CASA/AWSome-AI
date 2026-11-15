@@ -15,7 +15,7 @@ Un investisseur dit ce qu'il accepte de perdre. Ce qu'il fait quand la baisse ar
 | Contraintes | Code | Exclusions, plafonds, budget de perte : le plus prudent du déclaré et du vécu |
 | Appariement | Code | Verdict et score de 0 à 100 pour chacun des 111 actifs, avec ses preuves |
 | Portefeuille | Code | Mini-portefeuille fictif ; tension calculée sur le portefeuille et le montant |
-| Dialogue | Agents Conseiller et Explicateur (Sonnet 5.5) | Ils appellent des outils, expliquent, et refusent ce que les données ne soutiennent pas |
+| Conversation | Agents Conseiller et Explicateur (Sonnet 5.5) | À l'écrit ou à la voix : « j'aimerais du Nvidia ». L'agent comprend et appelle un outil ; le code ajoute, réduit la part, ou refuse avec des alternatives |
 
 **Le code décide ; les modèles orchestrent et expliquent.**
 
@@ -25,6 +25,7 @@ Un investisseur dit ce qu'il accepte de perdre. Ce qu'il fait quand la baisse ar
 - **Aucun chiffre inventé** : un vérificateur rejette tout texte dont un nombre n'existe pas dans une sortie d'outil.
 - **Une exclusion ne se rachète pas** : aucune préférence ne compense une exclusion ou une tension.
 - **L'inconnu reste visible** : une question sans réponse n'est jamais comblée par une valeur inventée.
+- **Des règles, pas un oracle** : nous avons fait construire neuf portefeuilles par le modèle seul. Plausibles, mais différents d'un essai à l'autre et avec un risque estimé à 5,5 points près. Les règles décident ; les agents comprennent et expliquent.
 
 ## Deux situations contrastées, même titre
 | | Amira, 26 ans, risque élevé, 15 ans et plus | Robert, 59 ans, risque faible à modéré, 3 à 5 ans |
@@ -32,7 +33,8 @@ Un investisseur dit ce qu'il accepte de perdre. Ce qu'il fait quand la baisse ar
 | Budget de perte | 45 % | 15 % |
 | NVIDIA, fiche d'actif | Compatible, score 88, plafonné à 10 % | À examiner, score 66, plafonné à 5 % |
 | Demande de 20 % | En tension : plafond par titre de 10 % | En tension : la perte de stress passerait de 6,0 % à 18,8 % |
-| Demande de 5 % | Cohérent avec le profil | À surveiller : compatible avec les plafonds, sans acquiescement |
+| Demande de 5 % | Ajouté, cohérent avec le profil | Ajouté, à surveiller : compatible avec les plafonds, sans acquiescement |
+| Bitcoin | Accepté, plafonné à 10 % | Exclu. L'outil nomme les deux réponses qu'il devrait revoir lui-même, et n'y touche pas sans son accord |
 
 Mateo, 41 ans, attentif à l'ESG : les 8 actifs à controverse grave, les 21 actifs spéculatifs, le tabac et l'armement sont exclus, avec la source de chaque controverse. NVIDIA est exclu pour lui.
 

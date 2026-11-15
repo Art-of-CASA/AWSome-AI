@@ -6,7 +6,7 @@
 
 Le flux `.github/workflows/deploy.yml` fait tout à chaque fusion dans `main` qui touche `mvp_profil/` ou `config/` :
 
-1. il lance toutes les suites (`python scripts/lancer_tests.py`), dont les quatre suites `test_reco_*` ;
+1. il lance toutes les suites (`python scripts/lancer_tests.py`), dont les cinq suites `test_reco_*` ;
 2. il construit le paquet vérifié (`python scripts/preparer_mvp.py`) : les fichiers de recommandation et leurs données sont dans l'inventaire `version_profil.FICHIERS` ;
 3. il installe le paquet sur l'instance, vérifie la page d'accueil et revient en arrière en cas d'échec.
 
@@ -50,9 +50,10 @@ Les identifiants des ressources se lisent dans l'onglet « Sorties » de la pile
 
 ## 5. À vérifier après le premier déploiement
 
-1. « Charger Robert » → « Découvrir mes propositions » → « Demande d'un titre » : la ligne « Rédigé par » doit indiquer le modèle, pas « gabarit ».
-2. « Pourquoi ? » → « Journal des actions » : le stockage doit indiquer Amazon DynamoDB.
-3. Un parcours vocal complet, puis l'ouverture des propositions : le composant vocal n'est pas monté sur ces écrans.
+1. Activer « Réglages de la simulation » → « Détails techniques ». « Charger Robert » → « Découvrir mes propositions » → « Parler au conseiller » → « J'aimerais 20 % de Nvidia » : la ligne « Rédigé par » doit indiquer le modèle, pas « code ».
+2. « Comprendre » : la ligne du journal doit indiquer Amazon DynamoDB.
+3. Dans « Parler au conseiller », enregistrer une demande à la voix et activer « Réponses lues à voix haute » : Transcribe et Polly doivent répondre (le site doit être en HTTPS pour le micro).
+4. Un parcours vocal complet du profil, puis l'ouverture des propositions : le composant vocal du profil n'est pas monté sur ces écrans.
 
 ## 6. Accès du jury
 
@@ -66,5 +67,5 @@ Le site reste filtré par adresse IP (fonction CloudFront et groupe de sécurit�
 | Niveau | Quand | Quoi |
 |---|---|---|
 | 1 | Micro ou réseau instable | Personas en un clic, sans voix |
-| 2 | Bedrock indisponible | « Réglages de la simulation » → couper la rédaction par le modèle : tout fonctionne, textes de gabarit |
+| 2 | Bedrock indisponible | « Réglages de la simulation » → couper « Explications rédigées par le modèle » : tout fonctionne, y compris la conversation pour les demandes simples |
 | 3 | Site inaccessible | Lancement local (`streamlit run mvp_profil/app.py`) ou vidéo préenregistrée |

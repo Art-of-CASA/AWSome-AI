@@ -73,6 +73,8 @@
  },
  "_stress": "Perte de stress = la pire de : perte maximale historique du portefeuille (2021-2026), perte de 2022, choc de taux (+2 points, appliqué aux FNB obligataires par leur sensibilité mesurée). Le krach des actions (-45 %, ordre de grandeur d'une crise majeure) est un SCÉNARIO FICTIF affiché en sensibilité seulement.",
 
+ "conversation": {"part_par_defaut_pct": 5, "nb_alternatives": 3},
+ "_conversation": "Quand la personne demande d'ajouter un actif sans donner de part, la part essayée est de 5 % (ou le poids maximal compatible s'il est plus bas). Trois alternatives au plus sont proposées.",
  "montant_fictif_defaut_cad": 10000,
  "montant_par_G1_cad": {"moins_5000": 2500, "5000_25000": 15000, "25000_100000": 50000, "plus_100000": 150000},
  "_montant": "Montant fictif pour exprimer la tension en dollars. Si la personne a indiqué une tranche de montant (G1), un montant repère de la tranche est proposé ; sinon 10 000 $. Toujours modifiable à l'écran.",

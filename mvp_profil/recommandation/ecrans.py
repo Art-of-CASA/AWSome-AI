@@ -1,7 +1,11 @@
 """Écrans des propositions (Streamlit), dans la charte de mvp_profil/design.css. Aucune décision ici.
 
-Quatrième étape du parcours : mini-portefeuille, recherche et fiche d'actif, comparaison, demande d'un titre,
-« Et si… ? », « Pourquoi ? ». Tout vient de recommandation/analyse.py ; le profil de la session est LU, jamais modifié.
+Quatrième étape du parcours : mon portefeuille, parler au conseiller, chercher un actif, comparer, « Et si… ? », comprendre.
+Tout vient de recommandation/analyse.py et recommandation/conversation.py. Le profil de la session est LU, jamais
+modifié : les réponses que la personne met à jour pendant la conversation sont gardées à part et s'annulent d'un clic.
+
+Affichage sobre par défaut : phrases en clair, pas d'identifiant ni de journal. « Détails techniques » (réglages) montre,
+pour qui veut vérifier, les outils appelés, les contrôles de chaque texte et le journal des actions.
 """
 from __future__ import annotations
 
@@ -12,63 +16,108 @@ from html import escape
 import pandas as pd
 import streamlit as st
 
-from . import agents, gouvernance
-from .analyse import MENTION, Analyse
+from . import agents, conversation as K, gouvernance
+from .analyse import MENTION, SECTEURS_FR, Analyse
 from .appariement import pct
 from .traces import Journal
 
 from criteres import CRITERES  # noqa: E402  (profil, lecture seule)
 
 S = st.session_state
-# Repères sobres, lisibles dans un tableau comme dans un texte (pas de couleur seule pour porter le sens).
-ICONES = {"exclu": "✕", "compatible": "✓", "a_examiner": "◐", "peu_adapte": "!", "donnees_insuffisantes": "?", "absent": "?",
-          "coherent": "✓", "a_surveiller": "◐", "en_tension": "✕", "satisfaite": "✓", "neutre": "–", "contraire": "!",
-          "information": "i", "respectee": "✓", "en_conflit": "✕", "a_confirmer": "?", "sans_limite": "–", "sans_objet": "–"}
-ETATS = {"coherent": "cohérent", "a_surveiller": "à surveiller", "en_tension": "en tension", "satisfaite": "préférence satisfaite",
-         "neutre": "neutre", "contraire": "contraire à une préférence", "information": "information", "exclu": "exclu",
-         "respectee": "respectée", "en_conflit": "en conflit", "a_confirmer": "à confirmer", "sans_limite": "sans limite chiffrée",
-         "sans_objet": "sans objet"}
-EFFETS = {"DURE": "Exclusion", "CALIBRAGE": "Budget de risque", "PLAFOND": "Plafond", "PREFERENCE": "Préférence", "INFORMATION": "Information"}
+ETATS = {"coherent": "cohérent", "a_surveiller": "à surveiller", "en_tension": "en tension", "satisfaite": "correspond à vos préférences",
+         "neutre": "neutre", "contraire": "à l'opposé d'une préférence", "information": "à savoir", "exclu": "exclu",
+         "respectee": "respectée", "en_conflit": "dépassée", "a_confirmer": "à confirmer", "sans_limite": "sans limite chiffrée",
+         "sans_objet": "sans objet", "compatible": "compatible", "a_examiner": "à examiner", "peu_adapte": "peu adapté",
+         "donnees_insuffisantes": "données insuffisantes", "absent": "absent de l'univers"}
+TON = {"compatible": "ok", "coherent": "ok", "respectee": "ok", "satisfaite": "ok", "a_examiner": "attention", "a_surveiller": "attention",
+       "a_confirmer": "attention", "contraire": "attention", "peu_adapte": "non", "en_tension": "non", "exclu": "non", "en_conflit": "non"}
+EFFETS = {"DURE": "Exclusion", "CALIBRAGE": "Risque", "PLAFOND": "Limite", "PREFERENCE": "Préférence", "INFORMATION": "À savoir"}
+POCHES = {"croissance": "Croissance", "amortisseur": "Stabilité"}
+VERTS = ["#1c4b3c", "#28624f", "#3f7d5c", "#557b47", "#6f9460", "#8bab7a", "#a6bf96", "#bfd1b1", "#d3e0c8", "#e2ead9"]
+OCRES = ["#b07a22", "#c99a45", "#dcb96f", "#e9d29c"]
+DEMANDE, ENCAISSE = "#b4553f", "#d5d9cf"
 STYLE = """<style>
-.af-reco-verdict { display: inline-flex; align-items: center; gap: 8px; padding: 5px 11px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid var(--af-border); background: #fff; }
-.af-reco-verdict i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-.af-reco-ok i { background: var(--af-valide); } .af-reco-attention i { background: var(--af-confirmer); }
-.af-reco-non i { background: var(--af-preciser); } .af-reco-neutre i { background: var(--af-analyse); }
-.af-reco-phrase { font-family: Georgia, 'Times New Roman', serif; font-size: 19px; line-height: 1.5; margin: 6px 0 14px; color: var(--af-ink); }
-.st-key-reco_nav [data-testid="stBaseButton-segmented_control"], .st-key-reco_nav [data-testid="stBaseButton-segmented_controlActive"] { font-size: 13px; padding: 8px 14px; }
-.st-key-reco_nav { margin: 6px 0 18px; }
-[class*="st-key-reco_carte_"] { background: #fff; border: 1px solid var(--af-border) !important; border-radius: 14px; padding: 20px !important; }
+.af-pill { display: inline-flex; align-items: center; gap: 7px; padding: 4px 11px; border-radius: 999px; font-size: 11.5px; font-weight: 600; border: 1px solid var(--af-border); background: #fff; color: var(--af-ink); white-space: nowrap; }
+.af-pill i { width: 7px; height: 7px; border-radius: 50%; display: inline-block; background: var(--af-analyse); }
+.af-pill.ok i { background: var(--af-valide); } .af-pill.attention i { background: var(--af-confirmer); } .af-pill.non i { background: var(--af-preciser); }
+.af-lede { font-family: Georgia, 'Times New Roman', serif; font-size: 19px; line-height: 1.5; margin: 4px 0 16px; color: var(--af-ink); }
+.af-note { color: var(--af-muted); font-size: 12.5px; line-height: 1.7; margin: 6px 0 14px; }
+.st-key-reco_nav { margin: 8px 0 20px; }
+.af-table { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border: 1px solid var(--af-border); border-radius: 14px; overflow: hidden; font-size: 13px; margin: 6px 0 14px; }
+.af-table th { text-align: left; font-size: 9.5px; letter-spacing: 1.2px; text-transform: uppercase; font-weight: 650; color: #6f806f; padding: 12px 16px; background: #f3f6ee; border-bottom: 1px solid var(--af-border); }
+.af-table td { padding: 12px 16px; border-bottom: 1px solid #edf1e8; vertical-align: top; line-height: 1.55; color: var(--af-ink); }
+.af-table tr:last-child td { border-bottom: 0; }
+.af-table td.n, .af-table th.n { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.af-table td small { display: block; color: var(--af-muted); font-size: 11.5px; margin-top: 2px; }
+.af-table td b { font-weight: 600; }
+.af-pos { display: grid; grid-template-columns: 12px 1fr 86px 58px; align-items: center; gap: 12px; padding: 10px 2px; border-bottom: 1px solid #edf1e8; }
+.af-pos:last-child { border-bottom: 0; }
+.af-pos .dot { width: 11px; height: 11px; border-radius: 3px; }
+.af-pos .nom b { font-size: 13px; font-weight: 600; } .af-pos .nom small { display: block; font-size: 11px; color: var(--af-muted); margin-top: 1px; }
+.af-pos .bar { height: 6px; background: #edf1e8; border-radius: 4px; overflow: hidden; } .af-pos .bar span { display: block; height: 100%; border-radius: 4px; }
+.af-pos .pct { text-align: right; font-family: Georgia, serif; font-size: 16px; }
+.af-card { background: #fff; border: 1px solid var(--af-border); border-radius: 14px; padding: 18px 20px; margin: 6px 0 14px; }
+.af-card h4 { margin: 0 0 8px; font-size: 14px; font-weight: 650; letter-spacing: -.2px; }
+.af-card ul { margin: 0; padding-left: 18px; } .af-card li { font-size: 13px; line-height: 1.6; margin-bottom: 4px; }
+.af-check { display: grid; grid-template-columns: 22px 1fr auto; gap: 10px; align-items: baseline; padding: 9px 2px; border-bottom: 1px solid #edf1e8; font-size: 13px; }
+.af-check:last-child { border-bottom: 0; } .af-check small { color: var(--af-muted); display: block; font-size: 11.5px; }
+.af-check .v { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--af-muted); font-size: 12.5px; }
+.af-mark { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%; font-size: 10px; font-weight: 700; color: #fff; background: var(--af-analyse); }
+.af-mark.ok { background: var(--af-valide); } .af-mark.attention { background: var(--af-confirmer); } .af-mark.non { background: var(--af-preciser); }
+.af-score { font-family: Georgia, serif; font-size: 44px; line-height: 1; } .af-score small { font-family: system-ui, sans-serif; font-size: 13px; color: var(--af-muted); }
+.af-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 12px; }
+.af-chip { padding: 5px 11px; border-radius: 999px; background: #edf2e8; color: #33543f; font-size: 11.5px; font-weight: 600; }
+.af-chip.demande { background: #f6e6e1; color: #8a3d2c; }
+.st-key-reco_chat [data-testid="stChatMessage"] { padding: 14px 16px; margin-bottom: 8px; }
+.st-key-reco_chat [data-testid="stChatMessage"] p { font-size: 14px; line-height: 1.65; }
+.st-key-reco_attente { background: #fff; border: 1px solid var(--af-border) !important; border-left: 4px solid var(--af-confirmer) !important; border-radius: 12px; padding: 14px 16px !important; }
 </style>"""
-TON = {"compatible": "ok", "coherent": "ok", "a_examiner": "attention", "a_surveiller": "attention", "peu_adapte": "non",
-       "en_tension": "non", "exclu": "non", "absent": "neutre", "donnees_insuffisantes": "neutre"}
 
 
-def _df(lignes, **kw) -> pd.DataFrame:
-    """Tableau affichable : une colonne qui mêle textes, nombres et valeurs absentes devient du texte (« — » si absent)."""
-    df = pd.DataFrame(lignes, **kw)
-    for col in df.columns:
-        if df[col].dtype == object:
-            df[col] = df[col].map(lambda v: "—" if v is None or (isinstance(v, float) and v != v) else str(v))
-    return df
+class Html(str):
+    """Cellule de tableau déjà en HTML (pastille) ; tout le reste est échappé."""
 
 
-def _nom_critere(code: str) -> str:
-    """Nom lisible du critère pour les libellés affichés à la personne."""
-    return CRITERES.get(code, {}).get("nom", code)
+def pastille(code: str, libelle: str | None = None) -> Html:
+    return Html(f'<span class="af-pill {TON.get(code, "")}"><i></i>{escape(libelle or ETATS.get(code, code))}</span>')
 
 
-def _etat(code: str) -> str:
-    return f"{ICONES.get(code, '')} {ETATS.get(code, code)}".strip()
+def marque(code: str) -> str:
+    ton = TON.get(code, "")
+    return f'<span class="af-mark {ton}">{"✓" if ton == "ok" else "!" if ton == "attention" else "✕" if ton == "non" else "i"}</span>'
 
 
-def pastille(code: str, libelle: str) -> str:
-    """Verdict en pastille : la couleur double le texte, elle ne le remplace pas."""
-    return f'<span class="af-reco-verdict af-reco-{TON.get(code, "neutre")}"><i></i>{escape(libelle)}</span>'
+def _cellule(x) -> str:
+    if isinstance(x, Html):
+        return x
+    if isinstance(x, tuple):   # (principal, détail)
+        return f"<b>{escape(str(x[0]))}</b><small>{escape(str(x[1]))}</small>"
+    return "—" if x is None or x == "" else escape(str(x))
+
+
+def tableau(colonnes: list[str], lignes: list[list], nombres: tuple[int, ...] = ()):
+    """Tableau dans la charte du site (pas de grille technique). nombres : indices des colonnes alignées à droite."""
+    cls = lambda i: ' class="n"' if i in nombres else ""  # noqa: E731
+    corps = "".join("<tr>" + "".join(f"<td{cls(i)}>{_cellule(c)}</td>" for i, c in enumerate(l)) + "</tr>" for l in lignes)
+    st.html('<table class="af-table"><thead><tr>' + "".join(f"<th{cls(i)}>{escape(c)}</th>" for i, c in enumerate(colonnes))
+            + f"</tr></thead><tbody>{corps}</tbody></table>")
 
 
 def titre(sur_titre: str, texte: str, detail: str = ""):
     st.html(f'<div class="af-section-intro"><div class="af-eyebrow"><span></span> {escape(sur_titre)}</div>'
             f'<h2>{escape(texte)}</h2>' + (f'<p>{escape(detail)}</p>' if detail else "") + '</div>')
+
+
+def carte(titre_: str, lignes: list[str], vide: str = "Rien à signaler."):
+    st.html(f'<div class="af-card"><h4>{escape(titre_)}</h4><ul>' + "".join(f"<li>{escape(x)}</li>" for x in (lignes or [vide])) + "</ul></div>")
+
+
+def dollars(x: float) -> str:
+    return f"{x:,.0f} $".replace(",", " ")
+
+
+def technique() -> bool:
+    return bool(S.get("reco_technique", False))
 
 
 def journal() -> Journal:
@@ -94,273 +143,388 @@ def modele():
     return S.reco_modele
 
 
-def analyse_courante() -> Analyse:
-    """Analyse du profil de la session, recalculée seulement si le profil, les critères personnels ou le montant changent."""
-    profil, dynamiques = S.profil, list(S.get("dynamiques") or [])
+def etat_conversation() -> dict:
+    if "reco_conv" not in S or S.get("reco_conv_profil") != _empreinte(S.profil):
+        S.reco_conv = K.etat_initial()             # nouveau profil : nouvelle conversation, aucun ajout repris
+        S.reco_conv_profil = _empreinte(S.profil)
+    return S.reco_conv
+
+
+def _empreinte(x) -> str:
+    return hashlib.sha256(json.dumps(x, sort_keys=True, default=str, ensure_ascii=False).encode()).hexdigest()
+
+
+def contexte() -> K.Contexte:
     nom = (S.get("persona") or {}).get("nom") or "Votre profil"
-    cle = hashlib.sha256(json.dumps([profil, dynamiques, S.get("reco_montant")], sort_keys=True, default=str,
-                                    ensure_ascii=False).encode()).hexdigest()
+    return K.Contexte(S.profil, list(S.get("dynamiques") or []), etat_conversation(), S.get("reco_montant"), nom, journal())
+
+
+def analyse_courante() -> Analyse:
+    """Analyse du profil de la session (avec les mises à jour confirmées et les ajouts), recalculée seulement s'ils changent."""
+    etat = etat_conversation()
+    cle = _empreinte([S.profil, list(S.get("dynamiques") or []), S.get("reco_montant"), etat["maj"], etat["ajouts"]])
     if S.get("reco_cle") != cle:
-        S.reco_analyse = Analyse(profil, dynamiques, montant=S.get("reco_montant"), nom=nom)
+        S.reco_analyse = contexte().analyse
         S.reco_cle = cle
-        noter("analyse_calculee", profil=nom, nb_actifs=len(S.reco_analyse.uni), decompte=S.reco_analyse.synthese()["decompte"])
+        noter("analyse_calculee", nb_actifs=len(S.reco_analyse.uni), decompte=S.reco_analyse.synthese()["decompte"],
+              ajouts=dict(etat["ajouts"]), reponses_mises_a_jour=sorted(etat["maj"]))
     return S.reco_analyse
 
 
-def tableau_preuves(preuves: list[dict], intitule: str = "Preuves (colonne, valeur, date, source)"):
-    if not preuves:
-        return
-    with st.expander(f"{intitule} — {len(preuves)}"):
-        lignes = []
-        for p in preuves:
-            if p["type"] == "actif":
-                lignes.append({"identifiant": p["id"], "nature": p["nature"], "valeur": p["valeur"] if p["valeur"] is not None else "donnée manquante",
-                               "date": p["date"], "source": p["source"], "fichier": p["fichier"], "conditions": p["conditions"]})
-            elif p["type"] == "profil":
-                lignes.append({"identifiant": p["id"], "nature": p["nature"], "valeur": p["valeur"] or "non renseigné", "date": "",
-                               "source": p["source"] or "", "fichier": f"« {p['citation']} »" if p.get("citation") else "", "conditions": ""})
-            elif p["type"] == "hypothese":
-                lignes.append({"identifiant": p["id"], "nature": p["nature"], "valeur": json.dumps(p["valeur"], ensure_ascii=False),
-                               "date": "", "source": p.get("explication") or "", "fichier": p["fichier"], "conditions": ""})
-            else:
-                lignes.append({"identifiant": p["id"], "nature": p["nature"], "valeur": p["valeur"], "date": p.get("periode") or "",
-                               "source": p["methode"], "fichier": "", "conditions": ""})
-        st.dataframe(_df(lignes).astype(str), hide_index=True, width="stretch")
-
-
 def afficher_reponse(rep: dict):
-    """Texte d'un agent, avec ses contrôles visibles."""
+    """Texte d'un agent. Les contrôles et les outils ne s'affichent qu'en « détails techniques »."""
     st.markdown(rep["texte"])
+    if not technique():
+        return
     f, g = rep["fidelite"], rep["gouvernance"]
-    st.caption(f"Rédigé par : {rep['source']}"
-               + (f" — motif : {rep['motif_secours']}" if rep.get("motif_secours") else "")
-               + f" · Fidélité : {f['nombres_verifies']} chiffre(s) retrouvé(s) dans les sorties d'outils, "
-               + ("aucun sans origine" if f["fidele"] else f"sans origine : {', '.join(f['sans_origine'])}")
-               + f" · Gouvernance : {'conforme' if g['conforme'] else 'non conforme'}")
+    st.caption(f"Rédigé par : {rep['source']}" + (f" — {rep['motif_secours']}" if rep.get("motif_secours") else "")
+               + f" · {f['nombres_verifies']} chiffre(s) retrouvé(s) dans les sorties d'outils"
+               + ("" if f["fidele"] else f" ; sans origine : {', '.join(f['sans_origine'])}")
+               + f" · formulations : {'conformes' if g['conforme'] else 'non conformes'}")
     with st.expander(f"Outils appelés ({len(rep['appels'])})"):
         for ap in rep["appels"]:
-            st.markdown(f"**{ap['outil']}** — entrée : `{json.dumps(ap['entree'], ensure_ascii=False)}`"
-                        + (" · calculé par le code avant la rédaction" if ap.get("par") == "code" else ""))
+            st.markdown(f"**{ap['outil']}** — `{json.dumps(ap['entree'], ensure_ascii=False)}`")
             st.json(ap["sortie"], expanded=False)
 
 
-def tableau_criteres(lignes: list[dict]):
-    df = _df([{"critère": _nom_critere(l["critere"]), "type": EFFETS[l["effet"]], "état": _etat(l["etat"]), "ce qui est vérifié": l["libelle"],
-                        "constat": l["raison"], "poids": l["poids"] or None, "preuves": ", ".join(l["preuves"])} for l in lignes])
-    st.dataframe(df, hide_index=True, width="stretch")
-
-
-# ---------- Écran 1 : mini-portefeuille ----------
-def page_portefeuille(a: Analyse):
-    s = a.synthese()
-    titre("SIMULATION · AUCUN ORDRE", "Votre mini-portefeuille fictif",
-          "Construit sous vos plafonds. Le risque se juge sur le portefeuille entier et sur le montant, pas actif par actif.")
-    pf = a.portefeuille
-    garde = gouvernance.controler_portefeuille(pf)
-    if not garde["affichable"]:
-        st.error(garde["motif"])
+def sources(preuves: list[dict], intitule: str = "D'où viennent ces chiffres"):
+    """Sources en clair : la donnée, sa valeur, sa date, son origine. Les identifiants internes restent en détails techniques."""
+    if not preuves:
         return
+    with st.expander(intitule):
+        lignes = []
+        for p in preuves:
+            ident = [p["id"]] if technique() else []
+            if p["type"] == "actif":
+                lignes.append([(p["ticker"], p["colonne"].replace("_", " ")), p["valeur"] if p["valeur"] is not None else "donnée manquante",
+                               p["date"], p["source"]] + ident)
+            elif p["type"] == "profil":
+                lignes.append([("Votre profil", CRITERES.get(p["critere"], {}).get("nom", p["critere"])), p["valeur"] or "non renseigné", "",
+                               f"« {p['citation']} »" if p.get("citation") else (p["source"] or "")] + ident)
+            elif p["type"] == "hypothese":
+                lignes.append([("Hypothèse de l'équipe", p["cle"].replace("_", " ")), "ajustable", "", p.get("explication") or ""] + ident)
+            else:
+                lignes.append([("Calcul", p["id"].split(":")[-1].replace("_", " ")), p["valeur"], p.get("periode") or "", p["methode"]] + ident)
+        tableau(["Donnée", "Valeur", "Date ou période", "Source"] + (["Identifiant"] if technique() else []), lignes)
+        st.caption("Prix et fondamentaux : Yahoo Finance, sous ses conditions d'utilisation. Change : Banque du Canada. "
+                   "Controverses et exclusions : recherche manuelle, non exhaustive.")
+
+
+# ---------- Camembert et liste des positions ----------
+def couleurs(pf: dict) -> dict[str, str]:
+    c, iv, io = {}, 0, 0
+    for l in pf["lignes"]:
+        if l.get("demande"):
+            c[l["ticker"]] = DEMANDE
+        elif l["poche"] == "amortisseur":
+            c[l["ticker"]] = OCRES[io % len(OCRES)]
+            io += 1
+        else:
+            c[l["ticker"]] = VERTS[iv % len(VERTS)]
+            iv += 1
+    return c
+
+
+def camembert(pf: dict, hauteur: int = 320):
+    import altair as alt
+
+    teintes = couleurs(pf)
+    lignes = [{"position": l["ticker"], "nom": l["nom"], "poids": l["poids_pct"], "poche": POCHES[l["poche"]], "ordre": i}
+              for i, l in enumerate(pf["lignes"])]
+    if pf["encaisse_pct"] >= 0.5:
+        lignes.append({"position": "Encaisse", "nom": "Non investie", "poids": pf["encaisse_pct"], "poche": "Encaisse", "ordre": len(lignes)})
+        teintes["Encaisse"] = ENCAISSE
+    df = pd.DataFrame(lignes)
+    rayon = hauteur / 2 - 14
+    arcs = alt.Chart(df).mark_arc(innerRadius=rayon * 0.62, outerRadius=rayon, cornerRadius=5, padAngle=0.014).encode(
+        theta=alt.Theta("poids:Q", stack=True), order=alt.Order("ordre:Q"),
+        color=alt.Color("position:N", scale=alt.Scale(domain=list(df["position"]), range=[teintes[p] for p in df["position"]]), legend=None),
+        tooltip=[alt.Tooltip("position:N", title="Position"), alt.Tooltip("nom:N", title="Nom"),
+                 alt.Tooltip("poche:N", title="Rôle"), alt.Tooltip("poids:Q", title="Poids (%)", format=".1f")])
+    centre = pd.DataFrame({"x": [0]})
+    grand = alt.Chart(centre).mark_text(text=pct(pf["perte_stress_pct"]), font="Georgia", fontSize=30, color="#193d36", dy=-6)
+    petit = alt.Chart(centre).mark_text(text="perte de stress", fontSize=11, color="#66746e", dy=18)
+    st.altair_chart((arcs + grand + petit).properties(height=hauteur).configure_view(strokeWidth=0)
+                    .configure(background="transparent"), width="stretch")
+
+
+def liste_positions(pf: dict, compact: bool = False):
+    teintes = couleurs(pf)
+    maxi = max([l["poids_pct"] for l in pf["lignes"]] + [pf["encaisse_pct"], 1])
+    lignes = []
+    for l in pf["lignes"]:
+        detail = POCHES[l["poche"]] + (" · ajouté à votre demande" if l.get("demande") else "") + ("" if compact else f" · {dollars(l['montant_cad'])}")
+        lignes.append(f'<div class="af-pos"><span class="dot" style="background:{teintes[l["ticker"]]}"></span>'
+                      f'<div class="nom"><b>{escape(l["nom"])}</b><small>{escape(l["ticker"])} · {escape(detail)}</small></div>'
+                      f'<div class="bar"><span style="width:{l["poids_pct"] / maxi * 100:.0f}%;background:{teintes[l["ticker"]]}"></span></div>'
+                      f'<div class="pct">{pct(l["poids_pct"])}</div></div>')
+    if pf["encaisse_pct"] >= 0.5:
+        lignes.append(f'<div class="af-pos"><span class="dot" style="background:{ENCAISSE}"></span><div class="nom"><b>Encaisse</b>'
+                      f'<small>Non investie{"" if compact else " · " + dollars(pf["encaisse_cad"])}</small></div>'
+                      f'<div class="bar"><span style="width:{pf["encaisse_pct"] / maxi * 100:.0f}%;background:{ENCAISSE}"></span></div>'
+                      f'<div class="pct">{pct(pf["encaisse_pct"])}</div></div>')
+    st.html('<div class="af-card" style="padding:8px 18px">' + "".join(lignes) + "</div>")
+
+
+def puces_ajustements(etat: dict, a: Analyse):
+    """Ce que la personne a changé pendant la conversation, toujours visible et annulable."""
+    if not etat["ajouts"] and not etat["maj"]:
+        return
+    puces = [f'<span class="af-chip demande">Ajouté à votre demande · {escape(a.uni[t]["name"])} {pct(p, 0)}</span>' for t, p in etat["ajouts"].items()]
+    puces += [f'<span class="af-chip">Réponse mise à jour · {escape(m["nom"])} : {escape(m["apres_libelle"])}</span>' for m in etat["maj"].values()]
+    st.html('<div class="af-chips">' + "".join(puces) + "</div>")
+    if st.button("Revenir à mon portefeuille et à mon profil d'origine", key="reco_reinit"):
+        S.reco_conv = K.etat_initial()
+        st.rerun()
+
+
+def portefeuille_absent(pf: dict):
+    st.warning(pf["erreur"])
+    if pf.get("diagnostic"):
+        st.markdown("**Les réponses qui écartent le plus d'actifs**")
+        tableau(["Réponse du profil", "Actifs écartés"], [[K.humaniser(d["libelle"]), d["nb_actifs_exclus"]] for d in pf["diagnostic"]], nombres=(1,))
+        st.caption("Dans « Parler au conseiller », nommez un actif qui vous intéresse : l'outil vous dira quelle réponse revoir.")
+
+
+# ---------- Écran 1 : mon portefeuille ----------
+def page_portefeuille(a: Analyse):
+    titre("SIMULATION · AUCUN ORDRE", "Votre mini-portefeuille fictif",
+          "Construit sous vos limites. Le risque se juge sur le portefeuille entier, pas actif par actif.")
+    pf = a.portefeuille
+    if "erreur" in pf:
+        portefeuille_absent(pf)
+        return
+    if not gouvernance.controler_portefeuille(pf)["affichable"]:
+        st.error("Un contrôle interne a bloqué l'affichage de ce portefeuille.")
+        return
+    puces_ajustements(etat_conversation(), a)
     c = st.columns(4)
-    c[0].metric("Perte de stress", pct(pf["perte_stress_pct"]), help="La pire de : perte maximale historique, perte de 2022, choc de taux déclaré.")
-    c[1].metric("En dollars", f"{pf['perte_stress_cad']:,.0f} $".replace(",", " "), help=f"Sur un montant fictif de {pf['montant_fictif_cad']:,.0f} $".replace(",", " "))
-    c[2].metric("Tension", f"{pf['ratio_tension']:.2f}", help="Perte de stress ÷ budget de perte. Moins de 0,8 : cohérent ; 0,8 à 1 : à surveiller ; plus de 1 : en tension.")
-    c[3].metric("État", _etat(pf["etat_tension"]))
+    c[0].metric("Perte de stress", pct(pf["perte_stress_pct"]), help="Le pire de ce que ce portefeuille aurait perdu : plus forte baisse de 2021 à 2026, année 2022, ou hausse brutale des taux.")
+    c[1].metric("Votre budget de perte", pct(pf["budget_perte_pct"], 0), help="Ce que vous pouvez, voulez et supportez de perdre : le plus prudent des trois.")
+    c[2].metric("En dollars", dollars(pf["perte_stress_cad"]), help=f"Sur un montant fictif de {dollars(pf['montant_fictif_cad'])}.")
+    c[3].metric("Cohérence", ETATS[pf["etat_tension"]].capitalize(), help="Perte de stress comparée à votre budget de perte.")
+    g, d = st.columns([1, 1.25], gap="large")
+    with g:
+        camembert(pf)
+    with d:
+        liste_positions(pf)
+    limite = " et ".join(pf["limite_par"])
+    st.html(f'<p class="af-note">La part de croissance est de {pct(pf["part_croissance_pct"], 0)}. Ce qui la limite : <b>{escape(limite)}</b>.'
+            + (f' {pct(pf["encaisse_pct"], 0)} restent en encaisse, non investis : {escape(pf["raison_encaisse"])}.' if pf["raison_encaisse"] else "")
+            + (f' Trop peu d\'actifs atteignaient {pf["seuil_entree_demande"]} sur 100 : le seuil d\'entrée a été abaissé à {pf["seuil_entree"]}.'
+               if pf["seuil_entree"] < pf["seuil_entree_demande"] else "") + "</p>")
     if pf["message_conflit"]:
         st.warning(pf["message_conflit"] + " " + " ; ".join(pf["conflits"]))
     if pf["a_confirmer"]:
-        st.info("À confirmer avec la personne : " + " ; ".join(pf["a_confirmer"]) + ".")
-    if pf["seuil_entree"] < pf["seuil_entree_demande"]:
-        st.info(f"Trop peu d'actifs atteignent {pf['seuil_entree_demande']} : le seuil d'entrée a été abaissé à {pf['seuil_entree']}.")
-    st.subheader("Composition")
-    df = _df([{"actif": l["ticker"], "nom": l["nom"], "poche": l["poche"], "rôle": l["role"], "poids": l["poids_pct"],
-                        "montant ($)": l["montant_cad"], "score": l["score"], "poids max. compatible": l["poids_max_pct"],
-                        "pourquoi": l["pourquoi"]} for l in pf["lignes"]])
-    g, d = st.columns([3, 2])
-    g.dataframe(df, hide_index=True, width="stretch",
-                column_config={"poids": st.column_config.ProgressColumn("poids (%)", min_value=0, max_value=40, format="%.1f")})
-    d.bar_chart(df.set_index("actif")["poids"], horizontal=True, height=380)
-    st.caption(f"Entrée dans le portefeuille : score d'au moins {pf['seuil_entree']} ({pf['nb_candidats']} candidats), "
-               f"{pf['hypotheses']['positions maximales']} positions au plus. Hypothèses ajustables : config/hypotheses_recommandation.json.")
-    st.subheader("Chaque contrainte, avec sa preuve")
-    st.dataframe(_df([{"contrainte": x["contrainte"], "critère": _nom_critere(x["critere"]), "valeur": x["valeur"],
-                                "limite": x["limite"] if x["limite"] is not None else "—", "état": _etat(x["etat"]),
-                                "détail": x["detail"], "preuves": ", ".join(x["preuves"])} for x in pf["controles"]]).astype(str),
-                 hide_index=True, width="stretch")
-    tableau_preuves(pf["preuves"])
-    g, d = st.columns(2)
+        st.info("À confirmer avec vous : " + " ; ".join(pf["a_confirmer"]) + ".")
+    g, d = st.columns(2, gap="large")
     with g:
-        st.subheader("Mesures (faits passés)")
-        m = pf["mesures"]
-        st.dataframe(_df([
-            ("Volatilité annualisée", pct(m["volatilite_pct"])), ("Perte maximale", pct(m["perte_max_pct"])),
-            ("Du sommet au creux", f"{m['date_sommet']} → {m['date_creux']}"),
-            ("Jours sous l'eau", f"{m['jours_sous_eau']}" + ("" if m["recupere"] else " (non récupéré)")),
-            ("Rendement de 2022", pct(m["rendement_2022_pct"])), ("Pire mois", pct(m["pire_mois_pct"])),
-            ("Période", m["periode"])], columns=["mesure", "valeur"]), hide_index=True, width="stretch")
-        st.caption("Fait : calculé sur les prix en CAD, portefeuille rééquilibré chaque jour (hypothèse de calcul).")
+        st.markdown("**Vos limites, une à une**")
+        st.html('<div class="af-card" style="padding:6px 18px">' + "".join(
+            f'<div class="af-check">{marque(x["etat"])}<div>{escape(x["contrainte"])}'
+            + (f'<small>{escape(K.humaniser(x["detail"]))}</small>' if x["detail"] and x["etat"] != "respectee" else "") + "</div>"
+            f'<span class="v">{escape(str(x["valeur"]).replace(".", ","))}' + ("" if x["limite"] is None else f' / {escape(str(x["limite"]))}') + "</span></div>"
+            for x in pf["controles"]) + "</div>")
     with d:
-        st.subheader("Stress : faits et scénario fictif")
-        st_ = pf["stress"]
-        st.dataframe(_df([
-            ("Fait", "Perte maximale historique", pct(st_["composantes_pct"]["perte_max_historique"])),
-            ("Fait", "Perte de l'année 2022", pct(st_["composantes_pct"]["annee_2022"])),
-            ("Hypothèse", f"Choc de taux de +{st_['choc_taux_points']:g} points (FNB obligataires)", pct(st_["composantes_pct"]["choc_taux"])),
-            ("Scénario fictif", "Krach des actions (non retenu dans la tension)", pct(st_["scenario_fictif_krach_pct"]))],
-            columns=["nature", "élément", "perte"]), hide_index=True, width="stretch")
-        st.caption("La fenêtre 2021-2026 ne contient qu'une crise (2022) : la perte historique sous-estime le risque d'un portefeuille "
-                   "riche en actions. Le scénario fictif le rappelle.")
-    with st.expander("Expositions à travers les FNB"):
-        e = pf["expositions"]
-        g, d = st.columns(2)
-        g.dataframe(_df(list(e["secteurs_pct"].items()), columns=["secteur", "exposition (%)"]), hide_index=True, width="stretch")
-        d.dataframe(_df(list(e["titres_pct"].items())[:12], columns=["titre (direct + via FNB)", "exposition (%)"]), hide_index=True, width="stretch")
-        st.caption(e["limite"])
+        st.markdown("**Ce que ce portefeuille aurait vécu**")
+        m, s_ = pf["mesures"], pf["stress"]
+        tableau(["Mesure", "Valeur"], [
+            ["Variation annuelle typique", pct(m["volatilite_pct"])], ["Plus forte baisse, 2021 à 2026", pct(m["perte_max_pct"])],
+            ["Année 2022", pct(m["rendement_2022_pct"])], ["Jours pour revenir au sommet", str(m["jours_sous_eau"]) + ("" if m["recupere"] else " (pas encore revenu)")],
+            ["Hausse des taux de 2 points", pct(s_["composantes_pct"]["choc_taux"])],
+            [("Krach des actions", "scénario fictif, hors du calcul"), pct(s_["scenario_fictif_krach_pct"])]], nombres=(1,))
+        st.caption("Faits passés, pas une prévision. Cinq ans de données ne contiennent qu'une crise : le scénario fictif rappelle qu'une baisse plus forte est possible.")
+    sources(pf["preuves"])
     with st.expander("Ce que l'outil ne sait pas sur ce profil"):
         for b in gouvernance.bilan(a, pf):
             st.markdown(f"- **{b['controle']}** : {b['detail']}")
-        if s["inconnus"]:
-            st.dataframe(_df([{**x, "critere": _nom_critere(x["critere"])} for x in s["inconnus"]]).rename(columns={"critere": "critère", "etat": "état"}), hide_index=True, width="stretch")
-    st.subheader("Résumé du Conseiller")
-    if st.button("Rédiger le résumé", key="btn_resume"):
-        with st.spinner("Le Conseiller appelle ses outils…"):
-            S.reco_resume = agents.dialoguer("conseiller", "Présente ce mini-portefeuille fictif : ce qu'il respecte, ce qui limite, "
-                                             "et ce qu'il faudrait confirmer avec la personne.", a, journal(), modele())
-            S.reco_resume_cle = S.reco_cle
-    if S.get("reco_resume") and S.get("reco_resume_cle") == S.reco_cle:
-        afficher_reponse(S.reco_resume)
+    if st.button("Lire le résumé du conseiller", key="btn_resume"):
+        with st.spinner("Le conseiller relit le portefeuille…"):
+            S.reco_resume = (S.reco_cle, agents.dialoguer(
+                "conseiller", "Présente ce mini-portefeuille fictif en clair : ce qu'il respecte, ce qui limite, ce qu'il faudrait confirmer.",
+                a, journal(), modele()))
+    if S.get("reco_resume") and S.reco_resume[0] == S.reco_cle:
+        with st.container(border=True, key="reco_carte_resume"):
+            afficher_reponse(S.reco_resume[1])
 
 
-# ---------- Écran 2 : recherche et fiche d'actif ----------
+# ---------- Écran 2 : parler au conseiller ----------
+def _envoyer(texte: str):
+    with st.spinner("Le conseiller vérifie votre demande…"):
+        m = K.tour(contexte(), texte, modele())
+    if S.get("reco_voix"):
+        try:
+            from entretien import synthese_vocale
+            m["audio"] = synthese_vocale(m["texte"][:900])
+        except Exception:
+            m["audio"] = None
+    st.rerun()
+
+
+def page_conversation(a: Analyse):
+    titre("ÉCRIVEZ OU PARLEZ", "Ajuster votre portefeuille avec le conseiller",
+          "Dites ce que vous aimeriez ajouter. Si c'est cohérent avec votre profil, le portefeuille s'ajuste ; sinon, vous verrez ce qui s'en rapproche.")
+    etat = etat_conversation()
+    g, d = st.columns([1.35, 1], gap="large")
+    with g, st.container(key="reco_chat"):
+        for i, m in enumerate(etat["messages"]):
+            with st.chat_message("assistant" if m["role"] == "assistant" else "user",
+                                 avatar=":material/eco:" if m["role"] == "assistant" else ":material/person:"):
+                st.markdown(m["texte"])
+                if m.get("audio") and i == len(etat["messages"]) - 1:
+                    st.audio(m["audio"], format="audio/mp3", autoplay=True)
+                    m["audio"] = None      # lu une seule fois
+                dernier = i == len(etat["messages"]) - 1
+                for alt_ in (m.get("cartes") or {}).get("alternatives", []) if dernier else []:
+                    if st.button(f"Ajouter {alt_['nom']}", key=f"reco_alt_{i}_{alt_['ticker']}", help=f"{alt_['lien']} · au plus {pct(alt_['poids_max_pct'], 0)}"):
+                        _envoyer(f"Ajoutez {alt_['ticker']}")
+                if technique() and m.get("appels") is not None:
+                    st.caption(f"Rédigé par : {m['source']} · chiffres vérifiés : {m['fidelite']['nombres_verifies']}"
+                               + ("" if m["fidelite"]["fidele"] else f" · sans origine : {', '.join(m['fidelite']['sans_origine'])}"))
+                    with st.expander(f"Outils appelés ({len(m['appels'])})"):
+                        for ap in m["appels"]:
+                            st.markdown(f"**{ap['outil']}** — `{json.dumps(ap['entree'], ensure_ascii=False)}`")
+                            st.json(ap["sortie"], expanded=False)
+        att = etat.get("en_attente")
+        if att:
+            with st.container(border=True, key="reco_attente"):
+                st.markdown(f"**{att['question']}**")
+                if att["type"] == "maj":
+                    for ch_ in att["changements"]:
+                        st.caption(f"{ch_['nom']} : {ch_['avant_libelle']} → {ch_['apres_libelle']}")
+                    st.caption("Votre profil d'origine est conservé : cette mise à jour s'annule d'un clic.")
+                o, n, _ = st.columns([1, 1, 2])
+                if o.button("Oui", type="primary", key="reco_oui", width="stretch"):
+                    _envoyer("Oui")
+                if n.button("Non", key="reco_non", width="stretch"):
+                    _envoyer("Non")
+        texte = st.chat_input("Par exemple : « J'aimerais un peu de Nvidia » ou « plus d'or »", key="reco_saisie")
+        if texte and texte.strip():
+            _envoyer(texte.strip())
+        vocal, lecture = st.columns([2, 1], vertical_alignment="bottom")
+        if S.get("reco_voix_possible", True):
+            n = S.get("reco_audio_n", 0)
+            son = vocal.audio_input("Ou dites-le à voix haute", key=f"reco_audio_{n}")
+            lecture.toggle("Réponses lues à voix haute", key="reco_voix")
+            if son is not None:
+                S.reco_audio_n = n + 1
+                try:
+                    from entretien import transcrire
+                    dit = transcrire(son.getvalue()).strip()
+                except Exception:
+                    dit, S.reco_voix_possible = "", False
+                    st.warning("La transcription vocale est indisponible pour le moment : écrivez votre demande.")
+                if dit:
+                    _envoyer(dit)
+    with d:
+        pf = a.portefeuille
+        if "erreur" in pf:
+            portefeuille_absent(pf)
+        else:
+            st.markdown("**Votre portefeuille, en direct**")
+            camembert(pf, hauteur=240)
+            st.caption(f"Perte de stress {pct(pf['perte_stress_pct'])} pour un budget de {pct(pf['budget_perte_pct'], 0)} · {ETATS[pf['etat_tension']]}")
+            liste_positions(pf, compact=True)
+        puces_ajustements(etat, a)
+    st.caption("Le conseiller comprend votre demande et rédige ; les règles du profil décident de ce qui entre dans le portefeuille. "
+               "Une réponse de votre profil n'est mise à jour qu'avec votre accord.")
+
+
+# ---------- Écran 3 : chercher un actif ----------
 def page_recherche(a: Analyse):
-    s = a.synthese()
     titre("UN ACTIF, UN VERDICT", "Chercher un actif", "Un score, un seuil, et ce qui l'explique pour votre profil.")
-    st.caption(f"Seuils (hypothèses ajustables) : {a.hyp['bandes_score']['compatible']} et plus « compatible » ; "
-               f"{a.hyp['bandes_score']['a_examiner']} à {a.hyp['bandes_score']['compatible'] - 1} « à examiner » ; en dessous « peu adapté ». "
-               "Une exclusion donne « exclu », quel que soit le score.")
-    texte = st.text_input("Ticker ou nom", key="reco_requete", placeholder="NVDA, Shopify, XBB, bitcoin…")
+    seuils = a.hyp["bandes_score"]
+    texte = st.text_input("Nom ou symbole", key="reco_requete", placeholder="Nvidia, Shopify, XBB, bitcoin…")
     if not texte:
-        d = s["decompte"]
-        st.markdown(f"Pour ce profil : **{d['compatible']}** compatibles, **{d['a_examiner']}** à examiner, **{d['peu_adapte']}** peu adaptés, "
-                    f"**{d['exclu']}** exclus, **{d['donnees_insuffisantes']}** sans données suffisantes.")
-        filtre = st.selectbox("Voir", ["compatible", "a_examiner", "peu_adapte", "exclu"], format_func=lambda v: f"{ICONES[v]} {v.replace('_', ' ')}")
-        st.dataframe(_df([{"actif": r["ticker"], "nom": r["nom"], "verdict": r["libelle_verdict"], "score": r["score"],
-                                    "poids max. (%)": r["poids_max_pct"], "critère décisif": r["critere_decisif"]}
-                                   for r in a.classement(filtre, n=len(a.uni))]), hide_index=True, width="stretch")
+        d = a.synthese()["decompte"]
+        st.html(f'<p class="af-note">Pour votre profil : <b>{d["compatible"]}</b> actifs compatibles ({seuils["compatible"]} sur 100 et plus), '
+                f'<b>{d["a_examiner"]}</b> à examiner ({seuils["a_examiner"]} à {seuils["compatible"] - 1}), <b>{d["peu_adapte"]}</b> peu adaptés, '
+                f'<b>{d["exclu"]}</b> exclus. Ces seuils sont des hypothèses ajustables.</p>')
+        filtre = st.segmented_control("Voir", ["compatible", "a_examiner", "peu_adapte", "exclu"], default="compatible",
+                                      format_func=lambda v: ETATS[v].capitalize(), key="reco_filtre", label_visibility="collapsed") or "compatible"
+        lignes = [[(r["nom"], r["ticker"]), pastille(r["verdict"], r["libelle_verdict"]), "—" if r["score"] is None else r["score"],
+                   pct(r["poids_max_pct"], 0) if r["poids_max_pct"] else "—"] for r in a.classement(filtre, n=len(a.uni))]
+        tableau(["Actif", "Verdict", "Score", "Part maximale"], lignes, nombres=(2, 3)) if lignes else st.caption("Aucun actif dans cette catégorie.")
         return
     f = a.rechercher(texte)
     noter("recherche", requete=texte, ticker=f.get("ticker"), verdict=f["verdict"], score=f.get("score"))
     if f["verdict"] == "absent":
         st.warning(f["message"])
         if f["suggestions"]:
-            st.markdown("Actifs proches dans l'univers : " + ", ".join(f"**{x['ticker']}** ({x['nom']})" for x in f["suggestions"]))
+            st.markdown("Actifs proches dans l'univers : " + ", ".join(f"**{x['nom']}**" for x in f["suggestions"]))
         return
-    st.subheader(f"{f['ticker']} — {f['nom']}")
-    st.html(pastille(f["verdict"], f["libelle_verdict"]))
-    e = f["explication"]
-    c = st.columns(4)
-    c[0].metric("Verdict", f"{ICONES[f['verdict']]} {f['libelle_verdict']}")
-    c[1].metric("Score", "—" if f["score"] is None else f"{f['score']} / 100")
-    c[2].metric("Poids max. compatible", pct(f.get("poids_max_pct"), 0))
-    c[3].metric("Critères évalués", "—" if f.get("couverture_pct") is None else pct(f["couverture_pct"], 0))
-    st.markdown(f"**{e['titre']}.** {e['resume']}")
-    g, d = st.columns(2)
+    e, faits = f["explication"], f["faits"]
+    g, d = st.columns([1, 2.2], gap="large")
     with g:
-        st.markdown("**Ce qui soutient la compatibilité**")
-        for x in e.get("soutient") or ["Rien à ce stade."]:
-            st.markdown(f"- {x}")
+        st.html(f'<div class="af-card"><div class="af-eyebrow">{escape(f["ticker"])}</div><h3 style="margin:8px 0 12px">{escape(f["nom"])}</h3>'
+                + pastille(f["verdict"], f["libelle_verdict"])
+                + (f'<div class="af-score" style="margin-top:16px">{f["score"]}<small> / 100</small></div>' if f["score"] is not None else "")
+                + (f'<p class="af-note" style="margin:10px 0 0">Au plus {pct(f["poids_max_pct"], 0)} du portefeuille.</p>' if f.get("poids_max_pct") else "")
+                + "</div>")
+        if f["verdict"] not in ("exclu", "donnees_insuffisantes") and st.button("Ajouter à mon portefeuille", type="primary", key="reco_ajout_fiche", width="stretch"):
+            K.tour(contexte(), f"Ajoutez {f['ticker']}", modele())
+            S.reco_ecran_demande = "Parler au conseiller"
+            st.rerun()
     with d:
-        st.markdown("**Ce qui pose problème ou retient**")
-        for x in e.get("retient") or ["Rien à signaler."]:
-            st.markdown(f"- {x}")
-    for x in e.get("a_savoir") or []:
-        st.caption("À savoir : " + x)
-    if e.get("donnees_manquantes"):
-        st.info("Données manquantes pour cet actif (non remplacées) : " + ", ".join(e["donnees_manquantes"]))
-    st.subheader("Fiche de l'actif")
+        st.html(f'<p class="af-lede">{escape(e["resume"])}</p>')
+        c1, c2 = st.columns(2)
+        with c1:
+            carte("Ce qui va dans le sens de votre profil", [K.humaniser(x) for x in e.get("soutient") or []], "Rien de particulier.")
+        with c2:
+            carte("Ce qui pose problème ou retient", [K.humaniser(x) for x in e.get("retient") or []], "Rien à signaler.")
+        for x in e.get("a_savoir") or []:
+            st.caption("À savoir : " + K.humaniser(x))
+        if e.get("donnees_manquantes"):
+            st.info("Certaines données manquent pour cet actif ; elles ne sont pas remplacées.")
+    with st.expander("La fiche de l'actif"):
+        nomme = {"secteur": SECTEURS_FR.get(faits["secteur"], faits["secteur"]), "pays": faits["pays"], "devise": faits["devise"],
+                 "variation annuelle typique": pct(faits["volatilite_pct"]), "plus forte baisse": pct(faits["perte_max_pct"]),
+                 "année 2022": pct(faits["rendement_2022_pct"]), "controverse connue": faits["controverse"],
+                 "sujet": faits["sujet_controverse"], "énergies fossiles": faits["fossile"], "période observée": faits["periode"]}
+        tableau(["Fait (donnée datée)", "Valeur"], [[k.capitalize(), v] for k, v in nomme.items() if v not in (None, "")])
     if f.get("lignes"):
-        tableau_criteres(f["lignes"])
-    faits = f["faits"]
-    st.dataframe(_df([(k.replace("_", " "), "donnée manquante" if v is None else v) for k, v in faits.items()],
-                              columns=["fait (donnée datée)", "valeur"]), hide_index=True, width="stretch")
-    tableau_preuves(f.get("preuves", []))
-    if st.button("Demander à l'Explicateur", key="btn_expl"):
-        with st.spinner("L'Explicateur relit le verdict et ses preuves…"):
+        with st.expander("Chaque critère, un par un"):
+            tableau(["Type", "Ce qui est vérifié", "Résultat", "Constat"] + (["Critère"] if technique() else []),
+                    [[EFFETS[l["effet"]], l["libelle"], pastille(l["etat"]), K.humaniser(l["raison"])] + ([l["critere"]] if technique() else [])
+                     for l in f["lignes"]])
+    sources(f.get("preuves", []))
+    if st.button("Demander une explication au conseiller", key="btn_expl"):
+        with st.spinner("Le conseiller relit le verdict…"):
             S.reco_expl = (f["ticker"], S.reco_cle, agents.dialoguer(
-                "explicateur", f"Explique le verdict de {f['ticker']} pour ce profil : pourquoi c'est adapté ou moins adapté, avec les preuves.",
+                "explicateur", f"Explique en clair le verdict de {f['ticker']} pour ce profil : pourquoi c'est adapté ou moins adapté.",
                 a, journal(), modele()))
     if S.get("reco_expl") and S.reco_expl[:2] == (f["ticker"], S.reco_cle):
-        afficher_reponse(S.reco_expl[2])
+        with st.container(border=True, key="reco_carte_expl"):
+            afficher_reponse(S.reco_expl[2])
 
 
-# ---------- Écran 3 : comparaison ----------
+# ---------- Écran 4 : comparer ----------
 def page_comparaison(a: Analyse):
     titre("CRITÈRE PAR CRITÈRE", "Comparer deux actifs", "L'écart décisif est le premier critère qui les sépare pour votre profil.")
     tickers = a.uni.tickers()
-    libelle = lambda t: f"{t} — {a.uni[t]['name']}"  # noqa: E731
+    libelle = lambda t: f"{a.uni[t]['name']} ({t})"  # noqa: E731
     g, d = st.columns(2)
     ta = g.selectbox("Premier actif", tickers, format_func=libelle, index=tickers.index("NVDA") if "NVDA" in tickers else 0, key="reco_cmp_a")
     tb = d.selectbox("Second actif", tickers, format_func=libelle, index=tickers.index("XBB.TO") if "XBB.TO" in tickers else min(1, len(tickers) - 1), key="reco_cmp_b")
     c = a.comparer(ta, tb)
     noter("comparaison", a=ta, b=tb, ecart=c["ecart_decisif"].get("critere"))
     for col, r in ((g, c["a"]), (d, c["b"])):
-        col.metric(r["ticker"], f"{ICONES[r['verdict']]} {r['libelle_verdict']}", None if r["score"] is None else f"score {r['score']}", delta_color="off")
+        col.html(f'<div class="af-card"><h4>{escape(a.uni[r["ticker"]]["name"])}</h4>{pastille(r["verdict"], r["libelle_verdict"])}'
+                 + (f'<div class="af-score" style="margin-top:14px;font-size:34px">{r["score"]}<small> / 100</small></div>' if r["score"] is not None else "") + "</div>")
     e = c["ecart_decisif"]
     if e.get("critere"):
-        st.success(f"**Écart décisif : {e['libelle']} ({EFFETS[e['effet']].lower()})**, en faveur de **{e['en_faveur_de']}**.\n\n{e['raison']}")
+        gagnant = a.uni[e["en_faveur_de"]]["name"]
+        st.success(f"**Ce qui les départage : {e['libelle'].lower()}**, en faveur de **{gagnant}**.\n\n{K.humaniser(e['raison'])}")
     else:
         st.info(e["raison"])
-    st.caption(c["regle"])
-    st.dataframe(_df([{"critère": x["critere"], "type": EFFETS[x["effet"]], "vérifié": x["libelle"],
-                                ta: _etat(x["etat_a"]), tb: _etat(x["etat_b"]), "diffère": "●" if x["different"] else "",
-                                f"constat {ta}": x["raison_a"], f"constat {tb}": x["raison_b"]} for x in c["tableau"]]),
-                 hide_index=True, width="stretch")
-    st.dataframe(_df([{"fait (donnée datée)": k.replace("_", " "), ta: c["faits_a"][k], tb: c["faits_b"][k]} for k in c["faits_a"]]).astype(str),
-                 hide_index=True, width="stretch")
-    tableau_preuves(c["preuves"])
-
-
-# ---------- Écran 4 : demande d'un titre (cas Robert) ----------
-def page_demande(a: Analyse):
-    titre("UNE ENVIE PRÉCISE ?", "Demander l'ajout d'un titre", "L'outil répond oui, oui mais, ou non — avec ses raisons.")
-    st.caption("Le verdict est calculé et figé **avant** que la justification soit lue. La justification ne peut pas le changer : "
-               "seule une réponse du profil le peut (écran « Et si… ? »).")
-    tickers = a.uni.tickers()
-    with st.form("form_demande"):
-        g, d = st.columns([2, 1])
-        tk = g.selectbox("Titre", tickers, format_func=lambda t: f"{t} — {a.uni[t]['name']}", index=tickers.index("NVDA") if "NVDA" in tickers else 0)
-        part = d.slider("Part du portefeuille demandée (%)", 1, 50, 20)
-        justification = st.text_area("Pourquoi ce titre ? (facultatif, lu après le verdict)", placeholder="Tout le monde en parle…")
-        envoye = st.form_submit_button("Évaluer la demande")
-    if envoye:
-        with st.spinner("Verdict figé, puis explication…"):
-            S.reco_demande = (S.reco_cle, agents.traiter_demande(a, tk, part, justification, journal(), modele()))
-    if not S.get("reco_demande") or S.reco_demande[0] != S.reco_cle:
-        return
-    r = S.reco_demande[1]
-    v, inc = r["verdict"], r["incoherence"]
-    couleur = {"en_tension": st.error, "exclu": st.error, "a_surveiller": st.warning, "coherent": st.success}.get(v["verdict"], st.info)
-    couleur(f"**{ICONES.get(v['verdict'], '')} {v['libelle_verdict']}** — {v['ticker']} pour {pct(v['part_demandee_pct'], 0)} du portefeuille "
-            f"({v['montant_demande_cad']:,.0f} $).".replace(",", " "))
-    st.caption(f"Verdict figé le {v['fige_le']} · empreinte {v['empreinte']} · revérifié après la rédaction : "
-               f"{'inchangé' if r['verdict_inchange'] else 'MODIFIÉ (anomalie)'}")
-    if v.get("perte_stress_apres_pct") is not None:
-        c = st.columns(4)
-        c[0].metric("Perte de stress avant", pct(v["perte_stress_avant_pct"]))
-        c[1].metric("Après l'ajout", pct(v["perte_stress_apres_pct"]), f"{v['perte_stress_apres_pct'] - v['perte_stress_avant_pct']:+.1f} pt", delta_color="inverse")
-        c[2].metric("Budget de perte", pct(v["budget_perte_pct"], 0))
-        c[3].metric("Part maximale compatible", pct(v["part_max_compatible_pct"], 0))
-    st.subheader("Pourquoi")
-    for x in v["raisons"]:
-        st.markdown(f"- {ICONES.get(x['etat'], '')} **{x['critere']}** — {x['texte']}")
-    if inc["tensions"]:
-        st.subheader("Demande et profil : ce qui ne va pas ensemble")
-        st.markdown("Incohérence relevée par le code." if inc["incoherent"] else "Points d'attention, sans incohérence franche.")
-        for p in inc["pistes"]:
-            st.markdown(f"- {p}")
-    st.subheader("Réponse de l'Explicateur")
-    afficher_reponse(r["reponse"])
-    tableau_preuves(v.get("preuves", []))
-    st.caption("Ordre des actions enregistrées : " + " → ".join(r["ordre"]))
+    tableau(["Type", "Ce qui est vérifié", a.uni[ta]["name"], a.uni[tb]["name"]],
+            [[EFFETS[x["effet"]], x["libelle"], pastille(x["etat_a"]), pastille(x["etat_b"])] for x in c["tableau"]])
+    with st.expander("Les faits, côte à côte"):
+        noms = {"secteur": "Secteur", "pays": "Pays", "volatilite_pct": "Variation annuelle typique (%)", "perte_max_pct": "Plus forte baisse (%)",
+                "rendement_2022_pct": "Année 2022 (%)", "controverse": "Controverse connue", "fossile": "Énergies fossiles", "acces": "Accès depuis le Canada"}
+        tableau(["Fait", a.uni[ta]["name"], a.uni[tb]["name"]],
+                [[n, str(c["faits_a"][k]).replace("_", " "), str(c["faits_b"][k]).replace("_", " ")] for k, n in noms.items()])
+    sources(c["preuves"])
 
 
 # ---------- Écran 5 : « Et si… ? » ----------
@@ -368,162 +532,143 @@ MODIFIABLES = ("A2", "A4", "A5", "B1", "B5", "B6", "B7", "D2", "D9", "D12", "D7"
 
 
 def page_et_si(a: Analyse):
-    titre("REPRENDRE UNE RÉPONSE", "Et si… ?", "Changez une réponse : tout est recalculé, et chaque changement est expliqué.")
-    st.caption("Scénario fictif : la réponse est modifiée dans une copie, tout est recalculé, et le profil enregistré ne change pas.")
     import synthese
+    titre("REPRENDRE UNE RÉPONSE", "Et si… ?", "Changez une réponse pour voir : tout est recalculé, et chaque changement est expliqué. Rien n'est enregistré.")
     g, d = st.columns(2)
-    cid = g.selectbox("Réponse à modifier", MODIFIABLES, format_func=lambda c: CRITERES[c]["nom"], key="reco_si_cid")
+    cid = g.selectbox("Réponse à essayer autrement", MODIFIABLES, format_func=lambda c: CRITERES[c]["nom"], key="reco_si_cid")
     actuelle = (a.profil.get(cid) or {}).get("valeurs") or []
     valeur = d.selectbox("Nouvelle valeur", CRITERES[cid]["valeurs"], format_func=lambda v: synthese.libelle_valeur(cid, v), key=f"reco_si_val_{cid}")
-    st.markdown("Réponse actuelle : " + (", ".join(f"**{synthese.libelle_valeur(cid, v)}**" for v in actuelle) or "**non renseignée**"))
+    st.caption("Votre réponse actuelle : " + (", ".join(synthese.libelle_valeur(cid, v) for v in actuelle) or "non renseignée"))
     r = a.et_si(cid, valeur)
     noter("et_si", critere=cid, valeur=valeur, nb_changements=r.get("nb_changements_de_bande"))
     if "erreur" in r:
         st.error(r["erreur"])
     elif r["aucun_changement"]:
-        st.info("Rien ne change : cette réponse ne limite pas le résultat actuel. Une autre contrainte reste la plus prudente.")
+        st.info("Rien ne change : cette réponse ne limite pas le résultat actuel. Une autre de vos réponses reste la plus prudente.")
     else:
-        if r["contraintes"]:
-            st.subheader("Ce qui change dans les contraintes")
-            st.dataframe(_df(r["contraintes"]).astype(str).rename(columns={"element": "élément", "apres": "après"}), hide_index=True, width="stretch")
         av, ap = r["portefeuille_avant"], r["portefeuille_apres"]
         if av and ap:
             c = st.columns(4)
-            c[0].metric("Perte de stress", pct(ap["perte_stress_pct"]), f"{ap['perte_stress_pct'] - av['perte_stress_pct']:+.1f} pt", delta_color="off")
-            c[1].metric("Part de croissance", pct(ap["part_croissance_pct"]), f"{ap['part_croissance_pct'] - av['part_croissance_pct']:+.1f} pt", delta_color="off")
-            c[2].metric("Volatilité", pct(ap["volatilite_pct"]), f"{ap['volatilite_pct'] - av['volatilite_pct']:+.1f} pt", delta_color="off")
+            c[0].metric("Perte de stress", pct(ap["perte_stress_pct"]), f"{ap['perte_stress_pct'] - av['perte_stress_pct']:+.1f} pt".replace(".", ","), delta_color="off")
+            c[1].metric("Part de croissance", pct(ap["part_croissance_pct"], 0), f"{ap['part_croissance_pct'] - av['part_croissance_pct']:+.0f} pt", delta_color="off")
+            c[2].metric("Variation annuelle", pct(ap["volatilite_pct"]), f"{ap['volatilite_pct'] - av['volatilite_pct']:+.1f} pt".replace(".", ","), delta_color="off")
             c[3].metric("Actifs qui changent de verdict", r["nb_changements_de_bande"])
-        if r["actifs_modifies"]:
-            st.subheader("Actifs dont le verdict, le score ou le poids maximal change")
-            st.dataframe(_df([{"actif": x["ticker"], "avant": f"{x['verdict_avant']} ({x['score_avant']})",
-                                        "après": f"{x['verdict_apres']} ({x['score_apres']})",
-                                        "poids max. avant": x["poids_max_avant_pct"], "poids max. après": x["poids_max_apres_pct"],
-                                        "règle en cause": ", ".join(x["regles_en_cause"]), "pourquoi": x["raison"]}
-                                       for x in sorted(r["actifs_modifies"], key=lambda x: (not x["change_de_bande"], x["ticker"]))]),
-                         hide_index=True, width="stretch")
+        if r["contraintes"]:
+            st.markdown("**Ce qui change dans vos limites**")
+            tableau(["Élément", "Avant", "Après"], [[x["element"], K.humaniser(str(x["avant"])) if x["avant"] is not None else "—",
+                                                     K.humaniser(str(x["apres"])) if x["apres"] is not None else "—"] for x in r["contraintes"]])
+        change = [x for x in r["actifs_modifies"] if x["change_de_bande"]]
+        if change:
+            st.markdown("**Actifs dont le verdict change**")
+            tableau(["Actif", "Avant", "Après", "Pourquoi"],
+                    [[(x["nom"], x["ticker"]), x["verdict_avant"], x["verdict_apres"], K.humaniser(x["raison"] or "")] for x in change[:25]])
         if r["poids_modifies"]:
-            st.subheader("Poids du mini-portefeuille")
-            st.dataframe(_df(r["poids_modifies"]).rename(columns={"avant_pct": "avant (%)", "apres_pct": "après (%)", "ecart_points": "écart (points)"}),
-                         hide_index=True, width="stretch")
+            st.markdown("**Poids du portefeuille**")
+            tableau(["Position", "Avant", "Après", "Écart"], [[a.uni[x["ticker"]]["name"], pct(x["avant_pct"]), pct(x["apres_pct"]),
+                                                               f"{x['ecart_points']:+.1f} pt".replace(".", ",")] for x in r["poids_modifies"][:12]], nombres=(1, 2, 3))
     st.divider()
-    st.subheader("Mise à l'épreuve des hypothèses")
-    st.caption("Une hypothèse change à la fois : horizon d'un cran, seuils du score, seuil de tension, période sans 2022.")
+    st.markdown("**Et si nos propres hypothèses étaient différentes ?**")
+    st.caption("Une hypothèse change à la fois : horizon d'un cran, seuils du score, seuil de cohérence, période sans 2022.")
     if st.button("Lancer le test de sensibilité", key="btn_sens") or (S.get("reco_sens") and S.reco_sens[0] == S.reco_cle):
         if not S.get("reco_sens") or S.reco_sens[0] != S.reco_cle:
             S.reco_sens = (S.reco_cle, a.sensibilite())
-            journal().noter("sensibilite", essais=len(S.reco_sens[1]["essais"]))
+            noter("sensibilite", essais=len(S.reco_sens[1]["essais"]))
         sens = S.reco_sens[1]
-        st.dataframe(_df([{"axe": x["axe"], "essai": x["essai"], "actifs qui changent de verdict": x["nb_changements_de_bande"],
-                                    "perte de stress (%)": (x["portefeuille"] or {}).get("perte_stress_pct"),
-                                    "tension": (x["portefeuille"] or {}).get("ratio_tension"),
-                                    "part de croissance (%)": (x["portefeuille"] or {}).get("part_croissance_pct")} for x in sens["essais"]]),
-                     hide_index=True, width="stretch")
-        ref = sens["reference"]["portefeuille"]
-        if ref:
-            st.caption(f"Référence : perte de stress {pct(ref['perte_stress_pct'])}, tension {ref['ratio_tension']:.2f}. "
-                       f"Scénario fictif de krach : {pct(sens['reference']['scenario_fictif_krach_pct'])}. {sens['limites']}")
+        tableau(["Hypothèse essayée", "Actifs qui changent de verdict", "Perte de stress", "Part de croissance"],
+                [[x["essai"], x["nb_changements_de_bande"], pct((x["portefeuille"] or {}).get("perte_stress_pct")),
+                  pct((x["portefeuille"] or {}).get("part_croissance_pct"), 0)] for x in sens["essais"]], nombres=(1, 2, 3))
+        st.caption(sens["limites"])
 
 
-# ---------- Écran 6 : « Pourquoi ? » ----------
-def page_pourquoi(a: Analyse):
+# ---------- Écran 6 : comprendre ----------
+def page_comprendre(a: Analyse):
+    titre("TRAÇABLE, PAS MAGIQUE", "Comprendre ces propositions",
+          "Chaque résultat renvoie à une donnée datée, à l'une de vos réponses ou à une hypothèse écrite.")
     s = a.synthese()
-    titre("TRAÇABLE, PAS MAGIQUE", "Pourquoi ? Ce qui soutient les résultats", "")
-    st.markdown("Les résultats sont **traçables** : chaque conclusion renvoie à une donnée datée, à une réponse du profil ou à une "
-                "hypothèse écrite. L'écran montre les **actions observables** (outils appelés, données lues), pas un raisonnement interne de modèle.")
-    onglets = st.tabs(["Du profil aux contraintes", "Poser une question", "Hypothèses", "Contrôles", "Journal des actions"])
-    with onglets[0]:
-        st.markdown(f"**{s['phrase']}** Limité par : {', '.join(s['limite_par'])}.")
-        st.markdown("**Exclusions dures** (ne se compensent jamais)")
-        st.dataframe(_df([{**x, "critere": _nom_critere(x["critere"])} for x in s["exclusions"]] or [{"critere": "—", "libelle": "aucune", "origine": ""}]).rename(columns={"critere": "critère", "libelle": "règle"}),
-                     hide_index=True, width="stretch")
-        p = s["plafonds"]
-        st.markdown("**Plafonds**")
-        st.dataframe(_df([("Par titre individuel", p["titre_pct"]), ("Cryptoactifs", p["crypto_pct"]),
-                                   ("Placements spéculatifs", "aucun plafond" if p["speculatif_pct"] is None else p["speculatif_pct"]),
-                                   ("Par secteur (hypothèse)", p["secteur_pct"]),
-                                   (f"Secteur de l'emploi : {', '.join(p['secteur_emploi']['secteurs']) or 'sans objet'}", p["secteur_emploi"]["pct"] if p["secteur_emploi"]["secteurs"] else "—"),
-                                   ("Exposition au change", "non renseigné" if p["hors_cad_pct"] is None else p["hors_cad_pct"]),
-                                   ("Par fonds (hypothèse)", p["fonds_pct"]), ("Complexité maximale", p["complexite_max"])] +
-                                  [(g["libelle"], g["plafond_pct"]) for g in s["plafonds_groupes"]], columns=["plafond", "% ou niveau"]).astype(str),
-                     hide_index=True, width="stretch")
-        st.markdown("**Préférences pondérées** (ne compensent jamais une tension)")
-        st.dataframe(_df([{**x, "critere": _nom_critere(x["critere"])} for x in s["preferences"]]).rename(columns={"critere": "critère", "libelle": "préférence", "poids": "multiplicateur"}), hide_index=True, width="stretch")
-        if s["reglages_prudents"]:
-            st.markdown("**Réglages prudents appliqués faute de réponse** (signalés, jamais présentés comme une réponse)")
-            st.dataframe(_df([{**x, "critere": _nom_critere(x["critere"])} for x in s["reglages_prudents"]])[["critere", "nom", "libelle"]].rename(columns={"critere": "critère", "libelle": "réglage"}), hide_index=True, width="stretch")
-        for x in s["sans_effet"]:
-            st.caption(f"Filtre sans effet — {x['critere']} = {x['valeur']} : {x['raison']}")
-        for x in s["notes_dynamiques"]:
-            st.caption(f"Critère personnel non appliqué — {x['libelle']} : {x['raison']}")
-    with onglets[1]:
-        role = st.radio("Agent", ["explicateur", "conseiller"], horizontal=True,
-                        format_func=lambda r: {"explicateur": "Explicateur (un actif, une comparaison, un « pourquoi »)",
-                                               "conseiller": "Conseiller (portefeuille, « et si », sensibilité)"}[r])
-        q = st.text_input("Votre question", placeholder="Pourquoi Tesla est-elle moins adaptée que Fortis ?", key="reco_q")
-        if st.button("Envoyer", key="btn_q") and q.strip():
-            with st.spinner("L'agent appelle ses outils…"):
-                S.reco_qr = (S.reco_cle, agents.dialoguer(role, q.strip(), a, journal(), modele()))
-        if S.get("reco_qr") and S.reco_qr[0] == S.reco_cle:
-            afficher_reponse(S.reco_qr[1])
-    with onglets[2]:
-        st.markdown("Tous les seuils sont des **hypothèses d'équipe**, écrites et ajustables. Aucun n'est une norme publiée.")
-        h = a.hyp
-        st.dataframe(_df([(k, json.dumps(v, ensure_ascii=False), h.get("_" + k, "")) for k, v in h.items() if not k.startswith("_")],
-                                  columns=["hypothèse", "valeur", "explication"]), hide_index=True, width="stretch")
-        st.caption("Fichiers : config/hypotheses_recommandation.json, mvp_profil/hypotheses_profil.json, config/seuils_criteres.json.")
-    with onglets[3]:
-        for b in gouvernance.bilan(a, a.portefeuille):
-            st.markdown(f"{'✓' if b['resultat'] == 'ok' else 'i' if b['resultat'] == 'info' else '!'} **{b['controle']}** — {b['detail']}")
-        st.caption("Sources : prix, fondamentaux et fiches de fonds de Yahoo Finance (yfinance), sous leurs conditions d'utilisation ; change de la "
-                   "Banque du Canada ; pages vues de Wikimedia ; controverses recherchées à la main, liste non exhaustive. "
-                   "Traitement dans la région AWS us-east-1.")
-    with onglets[4]:
+    p = s["plafonds"]
+    st.html(f'<p class="af-lede">{escape(s["phrase"])}</p>')
+    g, d = st.columns(2, gap="large")
+    with g:
+        carte("Ce que vos réponses écartent", list(dict.fromkeys(K.humaniser(e["libelle"]) for e in s["exclusions"])), "Aucune exclusion.")
+        carte("Ce que vous préférez", [x["libelle"] for x in s["preferences"]], "Aucune préférence déclarée.")
+    with d:
+        limites = [f"Un seul titre : au plus {p['titre_pct']} % du portefeuille",
+                   f"Cryptoactifs : au plus {p['crypto_pct']} %",
+                   "Placements spéculatifs : " + ("aucune limite déclarée" if p["speculatif_pct"] is None else f"au plus {p['speculatif_pct']} %"),
+                   f"Un secteur : au plus {p['secteur_pct']} %"]
+        if p["secteur_emploi"]["secteurs"]:
+            limites.append(f"Le secteur où vous travaillez : au plus {p['secteur_emploi']['pct']} %, fonds compris")
+        if p["hors_cad_pct"] is not None:
+            limites.append(f"Exposition au change : au plus {p['hors_cad_pct']} %")
+        limites += [f"{K.humaniser(x['libelle'])} : au plus {x['plafond_pct']} %" for x in s["plafonds_groupes"]]
+        carte("Vos limites", limites)
+        carte("Ce que l'outil ne sait pas", [f"{x['nom']} : {x['traitement']}" for x in s["inconnus"][:8]] + [K.humaniser(x) for x in s["alertes"]],
+              "Toutes les réponses utiles sont connues.")
+    st.markdown("**Comment un actif est jugé**")
+    tableau(["Ordre", "Règle", "Effet"], [
+        ["1", "Une de vos exclusions s'applique", "L'actif est exclu. Aucun bon score ne le rattrape."],
+        ["2", "Le risque de l'actif face à votre budget de perte", "Une part maximale dans le portefeuille, pas un refus."],
+        ["3", "Vos limites (complexité, titres à la mode, controverses)", "Le score est borné : une préférence ne compense pas une réserve."],
+        ["4", "Vos préférences (thèmes, régions, style)", "Elles départagent les actifs déjà compatibles."]])
+    h = a.hyp
+    st.markdown("**Nos hypothèses, écrites et ajustables**")
+    tableau(["Hypothèse", "Valeur retenue"], [
+        ["Seuils du score", f"{h['bandes_score']['compatible']} et plus : compatible ; {h['bandes_score']['a_examiner']} à {h['bandes_score']['compatible'] - 1} : à examiner"],
+        ["Cohérence du portefeuille", f"perte de stress jusqu'à {h['tension']['coherent_max']:.1f} fois le budget de perte".replace(".", ",")],
+        ["Entrée dans le portefeuille", f"score d'au moins {h['portefeuille']['seuil_entree']}, {h['portefeuille']['nb_positions_max']} positions au plus"],
+        ["Perte de stress", f"pire de la baisse historique, de 2022 et d'une hausse des taux de {h['stress']['choc_taux_points']:g} points"],
+        ["Part ajoutée sans précision", f"{h['conversation']['part_par_defaut_pct']} % du portefeuille"]])
+    st.caption("Aucune de ces valeurs n'est une norme : l'écran « Et si… ? » montre ce qui change quand on les déplace. "
+               "Rôle des agents : ils comprennent, expliquent et refusent ; ils ne calculent ni verdict, ni poids, ni chiffre.")
+    if technique():
+        st.divider()
+        st.markdown("**Détails techniques**")
         j = journal()
-        st.caption(f"Session {j.session} · stockage : {j.stockage()} · {len(j.evenements)} action(s)")
+        st.caption(f"Session {j.session} · journal : {j.stockage()} · {len(j.evenements)} action(s)")
         if j.evenements:
-            st.dataframe(_df([{"rang": e["rang"], "horodatage (UTC)": e["horodatage"], "action": e["type"],
-                                        "détail": json.dumps({k: v for k, v in e.items() if k not in ("session", "rang", "horodatage", "type")},
-                                                             ensure_ascii=False, default=str)[:300]} for e in j.evenements]),
-                         hide_index=True, width="stretch")
+            tableau(["#", "Heure (UTC)", "Action", "Détail"], [[e["rang"], e["horodatage"][11:19], e["type"],
+                    json.dumps({k: v for k, v in e.items() if k not in ("session", "rang", "horodatage", "type")}, ensure_ascii=False, default=str)[:220]]
+                    for e in j.evenements[-40:]])
+        with st.expander("Toutes les hypothèses (fichier de configuration)"):
+            st.json({k: v for k, v in h.items() if not k.startswith("_")}, expanded=False)
     st.caption(MENTION)
 
 
-
-ECRANS = {"Mini-portefeuille": page_portefeuille, "Recherche d'actif": page_recherche, "Comparaison": page_comparaison,
-          "Demande d'un titre": page_demande, "Et si… ?": page_et_si, "Pourquoi ?": page_pourquoi}
+ECRANS = {"Mon portefeuille": page_portefeuille, "Parler au conseiller": page_conversation, "Chercher un actif": page_recherche,
+          "Comparer": page_comparaison, "Et si… ?": page_et_si, "Comprendre": page_comprendre}
 
 
 def afficher(retour=None):
     """Point d'entrée appelé par app.py quand S.phase == « recommandation ». retour : fonction qui ramène à la synthèse."""
     st.html(STYLE)
+    S.setdefault("reco_avec_modele", True)
+    S.setdefault("reco_technique", False)
+    S.setdefault("reco_voix", False)
     if not S.get("profil"):
         st.info("Les propositions s'appuient sur un profil terminé. Revenez à l'accueil pour créer un profil ou charger un exemple.")
         return
     tete, action = st.columns([4, 1], vertical_alignment="bottom")
     with tete:
-        titre("ÉTAPE 04 · VOS PROPOSITIONS", "Ce qui est cohérent avec votre profil, et pourquoi",
-              "Un mini-portefeuille fictif, le verdict de chaque actif et les preuves qui les soutiennent. "
-              "Tout est calculé par des règles écrites ; les agents expliquent, ils ne décident pas.")
+        titre("ÉTAPE 04 · VOS PROPOSITIONS", "Ce qui est cohérent avec votre profil, et pourquoi", "")
     if retour is not None and action.button("← Revenir à ma synthèse", width="stretch", key="reco_retour"):
         retour()
     a = analyse_courante()
-    s = a.synthese()
     if S.get("persona"):
         st.caption(f"Profil fictif de démonstration : {S.persona['nom']}. {S.persona['description']}")
-    st.html(f'<p class="af-reco-phrase">{escape(s["phrase"])}</p>')
-    c = st.columns(4)
-    c[0].metric("Niveau de risque", f"{s['niveau']} sur 5")
-    c[1].metric("Budget de perte", pct(s["budget_perte_pct"], 0), help="Le plus prudent de votre capacité, de votre tolérance déclarée et de votre tolérance observée.")
-    c[2].metric("Actifs compatibles", f"{s['decompte']['compatible']} sur {s['nb_actifs']}", help=f"Données au {s['date_donnees']}.")
-    c[3].metric("Actifs exclus", s["decompte"]["exclu"], help="Une exclusion ne se compense jamais par un bon score.")
-    with st.expander("Réglages de la simulation"):
-        g, d = st.columns(2)
-        S.reco_montant = g.number_input("Montant fictif ($ CA)", min_value=500, max_value=5_000_000, step=500, value=int(a.montant),
-                                        help="Sert à exprimer la tension en dollars. Aucun argent réel.")
-        S.reco_avec_modele = d.toggle("Rédaction des explications par le modèle", value=S.get("reco_avec_modele", True),
-                                      help="Coupé : les textes viennent des gabarits du code. Verdicts et chiffres sont identiques.")
-        if int(S.reco_montant) != int(a.montant):
-            st.rerun()
+    if S.get("reco_ecran_demande"):       # un bouton d'un autre écran demande d'ouvrir celui-ci
+        S.reco_ecran = S.pop("reco_ecran_demande")
     with st.container(key="reco_nav"):
         ecran = st.segmented_control("Écran", list(ECRANS), default=list(ECRANS)[0], key="reco_ecran", label_visibility="collapsed")
     ECRANS[ecran or list(ECRANS)[0]](a)
+    with st.expander("Réglages de la simulation"):
+        g, m, d = st.columns(3)
+        montant = g.number_input("Montant fictif ($ CA)", min_value=500, max_value=5_000_000, step=500, value=int(a.montant),
+                                 help="Sert à exprimer la perte en dollars. Aucun argent réel.")
+        # Clés de widgets : la nouvelle valeur est connue dès le début du rendu suivant, donc par les écrans au-dessus.
+        m.toggle("Explications rédigées par le modèle", key="reco_avec_modele",
+                 help="Coupé : les textes viennent de gabarits. Verdicts et chiffres sont identiques.")
+        d.toggle("Détails techniques", key="reco_technique",
+                 help="Pour vérifier : outils appelés par les agents, contrôle de chaque texte, journal des actions.")
+        if int(montant) != int(a.montant):
+            S.reco_montant = montant
+            st.rerun()

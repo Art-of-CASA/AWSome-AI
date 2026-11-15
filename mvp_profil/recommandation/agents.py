@@ -94,24 +94,30 @@ def _texte(message: dict) -> str:
 
 
 def dialoguer(role: str, question: str, analyse: Analyse, journal: Journal | None = None, modele=None,
-              contexte: list[dict] | None = None) -> dict:
+              contexte: list[dict] | None = None, systeme: str | None = None, specs: list | None = None,
+              executer=None, historique: list[dict] | None = None, texte_secours=None, mention: bool = True) -> dict:
     """Une question, une suite d'appels d'outils, un texte vérifié.
 
     contexte : sorties d'outils déjà calculées par le code et transmises à l'agent (par exemple le verdict figé
     d'une demande). Elles comptent comme sources pour le vérificateur de fidélité.
+    systeme, specs, executer : consignes, outils et routeur propres à un usage (la conversation d'ajustement) ; par
+    défaut ceux du rôle. historique : tours précédents [{role, texte}]. texte_secours(appels) : texte du code si le
+    modèle est absent ou rejeté.
     """
+    executer = executer or (lambda nom, entree: outils.executer(analyse, nom, entree))
+    fin = gouvernance.finaliser if mention else (lambda t: t)
     journal = journal or Journal(persister=False)
     appels: list[dict] = [dict(c) for c in (contexte or [])]
     journal.noter("question", role=role, question=question)
     tickers = analyse.uni.tickers()
 
     def secours(motif: str) -> dict:
-        if not appels:  # aucun outil appelé : le code choisit l'outil par défaut du rôle
+        if not appels and texte_secours is None:  # aucun outil appelé : le code choisit l'outil par défaut du rôle
             nom = "construire_portefeuille" if role == "conseiller" else "lire_contraintes"
             appels.append({"outil": nom, "entree": {}, "sortie": outils.executer(analyse, nom, {})})
-        texte = gabarits.depuis_appels(appels)
+        texte = texte_secours(appels) if texte_secours else gabarits.depuis_appels(appels)
         journal.noter("texte_de_secours", role=role, motif=motif)
-        return {"texte": gouvernance.finaliser(texte), "source": "gabarit (code)", "motif_secours": motif, "appels": appels,
+        return {"texte": fin(texte), "source": "gabarit (code)", "motif_secours": motif, "appels": appels,
                 "fidelite": fidelite.verifier(texte, [a["sortie"] for a in appels], question, tickers),
                 "gouvernance": gouvernance.controler_texte(texte), "role": role}
 
@@ -121,12 +127,19 @@ def dialoguer(role: str, question: str, analyse: Analyse, journal: Journal | Non
     if contexte:
         invite += "\n\nRésultats déjà calculés par le code (définitifs, à expliquer sans les modifier) :\n" + \
                   json.dumps([{"outil": c["outil"], "sortie": c["sortie"]} for c in contexte], ensure_ascii=False, default=str)
-    messages = [{"role": "user", "content": [{"text": invite}]}]
-    specs = outils.specifications(role)
+    messages = [{"role": "assistant" if h["role"] == "assistant" else "user", "content": [{"text": h["texte"]}]}
+                for h in (historique or []) if h.get("texte")]
+    while messages and messages[0]["role"] != "user":   # l'API exige de commencer par un tour de l'utilisateur
+        messages.pop(0)
+    if messages and messages[-1]["role"] == "user":
+        messages.pop()
+    messages.append({"role": "user", "content": [{"text": invite}]})
+    specs = specs if specs is not None else outils.specifications(role)
+    consignes = systeme or SYSTEMES[role]
     rejets = 0
     try:
         for _ in range(TOURS_MAX + 2):
-            rep = modele.converser(SYSTEMES[role], messages, specs)
+            rep = modele.converser(consignes, messages, specs)
             msg = rep["message"]
             messages.append(msg)
             if rep["arret"] == "guardrail_intervened":
@@ -136,11 +149,11 @@ def dialoguer(role: str, question: str, analyse: Analyse, journal: Journal | Non
             if demandes and len([a for a in appels if a.get("par") == "agent"]) < TOURS_MAX * 2:
                 resultats = []
                 for d in demandes:
-                    sortie = outils.executer(analyse, d["name"], d.get("input") or {})
+                    sortie = executer(d["name"], d.get("input") or {})
                     appels.append({"outil": d["name"], "entree": d.get("input") or {}, "sortie": sortie, "par": "agent"})
                     journal.noter("appel_outil", role=role, outil=d["name"], entree=d.get("input") or {},
                                   resume={k: sortie.get(k) for k in ("verdict", "libelle_verdict", "score", "ratio_tension",
-                                                                    "etat_tension", "empreinte", "erreur") if k in sortie})
+                                                                    "etat_tension", "empreinte", "erreur", "decision", "ticker") if k in sortie})
                     resultats.append({"toolResult": {"toolUseId": d["toolUseId"],
                                                      "content": [{"text": json.dumps(sortie, ensure_ascii=False, default=str)[:60000]}]}})
                 messages.append({"role": "user", "content": resultats})
@@ -153,7 +166,7 @@ def dialoguer(role: str, question: str, analyse: Analyse, journal: Journal | Non
             journal.noter("controle_texte", role=role, fidele=fid["fidele"], sans_origine=fid["sans_origine"],
                           conforme=gouv["conforme"], infractions=gouv["infractions"])
             if texte and fid["fidele"] and gouv["conforme"]:
-                return {"texte": gouvernance.finaliser(texte), "source": f"modèle ({getattr(modele, 'modele', 'simulé')})",
+                return {"texte": fin(texte), "source": f"modèle ({getattr(modele, 'modele', 'simulé')})",
                         "appels": appels, "fidelite": fid, "gouvernance": gouv, "role": role, "rejets": rejets}
             rejets += 1
             if rejets > 1:

@@ -14,9 +14,9 @@ Produit par `python scripts/tableau_personas.py` sur 111 actifs, données au 202
 
 | Persona | Positions | Poche de croissance | Volatilité | Perte de stress | Tension | Scénario fictif de krach |
 |---|---|---|---|---|---|---|
-| Amira | 12 | 92,3 % | 12,0 % | 22,5 % | 0.50 (coherent) | 44,4 % |
+| Amira | 12 | 92,1 % | 12,0 % | 22,5 % | 0.50 (coherent) | 44,4 % |
 | Mateo | 12 | 60,0 % | 9,0 % | 12,8 % | 0.58 (coherent) | 27,0 % |
-| Robert | 12 | 39,8 % | 4,4 % | 6,0 % | 0.40 (coherent) | 18,0 % |
+| Robert | 12 | 40,0 % | 4,4 % | 6,0 % | 0.40 (coherent) | 18,0 % |
 
 ### Amira
 

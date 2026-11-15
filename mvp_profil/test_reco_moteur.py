@@ -123,6 +123,56 @@ verifier(json.dumps(robert.profil, sort_keys=True, ensure_ascii=False) == avant,
 s = robert.sensibilite()
 verifier({x["axe"] for x in s["essais"]} == {"horizon", "seuils", "periode"}, "sensibilité : horizon, seuils, période")
 
+# ---------- Encaisse, ajouts imposés et contrainte limitante ----------
+for a in (amira, mateo, robert):
+    pf = a.portefeuille
+    verifier(abs(sum(pf["poids"].values()) * 100 + pf["encaisse_pct"] - 100) < 0.2, f"{a.nom} : poids + encaisse = 100 %")
+    verifier(pf["limite_par"], f"{a.nom} : la contrainte qui limite la part de croissance doit être nommée")
+avec = Analyse(ch.charger_persona("robert")["profil"], ajouts={"NVDA": 5.0})
+verifier(abs(avec.portefeuille["poids"]["NVDA"] - 0.05) < 1e-6 and not avec.portefeuille["conflits"], "un ajout imposé garde son poids, sans conflit")
+verifier(any(l["demande"] for l in avec.portefeuille["lignes"]), "un ajout demandé est marqué comme tel")
+d = robert.proposer_ajout("nvidia", 20)
+verifier(d["decision"] == "reduit" and d["part_pct"] == 5 and not d["mises_a_jour"]["possible"], "Robert, 20 % de NVDA : part réduite, aucune réponse déclarée ne suffirait")
+d = robert.proposer_ajout("nvidia", 10)
+verifier(d["mises_a_jour"]["possible"] and {c["critere"] for c in d["mises_a_jour"]["changements"]} == {"D9", "D12"}, "Robert, 10 % de NVDA : deux plafonds déclarés à revoir")
+d = mateo.proposer_ajout("NVDA", 5)
+verifier(d["decision"] == "refuse" and d["alternatives"] and all(mateo.resultats[x["ticker"]]["verdict"] == "compatible" for x in d["alternatives"]),
+         "Mateo, NVDA : refus avec des alternatives compatibles")
+verifier(robert.proposer_ajout("gamestop")["decision"] == "absent", "actif absent")
+verifier(robert.trouver_par_envie("un peu d'or")["envie"] == ["or"] and robert.trouver_par_envie("zzz")["envie"] is None, "recherche par envie")
+
+# ---------- Robustesse : 200 profils aléatoires (réponses manquantes, incertaines, contradictoires) ----------
+import random  # noqa: E402
+from criteres import CRITERES  # noqa: E402
+
+rnd = random.Random(2026)
+construits = sans = 0
+for i in range(200):
+    p = {}
+    for cid, d in CRITERES.items():
+        if rnd.random() < 0.12:
+            continue
+        vals = d["valeurs"]
+        v = rnd.sample(vals, rnd.randint(1, min(3, len(vals)))) if d.get("multiple") else [rnd.choice(vals)]
+        if len(v) > 1 and any(x in ("aucun", "aucune") for x in v):
+            v = [x for x in v if x in ("aucun", "aucune")][:1]
+        statut = rnd.choices(["validé", "retenu", "incertain", "à préciser"], [80, 8, 6, 6])[0]
+        p[cid] = {"valeurs": [] if statut == "à préciser" else v, "source": "aléatoire", "citation": "", "confiance": 1.0, "statut": statut, "motif": ""}
+    a = Analyse(p)
+    pf = a.portefeuille
+    if "erreur" in pf:
+        sans += 1
+        verifier(not any(r["verdict"] == "compatible" for r in a.resultats.values()) or pf.get("diagnostic") is not None, f"profil {i} : refus sans diagnostic")
+        continue
+    construits += 1
+    verifier(abs(sum(pf["poids"].values()) * 100 + pf["encaisse_pct"] - 100) < 0.2, f"profil {i} : poids + encaisse ≠ 100 %")
+    verifier(all(a.resultats[t]["verdict"] == "compatible" for t in pf["poids"]), f"profil {i} : actif non compatible retenu")
+    verifier(all(w * 100 <= a.resultats[t]["poids_max_pct"] + 0.11 for t, w in pf["poids"].items()), f"profil {i} : poids au-dessus du maximum compatible")
+    verifier(not pf["conflits"], f"profil {i} : contrainte dépassée {pf['conflits']}")
+    verifier(pf["etat_tension"] != "en_tension", f"profil {i} : perte de stress au-dessus du budget ({pf['ratio_tension']})")
+    verifier(pf["encaisse_pct"] < 0.5 or pf["raison_encaisse"], f"profil {i} : encaisse non expliquée")
+print(f"Robustesse : 200 profils aléatoires, {construits} portefeuilles sans aucune limite dépassée, {sans} sans actif compatible (diagnostic donné)")
+
 print("Moteur OK : appariement (exclusions non compensables, bornes, preuves), portefeuilles des trois personas, "
       "demande de titre, recherche, comparaison, « Et si… ? », sensibilité")
 for a in (amira, mateo, robert):

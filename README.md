@@ -24,12 +24,12 @@ Une fois le profil terminé, la synthèse ouvre « Découvrir mes propositions �
 
 | Écran | Ce qu'il montre |
 |---|---|
-| Mini-portefeuille | Portefeuille fictif, perte de stress, tension en % et en dollars, preuve de chaque contrainte |
-| Recherche d'actif | Score 0-100, seuil, pourquoi c'est adapté ou moins adapté ; « absent de l'univers » si l'actif n'y est pas |
-| Comparaison | Deux actifs critère par critère, avec l'écart décisif |
-| Demande d'un titre | Verdict figé avant la lecture de la justification (cas Robert) |
-| Et si… ? | Une réponse modifiée, tout recalculé, ce qui change et pourquoi ; test de sensibilité |
-| Pourquoi ? | Contraintes tirées du profil, hypothèses, contrôles, journal des actions, questions aux agents |
+| Mon portefeuille | Portefeuille fictif en camembert, perte de stress face au budget de perte, chaque limite contrôlée, sources |
+| Parler au conseiller | À l'écrit ou à la voix : « j'aimerais du Nvidia ». Ajout si c'est cohérent, part réduite ou alternatives sinon ; une réponse du profil n'est revue qu'avec l'accord de la personne |
+| Chercher un actif | Score 0-100, seuil, pourquoi c'est adapté ou moins adapté ; « absent de l'univers » si l'actif n'y est pas |
+| Comparer | Deux actifs critère par critère, avec ce qui les départage |
+| Et si… ? | Une réponse essayée autrement, tout recalculé, ce qui change et pourquoi ; test de sensibilité |
+| Comprendre | Ce que le profil écarte, les limites, les hypothèses ; « Détails techniques » pour les outils appelés et le journal |
 
 Le code calcule verdicts, scores et poids. Deux agents à outils (Conseiller, Explicateur, Claude Sonnet 5.5 sur Amazon Bedrock) orchestrent et expliquent ; un vérificateur rejette tout texte dont un chiffre n'existe pas dans une sortie d'outil. Sans accès à Bedrock, tout fonctionne avec des textes de gabarit : verdicts et chiffres identiques.
 
@@ -45,6 +45,7 @@ python scripts/build_donnees_recommandation.py
 | [docs/one_pager.md](docs/one_pager.md) | Résumé en une page |
 | [docs/script_video.md](docs/script_video.md) | Script de la vidéo et questions probables du jury |
 | [docs/resultats_personas.md](docs/resultats_personas.md) | Résultats par persona, générés par `python scripts/tableau_personas.py` |
+| [docs/experience_modele_seul.md](docs/experience_modele_seul.md) | Expérience : neuf portefeuilles construits par le modèle seul, jugés par les contrôles du moteur |
 | [docs/deploiement_recommandation.md](docs/deploiement_recommandation.md) | Déploiement, ressources AWS ajoutées, vérifications, mode de secours |
 | [config/hypotheses_recommandation.json](config/hypotheses_recommandation.json) | Tous les seuils des propositions : des hypothèses écrites et ajustables |
 
