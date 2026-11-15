@@ -40,3 +40,6 @@ mvp_profil/cache/
 # Journal local des actions de la recommandation (propre à chaque machine)
 mvp_profil/traces/
 traces/
+
+# Fichiers de travail locaux (audits, extraits) : jamais versionnés
+tmp/
