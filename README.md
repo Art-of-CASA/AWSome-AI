@@ -47,7 +47,7 @@ Les principes qui en découlent, à respecter partout :
   prix, change, dividendes, états financiers, FNB, ESG, attention, macro
                               │  code (scripts/build_asset_criteria.py)
                               ▼
-     asset_criteria.csv : 66 actifs × 109 colonnes, dont 23 mots-clés kw_*
+     asset_criteria.csv : 111 actifs × 109 colonnes, dont 23 mots-clés kw_*
                               │
   PROFIL (mvp_profil/, site Streamlit + Claude Haiku 5.5 sur Bedrock)     │
   conversation ─▶ classificateur ⇄ critique ─▶ critères fixes (42)        │
@@ -67,7 +67,7 @@ Les principes qui en découlent, à respecter partout :
 |---|---|---|
 | `Datathon2026/alphaforge_starter/` | Jeu de départ des organisateurs : 31 actifs (Canada, États-Unis, FNB, obligations, or, cryptos), prix, USD/CAD, taux | Organisateurs |
 | `data_extra/` | Pour les 31 actifs de départ : états financiers et ratios, FNB (frais, positions, secteurs), ESG (implication fossile, controverses sourcées), attention Wikipédia, actualités, dates de publication macro (ALFRED) | `scripts/fetch_extra_data.py`, `build_esg.py`, `fetch_macro_release_dates.py` |
-| `data_extended/` | **35 actifs ajoutés** (10 Europe, 10 Asie, 10 Afrique, 5 FNB mondiaux), même jeu de données ; change vers le CAD pour 12 devises ; puis **indicateurs et mots-clés des 66 actifs** | `build_extended_prices.py`, `compute_metrics.py`, `fetch_market_caps.py`, `build_asset_criteria.py` |
+| `data_extended/` | **80 actifs ajoutés** en trois lots : 35 (10 Europe, 10 Asie, 10 Afrique, 5 FNB mondiaux), 35 pour contraster les valeurs (tabac, armement, alcool, jeux d'argent, nucléaire, fossiles, renouvelables ; Amérique latine, Moyen-Orient) et 10 actifs stables ; même jeu de données ; change vers le CAD pour 17 devises ; puis **indicateurs et mots-clés des 111 actifs** (détail dans `data_extended/README.md`) | `build_extended_prices.py`, `compute_metrics.py`, `fetch_market_caps.py`, `build_asset_criteria.py` |
 | `config/` | `criteres_appariement.csv` (51 critères, alignés sur `criteres.py` par `scripts/sync_grille.py` : question, valeurs du profil, critère d'actif, règle, type de règle, personas) et `seuils_criteres.json` (tous les seuils, qui sont des hypothèses) | Équipe |
 | `docs/criteres_profil_actifs.md` | La grille lisible : principe, 8 blocs de critères (A situation à H gouvernance), calcul des mots-clés, test sur les 3 personas | Équipe |
 
@@ -93,7 +93,7 @@ La synthèse affiche aussi les **réponses décisives**, leurs sources et les di
 
 ### Côté actifs : mots-clés calculés ([data_extended/asset_criteria.csv](data_extended/asset_criteria.csv))
 
-Pour chacun des 66 actifs, le fichier donne :
+Pour chacun des 111 actifs, le fichier donne :
 - les indicateurs en CAD : volatilité, perte maximale, jours de récupération, choc de 2022, bêta, corrélations, dividendes, ratios financiers ;
 - 23 mots-clés `kw_*` : `kw_volatilite`, `kw_recuperation`, `kw_exclusions`, `kw_risque_pays`, `kw_devise`, `kw_attention`, `kw_frais`…
 
@@ -132,7 +132,7 @@ Le **critique des critères personnels** a ses propres consignes : il juge l'int
 
 **Quand le vocabulaire ne suffit pas : l'agent chercheur ([mvp_profil/chercheur.py](mvp_profil/chercheur.py)).** Certaines idées visent des actifs, mais aucune valeur existante ne les traduit : « rien qui touche à Elon Musk », « les entreprises qui recyclent ». Le découvreur crée alors le critère « à étiqueter », avec un **concept** à rechercher. Un deuxième agent, le **chercheur**, prend le relais **en arrière-plan**, pendant que le profil s'affiche :
 
-1. **La recherche.** Le chercheur reçoit le tableau des 66 actifs et quatre outils :
+1. **La recherche.** Le chercheur reçoit le tableau des 111 actifs (nombre lu dans les données) et quatre outils :
    - `chercher_dans_donnees` : noms, secteurs, thèmes, controverses, actualités récentes et positions des FNB ;
    - `fiche_actif` ;
    - `recherche_web` et `lire_page_web` : Wikipédia en français ou en anglais.
@@ -254,7 +254,7 @@ Le lanceur découvre toutes les suites `mvp_profil/test_*.py`, `mvp_profil/test_
 ## 9. Où on en est, et où on veut aller
 
 **Fait :**
-- les données des 66 actifs et les mots-clés ;
+- les données des 111 actifs et les mots-clés ;
 - la grille de 51 critères, alignée sur le code et vérifiée par `scripts/test_grille.py` ;
 - la synthèse du profil : capacité, tolérance déclarée et observée, budget de perte, réponses décisives et robustesse locale ([mvp_profil/synthese.py](mvp_profil/synthese.py)) ;
 - le pilotage déterministe des questions restantes, les contrôles de corrections et les confirmations des contraintes personnelles ;
@@ -276,7 +276,7 @@ Le lanceur découvre toutes les suites `mvp_profil/test_*.py`, `mvp_profil/test_
 Datathon2026/         matériel des organisateurs (les PDF et PPTX ne sont pas versionnés)
 scripts/              collecte et calcul des données, scénarios, vocabulaire des actifs
 data_extra/           données ajoutées pour les 31 actifs de départ
-data_extended/        univers étendu (35 actifs) + indicateurs et mots-clés des 66 actifs
+data_extended/        univers étendu (80 actifs) + indicateurs et mots-clés des 111 actifs
 config/               grille d'appariement (51 critères), seuils et correspondances profil ↔ actifs
 docs/                 grille lisible des critères
 mvp_profil/           site Streamlit : agents, critères, conversation vocale, simulations, tests, déploiement

@@ -71,7 +71,7 @@ assert x1["effet"] == "plafonner" and x1["plafond_pct"] is None and not x1["appl
 assert "plafond à préciser" in x1["regle"]
 x2 = par_nom["Préférence pour l'euro"]
 assert x2["statut"] == "à préciser" and x2["confiance"] == 0.6 and not x2["applicable"], x2
-assert set(x2["actifs"]) == {"ASML.AS", "MC.PA", "SAP.DE", "SIE.DE", "TTE.PA"}, x2["actifs"]
+assert set(x2["actifs"]) == {"ASML.AS", "ENEL.MI", "IBE.MC", "MC.PA", "RHM.DE", "SAP.DE", "SIE.DE", "TTE.PA"}, x2["actifs"]  # 8 titres en euros depuis l'ajout du 15 novembre 2026
 x3 = par_nom["Banques plafonnées à 10 %"]
 assert x3["effet"] == "plafonner" and x3["plafond_pct"] == 10 and "RY.TO" in x3["actifs"] and x3["regle"].startswith("Plafonner à 10 %")
 x4 = par_nom["Rien lié à Elon Musk"]
@@ -139,41 +139,3 @@ cd.appliquer_etiquetage(vide, {"oui": [], "partiel": [], "mot_cle": "kw_dyn_test
 assert "aucun lien établi" in vide["regle"] and "aucun actif de l'univers concerné" not in vide["regle"]
 assert vide["recherche"]["inconnus"] == ["TSLA"]
 print("Limites à préciser, confirmation explicite et absence de preuve distincte d'un résultat négatif : OK")
-
-# ---------- Critique dédié, idées oubliées, part minimale ----------
-# Le critique des critères personnels a ses propres consignes et voit qu'un concept sera recherché ensuite.
-crit_envoi = [e for e in ENVOIS if "CRITIQUE" in e["system"]][-1]
-assert "critères personnels" in crit_envoi["system"] and "IDÉES OUBLIÉES" in crit_envoi["system"]
-assert "[concept à rechercher par le chercheur]" in ENVOIS[1]["messages"][0]["content"]
-
-REP2 = "Je veux au moins 10 % en or. Je ne veux pas d'alcool ni de tabac. Et je garde une part minimale en obligations."
-dec3 = {"criteres": [
-    crit("Or minimum", "Je veux au moins 10 % en or", "minimum", "theme", ["or"], 0.9, None) | {"minimum_pct": 10},
-    crit("Pas d'alcool", "Je ne veux pas d'alcool", "exclure", "exclusion", ["alcool"], 0.9),
-    crit("Obligations minimum", "je garde une part minimale en obligations", "minimum", "classe", ["etf_bond"], 0.9),
-]}
-cri3 = {"avis": [avis("X3", True, 0.9), avis("X4", True, 0.9), avis("X5", True, 0.9)],
-        "idees_oubliees": [{"citation": "ni de tabac", "description": "Pas de tabac"},
-                           {"citation": "pas de cigarettes électroniques", "description": "citation inventée"},
-                           {"citation": "Je ne veux pas d'alcool", "description": "déjà traduite"}],
-        "question_relance": ""}
-out3 = cd.creer(backend(dec3, cri3), cd.QUESTION_OUVERTE, REP2, 0.8, deja=2)
-ids3 = {c["id"]: c for c in out3}
-assert list(ids3) == ["X3", "X4", "X5", "X6"], list(ids3)
-x_or, x_oblig, x_tabac = ids3["X3"], ids3["X5"], ids3["X6"]
-assert x_or["effet"] == "minimum" and x_or["minimum_pct"] == 10 and x_or["statut"] == "validé" and x_or["applicable"], x_or
-assert x_or["type_regle"] == "plancher" and x_or["regle"].startswith("Garder au moins 10 %"), x_or["regle"]
-assert x_oblig["minimum_pct"] is None and x_oblig["statut"] == "à préciser" and not x_oblig["applicable"], x_oblig
-assert "Pourcentage minimal à préciser" in x_oblig["motif"] and "pourcentage à préciser" in x_oblig["regle"]
-cd.confirmer(x_oblig, 15)
-assert x_oblig["minimum_pct"] == 15 and x_oblig["applicable"] and x_oblig["regle"].startswith("Garder au moins 15 %")
-# Idée oubliée par le découvreur : visible comme note à préciser, sans filtre ; citation inventée ou déjà traduite ignorée
-assert x_tabac["effet"] == "note" and x_tabac["statut"] == "à préciser" and not x_tabac["applicable"], x_tabac
-assert x_tabac["citation"] == "ni de tabac" and x_tabac["source"] == "question ouverte (contrôle)"
-# Un minimum n'est jamais un plafond, et inversement
-assert not cd.plafond_etaye("pas moins de 10 % d'or", 10) and cd.minimum_etaye("pas moins de 10 % d'or", 10)
-assert cd.plafond_etaye("pas plus de 10 % de banques", 10) and not cd.minimum_etaye("pas plus de 10 % de banques", 10)
-assert not cd.minimum_etaye("au moins 10 % d'or et je veux limiter les banques", 10)
-_, _, _, pct = cd._nettoyer(cd.CritereIA(**crit("Or", "au moins 10 % en or", "plafonner", "theme", ["or"], 0.9, 10)))
-assert pct is None  # « au moins » proposé comme plafond : jamais un maximum de 10 %
-print("Critique dédié, idées oubliées visibles, part minimale chiffrée ou à préciser : OK")

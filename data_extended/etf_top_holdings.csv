@@ -36,3 +36,73 @@ XEQT.TO,ITOT,iShares Core S&P Total US Stock Mkt ETF,0.14320171
 XEQT.TO,XEC.TO,iShares Core MSCI Emer Mkts IMI ETF,0.044765
 BNDW,BND,Vanguard Total Bond Market ETF,0.5131012
 BNDW,BNDX,Vanguard Total International Bond ETF,0.48687708
+ICLN,FSLR,First Solar Inc,0.086014
+ICLN,NXT,Nextpower Inc,0.0803567
+ICLN,IBE.MC,Iberdrola SA,0.0704029
+ICLN,BE,Bloom Energy Corp Class A,0.0619547
+ICLN,600900.SS,China Yangtze Power Co Ltd Class A,0.0584271
+ICLN,AXIA3.SA,Axia Energia,0.0416538
+ICLN,VWS.CO,Vestas Wind Systems AS,0.0332249
+ICLN,ORA,Ormat Technologies Inc,0.0306968
+ICLN,9502.T,Chubu Electric Power Co Inc,0.0286397
+ICLN,ENPH,Enphase Energy Inc,0.025200501
+ITA,GE,GE Aerospace,0.2002375
+ITA,RTX,RTX Corp,0.1721944
+ITA,BA,Boeing Co,0.068250395
+ITA,LMT,Lockheed Martin Corp,0.0568729
+ITA,NOC,Northrop Grumman Corp,0.050640896
+ITA,GD,General Dynamics Corp,0.0494738
+ITA,TDG,TransDigm Group Inc,0.0477077
+ITA,HWM,Howmet Aerospace Inc,0.040105
+ITA,LHX,L3Harris Technologies Inc,0.0396977
+ITA,HONA,Honeywell Aerospace Inc,0.0375193
+VNQ,VRTPX,Vanguard Real Estate II Index,0.1451014
+VNQ,WELL,Welltower Inc,0.091210805
+VNQ,PLD,Prologis Inc,0.0686077
+VNQ,EQIX,Equinix Inc,0.056542102
+VNQ,AMT,American Tower Corp,0.043221403
+VNQ,SPG,Simon Property Group Inc,0.0368971
+VNQ,DLR,Digital Realty Trust Inc,0.036805797
+VNQ,O,Realty Income Corp,0.0284775
+VNQ,PSA,Public Storage,0.026882902
+VNQ,VMRK,Vivmark Residential,0.0246472
+SMH,NVDA,NVIDIA Corp,0.2019254
+SMH,TSM,Taiwan Semiconductor Manufacturing Co Ltd ADR,0.0957566
+SMH,TXN,Texas Instruments Inc,0.056981303
+SMH,AVGO,Broadcom Inc,0.056143798
+SMH,AMD,Advanced Micro Devices Inc,0.0534505
+SMH,ADI,Analog Devices Inc,0.049555603
+SMH,MU,Micron Technology Inc,0.047497
+SMH,ASML,ASML Holding NV ADR,0.044960096
+SMH,KLAC,KLA Corp,0.042775
+SMH,SKHY,SK hynix Inc ADR,0.041447703
+VDY.TO,RY,Royal Bank of Canada,0.158413
+VDY.TO,TD,The Toronto-Dominion Bank,0.1113914
+VDY.TO,BMO.TO,Bank of Montreal,0.0680334
+VDY.TO,BNS.TO,Bank of Nova Scotia,0.0645173
+VDY.TO,ENB.TO,Enbridge Inc,0.059447397
+VDY.TO,CM.TO,Canadian Imperial Bank of Commerce,0.058259
+VDY.TO,CNQ.TO,Canadian Natural Resources Ltd,0.055273
+VDY.TO,SU.TO,Suncor Energy Inc,0.046375
+VDY.TO,MFC.TO,Manulife Financial Corp,0.041015
+VDY.TO,TRP.TO,TC Energy Corp,0.034705803
+ZLB.TO,GWO.TO,Great-West Lifeco Inc,0.0447759
+ZLB.TO,FTS.TO,Fortis Inc,0.044204302
+ZLB.TO,L.TO,Loblaw Companies Ltd,0.0415412
+ZLB.TO,QBR-B.TO,Quebecor Inc Shs -B- Subord.Voting,0.0408188
+ZLB.TO,H.TO,Hydro One Ltd,0.0372915
+ZLB.TO,EMP-A.TO,Empire Co Ltd Registered Shs -A- Non Vtg,0.0361392
+ZLB.TO,EMA.TO,Emera Inc,0.0342229
+ZLB.TO,MRU.TO,Metro Inc,0.0337262
+ZLB.TO,CCL.B,CCL Industries Inc Registered Shs -B- Non Vtg,0.0327521
+ZLB.TO,X.TO,TMX Group Ltd,0.0319299
+USMV,XOM,ExxonMobil Holdings Corp,0.0160894
+USMV,MSFT,Microsoft Corp,0.0158531
+USMV,CB,Chubb Ltd,0.015367
+USMV,MSI,Motorola Solutions Inc,0.015038299
+USMV,BRK-B,Berkshire Hathaway Inc Class B,0.0149847
+USMV,APH,Amphenol Corp Class A,0.0149521995
+USMV,MCK,McKesson Corp,0.0147192
+USMV,JNJ,Johnson & Johnson,0.0146999005
+USMV,WELL,Welltower Inc,0.014641
+USMV,MRK,Merck & Co Inc,0.0144523

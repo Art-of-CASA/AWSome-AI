@@ -7,6 +7,9 @@
     "005930.KQ": {"ticker": "005930.KS", "raison": "La position locale nomme Samsung Electronics ; correction explicite du suffixe fourni dans les positions."}
   },
   "meme_emetteur": {
-    "GOOG": {"ticker": "GOOGL", "raison": "Alphabet classe C et classe A : classes distinctes du même émetteur. GOOGL sert de référence aux expositions de l'univers."}
+    "GOOG": {"ticker": "GOOGL", "raison": "Alphabet classe C et classe A : classes distinctes du même émetteur. GOOGL sert de référence aux expositions de l'univers."},
+    "TSM": {"ticker": "2330.TW", "raison": "Certificat américain (ADR) de TSMC : même émetteur que l'action cotée à Taïwan."},
+    "ASML": {"ticker": "ASML.AS", "raison": "Action d'ASML cotée au Nasdaq : même émetteur que l'action cotée à Amsterdam."},
+    "SKHY": {"ticker": "000660.KS", "raison": "Certificat américain (ADR) de SK Hynix, nommé dans la position : même émetteur que l'action cotée à Séoul."}
   }
 }

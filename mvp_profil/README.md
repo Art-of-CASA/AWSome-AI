@@ -108,7 +108,7 @@ Le SDK lit les identifiants AWS temporaires dans les variables `AWS_*` ou `~/.aw
 | `synthese.py`, `hypotheses_profil.json` | Calcul, réponses décisives et robustesse locale |
 | `criteres_dynamiques.py` | Critères personnels, pourcentages à confirmer et applicabilité |
 | `chercheur.py`, `donnees_chercheur.json` | Recherche à quatre états, preuves, couverture et cache versionné |
-| `vocabulaire_actifs.json` | Dimensions et valeurs réellement présentes parmi les 66 actifs |
+| `vocabulaire_actifs.json` | Dimensions et valeurs réellement présentes parmi les 111 actifs |
 | `personas/` | Profils fictifs, sources de l'énoncé et hypothèses de test distinguées |
 | `voix_composant.py`, `composant_voix/index.html` | Composant vocal commun aux étapes orales |
 | `evaluer_classement.py`, `validation/phrases_etiquetees.json` | Évaluation sur 51 phrases et 88 couples, dont des échanges multi-tours |

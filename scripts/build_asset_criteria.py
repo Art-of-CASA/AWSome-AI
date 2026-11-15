@@ -1,4 +1,4 @@
-"""Calcule, pour chacun des 66 actifs, les critères qui se comparent au profil de l'investisseur.
+"""Calcule, pour chacun des actifs (111 depuis le 15 novembre 2026), les critères qui se comparent au profil de l'investisseur.
 
 Entrées : jeu de départ, data_extra/, data_extended/, config/seuils_criteres.json
 Sortie  : data_extended/asset_criteria.csv  (une ligne par actif, une colonne par critère)
@@ -40,19 +40,36 @@ THEMES = {
     "VOD.JO": "telecoms;paiement_mobile", "RY.TO": "banque", "TD.TO": "banque", "JPM": "banque", "HSBA.L": "banque",
     "HDFCBANK.NS": "banque", "FSR.JO": "banque", "SBK.JO": "banque", "COMI.CA": "banque", "MFC.TO": "assurance",
     "BTC-USD": "crypto", "ETH-USD": "crypto;contrats_intelligents", "QQQ": "technologie_large", "ESGV": "esg",
+    # Actifs ajoutés le 15 novembre 2026
+    "PM": "tabac", "BATS.L": "tabac", "DGE.L": "alcool", "LVS": "jeux_argent;hotellerie",
+    "LMT": "armes;aerospatiale", "RHM.DE": "armes", "BA": "aerospatiale;armes", "ITA": "armes;aerospatiale",
+    "PLTR": "ia;logiciel", "META": "reseaux_sociaux;publicite_numerique;ia", "000660.KS": "ia;semi-conducteurs",
+    "SMH": "semi-conducteurs;ia", "9984.T": "ia;holding;telecoms", "7974.T": "jeux_video", "BCE.TO": "telecoms",
+    "UNH": "assurance", "KO": "boissons", "COST": "commerce", "WALMEX.MX": "supermarches;commerce",
+    "O": "immobilier", "VNQ": "immobilier", "D05.SI": "banque", "VDY.TO": "banque;petrole",
+    "NEE": "services_publics;energies_renouvelables", "IBE.MC": "services_publics;energies_renouvelables",
+    "ENEL.MI": "services_publics;energies_renouvelables", "BEP-UN.TO": "energies_renouvelables;infrastructures",
+    "VWS.CO": "energies_renouvelables;eolien", "ICLN": "energies_renouvelables;esg", "CCO.TO": "uranium;energie_nucleaire",
+    "GLEN.L": "mines;charbon", "VALE3.SA": "mines", "PETR4.SA": "petrole;gaz", "2222.SR": "petrole;gaz",
 }
 # Complexité pour un investisseur non spécialiste : 1 simple, 2 intermédiaire, 3 complexe.
 # 1 : FNB d'actions larges, FNB obligataires courts ou agrégés, actions d'entreprises au modèle d'affaires lisible.
 # 2 : or (aucun flux de trésorerie), obligations longues (risque de taux marqué).
 # 3 : cryptoactifs, holding à étages, devise instable.
 # Être coté à l'étranger est une question d'ACCÈS (critère G3, colonne access_canada), pas de complexité.
-COMPLEXITY_3 = {"BTC-USD", "ETH-USD", "NPN.JO", "COMI.CA"}  # crypto, holding à étages, devise instable
-COMPLEXITY_2 = {"GLD", "TLT"}
+COMPLEXITY_3 = {"BTC-USD", "ETH-USD", "NPN.JO", "COMI.CA", "9984.T"}  # crypto, holding à étages (Naspers, SoftBank), devise instable
+# TIP : capital indexé sur l'inflation, mécanisme moins lisible qu'une obligation ordinaire ; BEP-UN.TO : parts d'une
+# société en commandite (fiscalité propre).
+COMPLEXITY_2 = {"GLD", "TLT", "TIP", "BEP-UN.TO"}
+# FNB d'un seul secteur ou d'un seul thème : ce n'est pas un « cœur » de portefeuille, quelle que soit sa taille.
+FNB_SECTORIELS = {"ICLN", "ITA", "VNQ", "SMH"}
 # Cotation américaine (ADR ou action cotée à New York) : le titre s'achète chez un courtier canadien ordinaire.
 # Liste écrite à la main, à vérifier auprès du courtier ; vide = non vérifié (pas « aucune »).
 ADR_US = {"ASML.AS": "ASML", "SAP.DE": "SAP", "NOVO-B.CO": "NVO", "AZN.L": "AZN", "SHEL.L": "SHEL", "TTE.PA": "TTE",
           "HSBA.L": "HSBC", "6758.T": "SONY", "7203.T": "TM", "9988.HK": "BABA", "2330.TW": "TSM", "INFY.NS": "INFY",
-          "HDFCBANK.NS": "HDB", "GFI.JO": "GFI", "SOL.JO": "SSL"}
+          "HDFCBANK.NS": "HDB", "GFI.JO": "GFI", "SOL.JO": "SSL",
+          # Ajouts du 15 novembre 2026 (les autres titres ajoutés ne se négocient aux États-Unis que hors cote : non retenus)
+          "BATS.L": "BTI", "DGE.L": "DEO", "VALE3.SA": "VALE", "PETR4.SA": "PBR.A"}
 # Pays réel des actifs du jeu de départ (qui n'a pas de colonne « pays »), d'après la place de cotation.
 PAYS_PAR_MARCHE = {"TSX": "Canada"}
 # Accès pour un particulier canadien (à vérifier selon le courtier).
@@ -65,6 +82,10 @@ ACCESS = {
     "Hong Kong Exchange": "courtier_international", "Johannesburg Stock Exchange": "courtier_international",
     "Taiwan Stock Exchange": "via_adr_ou_fnb", "Korea Exchange": "via_adr_ou_fnb",
     "National Stock Exchange of India": "via_adr_ou_fnb", "Egyptian Exchange": "via_fnb_seulement",
+    # Marchés ajoutés le 15 novembre 2026
+    "Bolsa de Madrid": "courtier_international", "Borsa Italiana": "courtier_international",
+    "Singapore Exchange": "courtier_international", "B3 (São Paulo)": "via_adr_ou_fnb",
+    "Bolsa Mexicana de Valores": "via_adr_ou_fnb", "Saudi Exchange (Tadawul)": "via_fnb_seulement",
 }
 # Secteur d'emploi de l'investisseur -> secteurs GICS qui doublent son exposition (capital humain).
 # Utilisé côté profil ; listé ici pour mémoire.
@@ -268,9 +289,9 @@ def classify(df):
     df["role"] = np.select(
         [obl & (df.vol_cad <= c["role_liquidites_volatilite_max"]),
          obl & (df.vol_cad <= c["role_obligations_amortisseur_volatilite_max"]),
-         obl, df.ticker.isin(["GLD"]), df.asset_class == "etf_equity",
+         obl, df.ticker.isin(["GLD"]), df.ticker.isin(FNB_SECTORIELS), df.asset_class == "etf_equity",
          df.speculative, df.income_asset, df.defensive, df.growth],
-        ["liquidites", "obligations_amortisseur", "obligations_longues", "couverture", "coeur",
+        ["liquidites", "obligations_amortisseur", "obligations_longues", "couverture", "satellite", "coeur",
          "speculatif", "satellite_revenu", "satellite_defensif", "satellite_croissance"], "satellite")
     return df
 
@@ -283,9 +304,21 @@ EXCLUSIONS = {
     "JNJ": ["tests_sur_animaux"], "AZN.L": ["tests_sur_animaux"], "NOVO-B.CO": ["tests_sur_animaux"],
     "APN.JO": ["tests_sur_animaux"],                       # pharmacie : essais précliniques exigés par la réglementation
     "ENB.TO": ["atteinte_droits_autochtones"],             # ligne 5, Bad River (décision confirmée en appel, 2026)
+    # Actifs ajoutés le 15 novembre 2026, pour contraster les profils selon leurs valeurs
+    "PM": ["tabac"], "BATS.L": ["tabac"],                  # cigarettes et produits du tabac : activité principale
+    "DGE.L": ["alcool"],                                   # spiritueux et bière : activité principale
+    "LVS": ["jeux_argent"],                                # casinos (Macao, Singapour) : activité principale
+    "LMT": ["armes", "contrats_de_defense"],               # avions de combat, missiles : premier fournisseur du Pentagone
+    "RHM.DE": ["armes", "contrats_de_defense"],            # munitions, blindés
+    "BA": ["armes", "contrats_de_defense"],                # division Défense : avions de combat, missiles
+    "ITA": ["armes", "contrats_de_defense"],               # fonds entièrement investi en aérospatiale et défense
+    "PLTR": ["contrats_de_defense"],                       # logiciels pour la défense et le renseignement
+    "CCO.TO": ["energie_nucleaire"],                       # extraction d'uranium, combustible nucléaire
+    "NEE": ["energie_nucleaire"], "IBE.MC": ["energie_nucleaire"], "ENEL.MI": ["energie_nucleaire"],  # exploitent des centrales nucléaires (une part minoritaire de leur production)
 }
 SECTEURS_DEFENSIFS = {"Consumer Staples", "Utilities", "Health Care"}
-SECTEURS_CYCLIQUES = {"Consumer Discretionary", "Materials", "Industrials", "Energy", "Financials", "Information Technology"}
+SECTEURS_CYCLIQUES = {"Consumer Discretionary", "Materials", "Industrials", "Energy", "Financials", "Information Technology",
+                      "Real Estate"}
 
 
 def _tranche(x, bornes, noms, defaut="non_disponible"):
@@ -379,7 +412,7 @@ def mots_cles(df, caps: pd.Series, top10: pd.Series, n_top: pd.Series) -> pd.Dat
         if pd.notna(r.dividends_to_fcf_last) and r.industrial_ratios_meaningful is True:
             # Le ratio dividendes ÷ flux libres ne veut rien dire quand les flux libres sont négatifs ou absorbés par
             # l'investissement réglementé (services publics, pipelines) ou par une filiale de financement (Toyota).
-            if r.dividends_to_fcf_last <= 0 or r.sector == "Utilities" or "pipelines" in r.themes or r.ticker == "7203.T":
+            if r.dividends_to_fcf_last <= 0 or r.sector in ("Utilities", "Real Estate") or "pipelines" in r.themes or r.ticker == "7203.T":
                 tags.append("ratio_distribution_non_comparable")
             else:
                 tags.append("ratio_distribution_soutenable" if r.dividends_to_fcf_last <= 0.75 else "ratio_distribution_eleve")
@@ -439,17 +472,18 @@ def mots_cles(df, caps: pd.Series, top10: pd.Series, n_top: pd.Series) -> pd.Dat
              "XEQT.TO": "pays_developpe;marche_emergent_partiel"}
     df["kw_risque_pays"] = [FONDS[t] if t in FONDS else "exposition_chine;marche_emergent" if c == "Chine"
                             else "devise_instable;marche_emergent" if c == "Égypte"
-                            else "marche_emergent" if c in ("Inde", "Afrique du Sud", "Taïwan", "Corée du Sud")
+                            else "marche_emergent" if c in ("Inde", "Afrique du Sud", "Taïwan", "Corée du Sud", "Brésil", "Mexique", "Arabie saoudite")
                             else "pays_developpe" if a != "crypto" else "sans_pays"
                             for c, t, a in zip(df.country, df.ticker, df.asset_class)]
     df["kw_devise"] = [("sans_devise_souveraine" if a == "crypto" else "cad_actifs_etrangers_non_couverts" if t == "XEQT.TO"
-                        else "usd_couvert" if t == "BNDW" else "multidevise_non_couvert" if t in ("VT", "VEA", "VWO")
+                        else "usd_couvert" if t == "BNDW" else "multidevise_non_couvert" if t in ("VT", "VEA", "VWO", "ICLN")
                         else "cad" if c == "CAD" else "usd" if c == "USD" else "autre_devise")
                        for a, t, c in zip(df.asset_class, df.ticker, df.currency)]
     df["kw_fiscalite"] = [("revenu_interets" if a == "etf_bond" else "gains_en_capital_seulement" if y == 0
+                           else "distributions_canadiennes" if t == "BEP-UN.TO"  # société en commandite : pas des dividendes admissibles
                            else "dividendes_canadiens_admissibles" if (m == "TSX" and a == "equity") else
                            "distributions_canadiennes" if c == "CAD" else "dividendes_etrangers")
-                          for a, y, m, c in zip(df.asset_class, df.dividend_yield_ttm, df.market, df.currency)]
+                          for a, y, m, c, t in zip(df.asset_class, df.dividend_yield_ttm, df.market, df.currency, df.ticker)]
     # « aucune_connue » ne veut pas dire « aucune » : liste d'implications connues, non exhaustive. Pour un FNB
     # d'actions, on signale l'exposition fossile par sa part du secteur énergie (les positions complètes manquent).
     seuil_fnb = CFG["fossile_via_fonds_part_energie_min"]

@@ -34,3 +34,48 @@ G02,VEA,Vanguard FTSE Developed Markets ETF,etf_equity,NYSE Arca,USD,Broad marke
 G03,VWO,Vanguard FTSE Emerging Markets ETF,etf_equity,NYSE Arca,USD,Broad market (pays émergents),Monde,États-Unis (fonds),
 G04,XEQT.TO,iShares Core Equity ETF Portfolio,etf_equity,TSX,CAD,"Broad market (monde, portefeuille tout-en-un)",Monde,Canada (fonds),
 G05,BNDW,Vanguard Total World Bond ETF,etf_bond,Nasdaq,USD,"Bonds (monde, couvert en USD)",Monde,États-Unis (fonds),
+N01,PM,Philip Morris International,equity,NYSE,USD,Consumer Staples,Amérique du Nord,États-Unis,Philip_Morris_International
+N02,LMT,Lockheed Martin,equity,NYSE,USD,Industrials,Amérique du Nord,États-Unis,Lockheed_Martin
+N03,BA,Boeing,equity,NYSE,USD,Industrials,Amérique du Nord,États-Unis,Boeing
+N04,META,Meta Platforms,equity,NASDAQ,USD,Communication Services,Amérique du Nord,États-Unis,Meta_Platforms
+N05,UNH,UnitedHealth Group,equity,NYSE,USD,Health Care,Amérique du Nord,États-Unis,UnitedHealth_Group
+N06,KO,Coca-Cola,equity,NYSE,USD,Consumer Staples,Amérique du Nord,États-Unis,The_Coca-Cola_Company
+N07,COST,Costco Wholesale,equity,NASDAQ,USD,Consumer Staples,Amérique du Nord,États-Unis,Costco
+N08,NEE,NextEra Energy,equity,NYSE,USD,Utilities,Amérique du Nord,États-Unis,NextEra_Energy
+N09,PLTR,Palantir Technologies,equity,NASDAQ,USD,Information Technology,Amérique du Nord,États-Unis,Palantir_Technologies
+N10,O,Realty Income,equity,NYSE,USD,Real Estate,Amérique du Nord,États-Unis,Realty_Income
+N11,LVS,Las Vegas Sands,equity,NYSE,USD,Consumer Discretionary,Amérique du Nord,États-Unis,Las_Vegas_Sands
+N12,CCO.TO,Cameco,equity,TSX,CAD,Energy,Amérique du Nord,Canada,Cameco
+N13,BEP-UN.TO,Brookfield Renewable Partners,equity,TSX,CAD,Utilities,Amérique du Nord,Canada,Brookfield_Renewable_Partners
+N14,BCE.TO,BCE,equity,TSX,CAD,Communication Services,Amérique du Nord,Canada,BCE_Inc.
+E11,BATS.L,British American Tobacco,equity,London Stock Exchange,GBP,Consumer Staples,Europe,Royaume-Uni,British_American_Tobacco
+E12,DGE.L,Diageo,equity,London Stock Exchange,GBP,Consumer Staples,Europe,Royaume-Uni,Diageo
+E13,GLEN.L,Glencore,equity,London Stock Exchange,GBP,Materials,Europe,Royaume-Uni,Glencore
+E14,RHM.DE,Rheinmetall,equity,Xetra,EUR,Industrials,Europe,Allemagne,Rheinmetall
+E15,VWS.CO,Vestas Wind Systems,equity,Nasdaq Copenhagen,DKK,Industrials,Europe,Danemark,Vestas
+E16,IBE.MC,Iberdrola,equity,Bolsa de Madrid,EUR,Utilities,Europe,Espagne,Iberdrola
+E17,ENEL.MI,Enel,equity,Borsa Italiana,EUR,Utilities,Europe,Italie,Enel
+S11,D05.SI,DBS Group Holdings,equity,Singapore Exchange,SGD,Financials,Asie,Singapour,DBS_Bank
+S12,9984.T,SoftBank Group,equity,Tokyo Stock Exchange,JPY,Communication Services,Asie,Japon,SoftBank_Group
+S13,000660.KS,SK Hynix,equity,Korea Exchange,KRW,Information Technology,Asie,Corée du Sud,SK_Hynix
+S14,7974.T,Nintendo,equity,Tokyo Stock Exchange,JPY,Communication Services,Asie,Japon,Nintendo
+L01,VALE3.SA,Vale,equity,B3 (São Paulo),BRL,Materials,Amérique latine,Brésil,Vale_S.A.
+L02,PETR4.SA,Petrobras (actions privilégiées),equity,B3 (São Paulo),BRL,Energy,Amérique latine,Brésil,Petrobras
+L03,WALMEX.MX,Walmart de México y Centroamérica,equity,Bolsa Mexicana de Valores,MXN,Consumer Staples,Amérique latine,Mexique,Walmart_de_México_y_Centroamérica
+M01,2222.SR,Saudi Aramco,equity,Saudi Exchange (Tadawul),SAR,Energy,Moyen-Orient,Arabie saoudite,Saudi_Aramco
+G06,ICLN,iShares Global Clean Energy ETF,etf_equity,Nasdaq,USD,Thématique (énergie propre mondiale),Monde,États-Unis (fonds),
+G07,ITA,iShares U.S. Aerospace & Defense ETF,etf_equity,Cboe BZX,USD,Sectoriel (aérospatiale et défense É.-U.),Amérique du Nord,États-Unis (fonds),
+G08,VNQ,Vanguard Real Estate ETF,etf_equity,NYSE Arca,USD,Sectoriel (immobilier coté É.-U.),Amérique du Nord,États-Unis (fonds),
+G09,SMH,VanEck Semiconductor ETF,etf_equity,Nasdaq,USD,Sectoriel (semi-conducteurs),Amérique du Nord,États-Unis (fonds),
+G10,VDY.TO,Vanguard FTSE Canadian High Dividend Yield Index ETF,etf_equity,TSX,CAD,"Broad market (Canada, dividendes élevés)",Amérique du Nord,Canada (fonds),
+G11,TIP,iShares TIPS Bond ETF,etf_bond,NYSE Arca,USD,"Bonds (U.S., indexées sur l'inflation)",Amérique du Nord,États-Unis (fonds),
+G12,PSA.TO,Purpose High Interest Savings Fund,etf_bond,TSX,CAD,Liquidités (comptes d'épargne à intérêt élevé),Amérique du Nord,Canada (fonds),
+G13,CASH.TO,Global X High Interest Savings ETF,etf_bond,TSX,CAD,Liquidités (comptes d'épargne à intérêt élevé),Amérique du Nord,Canada (fonds),
+G14,BIL,SPDR Bloomberg 1-3 Month T-Bill ETF,etf_bond,NYSE Arca,USD,Bonds (U.S. bons du Trésor 1 à 3 mois),Amérique du Nord,États-Unis (fonds),
+G15,XSB.TO,iShares Core Canadian Short Term Bond Index ETF,etf_bond,TSX,CAD,Bonds (Canada court terme),Amérique du Nord,Canada (fonds),
+G16,XSH.TO,iShares Core Canadian Short Term Corporate Bond Index ETF,etf_bond,TSX,CAD,Bonds (Canada sociétés court terme),Amérique du Nord,Canada (fonds),
+G17,CLF.TO,iShares 1-5 Year Laddered Government Bond Index ETF,etf_bond,TSX,CAD,Bonds (Canada gouvernements 1 à 5 ans échelonnés),Amérique du Nord,Canada (fonds),
+G18,XGB.TO,iShares Core Canadian Government Bond Index ETF,etf_bond,TSX,CAD,Bonds (Canada gouvernements),Amérique du Nord,Canada (fonds),
+G19,SHY,iShares 1-3 Year Treasury Bond ETF,etf_bond,Nasdaq,USD,Bonds (U.S. Trésor 1 à 3 ans),Amérique du Nord,États-Unis (fonds),
+G20,ZLB.TO,BMO Low Volatility Canadian Equity ETF,etf_equity,TSX,CAD,Broad market (Canada faible volatilité),Amérique du Nord,Canada (fonds),
+G21,USMV,iShares MSCI USA Min Vol Factor ETF,etf_equity,Cboe BZX,USD,Broad market (U.S. volatilité minimale),Amérique du Nord,États-Unis (fonds),

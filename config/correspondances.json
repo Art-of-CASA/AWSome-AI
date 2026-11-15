@@ -17,10 +17,10 @@
   "infrastructures": {"colonne": "themes", "valeurs": ["infrastructures"]},
   "telecoms": {"colonne": "themes", "valeurs": ["telecoms"]},
   "alcool": {"colonne": "kw_exclusions", "valeurs": ["alcool"]},
-  "immobilier": {"aucun_actif": "Aucune société immobilière dans l'univers."},
-  "armes": {"aucun_actif": "Aucun fabricant d'armes identifié parmi les titres ; non mesuré à l'intérieur des FNB (seules leurs 10 premières positions sont connues)."},
-  "tabac": {"aucun_actif": "Aucun cigarettier parmi les titres ; non mesuré à l'intérieur des FNB."},
-  "jeux_argent": {"aucun_actif": "Aucun exploitant de jeux d'argent parmi les titres ; non mesuré à l'intérieur des FNB."},
+  "immobilier": {"colonne": "themes", "valeurs": ["immobilier"]},
+  "armes": {"colonne": "kw_exclusions", "valeurs": ["armes"]},
+  "tabac": {"colonne": "kw_exclusions", "valeurs": ["tabac"]},
+  "jeux_argent": {"colonne": "kw_exclusions", "valeurs": ["jeux_argent"]},
   "aucun": {"sans_effet": "Pas de préférence."}
  },
  "secteur_emploi_vers_gics": {
@@ -32,7 +32,7 @@
   "industrie": ["Industrials", "Materials"],
   "commerce": ["Consumer Staples", "Consumer Discretionary"],
   "telecoms": ["Communication Services"],
-  "immobilier": [], "education": [], "fonction_publique": [], "autre": [], "sans_emploi": [], "etudiant": [], "retraite": []
+  "immobilier": ["Real Estate"], "education": [], "fonction_publique": [], "autre": [], "sans_emploi": [], "etudiant": [], "retraite": []
  },
  "secteurs_fnb_vers_gics": {
   "_note": "Les poids sectoriels des FNB (etf_sector_weights.csv, Yahoo) suivent la nomenclature Morningstar.",
@@ -68,10 +68,10 @@
   "alcool": {"colonne": "kw_exclusions", "valeurs": ["alcool"]},
   "tests_sur_animaux": {"colonne": "kw_exclusions", "valeurs": ["tests_sur_animaux"]},
   "atteinte_droits_autochtones": {"colonne": "kw_exclusions", "valeurs": ["atteinte_droits_autochtones"]},
-  "armes": {"aucun_actif": "Aucun titre identifié ; non mesuré à l'intérieur des FNB."},
-  "tabac": {"aucun_actif": "Aucun titre identifié ; non mesuré à l'intérieur des FNB."},
-  "jeux_argent": {"aucun_actif": "Aucun titre identifié ; non mesuré à l'intérieur des FNB."},
-  "energie_nucleaire": {"aucun_actif": "Aucun titre identifié ; non mesuré à l'intérieur des FNB."},
+  "armes": {"colonne": "kw_exclusions", "valeurs": ["armes"]},
+  "tabac": {"colonne": "kw_exclusions", "valeurs": ["tabac"]},
+  "jeux_argent": {"colonne": "kw_exclusions", "valeurs": ["jeux_argent"]},
+  "energie_nucleaire": {"colonne": "kw_exclusions", "valeurs": ["energie_nucleaire"]},
   "aucune": {"sans_effet": "Aucune exclusion."}
  },
  "F2": {

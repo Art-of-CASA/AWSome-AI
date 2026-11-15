@@ -52,3 +52,49 @@ Le choix vise des sociétés grandes, liquides et de secteurs variés, avec des 
 .venv/Scripts/python scripts/build_esg.py --universe scripts/universe_extended.csv --out data_extended
 .venv/Scripts/python scripts/compute_metrics.py
 ```
+
+## Ajouts du 15 novembre 2026 : 45 actifs de plus (80 dans ce dossier, 111 avec le jeu de départ)
+
+### Premier lot : 35 actifs pour diversifier et contraster les valeurs
+
+Ajoutés par `scripts/ajouter_actifs.py`, qui ne retélécharge pas les 35 actifs déjà présents : leurs lignes sont restées identiques, seules des lignes ont été ajoutées. Même période (12 novembre 2021 au 12 novembre 2026), collecte du 15 novembre 2026.
+
+| Groupe | Actifs |
+|---|---|
+| **États-Unis (11)** | Philip Morris, Lockheed Martin, Boeing, Meta, UnitedHealth, Coca-Cola, Costco, NextEra Energy, Palantir, Realty Income, Las Vegas Sands |
+| **Canada (3)** | Cameco, Brookfield Renewable Partners, BCE |
+| **Europe (7)** | British American Tobacco, Diageo, Glencore, Rheinmetall, Vestas, Iberdrola, Enel |
+| **Asie (4)** | DBS (Singapour), SoftBank, SK Hynix, Nintendo |
+| **Amérique latine (3)** | Vale, Petrobras (Brésil) ; Walmart de México |
+| **Moyen-Orient (1)** | Saudi Aramco |
+| **FNB (6)** | ICLN (énergie propre), ITA (aérospatiale et défense), VNQ (immobilier coté), SMH (semi-conducteurs), VDY.TO (dividendes canadiens), TIP (obligations indexées sur l'inflation) |
+
+**Pourquoi ces actifs.** Pour contraster les profils selon leurs valeurs : tabac (Philip Morris, British American Tobacco), armement (Lockheed Martin, Rheinmetall, Boeing, le FNB ITA), alcool (Diageo), jeux d'argent (Las Vegas Sands), nucléaire (Cameco), énergies fossiles (Petrobras, Saudi Aramco, Glencore), face aux énergies renouvelables (Vestas, Iberdrola, Enel, Brookfield Renewable, NextEra, le FNB ICLN). Pour diversifier : immobilier, services publics, santé, consommation courante, et trois régions nouvelles. Pour le test de Robert : des titres très médiatisés et volatils (Palantir, Rheinmetall, SK Hynix, Meta).
+
+**Nouveautés à connaître**
+- **Régions nouvelles :** « Amérique latine » et « Moyen-Orient ». Les 14 actions nord-américaines ajoutées ont la région « Amérique du Nord », comme le jeu de départ.
+- **Devises nouvelles :** BRL, MXN, SGD, SAR (Banque du Canada). La Banque du Canada ne publie plus le riyal saoudien après le 30 avril 2026 : la suite est un taux croisé USD/CAD ÷ 3,75 (arrimage officiel au dollar américain). Détail dans `data_quality_warnings.txt`.
+- **Secteur nouveau :** « Real Estate » (Realty Income).
+- **ESG :** 6 controverses sourcées ajoutées (Glencore, British American Tobacco, Boeing, Meta, Vale, Petrobras), recherche du 15 novembre 2026. Les autres actifs ajoutés ont « aucune trouvée », ce qui ne veut pas dire « aucune » : la liste n'est pas exhaustive. Les exclusions par activité (tabac, armes, alcool, jeux d'argent, nucléaire) sont écrites à la main dans `scripts/build_asset_criteria.py`, avec leur justification.
+- **États financiers dans une autre devise que la cotation :** Diageo et Glencore (USD), Brookfield Renewable (USD), Vestas (EUR).
+- **DBS** est une banque : les ratios industriels ne s'appliquent pas.
+
+### Second lot : 10 actifs stables
+
+L'univers manquait d'actifs peu risqués : 9 actifs seulement sous la classe de risque 6. Dix FNB ajoutés, tous avec cinq ans d'historique :
+
+| Type | Actifs | Volatilité en CAD | Classe |
+|---|---|---|---|
+| Liquidités en dollars canadiens | PSA.TO, CASH.TO (comptes d'épargne à intérêt élevé) | 0,3 % et 0,6 % | 1 et 2 |
+| Obligations canadiennes à court terme | XSB.TO (ensemble), XSH.TO (sociétés), CLF.TO (gouvernements 1 à 5 ans) | environ 3 % | 3 |
+| Obligations gouvernementales canadiennes | XGB.TO | 6,9 % | 4 |
+| Bons et obligations du Trésor américain à court terme | BIL (1 à 3 mois), SHY (1 à 3 ans) | 5,4 % | 4 |
+| Actions à faible volatilité | ZLB.TO (Canada), USMV (États-Unis) | 9,7 % et 12,2 % | 4 et 5 |
+
+À savoir : BIL et SHY ne bougent presque pas en dollars américains (0,3 % et 2 %) ; leur volatilité de 5,4 % en CAD vient entièrement du taux de change. Pour un investisseur canadien, les vraies liquidités sont PSA.TO et CASH.TO. XGB.TO n'a jamais retrouvé son sommet d'avant 2022 : « stable » ne veut pas dire « sans perte ».
+
+**Devises.** Les 111 actifs sont cotés dans 17 devises : USD, CAD, ZAR, EUR, GBP, JPY, HKD, INR, DKK, KRW, BRL, CHF, TWD, EGP, SGD, MXN, SAR.
+
+**État des fichiers calculés**
+- `asset_metrics_cad.csv` et `asset_criteria.csv` : recalculés pour les 111 actifs avec les scripts de la branche (109 colonnes). Les 66 lignes précédentes sont identiques, sauf `media_hype` et `kw_attention` pour 4 actifs (LVMH, Siemens, Samsung, Sony) : la notoriété se mesure par rapport à l'univers, qui a changé.
+- Fichiers dérivés du site, régénérés : `mvp_profil/vocabulaire_actifs.json` (333 valeurs) et `mvp_profil/donnees_chercheur.json` (111 actifs, 17 FNB).

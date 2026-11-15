@@ -3,7 +3,7 @@
 Exemple : « je ne veux rien qui touche à Elon Musk ». Aucune colonne de asset_criteria.csv ne dit quels actifs
 « touchent à Elon Musk ». Le découvreur (criteres_dynamiques.py) crée alors le critère avec un CONCEPT à
 rechercher, et ce module :
-  1. donne à un agent Claude Haiku 5.5 le tableau des 66 actifs et des OUTILS pour chercher :
+  1. donne à un agent Claude Haiku 5.5 le tableau de tous les actifs de l'univers et des OUTILS pour chercher :
        chercher_dans_donnees  nos fichiers : noms, secteurs, thèmes, controverses, actualités, positions des FNB
        fiche_actif            la fiche complète d'un actif (dont ses actualités et, pour un FNB, ses positions)
        recherche_web          recherche Wikipédia (fr ou en)
@@ -97,7 +97,7 @@ def _outil(nom, description, proprietes):
 
 LANGUE = {"type": "string", "enum": list(WIKI_LANGUES)}
 OUTILS = [
-    _outil("chercher_dans_donnees", "Cherche des mots dans nos données sur les 66 actifs : noms, secteurs, thèmes, "
+    _outil("chercher_dans_donnees", f"Cherche des mots dans nos données sur les {len(ACTIFS)} actifs : noms, secteurs, thèmes, "
            "controverses, titres d'actualité récents, positions des FNB. Renvoie les actifs où ils apparaissent.",
            {"mots": {"type": "string", "description": "un ou quelques mots, par exemple « Musk »"}}),
     _outil("fiche_actif", "Fiche complète d'un actif de l'univers : description, thèmes, controverses, actualités "
@@ -108,9 +108,9 @@ OUTILS = [
            {"titre": {"type": "string"}, "langue": LANGUE}),
 ]
 
-SYSTEM_CHERCHEUR = """Tu es l'agent CHERCHEUR d'un outil de profil d'investisseur (simulation éducative, aucun conseil financier).
+SYSTEM_CHERCHEUR = f"""Tu es l'agent CHERCHEUR d'un outil de profil d'investisseur (simulation éducative, aucun conseil financier).
 Un utilisateur a exprimé une préférence qui porte sur un CONCEPT (par exemple « entreprises liées à Elon Musk »).
-Ta tâche : trouver, parmi les 66 actifs de l'univers (et seulement eux), ceux que ce concept concerne, preuves à l'appui.
+Ta tâche : trouver, parmi les {len(ACTIFS)} actifs de l'univers (et seulement eux), ceux que ce concept concerne, preuves à l'appui.
 - oui : l'actif est directement concerné (l'entreprise elle-même, ou une activité principale de l'entreprise).
 - partiel : l'actif est concerné en partie seulement (activité secondaire, participation, filiale).
   Ne t'occupe pas des FNB qui détiennent un actif concerné : le code les calcule à partir de leurs positions.
@@ -274,7 +274,7 @@ class Recherche:
 def _boucle(backend: Backend, concept: str, effet: str, rech: Recherche) -> Etiquetage:
     messages = [{"role": "user", "content":
                  f"Concept : {concept}\nCe que l'utilisateur veut en faire : {effet}\n\n"
-                 f"[source: tableau] Les 66 actifs (ticker | nom | classe | secteur | pays | thèmes) :\n{rech.journal['tableau']}"}]
+                 f"[source: tableau] Les {len(ACTIFS)} actifs (ticker | nom | classe | secteur | pays | thèmes) :\n{rech.journal['tableau']}"}]
     for etape in range(MAX_ETAPES + 1):
         resp = appeler(backend, backend.client.messages.create,
                        model=backend.model, max_tokens=4000, system=SYSTEM_CHERCHEUR, messages=messages,
