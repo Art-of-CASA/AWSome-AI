@@ -69,7 +69,7 @@ LOG = logging.getLogger(__name__)
 # Une clarification exige une ambiguïté identifiée ; jamais une panne ou un simple score faible.
 MAX_RELANCES = 1
 
-st.set_page_config(page_title="AWSome · Votre profil", page_icon="🌿", layout="wide",
+st.set_page_config(page_title="AWSome · Votre profil", page_icon=str(interface.ICONE), layout="wide",
                    initial_sidebar_state="auto")
 interface.style()
 

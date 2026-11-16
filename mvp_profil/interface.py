@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import base64
+from functools import lru_cache
 from html import escape
 from pathlib import Path
 
@@ -12,9 +13,19 @@ def style():
     st.html("<style>" + (Path(__file__).parent / "design.css").read_text(encoding="utf-8") + "</style>")
 
 
+ASSETS = Path(__file__).parent / "assets"
+ICONE = ASSETS / "icone_awsome.png"  # icône de l'onglet du navigateur (bulle de conversation)
+
+
+@lru_cache(maxsize=1)
+def _logo_data_uri() -> str:
+    return "data:image/png;base64," + base64.b64encode((ASSETS / "logo_awsome.png").read_bytes()).decode()
+
+
 def marque():
-    return ('<span class="af-logo" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>AWS<span class="af-forge">ome</span>'
-            '<span class="af-ai">AI</span></span>')
+    """Logo AWSome (bulle de conversation et barres, « AWS » en encre, « ome » en vert forêt), fond transparent."""
+    return f'<img class="af-logo-img" src="{_logo_data_uri()}" alt="AWSome" width="186" height="40">'
+
 
 
 def entete(phase: str):

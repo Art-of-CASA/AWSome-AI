@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/logo_awsome.png" alt="AWSome" width="420"></p>
+
 # AWSome — comprendre son profil d'investisseur et ce qui lui correspond
 
 **Datathon PolyFinances 2026 · cas « AlphaForge AI » (Banque Nationale × AWS)**

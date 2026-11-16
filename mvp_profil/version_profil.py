@@ -24,18 +24,24 @@ FICHIERS = (
     "recommandation/donnees/correspondances.json", "recommandation/donnees/hypotheses_recommandation.json",
     "recommandation/donnees/regles_appariement.json", "recommandation/donnees/sources_colonnes.json",
     "recommandation/donnees/origine.json",
+    # Identité visuelle : logo de l'en-tête et icône de l'onglet du navigateur
+    "assets/logo_awsome.png", "assets/icone_awsome.png",
 )
 
+BINAIRES = (".png", ".jpg", ".jpeg", ".webp", ".ico", ".gif")
 
-def contenu_normalise(octets: bytes) -> bytes:
-    """Fins de ligne ramenées à LF : tous les fichiers de production sont du texte. Sans cela, le même code
-    extrait sous Windows (CRLF) et sous Linux (LF, CI et serveur) aurait deux versions différentes."""
+
+def contenu_normalise(octets: bytes, nom: str = "") -> bytes:
+    """Fins de ligne ramenées à LF pour les fichiers texte. Sans cela, le même code extrait sous Windows (CRLF)
+    et sous Linux (LF, CI et serveur) aurait deux versions différentes. Une image est laissée intacte."""
+    if nom.lower().endswith(BINAIRES):
+        return octets
     return octets.replace(b"\r\n", b"\n")
 
 
 def empreintes(racine: Path | None = None) -> dict[str, str]:
     racine = racine or Path(__file__).resolve().parent
-    return {nom: hashlib.sha256(contenu_normalise((racine / nom).read_bytes())).hexdigest() for nom in FICHIERS}
+    return {nom: hashlib.sha256(contenu_normalise((racine / nom).read_bytes(), nom)).hexdigest() for nom in FICHIERS}
 
 
 def version_depuis_empreintes(fichiers: dict[str, str]) -> str:

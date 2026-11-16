@@ -7,7 +7,7 @@ from criteres import CRITERES
 from hypotheses import afficher_hypotheses
 import interface
 
-st.set_page_config(page_title="AWSome · Démo du profil", page_icon="📊", layout="wide")
+st.set_page_config(page_title="AWSome · Démo du profil", page_icon=str(interface.ICONE), layout="wide")
 interface.style()
 st.title("Votre profil d’investisseur")
 st.caption("DÉMO · Données fictives · Aucun appel à l’IA")

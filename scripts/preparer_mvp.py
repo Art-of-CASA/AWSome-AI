@@ -36,7 +36,7 @@ def verifier_archive(sortie: Path) -> dict:
 def construire(sortie: Path, source: Path = SOURCE) -> dict:
     # Les octets sont lus une seule fois : le zip et son manifeste décrivent le même contenu.
     # Fins de ligne normalisées (LF) : un paquet construit sous Windows ou sous Linux porte la même version.
-    contenus = {nom: contenu_normalise((source / nom).read_bytes()) for nom in FICHIERS}
+    contenus = {nom: contenu_normalise((source / nom).read_bytes(), nom) for nom in FICHIERS}
     fichiers = {nom: hashlib.sha256(contenu).hexdigest() for nom, contenu in contenus.items()}
     manifest = {"version": version_depuis_empreintes(fichiers), "fichiers": fichiers}
     sortie.parent.mkdir(parents=True, exist_ok=True)
