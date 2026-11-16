@@ -36,6 +36,7 @@ import tempfile
 import unicodedata
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from confidentialite import masquer  # noqa: E402
 from typing import Literal
 from urllib.parse import quote, urlsplit
 
@@ -217,7 +218,7 @@ class Recherche:
         except AgentError:
             raise
         except Exception as e:  # noqa: BLE001  (une page absente ou le réseau ne doivent pas arrêter la recherche)
-            return f"Erreur de l'outil : {e}"
+            return f"Erreur de l'outil : {masquer(e)}"
 
     def chercher_dans_donnees(self, mots: str) -> str:
         cles = [_norm(m) for m in mots.split() if len(m) > 2] or [_norm(mots)]

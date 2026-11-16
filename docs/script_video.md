@@ -4,7 +4,7 @@ Préparer avant de tourner : site ouvert, modèle activé et nouveau contrat de 
 
 | Temps | À l'écran | À dire |
 |---|---|---|
-| 0:00 – 0:30 | Accueil du site | « Un investisseur dit ce qu'il accepte de perdre. Ce qu'il fait quand ça baisse est autre chose. AlphaForge compare la déclaration aux choix dans une simulation, et sait dire non. Tout ce que vous verrez est une simulation, sur des profils fictifs. » |
+| 0:00 – 0:30 | Accueil du site | « Un investisseur dit ce qu'il accepte de perdre. Ce qu'il fait quand ça baisse est autre chose. AWSome compare la déclaration aux choix dans une simulation, et sait dire non. Tout ce que vous verrez est une simulation, sur des profils fictifs. » |
 | 0:30 – 1:10 | Entretien vocal, 20 secondes, puis le replay de 2022 | « L'entretien se fait à la voix. Un agent classe chaque réponse dans une liste fermée, avec la citation exacte ; un second agent la critique ; le code valide. Puis trois mises en situation observent les choix dans une simulation : ici, un marché qui baisse. Le plus prudent du déclaré et du vécu l'emporte. » |
 | 1:10 – 1:50 | « Charger Amira », « Découvrir mes propositions », écran « Mini-portefeuille » | « Amira, 26 ans, risque élevé. Budget de perte : 45 %. Le portefeuille fictif compte douze positions, dont 10 % de bitcoin, pas plus. Elle travaille en technologie : son exposition à ce secteur est plafonnée à 25 %, fonds compris. Risque élevé ne veut pas dire que tout est acceptable. » Montrer le tableau « Chaque contrainte, avec sa preuve ». |
 | 1:50 – 2:20 | « Chercher un actif », taper Nvidia | « NVIDIA pour Amira : compatible, score 88, mais au plus 10 % du portefeuille. Chaque ligne renvoie à une donnée datée et à sa source. » Ouvrir « Preuves ». |

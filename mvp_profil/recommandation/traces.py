@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from functools import lru_cache
 from version_profil import version_courante
+from confidentialite import masquer
 
 DOSSIER = Path(os.environ.get("ALPHAFORGE_DOSSIER_TRACES", Path(__file__).resolve().parents[1] / "traces"))
 
@@ -51,7 +52,7 @@ class Journal:
                 self._table = boto3.resource("dynamodb", region_name=os.environ.get("AWS_REGION", "us-east-1"),
                                              config=Config(connect_timeout=2, read_timeout=3, retries={"max_attempts": 1})).Table(nom)
             except Exception as e:  # pas d'AWS : le journal local suffit
-                self.erreur_stockage = f"{type(e).__name__}: {e}"
+                self.erreur_stockage = f"{type(e).__name__}: {masquer(e)}"
 
     def noter(self, type_: str, **donnees) -> dict:
         ev = {"session": self.session, "rang": len(self.evenements) + 1,
@@ -69,7 +70,7 @@ class Journal:
                     with (DOSSIER / f"{self.session}.jsonl").open("a", encoding="utf-8") as f:
                         f.write(charge + "\n")
             except Exception as e:
-                self.erreur_stockage = f"{type(e).__name__}: {str(e)[:160]}"
+                self.erreur_stockage = f"{type(e).__name__}: {masquer(e)[:160]}"
                 if self._table is not None:      # DynamoDB indisponible : fichier local pour la suite de la session
                     self._table = None
                     try:

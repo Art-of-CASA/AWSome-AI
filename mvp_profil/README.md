@@ -8,7 +8,7 @@ La version est affichée dans la barre latérale et exportée avec les questions
 
 Site Streamlit qui établit un profil à partir d'une conversation, de questions fermées et de mises en situation. Les réponses libres sont classées puis vérifiées par deux agents Claude Haiku 5.5. Les critères sont alignés avec [config/criteres_appariement.csv](../config/criteres_appariement.csv). **Simulation éducative : aucun conseil financier personnalisé, aucune transaction réelle.** L'étape 4 fournit l'appariement, un mini-portefeuille fictif et des explications. Les [correctifs de l'audit multi-agents](../docs/correctifs_audit_multi_agents_2026-11-15.md) sont locaux, sans nouveau déploiement.
 
-**Version hébergée sur AWS : https://d29e3l5vv5fmjy.cloudfront.net** (HTTPS via CloudFront, accès limité aux IP de l'équipe ; voir [DEPLOIEMENT.md](DEPLOIEMENT.md)). Les appels utilisent Amazon Bedrock, Transcribe et Polly avec le rôle IAM du serveur.
+**Version hébergée sur AWS : https://d29e3l5vv5fmjy.cloudfront.net** (HTTPS via CloudFront, accès public ; voir [DEPLOIEMENT.md](DEPLOIEMENT.md)). Les appels utilisent Amazon Bedrock, Transcribe et Polly avec le rôle IAM du serveur.
 
 **Les changements décrits ici sont implémentés localement et n'ont pas été publiés sur le site partagé.** Aucun nouveau résultat réel du modèle ni gain de temps avec des utilisateurs n'a été mesuré pour cette version. Le détail des responsabilités, de l'ordre des questions et des garanties est dans [l'infrastructure du profil](../docs/infrastructure_profil.md).
 

@@ -21,6 +21,7 @@ from jsonschema import Draft202012Validator
 from . import fidelite, gabarits, gouvernance, incoherence, outils
 from .analyse import Analyse
 from .traces import Journal
+from confidentialite import masquer  # noqa: E402
 
 MODELE = os.environ.get("ALPHAFORGE_MODELE_RECOMMANDATION", "us.anthropic.claude-sonnet-5-5")
 TOURS_MAX = 6
@@ -275,7 +276,7 @@ def dialoguer(role: str, question: str, analyse: Analyse, journal: Journal | Non
                                                          _catalogue_pour_modele(catalogue)}]})
         return secours("nombre de tours dépassé")
     except Exception as e:  # réseau, droits, quota : la démonstration continue sans modèle
-        journal.noter("erreur_modele", role=role, erreur=f"{type(e).__name__}: {str(e)[:200]}")
+        journal.noter("erreur_modele", role=role, erreur=f"{type(e).__name__}: {masquer(e)[:200]}")
         return secours(f"modèle indisponible ({type(e).__name__})")
 
 

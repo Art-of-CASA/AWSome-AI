@@ -36,6 +36,7 @@ import anthropic
 from pydantic import BaseModel, ValidationError
 
 from criteres import CRITERES, SECTIONS, describe
+from confidentialite import masquer
 
 MAX_TOURS = 2
 BAISSE_REFORMULATION = 0.15  # 2e tentative (question reformulée) : seuil abaissé de 15 points (80 % -> 65 %)
@@ -237,7 +238,7 @@ def appeler(backend: Backend, methode, **kwargs):
     except (bx.NoCredentialsError, bx.PartialCredentialsError) as e:
         raise AgentError("Aucun identifiant AWS trouvé sur cette machine.") from e
     except bx.BotoCoreError as e:
-        raise AgentError(f"Erreur AWS : {e}") from e
+        raise AgentError(f"Erreur AWS : {masquer(e)}") from e
     except ValidationError as e:
         raise AgentError("Réponse du modèle illisible, hors schéma ou tronquée ; votre réponse est conservée.") from e
     except (anthropic.AuthenticationError, anthropic.PermissionDeniedError) as e:
@@ -245,7 +246,7 @@ def appeler(backend: Backend, methode, **kwargs):
     except anthropic.RateLimitError as e:
         raise AgentError("Limite de débit atteinte : réessayez dans quelques secondes.") from e
     except anthropic.APIStatusError as e:
-        raise AgentError(f"Erreur de l'API ({e.status_code}) : {e.message}") from e
+        raise AgentError(f"Erreur de l'API ({e.status_code}) : {masquer(e.message)}") from e
     except anthropic.APITimeoutError as e:
         raise AgentError("Le délai de réponse du modèle est dépassé ; votre réponse est conservée.") from e
     except anthropic.APIConnectionError as e:

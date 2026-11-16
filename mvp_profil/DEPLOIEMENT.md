@@ -1,6 +1,6 @@
 # Déploiement du MVP sur AWS
 
-Les corrections du 15 novembre issues de la revue de code sont préparées localement. Leur publication sur le site partagé reste à vérifier : le numéro affiché doit correspondre à `version_manifest.json` du paquet installé. Les essais historiques ci-dessous ne valident pas cette nouvelle version.
+**État au 15 novembre 2026 :** le site est **public** et se met à jour automatiquement à chaque mise à jour de `main` (GitHub Actions : tests, paquet vérifié, installation par Systems Manager avec retour arrière). La version installée s'affiche dans « Connexion et réglages » et dans `version_manifest.json`. Les paragraphes datés plus bas sont l'historique de la mise en place.
 
 > Les identifiants du compte, des ressources et les adresses IP ont été retirés de ce fichier (remplacés par `<...>`). Ils se retrouvent dans la console AWS, grâce à l'étiquette `projet = alphaforge-mvp`. Ne les remettez pas dans le dépôt.
 
@@ -8,7 +8,7 @@ Déployé le 14 novembre 2026 dans le compte du datathon (`<ID_DU_COMPTE>`), ré
 
 **Adresse : https://d29e3l5vv5fmjy.cloudfront.net** (HTTPS, micro disponible ; adresse directe en HTTP : http://<IP_PUBLIQUE_INSTANCE>:8501)
 
-L'accès est limité aux adresses IP de l'équipe : `<IP_EQUIPE_1>` et `<IP_EQUIPE_2>` (ajoutée le 14 novembre 2026). Depuis un autre réseau, il faut ajouter l'IP à la fonction CloudFront et au groupe de sécurité (voir plus bas).
+**Accès public depuis le 15 novembre 2026** (rendu du datathon) : la fonction CloudFront laisse passer toutes les adresses. Elle reste associée à la distribution pour pouvoir rétablir un filtre en une publication. L'adresse HTTP directe de l'instance reste réservée aux adresses de l'équipe (groupe de sécurité).
 
 ## Architecture
 
@@ -38,7 +38,7 @@ Le rôle `alphaforge-mvp-ec2` a reçu une seconde politique, `alphaforge-mvp-voi
 | Ressource | Identifiant | Rôle |
 |---|---|---|
 | Distribution CloudFront | `<ID_DISTRIBUTION>` (`d29e3l5vv5fmjy.cloudfront.net`) | HTTPS (certificat CloudFront), sans cache (Managed-CachingDisabled), tous les en-têtes transmis (Managed-AllViewer) pour les WebSockets de Streamlit ; origine : l'instance, port 8501 en HTTP |
-| Fonction CloudFront | `alphaforge-mvp-filtre-ip` | Ne laisse passer que les IP `<IP_EQUIPE_1>` et `<IP_EQUIPE_2>` ; les autres reçoivent une erreur 403 (testé) |
+| Fonction CloudFront | `alphaforge-mvp-filtre-ip` | Accès public depuis le 15 novembre 2026 ; auparavant, seules les IP de l'équipe passaient (403 pour les autres) |
 | Règle du groupe de sécurité | port 8501 ← liste de préfixes `pl-3b927c52` | Autorise les serveurs CloudFront à joindre l'instance |
 
 Pour ajouter un coéquipier sur un autre réseau : ajouter son IP dans la liste `autorisees` de la fonction CloudFront (et la publier), ou au groupe de sécurité pour l'accès direct en HTTP. L'adresse HTTP directe (http://<IP_PUBLIQUE_INSTANCE>:8501) reste ouverte à la même IP, sans micro.
@@ -46,7 +46,7 @@ Pour ajouter un coéquipier sur un autre réseau : ajouter son IP dans la liste 
 ## Opérations courantes
 
 - **Donner l'accès à un coéquipier sur un autre réseau :** ajouter son IP (`/32`) à la règle entrante du port 8501 du groupe `alphaforge-mvp-sg`.
-- **Mettre le code à jour :**
+- **Mettre le code à jour :** pousser sur `main` ; le workflow `.github/workflows/deploy.yml` teste, construit et installe. Procédure manuelle de secours :
   1. Lancer `python scripts/lancer_tests.py`, puis **uniquement** `python scripts/preparer_mvp.py` pour construire `mvp_profil.zip`. Ne pas maintenir une liste manuelle de fichiers : l'inventaire provient de `mvp_profil/version_profil.py`. Le préparateur contrôle tous les fichiers, leurs empreintes et la version, même avec Python `-O`.
   2. L'envoyer sur `s3://alphaforge-mvp-<ID_DU_COMPTE>-us-east-1/app/mvp_profil.zip`.
   3. Sur l'instance, via Session Manager, lancer : `cd /opt/alphaforge && aws s3 cp s3://alphaforge-mvp-<ID_DU_COMPTE>-us-east-1/app/mvp_profil.zip app.zip && unzip -o app.zip -d app && systemctl restart alphaforge`
@@ -57,5 +57,6 @@ Pour ajouter un coéquipier sur un autre réseau : ajouter son IP dans la liste 
 
 ## Limites
 
-- HTTP sans chiffrement, et pas de mot de passe : la protection repose sur le filtrage par IP. C'est suffisant pour une démo, pas pour de vrais utilisateurs.
+- Site public sans compte ni mot de passe : c'est une démonstration avec des profils fictifs, pas un service pour de vrais clients. Les messages d'erreur sont masqués (`confidentialite.py`) et aucune trace d'erreur n'est affichée ; le coût des appels aux modèles est surveillé par AWS Budgets (alerte, pas un plafond).
+- L'adresse HTTP directe de l'instance n'est pas chiffrée ; elle reste limitée aux adresses de l'équipe.
 - Une seule instance, sans redémarrage automatique en cas de panne de la machine. Le service redémarre seulement si Streamlit plante.

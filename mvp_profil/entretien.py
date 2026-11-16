@@ -24,6 +24,7 @@ from pydantic import BaseModel
 from agents import (REGION, AgentError, Backend, Classification, Proposition, _ask, classifier, critiquer,
                     evaluer, precontrole, debattre)
 from criteres import CRITERES, describe
+from confidentialite import masquer  # noqa: E402
 
 MAX_AUDIO_S = 30
 MAX_WAV_OCTETS = MAX_AUDIO_S * 48_000 * 2 * 2 + 4096
@@ -177,4 +178,4 @@ def transcrire(donnees_wav: bytes, langue: str = "fr-CA") -> str:
     except TimeoutError as exc:
         raise AgentError("La transcription a dépassé son délai. Vous pouvez réessayer.") from exc
     except Exception as e:  # noqa: BLE001
-        raise AgentError(f"Transcription impossible : {e}") from e
+        raise AgentError(f"Transcription impossible : {masquer(e)}") from e

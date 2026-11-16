@@ -21,6 +21,7 @@ from .appariement import pct
 from .chargement import sans_accents
 
 from criteres import CRITERES  # noqa: E402  (profil, lecture seule)
+from confidentialite import masquer  # noqa: E402
 
 BIENVENUE = ("Dites-moi ce que vous aimeriez voir dans votre portefeuille fictif : un titre précis, un thème, une région. "
              "Je l'ajoute si c'est cohérent avec votre profil ; sinon je vous propose ce qui s'en rapproche le plus.")
@@ -249,7 +250,7 @@ def executer(ctx: Contexte, nom: str, entree: dict | None) -> dict:
     try:
         return ACTIONS[nom][0](ctx, entree or {})
     except (ValueError, TypeError, KeyError) as e:
-        return {"erreur": f"Entrée invalide pour {nom} : {e}"}
+        return {"erreur": f"Entrée invalide pour {nom} : {masquer(e)}"}
 
 
 # ---------- Interprète à règles (sans modèle) ----------

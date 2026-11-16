@@ -1,6 +1,8 @@
-# AlphaForge AI — une page
+# AWSome — une page
 
-**Datathon PolyFinances 2026 · Banque Nationale × AWS · simulation éducative, profils fictifs, aucun conseil financier**
+**Datathon PolyFinances 2026 · cas « AlphaForge AI » · Banque Nationale × AWS · simulation éducative, profils fictifs, aucun conseil financier**
+
+Application : https://d29e3l5vv5fmjy.cloudfront.net
 
 ## Le problème
 Un investisseur dit ce qu'il accepte de perdre. Ce qu'il fait quand la baisse arrive est souvent différent. Un outil qui écoute seulement la déclaration propose des placements que la personne abandonnera au pire moment. Et un outil qui dit toujours oui n'aide personne : Robert, 59 ans, prudent, veut le titre dont tout le monde parle.

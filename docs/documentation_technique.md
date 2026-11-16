@@ -1,6 +1,6 @@
-# AlphaForge AI — documentation technique
+# AWSome — documentation technique
 
-Datathon PolyFinances 2026, défi AlphaForge AI (Banque Nationale, AWS). Version du 15 novembre 2026.
+Datathon PolyFinances 2026, défi « AlphaForge AI » (Banque Nationale, AWS) ; notre outil s'appelle AWSome. Version du 15 novembre 2026.
 
 **Simulation éducative.** Profils fictifs, données publiques, aucun ordre réel, aucun conseil financier personnalisé. Les mesures décrivent le passé sur une période dite ; elles ne prédisent pas les rendements futurs.
 

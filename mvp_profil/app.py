@@ -54,6 +54,7 @@ from voix_composant import conversation_vocale
 from profil import (UTILISABLES, appliquer_correctif, connu, deduire, entree, incoherences, niveau_quiz,
                     recouper_rupture, valeur_curseur, signaux_coherence)
 from simulations import ETAPES
+from confidentialite import masquer
 from synthese import phrase, synthetiser, libelle_valeur
 from pilotage import prioriser_criteres, prioriser_items, prioriser_sections
 from questions_conversation import enregistrer_question
@@ -413,7 +414,7 @@ def barre_vocale(force_veille: bool = False):
                 raise AgentError("Enregistrement trop volumineux ou invalide. Réessayez avec une réponse de moins de 30 secondes.")
             texte = transcrire(base64.b64decode(wav, validate=True))
     except (AgentError, binascii.Error, ValueError) as e:
-        st.warning(str(e))
+        st.warning(masquer(e))
     return {"kind": "texte", "texte": texte}
 
 
@@ -740,7 +741,7 @@ def recuperer_analyses(attendre: bool = True):
                 S.echecs_analyses.append({"item": job["item"], "criteres": eligibles, "echanges": job["echanges"],
                                           "definitif": job.get("definitif", False),
                                           "profil_echec": {cid: deepcopy(S.profil.get(cid)) for cid in eligibles}})
-            S.debats.append({"question": job["item"], "tours": [], "resultats": {}, "erreur": str(exc)})
+            S.debats.append({"question": job["item"], "tours": [], "resultats": {}, "erreur": masquer(exc)})
         finally:
             S.en_cours.remove(job)
     if attendre:
@@ -926,7 +927,7 @@ def page_ouverte():
         except Exception as exc:
             if not isinstance(exc, AgentError):
                 LOG.exception("Analyse de la réponse ouverte indisponible")
-            S.erreur_ouverte = str(exc)
+            S.erreur_ouverte = masquer(exc)
             S.analyse_ouverte = None
             st.rerun()
         S.analyse_ouverte = None
@@ -938,7 +939,7 @@ def page_ouverte():
                     fut = executeur().submit(chercheur.etiqueter, backend_pour(cle), c["concept"], c["effet"])
                     S.recherches.append(suivre_tache({"id": c["id"], "future": fut, "soumis_le": monotonic()}))
                 except AgentError as exc:
-                    c.update(etiquetage="echec", applicable=False, motif=str(exc))
+                    c.update(etiquetage="echec", applicable=False, motif=masquer(exc))
                     c["regle"] = criteres_dynamiques.regle(c)
         S.phase = "termine"
         st.rerun()
@@ -963,7 +964,7 @@ def page_ouverte():
         futur = executeur().submit(criteres_dynamiques.creer, backend_pour(cle), QUESTION_OUVERTE,
                                    S.reponse_ouverte, seuil, deja=len(S.dynamiques))
     except AgentError as e:
-        S.erreur_ouverte = str(e)
+        S.erreur_ouverte = masquer(e)
         st.error("L'analyse est indisponible ; votre réponse est conservée.")
         return
     S.analyse_ouverte = suivre_tache({"future": futur, "soumis_le": monotonic()})
@@ -980,7 +981,7 @@ def integrer_recherches() -> bool:
                 raise AgentError("Délai de recherche dépassé ; aucun résultat négatif n'est déduit.")
             criteres_dynamiques.appliquer_etiquetage(c, job["future"].result())
         except Exception as e:  # noqa: BLE001  (réseau, modèle : le critère reste visible, à revoir)
-            c.update(etiquetage="echec", applicable=False, motif=f"Recherche impossible : {e}")
+            c.update(etiquetage="echec", applicable=False, motif=f"Recherche impossible : {masquer(e)}")
             c["regle"] = criteres_dynamiques.regle(c)
         S.recherches.remove(job)
     return bool(S.recherches)
@@ -1056,7 +1057,7 @@ def afficher_dynamiques(details: bool = False):
                     try:
                         criteres_dynamiques.confirmer(c, pct)
                     except ValueError as e:
-                        st.warning(str(e))
+                        st.warning(masquer(e))
                     else:
                         st.rerun()
 
