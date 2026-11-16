@@ -13,7 +13,7 @@ def style():
 
 
 def marque():
-    return ('<span class="af-logo" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>Alpha<span class="af-forge">Forge</span>'
+    return ('<span class="af-logo" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>AWS<span class="af-forge">ome</span>'
             '<span class="af-ai">AI</span></span>')
 
 

@@ -224,7 +224,7 @@ ACTIONS = {
         "Une réponse ambiguë ne vaut pas accord : conserve la proposition en attente et demande une réponse explicite.", {}, []),
 }
 
-SYSTEME = """Tu es le CONSEILLER d'AlphaForge, dans une conversation où la personne ajuste son mini-portefeuille FICTIF (simulation éducative).
+SYSTEME = """Tu es le CONSEILLER d'AWSome, dans une conversation où la personne ajuste son mini-portefeuille FICTIF (simulation éducative).
 Ton rôle : comprendre ce qu'elle veut, appeler l'outil qui convient, puis répondre en deux à quatre phrases simples.
 - Pour toute demande d'ajout, appelle ajouter_au_portefeuille. Sa décision est définitive : tu ne la contestes pas et tu ne l'adoucis pas.
 - Si c'est refusé, présente les alternatives renvoyées par l'outil. Si l'outil indique des réponses du profil à revoir, demande à la personne si elle veut les mettre à jour ; n'appelle confirmer que si elle dit clairement oui.

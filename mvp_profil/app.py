@@ -68,7 +68,7 @@ LOG = logging.getLogger(__name__)
 # Une clarification exige une ambiguïté identifiée ; jamais une panne ou un simple score faible.
 MAX_RELANCES = 1
 
-st.set_page_config(page_title="AlphaForge · Votre profil", page_icon="🌿", layout="wide",
+st.set_page_config(page_title="AWSome · Votre profil", page_icon="🌿", layout="wide",
                    initial_sidebar_state="auto")
 interface.style()
 
@@ -125,7 +125,7 @@ with st.sidebar:
     if st.button("Recommencer", width="stretch"):
         reset()
         st.rerun()
-    st.html('<div class="af-footer-note">CONÇU POUR COMPRENDRE<br>AlphaForge AI · PolyFinances 2026<br>'
+    st.html('<div class="af-footer-note">CONÇU POUR COMPRENDRE<br>AWSome AI · PolyFinances 2026<br>'
             'Simulation éducative en dollars canadiens.</div>')
 
 
