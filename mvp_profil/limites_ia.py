@@ -16,9 +16,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
-# 300 appels de modèle sur 24 h permettent largement plusieurs démonstrations
+# 1 000 appels de modèle sur 24 h permettent largement plusieurs démonstrations
 # complètes, tout en bornant explicitement l'exposition du compte AWS.
-LIMITE_PAR_JOUR_DEFAUT = 300
+LIMITE_PAR_JOUR_DEFAUT = 1000
 DOSSIER = Path(os.environ.get("ALPHAFORGE_DOSSIER_LIMITES_IA",
                               os.environ.get("ALPHAFORGE_DOSSIER_TRACES",
                                              Path(__file__).resolve().parent / "traces")))
