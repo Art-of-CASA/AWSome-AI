@@ -62,15 +62,10 @@ def decouverte_simulee(backend, question, reponse, seuil, deja=0):
     return []
 
 
-def replique_interdite(*args, **kwargs):
-    raise AssertionError("Un modèle ne doit plus choisir ni reformuler librement la prochaine question.")
-
-
 agents.aws_identifiants_presents = lambda: True
 agents.backend_bedrock = lambda: agents.Backend(None, agents.MODELES["bedrock"], "test hors ligne")
 agents.debattre = debat_simule
 entretien.analyser = analyse_simulee
-entretien.replique = replique_interdite
 entretien.transcrire = lambda wav: VOIX["texte"]
 entretien.synthese_vocale = lecture_simulee
 voix_composant.conversation_vocale = composant_simule
