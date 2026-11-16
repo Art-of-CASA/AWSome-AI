@@ -118,9 +118,13 @@ def _choisir(resultats: dict, uni, ctr: dict, hyp: dict) -> dict:
         if len(amort) >= 1 and len(amort[: p["nb_amortisseurs"]]) + len(crois) >= p["nb_positions_min"]:
             break
     cle = lambda r: (-r["score"], C.expose_change(uni[r["ticker"]]), abs(M.nombre(uni[r["ticker"]]["stress_loss"]) or 0), r["ticker"])  # noqa: E731
-    liquides = sorted([r for r in amort if r["role"] == "liquidites"], key=cle)[:1]
+    liquides = sorted([r for r in amort if r["role"] == "liquidites"], key=cle)
     oblig = sorted([r for r in amort if r["role"] == "obligations_amortisseur"], key=cle)
-    choisis_amort = (liquides + oblig)[: p["nb_amortisseurs"]] or sorted(amort, key=cle)[: p["nb_amortisseurs"]]
+    # Conserver un fonds de liquidités et les obligations lorsqu'elles sont
+    # compatibles, puis remplir les places libres avec les autres liquidités.
+    # Sinon un petit budget de perte ne garde qu'un fonds plafonné à 40 %,
+    # laissant artificiellement 60 % en encaisse malgré d'autres candidats.
+    choisis_amort = (liquides[:1] + oblig + liquides[1:])[: p["nb_amortisseurs"]]
     place = p["nb_positions_max"] - len(choisis_amort)
     coeurs = sorted([r for r in crois if r["role"] == "coeur"],
                     key=lambda r: (-r["score"], -prefs(r), uni[r["ticker"]].get("region") != "Monde", r["ticker"]))[:3]
@@ -219,7 +223,7 @@ def controles(poids: dict, ctr: dict, uni, hyp: dict, registre: Registre, st: di
     p_stress = registre.calcul("portefeuille:perte_stress", st["perte_stress_pct"],
                                "pire de : perte maximale historique, perte de 2022, choc de taux déclaré", m["periode"])
     ctl("Perte de stress face au budget de perte", "B1", st["perte_stress_pct"], budget, _etat_tension(ratio, hyp),
-        f"Tension = {pct(st['perte_stress_pct'])} ÷ {pct(budget, 0)} = {ratio:.2f} ; cause : {st['cause'].replace('_', ' ')}.",
+        f"Tension = {pct(st['perte_stress_pct'])} ÷ {pct(budget)} = {ratio:.2f} ; cause : {st['cause'].replace('_', ' ')}.",
         [p_stress, registre.hypothese("tension"), registre.hypothese("stress")])
     vmax = ctr["volatilite_max_pct"]
     p_vol = registre.calcul("portefeuille:volatilite", m["volatilite_pct"], "écart-type des rendements quotidiens en CAD, annualisé", m["periode"])
@@ -393,6 +397,14 @@ def construire(ctr: dict, resultats: dict, uni, montant: float | None = None, hy
                        "preuves": [reg.actif(a, "stress_loss"), reg.actif(a, "role")]})
     part = lambda poche: round(sum(x for t, x in w.items() if (uni[t]["role"] in AMORTISSEURS) == (poche == "amortisseur")) * 100, 1)  # noqa: E731
     encaisse_pct = round(encaisse * 100, 1)
+    if len(lignes) < 2 and encaisse_pct >= 50 and not imposes:
+        return {
+            "erreur": "Les réponses actuelles ne permettent pas de construire un portefeuille suffisamment investi : "
+                      f"{pct(encaisse_pct)} resteraient en encaisse. "
+                      f"Le budget de perte retenu est de {pct(ctr['budget_perte_pct'])}. "
+                      "Vérifiez le résultat de la simulation et les réponses de risque encore à préciser avant de continuer.",
+            "seuil_entree": sel["seuil"], "diagnostic": diagnostic_exclusions(resultats),
+        }
     raison_encaisse = None
     if encaisse_pct >= 0.5:
         raison_encaisse = ("aucun actif défensif (liquidités, obligations courtes) n'est compatible avec vos réponses"

@@ -300,7 +300,7 @@ def page_portefeuille(a: Analyse):
     puces_ajustements(etat_conversation(), a)
     c = st.columns(4)
     c[0].metric("Perte de stress", pct(pf["perte_stress_pct"]), help="Le pire de ce que ce portefeuille aurait perdu : plus forte baisse de 2021 à 2026, année 2022, ou hausse brutale des taux.")
-    c[1].metric("Votre budget de perte", pct(pf["budget_perte_pct"], 0), help="Ce que vous pouvez, voulez et supportez de perdre : le plus prudent des trois.")
+    c[1].metric("Votre budget de perte", pct(pf["budget_perte_pct"]), help="Ce que vous pouvez, voulez et supportez de perdre : le plus prudent des trois.")
     c[2].metric("En dollars", dollars(pf["perte_stress_cad"]), help=f"Sur un montant fictif de {dollars(pf['montant_fictif_cad'])}.")
     c[3].metric("Cohérence", ETATS[pf["etat_tension"]].capitalize(), help="Perte de stress comparée à votre budget de perte.")
     g, d = st.columns([1, 1.25], gap="large")
@@ -423,7 +423,7 @@ def page_conversation(a: Analyse):
         else:
             st.markdown("**Votre portefeuille, en direct**")
             camembert(pf, hauteur=240)
-            st.caption(f"Perte de stress {pct(pf['perte_stress_pct'])} pour un budget de {pct(pf['budget_perte_pct'], 0)} · {ETATS[pf['etat_tension']]}")
+            st.caption(f"Perte de stress {pct(pf['perte_stress_pct'])} pour un budget de {pct(pf['budget_perte_pct'])} · {ETATS[pf['etat_tension']]}")
             liste_positions(pf, compact=True)
         puces_ajustements(etat, a)
     st.caption("Le conseiller comprend votre demande et choisit les explications ; les règles du profil décident de ce qui entre dans le portefeuille. "

@@ -115,7 +115,7 @@ def evaluer_actif(ticker: str, ctr: dict, uni: Univers, registre: Registre | Non
     if stress is None or stress == 0:
         non_evalues.append("stress_loss")
     else:
-        bornes.append((min(100.0, cible / abs(stress * 100) * 100), f"budget de perte de {pct(ctr['budget_perte_pct'], 0)} "
+        bornes.append((min(100.0, cible / abs(stress * 100) * 100), f"budget de perte de {pct(ctr['budget_perte_pct'])} "
                        f"face à une perte maximale historique de {pct(abs(stress) * 100)}"))
     if C.titre_individuel(a):
         bornes.append((float(plaf["titre_pct"]), f"plafond par titre de {plaf['titre_pct']} %"))
