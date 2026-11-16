@@ -54,7 +54,7 @@ const instanceId = window.crypto && typeof window.crypto.randomUUID === "functio
 
 let args = {}, sessionId = null, premierRender = true;
 let demarre = false, enPause = false, etat = "arret";
-let nEnvoye = 0, envoiEnAttente = 0, generationLecture = 0;
+let nEnvoye = 0, envoiEnAttente = 0, generationLecture = 0, dernierEchecTranscription = 0;
 let lecteur = null, lecture = null, identiteEcoute = null;
 let fluxMicro = null, contexte = null, sourceMicro = null, processeur = null, sortieMuette = null;
 let ouvertureMicro = null, generationMicro = 0, tauxEntree = 48000, ouvertureEcoute = null;
@@ -285,6 +285,19 @@ function reconcilier() {
   if (envoiEnAttente && entier(args.ack) < envoiEnAttente) {
     muterMicro(); afficher("reflexion", "Réponse envoyée", "Votre réponse est en cours de traitement."); bouton("Pause"); return;
   }
+  if (envoiEnAttente && entier(args.ack) >= envoiEnAttente && args.attendre_reprise_explicite) {
+    const echec = entier(args.echec_transcription);
+    muterMicro();
+    if (echec > dernierEchecTranscription) {
+      dernierEchecTranscription = echec;
+      afficher("erreur_micro", "Réponse non transcrite", "Vérifiez le microphone, puis choisissez vous-même de réessayer.");
+      bouton("Réessayer le micro");
+    } else {
+      afficher("reflexion", "Réponse reçue", "Votre réponse est transmise. Attendez la question suivante.");
+      bouton("Réponse transmise", true);
+    }
+    return;
+  }
   if (lecture.terminee) {
     if (!args.fin && etat !== "ecoute") commencerEcoute();
   } else if (lecteur && lecteur.paused) {
@@ -310,7 +323,12 @@ $("bouton").onclick = async () => {
     afficher("reflexion", "Nouvelle lecture demandée", "La question sera lue avant la reprise du microphone.");
     bouton("Réessayer la lecture", true); return;
   }
-  if (etat === "erreur_micro") { await commencerEcoute(); return; }
+  if (etat === "erreur_micro") {
+    // Après une transcription vide, ce clic est le consentement explicite à une nouvelle capture.
+    // Un échec d'accès au périphérique arrive sans envoi en attente et suit le même chemin.
+    if (envoiEnAttente && entier(args.ack) >= envoiEnAttente) envoiEnAttente = 0;
+    await commencerEcoute(); return;
+  }
   if (!demarre) { demarre = true; enPause = false; reconcilier(); return; }
   enPause = !enPause;
   if (enPause) {

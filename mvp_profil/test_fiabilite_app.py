@@ -91,6 +91,7 @@ def job(at, future, ids, *, autres=(), ancien=False):
 at = nouveau()
 assert RENDUS[-1]["veille"], "Le composant reste monté même sur l'accueil."
 at.session_state.phase = "libre_oral"
+at.session_state.section = 1
 at.session_state.libres_en_attente = [{"id": "horizon", "criteres": ["A2"],
                                        "texte": "Dans combien d'années aurez-vous besoin de cet argent ?"}]
 args_horizon = run(at)
@@ -98,6 +99,14 @@ assert args_horizon["n"] == at.session_state.vocal["n"] > 0
 assert args_horizon["audio_b64"] == at.session_state.vocal["audio"]
 assert args_horizon["question_text"].startswith("Dans combien")
 assert not args_horizon["veille"]
+assert args_horizon["attendre_reprise_explicite"]
+
+# Une transcription vide est acquittée, mais devient un échec explicite : le navigateur n'a pas
+# l'autorisation de réarmer le micro de lui-même pour la même question.
+MICRO["texte"] = ""
+apres_echec = injecter(at, payload(args_horizon), "")
+assert apres_echec["question_id"] == args_horizon["question_id"]
+assert apres_echec["echec_transcription"] == args_horizon.get("echec_transcription", 0) + 1
 
 at.session_state.phase = "precisions"
 at.session_state.precisions_pretes = True

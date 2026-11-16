@@ -114,6 +114,20 @@ async function main() {
   assert.ok(h.lire('seuil') < 0.03, 'Le premier mot pendant la calibration reste de la parole.');
   paroleComplete(h); assert.equal(messagesDe(h, 'audio').length, 1, 'Une seule réponse est envoyée avant acquittement.');
 
+  // L'acquittement transporte la réponse, mais ne doit jamais réouvrir automatiquement le micro
+  // pour la même question : une transcription vide ne peut donc pas provoquer une boucle de captures.
+  h.render({ ack: 1, attendre_reprise_explicite: true }); await drainer();
+  assert.equal(h.lire('etat'), 'reflexion');
+  assert.equal(h.element('etat').textContent, 'Réponse reçue');
+  assert.equal(h.element('bouton').disabled, true);
+  h.render({ ack: 1, echec_transcription: 1, attendre_reprise_explicite: true }); await drainer();
+  assert.equal(h.lire('etat'), 'erreur_micro');
+  assert.equal(h.element('bouton').textContent, 'Réessayer le micro');
+  await h.cliquer();
+  assert.equal(h.lire('etat'), 'ecoute');
+  h.render({ ack: 1, echec_transcription: 1, attendre_reprise_explicite: true }); await drainer();
+  assert.equal(h.lire('etat'), 'ecoute', 'Un même échec déjà vu ne réarme ni ne coupe une nouvelle écoute.');
+
   // Une nouvelle question invalide les anciens callbacks et les buffers de l'ancien sujet.
   const ancienOnEnded = h.audios[0].onended;
   h.render({ question_id: 'question-2', playback_id: 2, n: 2, ack: 1, question_text: 'Combien de mois de réserve avez-vous ?' });

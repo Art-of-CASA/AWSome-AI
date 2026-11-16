@@ -86,7 +86,7 @@ def reset():
         # Composant vocal UNIQUE (conversation, précisions, question ouverte) : n = numéro de la dernière phrase de l'IA,
         # ack = dernier énoncé de l'utilisateur traité, etape = question en cours, actif = l'utilisateur a parlé
         vocal={"n": 0, "ack": 0, "acks": {}, "audio": "", "texte": "", "fin": False,
-               "etape": None, "actif": False, "session_id": uuid4().hex}, retires=0)
+               "etape": None, "actif": False, "session_id": uuid4().hex, "echec_transcription": 0}, retires=0)
 
 
 if "phase" not in st.session_state:
@@ -96,7 +96,7 @@ for nom, valeur in {"questions_posees": {}, "libres_en_attente": [], "libres_tra
                     "retour_libres": "questionnaire", "evenements_questions": [], "erreur_ouverte": None,
                     "versions_profil": {}, "echecs_analyses": [], "analyse_ouverte": None}.items():
     S.setdefault(nom, valeur)
-for nom, valeur in {"session_id": uuid4().hex, "acks": {}, "texte": ""}.items():
+for nom, valeur in {"session_id": uuid4().hex, "acks": {}, "texte": "", "echec_transcription": 0}.items():
     S.vocal.setdefault(nom, valeur)
 
 # ---------- Barre latérale ----------
@@ -383,10 +383,15 @@ def barre_vocale(force_veille: bool = False):
     v = S.vocal
     attente = S.phase == "conversation" and bool((S.conv or {}).get("attente"))
     veille = force_veille or S.phase not in PHASES_VOCALES or attente
+    # Le verrou cible uniquement la première réponse libre, après la première vague de QCM.
+    # Les autres usages du composant vocal conservent leur comportement existant.
+    attendre_reprise_explicite = S.phase == "libre_oral" and S.section == 1
     with ZONE_VOIX:
         valeur = conversation_vocale(audio_b64=v["audio"], n=v["n"], ack=v["ack"], fin=v["fin"], voix=voix,
                                      veille=veille, attente=attente, termine=S.phase == "termine", key="voix",
-                                     question_id=v["etape"] or "", session_id=v["session_id"], question_text=v["texte"])
+                                     question_id=v["etape"] or "", session_id=v["session_id"], question_text=v["texte"],
+                                     echec_transcription=v["echec_transcription"],
+                                     attendre_reprise_explicite=attendre_reprise_explicite)
     if not isinstance(valeur, dict) or valeur.get("session_id") != v["session_id"]:
         return None
     instance, numero = valeur.get("instance_id"), valeur.get("n")
@@ -413,7 +418,13 @@ def barre_vocale(force_veille: bool = False):
             if not isinstance(wav, str) or len(wav) > 1_300_000:
                 raise AgentError("Enregistrement trop volumineux ou invalide. Réessayez avec une réponse de moins de 30 secondes.")
             texte = transcrire(base64.b64decode(wav, validate=True))
+            if not isinstance(texte, str) or not texte.strip():
+                raise AgentError("Aucune parole n'a été reconnue. Vérifiez le micro puis réessayez.")
     except (AgentError, binascii.Error, ValueError) as e:
+        # Sur la première réponse libre, l'ack ne doit jamais réarmer automatiquement la même
+        # question : un échec Transcribe pouvait sinon former une boucle audio.
+        if attendre_reprise_explicite:
+            v["echec_transcription"] += 1
         st.warning(masquer(e))
     return {"kind": "texte", "texte": texte}
 
