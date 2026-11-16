@@ -31,7 +31,7 @@ def portefeuille(pf: dict) -> str:
     lignes = [f"Mini-portefeuille fictif de {len(pf['lignes'])} positions pour un montant fictif de {_dollars(pf['montant_fictif_cad'])} :"]
     lignes += [f"- {l['ticker']} ({l['nom']}) : {pct(l['poids_pct'])}, poche {l['poche']}" for l in pf["lignes"]]
     lignes.append(f"Perte de stress : {pct(pf['perte_stress_pct'])}, soit {_dollars(pf['perte_stress_cad'])}, pour un budget de perte de "
-                  f"{pct(pf['budget_perte_pct'], 0)} ({_dollars(pf['budget_perte_cad'])}). Tension : {pf['ratio_tension']:.2f} "
+                  f"{pct(pf['budget_perte_pct'])} ({_dollars(pf['budget_perte_cad'])}). Tension : {pf['ratio_tension']:.2f} "
                   f"({pf['etat_tension'].replace('_', ' ')}) [calcul:portefeuille:perte_stress].")
     if pf.get("conflits"):
         lignes.append("Contraintes en conflit : " + " ; ".join(pf["conflits"]) + ".")
@@ -83,7 +83,7 @@ def demande(v: dict) -> str:
         lignes.append(f"- {r['critere']} : {r['texte']}")
     if v.get("perte_stress_apres_pct") is not None:
         lignes.append(f"Perte de stress du portefeuille : {pct(v['perte_stress_avant_pct'])} avant, {pct(v['perte_stress_apres_pct'])} après, "
-                      f"pour un budget de {pct(v['budget_perte_pct'], 0)} [calcul:demande:perte_stress_apres].")
+                      f"pour un budget de {pct(v['budget_perte_pct'])} [calcul:demande:perte_stress_apres].")
     if v.get("part_max_compatible_pct") is not None:
         lignes.append(f"Part maximale compatible avec le profil : {pct(v['part_max_compatible_pct'], 0)}.")
     for p in (v.get("incoherence") or {}).get("pistes", []):

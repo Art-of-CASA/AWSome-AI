@@ -41,6 +41,22 @@ for persona in ch.personas_disponibles():
     bouton(at, "← Revenir").click().run()
     verifier(not at.exception and at.session_state["phase"] == "termine", "retour à la synthèse")
 
+# Un profil saisi peut vendre très tôt au replay, contrairement aux personas.
+from profil import entree
+
+for perte in (0.3, 0.1):
+    at = ouvrir("mateo")
+    profil = dict(at.session_state["profil"])
+    profil["B2"] = entree(["5"], "replay", perte=perte)
+    at.session_state["profil"] = profil
+    bouton(at, "Découvrir mes propositions").click().run()
+    verifier(not at.exception, f"vente précoce {perte} : affichage")
+    if perte == 0.3:
+        budget = next(m for m in at.metric if m.label == "Votre budget de perte")
+        verifier("0,3" in budget.value, "ne pas arrondir le budget à zéro")
+    else:
+        verifier(any("resteraient en encaisse" in w.value for w in at.warning), "expliquer le portefeuille impossible")
+
 # Recherche : compatible, à examiner, exclu, absent. L'écran ne doit ni planter ni noter un actif absent.
 at = ouvrir("robert")
 bouton(at, "Découvrir mes propositions").click().run()

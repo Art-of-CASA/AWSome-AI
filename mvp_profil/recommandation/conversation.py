@@ -379,7 +379,7 @@ def _phrase_portefeuille(d: dict) -> str:
     if ap.get("perte_stress_pct") is None:
         return ""
     return (f" La perte de stress du portefeuille passe de {pct(av.get('perte_stress_pct'))} à {pct(ap['perte_stress_pct'])}, "
-            f"pour un budget de {pct(ap['budget_perte_pct'], 0)}.")
+            f"pour un budget de {pct(ap['budget_perte_pct'])}.")
 
 
 def _phrase_maj(m: dict) -> str:
@@ -455,7 +455,7 @@ def rediger(nom: str, d: dict) -> str:
         if "erreur" in d:
             return d["erreur"]
         return (f"Votre portefeuille fictif compte {len(d['positions'])} positions. Perte de stress : {pct(d['perte_stress_pct'])} pour un budget "
-                f"de {pct(d['budget_perte_pct'], 0)}." + (f" Ajouté à votre demande : {', '.join(d['ajouts'])}." if d["ajouts"] else ""))
+                f"de {pct(d['budget_perte_pct'])}." + (f" Ajouté à votre demande : {', '.join(d['ajouts'])}." if d["ajouts"] else ""))
     return d.get("message", "")
 
 
