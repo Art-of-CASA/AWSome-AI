@@ -8,7 +8,7 @@ FICHIERS = (
     "app.py", "agents.py", "criteres.py", "profil.py", "entretien.py", "simulations.py", ".streamlit/config.toml",
     "synthese.py", "hypotheses.py", "pilotage.py", "moteur_conversation.py", "questions_conversation.py",
     "reponses_directes.py", "criteres_dynamiques.py", "chercheur.py", "voix_composant.py",
-    "version_profil.py", "taches.py", "interface.py", "design.css", "composant_voix/index.html",
+    "version_profil.py", "taches.py", "limites_ia.py", "interface.py", "design.css", "composant_voix/index.html",
     "replay_composant.py", "replay_moteur.py", "replay_quotidien.json",
     "composant_replay/index.html", "composant_replay/replay.js", "confidentialite.py", "requirements.txt", "constraints.txt", "hypotheses_profil.json",
     "scenarios.json", "vocabulaire_actifs.json", "donnees_chercheur.json",

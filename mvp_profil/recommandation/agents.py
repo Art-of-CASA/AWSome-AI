@@ -22,6 +22,7 @@ from . import fidelite, gabarits, gouvernance, incoherence, outils
 from .analyse import Analyse
 from .traces import Journal
 from confidentialite import masquer  # noqa: E402
+import limites_ia
 
 MODELE = os.environ.get("ALPHAFORGE_MODELE_RECOMMANDATION", "us.anthropic.claude-sonnet-5-5")
 TOURS_MAX = 6
@@ -78,6 +79,7 @@ class ModeleBedrock:
         self.guardrail_version = os.environ.get("ALPHAFORGE_GUARDRAIL_VERSION", "DRAFT")
 
     def converser(self, systeme: str, messages: list[dict], specs: list[dict]) -> dict:
+        limites_ia.reserver("recommandation")
         params = {"modelId": self.modele, "system": [{"text": systeme}], "messages": messages,
                   "inferenceConfig": {"maxTokens": JETONS_MAX}}
         if specs:

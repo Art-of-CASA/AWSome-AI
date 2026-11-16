@@ -37,6 +37,7 @@ from pydantic import BaseModel, ValidationError
 
 from criteres import CRITERES, SECTIONS, describe
 from confidentialite import masquer
+import limites_ia
 
 MAX_TOURS = 2
 BAISSE_REFORMULATION = 0.15  # 2e tentative (question reformulée) : seuil abaissé de 15 points (80 % -> 65 %)
@@ -233,6 +234,10 @@ def _ask(backend: Backend, system: str, prompt: str, schema: type[BaseModel], ma
 def appeler(backend: Backend, methode, **kwargs):
     """Appel au modèle avec des erreurs lisibles (identifiants, droits, débit, réseau, refus, réponse coupée)."""
     import botocore.exceptions as bx
+    try:
+        limites_ia.reserver("profil")
+    except limites_ia.LimiteIAAtteinte as e:
+        raise AgentError(str(e)) from e
     try:
         resp = methode(**kwargs)
     except (bx.NoCredentialsError, bx.PartialCredentialsError) as e:

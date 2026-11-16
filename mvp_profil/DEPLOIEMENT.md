@@ -33,6 +33,12 @@ Dernière mise à jour du code : 14 novembre 2026, 19 h 45 : précisions et ques
 
 Le rôle `alphaforge-mvp-ec2` a reçu une seconde politique, `alphaforge-mvp-voix` : `polly:SynthesizeSpeech` et `transcribe:StartStreamTranscription` (voix de l'entretien).
 
+### Budget dur des agents
+
+Tous les appels aux modèles (classificateur, critique, chercheur et agents de recommandation) partagent un budget persistant de **300 appels par jour UTC**. Une fois atteint, l'application conserve les réponses et bascule vers ses gabarits déterministes : elle ne tente plus d'appel payant avant le lendemain UTC. Le compteur est conservé dans `/opt/alphaforge/app/traces/budget_ia.json` et donc préservé lors d'un déploiement.
+
+On peut réduire ce plafond avec `ALPHAFORGE_MAX_APPELS_IA_JOUR`; une valeur absente ou invalide revient à 300 et une valeur inférieure à 1 devient 1. Ne pas l'augmenter pour une exposition publique sans ajouter d'authentification et de rate-limit en amont.
+
 **HTTPS (en place depuis le 14 novembre 2026, 18 h 06) : https://d29e3l5vv5fmjy.cloudfront.net** — c'est l'adresse à utiliser, car le micro du navigateur exige HTTPS.
 
 | Ressource | Identifiant | Rôle |
